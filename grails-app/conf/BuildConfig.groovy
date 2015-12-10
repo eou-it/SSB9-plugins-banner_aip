@@ -17,6 +17,9 @@ grails.project.fork = [
     console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]
 ]
 
+grails.plugin.location.'banner-ui-ss'="plugins/banner_ui_ss.git"
+grails.plugin.location.'web-app-extensibility' = "plugins/web-app-extensibility.git"
+
 grails.project.dependency.resolver = "maven" // or ivy
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
@@ -41,9 +44,7 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        build(":release:3.1.0",
-              ":rest-client-builder:2.1.0") {
-            export = false
-        }
+        runtime "org.grails.plugins:resources:1.2.14"
+        compile ':restful-api:1.0.0'
     }
 }
