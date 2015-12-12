@@ -10,15 +10,17 @@ modules = {
     'csrTestDependencies' {
         dependsOn "angularApp"
         resource url:[plugin: 'banner-csr', file: 'node_modules/angular-material/angular-material.css']
+        resource url:[plugin: 'banner-csr', file: 'node_modules/angular-aria/angular-aria.js']
         resource url:[plugin: 'banner-csr', file: 'node_modules/angular-material/angular-material.js']
-//        resource url:[plugin: 'banner-csr', file: 'node_modules/requirejs/require.js']
         resource url:[plugin: 'banner-csr', file: 'js/utils/register.js']
     }
 
     'bannerCSR' {
-        dependsOn "csrTestDependencies, jquery"
+        dependsOn "csrTestDependencies, jquery, bannerSelfService"
         resource url:[plugin: 'banner-csr', file: 'js/app.js']
+        resource url:[plugin: 'banner-csr', file: 'js/service/testService.js']
         resource url:[plugin: 'banner-csr', file: 'js/controller/testCtrl.js']
+
     }
 
 }
