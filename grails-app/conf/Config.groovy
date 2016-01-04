@@ -20,3 +20,27 @@ log4j = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
 }
+
+
+grails.plugin.springsecurity.logout.afterLogoutUrl = "/"
+grails.plugin.springsecurity.logout.mepErrorLogoutUrl = '/logout/logoutPage'
+grails.plugin.springsecurity.useRequestMapDomainClass = false
+grails.plugin.springsecurity.cas.active = false
+grails.plugin.springsecurity.saml.active = false
+
+security = {
+       active = true
+       ajaxLoginFormUrl = "/login/auth"
+       loginFormUrl = "/login/auth"
+       afterLogoutUrl = "/"
+}
+
+grails.plugin.springsecurity.filterChain.chainMap = [
+        '/api/**': 'authenticationProcessingFilter,basicAuthenticationFilter,securityContextHolderAwareRequestFilter,anonymousProcessingFilter,basicExceptionTranslationFilter,filterInvocationInterceptor',
+        '/**'    : 'securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,anonymousProcessingFilter,exceptionTranslationFilter,filterInvocationInterceptor'
+]
+
+grails.databinding.useSpringBinder = true
+grails.plugin.springsecurity.useRequestMapDomainClass = false
+grails.plugin.springsecurity.securityConfigType = SecurityConfigType.InterceptUrlMap
+

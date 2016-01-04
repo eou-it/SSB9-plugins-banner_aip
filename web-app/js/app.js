@@ -6,8 +6,8 @@
 
 var bannerCSRApp = angular.module("bannercsr", [
     "ngMaterial",
-    "ngRoute",
-    "ngResource"
+    "mdDataTable",
+    "bgMdIcons"
 ]);
 
 //provider-injector
