@@ -35,7 +35,6 @@ module CSR {
         dialogService;
         mdMedia: angular.material.IMedia;
         adminItemListViewService: CSR.AdminItemListViewService;
-        customFullscreen;
         constructor($scope:IAdminItemListViewScope, $mdToast:angular.material.IToastService, $mdDialog:angular.material.IDialogService,
                     $mdMedia:angular.material.IMedia, AdminItemListViewService:CSR.AdminItemListViewService) {
             this.toastService = $mdToast;
@@ -54,7 +53,6 @@ module CSR {
             this.itemGroups = this.adminItemListViewService.itemGroups;
             this.disableDelete = true;
             this.disableUpdate = true;
-            this.customFullscreen = this.mdMedia("xs") || this.mdMedia("sm");
         }
         chkboxCallback(filteredItems) {
             var selected = filteredItems.filter((item)=>{return item.selected;});
@@ -77,46 +75,36 @@ module CSR {
             this.disableUpdate = false;
         }
         addNewItem(evt) {
-            var useFullScreen = (this.mdMedia("sm") || this.mdMedia("xs")) && this.customFullscreen;
             this.dialogService.show({
                 controller:CSR.AddDialogCtrl,
                 templateUrl: "../plugins/banner-csr-1.0/js/templates/addNewItem.html",
                 parent: angular.element(document.body),
                 targetEvent:evt,
                 clickOutsideToClose: false,
-                fullscreen: true //useFullScreen
+                fullscreen: true
             }).then(() => {
                 console.log("OK")
                 }, () => {
                 console.log("Cancel");
             });
-            //var confirm = this.dialogService.confirm()
-            //    .title("Add item")
-            //    .content("Add new item here")
-            //    .ariaLabel("Add new item")
-            //    .targetEvent(evt)
-            //    .ok("Add")
-            //    .cancel("Cancel");
-            //var self = this;
-            //this.dialogService.show(confirm).then(() => {
-            //    self.disableUpdate = false;
-            //}, () => {
-            //    console.log("what?");
-            //});
         }
         updateItems() {
             this.disableUpdate = true;
         }
     }
 
+
+    interface IAddDialogCtrl extends ng.IScope {
+        vm:AddDialogCtrl;
+    }
     export class AddDialogCtrl {
-        static $inject=["$scope", "$mdDialog", "AdminItemListViewService"]
-        AdminItemListViewService;
+        static $inject=["$scope", "$mdDialog", "AdminItemListViewService"];
+        AdminItemListViewService:CSR.AdminItemListViewService;
         mdDialogService;
-        studentGroup;
-        listItem;
-        listItems;
-        constructor($scope, $mdDialog, AdminItemListViewService) {
+        studentGroup:string[];
+        listItem:IListItem;
+        listItems:IListItem[];
+        constructor($scope:IAddDialogCtrl, $mdDialog, AdminItemListViewService:CSR.AdminItemListViewService) {
             this.AdminItemListViewService = AdminItemListViewService;
             this.mdDialogService = $mdDialog;
             $scope.vm = this;
@@ -124,7 +112,7 @@ module CSR {
         }
         init() {
             this.studentGroup = this.AdminItemListViewService.getTestGroupData();
-            this.listItem = {name:"", group:"", description:""};
+            this.listItem = {name:"", group:0, description:""};
             this.listItems=[];
         }
         cancel() {
@@ -133,7 +121,7 @@ module CSR {
         add() {
             this.listItem.group = this.studentGroup.indexOf(this.listItem.group);
             this.listItems.push(this.listItem);
-            this.listItem = {name:"", group:"", description:""};
+            this.listItem = {name:"", group:0, description:""};
         }
         apply() {
             this.AdminItemListViewService.addNewItems(this.listItems);

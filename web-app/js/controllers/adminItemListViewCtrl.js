@@ -22,7 +22,6 @@ var CSR;
             this.itemGroups = this.adminItemListViewService.itemGroups;
             this.disableDelete = true;
             this.disableUpdate = true;
-            this.customFullscreen = this.mdMedia("xs") || this.mdMedia("sm");
         };
         AdminItemListViewCtrl.prototype.chkboxCallback = function (filteredItems) {
             var selected = filteredItems.filter(function (item) { return item.selected; });
@@ -46,32 +45,18 @@ var CSR;
             this.disableUpdate = false;
         };
         AdminItemListViewCtrl.prototype.addNewItem = function (evt) {
-            var useFullScreen = (this.mdMedia("sm") || this.mdMedia("xs")) && this.customFullscreen;
             this.dialogService.show({
                 controller: CSR.AddDialogCtrl,
                 templateUrl: "../plugins/banner-csr-1.0/js/templates/addNewItem.html",
                 parent: angular.element(document.body),
                 targetEvent: evt,
                 clickOutsideToClose: false,
-                fullscreen: true //useFullScreen
+                fullscreen: true
             }).then(function () {
                 console.log("OK");
             }, function () {
                 console.log("Cancel");
             });
-            //var confirm = this.dialogService.confirm()
-            //    .title("Add item")
-            //    .content("Add new item here")
-            //    .ariaLabel("Add new item")
-            //    .targetEvent(evt)
-            //    .ok("Add")
-            //    .cancel("Cancel");
-            //var self = this;
-            //this.dialogService.show(confirm).then(() => {
-            //    self.disableUpdate = false;
-            //}, () => {
-            //    console.log("what?");
-            //});
         };
         AdminItemListViewCtrl.prototype.updateItems = function () {
             this.disableUpdate = true;
@@ -89,7 +74,7 @@ var CSR;
         }
         AddDialogCtrl.prototype.init = function () {
             this.studentGroup = this.AdminItemListViewService.getTestGroupData();
-            this.listItem = { name: "", group: "", description: "" };
+            this.listItem = { name: "", group: 0, description: "" };
             this.listItems = [];
         };
         AddDialogCtrl.prototype.cancel = function () {
@@ -98,7 +83,7 @@ var CSR;
         AddDialogCtrl.prototype.add = function () {
             this.listItem.group = this.studentGroup.indexOf(this.listItem.group);
             this.listItems.push(this.listItem);
-            this.listItem = { name: "", group: "", description: "" };
+            this.listItem = { name: "", group: 0, description: "" };
         };
         AddDialogCtrl.prototype.apply = function () {
             this.AdminItemListViewService.addNewItems(this.listItems);

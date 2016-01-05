@@ -4,14 +4,22 @@ declare var register;
 
 module CSR {
     export interface IListItem {
-        id:number;
         name:string;
-        group:number;
+        group:any;
         description: string;
-        selected: boolean;
+        selected?: boolean;
+        id?:number;
     }
 
-    export class AdminItemListViewService {
+    interface IAdminItemListViewService {
+        httpService:ng.IHttpService;
+        itemGroups:IListItem[];
+        studentGroups:string[];
+        removeSelectedItem(items:IListItem[]):IListItem[];
+        addNewItems(items:IListItem[]):void;
+    }
+
+    export class AdminItemListViewService implements IAdminItemListViewService{
         static $inject=["$http"];
         httpService:ng.IHttpService;
         itemGroups:IListItem[];
