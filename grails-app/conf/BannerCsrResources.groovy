@@ -27,7 +27,9 @@ modules = {
 
     'bannerCSR' {
         dependsOn "csrThirdPartyLib, bannerSelfService"
+        resource url:[plugin: 'banner-csr', file: 'css/adminItemList.css']
         resource url:[plugin: 'banner-csr', file: 'js/app.js']
-        resource url:[plugin: 'banner-csr', file: 'js/controllers/adminItemListView.js']
+        resource url:[plugin: 'banner-csr', file: 'js/controllers/adminItemListViewCtrl.js']
+        resource url:[plugin: 'banner-csr', file: 'js/services/adminItemListViewService.js']
     }
 }
