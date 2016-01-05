@@ -21,8 +21,8 @@ modules = {
         dependsOn "csrTestDependencies"
         resource url:[plugin: 'banner-csr', file: 'bower_components/angular-material-icons/angular-material-icons.js']
         resource url:[plugin: 'banner-csr', file: 'bower_components/mdDataTable/dist/md-data-table-style.css']
-        resource url:[plugin: 'banner-csr', file: 'bower_components/md-data-table.js']
-        resource url:[plugin: 'banner-csr', file: 'bower_components/md-data-table-template.js']
+        resource url:[plugin: 'banner-csr', file: 'bower_components/mdDataTable/dist/md-data-table.js']
+        resource url:[plugin: 'banner-csr', file: 'bower_components/mdDataTable/dist/md-data-table-templates.js']
     }
 
     'bannerCSR' {
