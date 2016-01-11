@@ -12,14 +12,19 @@ var CSR;
             this.init();
             $scope.vm = this;
             $scope.$watch(function () {
-                return _this.adminItemListViewService.itemGroups;
+                return _this.adminItemListViewService.gridData;
             }, function (newVal) {
-                _this.itemGroups = newVal;
+                _this.gridData = newVal;
+            });
+            $scope.$watch(function () {
+                return _this.adminItemListViewService.codeTypes;
+            }, function (newVal) {
+                _this.codeTypes = newVal;
             });
         }
         AdminItemListViewCtrl.prototype.init = function () {
-            this.studentGroups = this.adminItemListViewService.studentGroups;
-            this.itemGroups = this.adminItemListViewService.itemGroups;
+            this.codeTypes = this.adminItemListViewService.codeTypes;
+            this.gridData = this.adminItemListViewService.gridData;
             this.disableDelete = true;
             this.disableUpdate = true;
         };
@@ -40,8 +45,8 @@ var CSR;
         };
         AdminItemListViewCtrl.prototype.removeItemCallback = function (filteredItems) {
             var selected = this.chkboxCallback(filteredItems);
-            this.itemGroups = this.adminItemListViewService.removeSelectedItem(selected);
-            this.chkboxCallback(this.itemGroups);
+            this.gridData.data = this.adminItemListViewService.removeSelectedItem(selected);
+            this.chkboxCallback(this.gridData.data);
             this.disableUpdate = false;
         };
         AdminItemListViewCtrl.prototype.addNewItem = function (evt) {
@@ -73,17 +78,16 @@ var CSR;
             this.init();
         }
         AddDialogCtrl.prototype.init = function () {
-            this.studentGroup = this.AdminItemListViewService.getTestGroupData();
-            this.listItem = { name: "", group: 0, description: "" };
+            this.codeTypes = this.AdminItemListViewService.codeTypes;
+            this.listItem = { id: this.AdminItemListViewService.getLastItemId() + 1, name: "", type: 0, description: "", lastModifiedDate: new Date(), lastModifiedBy: "me" };
             this.listItems = [];
         };
         AddDialogCtrl.prototype.cancel = function () {
             this.mdDialogService.cancel();
         };
         AddDialogCtrl.prototype.add = function () {
-            this.listItem.group = this.studentGroup.indexOf(this.listItem.group);
             this.listItems.push(this.listItem);
-            this.listItem = { name: "", group: 0, description: "" };
+            this.listItem = { id: this.listItem.id + 1, name: "", type: 0, description: "", lastModifiedDate: new Date(), lastModifiedBy: "me" };
         };
         AddDialogCtrl.prototype.apply = function () {
             this.AdminItemListViewService.addNewItems(this.listItems);

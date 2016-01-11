@@ -10,25 +10,25 @@ module CSR {
     }
 
     interface IAdminItemListView {
-        itemGroups:IListItem[];
-        studentGroups:string[];
-        disableDelete:boolean;
-        disableUpdate:boolean;
-        toastService:angular.material.IToastService;
+        gridData: IGridData;
+        codeTypes: string[];
+        disableDelete: boolean;
+        disableUpdate: boolean;
+        toastService: angular.material.IToastService;
         dialogService;
-        mdMedia:angular.material.IMedia;
-        adminItemListViewService:CSR.AdminItemListViewService;
-        chkboxCallback(filteredItems:IListItem[]):IListItem[];
-        removeItemCallback(filteredItems:IListItem[]):void
-        addNewItem(evt):void;
-        updateItems():void;
+        mdMedia: angular.material.IMedia;
+        adminItemListViewService: CSR.AdminItemListViewService;
+        chkboxCallback(filteredItems:IListItem[]): IListItem[];
+        removeItemCallback(filteredItems:IListItem[]): void
+        addNewItem(evt): void;
+        updateItems(): void;
         selectAll(filteredItems:IListItem[], chkAll:boolean): void;
     }
 
     export class AdminItemListViewCtrl implements IAdminItemListView {
         static $inject=["$scope", "$mdToast", "$mdDialog", "$mdMedia", "AdminItemListViewService"];
-        public itemGroups:IListItem[];
-        public studentGroups: string[];
+        public gridData: IGridData;
+        public codeTypes: string[];
         public disableDelete:boolean;
         public disableUpdate:boolean;
         toastService: angular.material.IToastService;
@@ -44,13 +44,17 @@ module CSR {
             this.init();
             $scope.vm = this;
             $scope.$watch(()=>{
-                return this.adminItemListViewService.itemGroups;}, (newVal) => {
-                this.itemGroups = newVal;
+                return this.adminItemListViewService.gridData;}, (newVal) => {
+                this.gridData = newVal;
+            });
+            $scope.$watch(()=>{
+                return this.adminItemListViewService.codeTypes;}, (newVal) => {
+                this.codeTypes = newVal;
             });
         }
         init() {
-            this.studentGroups = this.adminItemListViewService.studentGroups;
-            this.itemGroups = this.adminItemListViewService.itemGroups;
+            this.codeTypes = this.adminItemListViewService.codeTypes;
+            this.gridData = this.adminItemListViewService.gridData;
             this.disableDelete = true;
             this.disableUpdate = true;
         }
@@ -70,8 +74,8 @@ module CSR {
         }
         removeItemCallback(filteredItems) {
             var selected = this.chkboxCallback(filteredItems);
-            this.itemGroups = this.adminItemListViewService.removeSelectedItem(selected);
-            this.chkboxCallback(this.itemGroups);
+            this.gridData.data = this.adminItemListViewService.removeSelectedItem(selected);
+            this.chkboxCallback(this.gridData.data);
             this.disableUpdate = false;
         }
         addNewItem(evt) {
@@ -101,7 +105,7 @@ module CSR {
         static $inject=["$scope", "$mdDialog", "AdminItemListViewService"];
         AdminItemListViewService:CSR.AdminItemListViewService;
         mdDialogService;
-        studentGroup:string[];
+        codeTypes:string[];
         listItem:IListItem;
         listItems:IListItem[];
         constructor($scope:IAddDialogCtrl, $mdDialog, AdminItemListViewService:CSR.AdminItemListViewService) {
@@ -111,17 +115,16 @@ module CSR {
             this.init();
         }
         init() {
-            this.studentGroup = this.AdminItemListViewService.getTestGroupData();
-            this.listItem = {name:"", group:0, description:""};
+            this.codeTypes = this.AdminItemListViewService.codeTypes;
+            this.listItem = {id: this.AdminItemListViewService.getLastItemId()+1, name: "", type: 0, description: "", lastModifiedDate: new Date(), lastModifiedBy: "me"};
             this.listItems=[];
         }
         cancel() {
             this.mdDialogService.cancel();
         }
         add() {
-            this.listItem.group = this.studentGroup.indexOf(this.listItem.group);
             this.listItems.push(this.listItem);
-            this.listItem = {name:"", group:0, description:""};
+            this.listItem = {id: this.listItem.id+1, name: "", type: 0, description: "", lastModifiedDate: new Date(), lastModifiedBy: "me"};
         }
         apply() {
             this.AdminItemListViewService.addNewItems(this.listItems);

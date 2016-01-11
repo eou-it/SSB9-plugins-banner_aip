@@ -4,56 +4,95 @@ declare var register;
 
 module CSR {
     export interface IListItem {
-        name:string;
-        group:any;
+        id: number;
+        name: string;
+        type: number;
         description: string;
-        selected?: boolean;
-        id?:number;
+        lastModifiedDate: Date;
+        lastModifiedBy: string;
     }
-
+    export interface IGridData {
+        header: {field:string, title:string}[];
+        data: IListItem[];
+    }
     interface IAdminItemListViewService {
         httpService:ng.IHttpService;
-        itemGroups:IListItem[];
-        studentGroups:string[];
+        qService:ng.IQService;
+        gridData:IGridData;
+        codeTypes:string[];
+        getCodeTypes():ng.IHttpPromise<string[]>
+        getGridData(): ng.IHttpPromise<IGridData>;
+        getLastItemId():number;
         removeSelectedItem(items:IListItem[]):IListItem[];
         addNewItems(items:IListItem[]):void;
     }
-
+    interface IGridDataResponse {
+        data: {
+            header:{field:string, title:string}[];
+            data: IListItem[]
+        };
+    }
+    interface ICodeTypeResponse {
+        data: string[];
+    }
     export class AdminItemListViewService implements IAdminItemListViewService{
-        static $inject=["$http"];
-        httpService:ng.IHttpService;
-        itemGroups:IListItem[];
-        studentGroups:string[];
-        constructor($http:ng.IHttpService) {
+        static $inject=["$http", "$q"];
+        httpService: ng.IHttpService;
+        qService:ng.IQService;
+        gridData:IGridData;
+        codeTypes: string[];
+        constructor($http:ng.IHttpService, $q:ng.IQService) {
             this.httpService = $http;
-            this.itemGroups = this.getTestData();
-            this.studentGroups = this.getTestGroupData();
+            this.qService = $q;
+            this.init();
         }
-        getTestGroupData() {
-            var data = ["International", "Out of state", "In state", "All"];
-            return data;
+        init() {
+            this.getGridData().then((response:IGridDataResponse) => {
+                this.gridData = {
+                    header: response.data.header,
+                    data : response.data.data
+                };
+            }, (errorResponse) => {
+                console.log(errorResponse);
+                //TODO: handling error
+            });
+            this.getCodeTypes().then((response:ICodeTypeResponse) => {
+                this.codeTypes = response.data;
+            }, (errorResponse) => {
+                console.log(errorResponse);
+                //TODO: handling error
+            })
         }
-        getTestData() {
-            var data= [
-                {id: 0, name: "Visa status", group:0, description:"Visa documents upload", selected:false},
-                {id: 1, name: "Medical Record", group:0, description: "Medical record documents upload", selected:false},
-                {id: 2, name: "Address", group:3, description: "Permanent residential address", selected:false}
-            ];
-            return data;
+        getCodeTypes() {
+            var request = this.httpService({
+                method: "POST",
+                url: "csr/codeTypes"
+            });
+            return request;
+        }
+        getGridData() {
+            var request = this.httpService({
+                method:"POST",
+                url: "csr/actionItems"
+            });
+            request
+            return request;
+        }
+        getLastItemId() {
+            var idArray = this.gridData.data.map((item)=>{return item.id;});
+            return Math.max(...idArray);
         }
         removeSelectedItem(selectedItems) {
-            var tempItems = [];
-            angular.forEach(this.itemGroups, (item)=> {
+            angular.forEach(this.gridData.data, (item, idx)=> {
                 var exist = selectedItems.filter((_item)=>{return item.id === _item.id;});
                 if(exist.length===0) {
-                    tempItems.push(item);
+                    this.gridData.data.splice(idx, 1);
                 }
             });
-            this.itemGroups = tempItems;
-            return this.itemGroups;
+            return this.gridData.data;
         }
         addNewItems(items) {
-            this.itemGroups = items.concat(this.itemGroups);
+            this.gridData.data = items.concat(this.gridData.data);
         }
     }
 }

@@ -2,38 +2,62 @@
 var CSR;
 (function (CSR) {
     var AdminItemListViewService = (function () {
-        function AdminItemListViewService($http) {
+        function AdminItemListViewService($http, $q) {
             this.httpService = $http;
-            this.itemGroups = this.getTestData();
-            this.studentGroups = this.getTestGroupData();
+            this.qService = $q;
+            this.init();
         }
-        AdminItemListViewService.prototype.getTestGroupData = function () {
-            var data = ["International", "Out of state", "In state", "All"];
-            return data;
+        AdminItemListViewService.prototype.init = function () {
+            var _this = this;
+            this.getGridData().then(function (response) {
+                _this.gridData = {
+                    header: response.data.header,
+                    data: response.data.data
+                };
+            }, function (errorResponse) {
+                console.log(errorResponse);
+                //TODO: handling error
+            });
+            this.getCodeTypes().then(function (response) {
+                _this.codeTypes = response.data;
+            }, function (errorResponse) {
+                console.log(errorResponse);
+                //TODO: handling error
+            });
         };
-        AdminItemListViewService.prototype.getTestData = function () {
-            var data = [
-                { id: 0, name: "Visa status", group: 0, description: "Visa documents upload", selected: false },
-                { id: 1, name: "Medical Record", group: 0, description: "Medical record documents upload", selected: false },
-                { id: 2, name: "Address", group: 3, description: "Permanent residential address", selected: false }
-            ];
-            return data;
+        AdminItemListViewService.prototype.getCodeTypes = function () {
+            var request = this.httpService({
+                method: "POST",
+                url: "csr/codeTypes"
+            });
+            return request;
+        };
+        AdminItemListViewService.prototype.getGridData = function () {
+            var request = this.httpService({
+                method: "POST",
+                url: "csr/actionItems"
+            });
+            request;
+            return request;
+        };
+        AdminItemListViewService.prototype.getLastItemId = function () {
+            var idArray = this.gridData.data.map(function (item) { return item.id; });
+            return Math.max.apply(Math, idArray);
         };
         AdminItemListViewService.prototype.removeSelectedItem = function (selectedItems) {
-            var tempItems = [];
-            angular.forEach(this.itemGroups, function (item) {
+            var _this = this;
+            angular.forEach(this.gridData.data, function (item, idx) {
                 var exist = selectedItems.filter(function (_item) { return item.id === _item.id; });
                 if (exist.length === 0) {
-                    tempItems.push(item);
+                    _this.gridData.data.splice(idx, 1);
                 }
             });
-            this.itemGroups = tempItems;
-            return this.itemGroups;
+            return this.gridData.data;
         };
         AdminItemListViewService.prototype.addNewItems = function (items) {
-            this.itemGroups = items.concat(this.itemGroups);
+            this.gridData.data = items.concat(this.gridData.data);
         };
-        AdminItemListViewService.$inject = ["$http"];
+        AdminItemListViewService.$inject = ["$http", "$q"];
         return AdminItemListViewService;
     })();
     CSR.AdminItemListViewService = AdminItemListViewService;
