@@ -7,20 +7,20 @@ import grails.converters.JSON
 
 class CsrController {
 
-    static defaultAction = "adminItemList"
+    static defaultAction = "adminLanding"
     def model=[:]
-    def adminItemList() {
-        render(model: model, view: "adminItemList")
+    def adminLanding() {
+        render(model: model, view: "index")
     }
 
     def actionItems() {
         def jsonTestHeaderData = '[' +
-                '{field: "id", title: "ID"},' +
-                '{field: "name", title: "Name"},' +
-                '{field: "type", title: "Type"},' +
-                '{field: "description", title: "Description"},' +
-                '{field: "lastModifiedDate", title: "Last Modified Date"},' +
-                '{field: "lastModifiedBy", title: "Last Modified By"}' +
+                '{name: "id", title: "ID", options:{visible:false, isSortable: false}},' +
+                '{name: "name", title: "Name", options:{visible:true, isSortable: false}},' +
+                '{name: "type", title: "Type", options:{visible:true, isSortable: false}},' +
+                '{name: "description", title: "Description", options:{visible:true, isSortable: false}},' +
+                '{name: "lastModifiedDate", title: "Last Modified Date", options:{visible:true, isSortable: false}},' +
+                '{name: "lastModifiedBy", title: "Last Modified By", options:{visible:true, isSortable: false}}' +
                 ']'
 
         def jsonTestItemData = '[' +
@@ -30,10 +30,11 @@ class CsrController {
                 ']'
         def model = [:]
         model.header = JSON.parse(jsonTestHeaderData)
-        model.data = JSON.parse(jsonTestItemData)
+        model.result = JSON.parse(jsonTestItemData)
 
         render model as JSON
     }
+
     def codeTypes() {
         def model = ["Student", "Person", "General", "All"]
         render model as JSON

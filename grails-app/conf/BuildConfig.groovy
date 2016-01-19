@@ -17,7 +17,7 @@ grails.project.fork = [
     console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]
 ]
 
-//grails.plugin.location.'banner-ui-ss'="../banner_ui_ss.git"
+grails.plugin.location.'banner-ui-ss'="../banner_ui_ss.git"
 //grails.plugin.location.'sghe-aurora'="../sghe_aurora.git"
 //
 //grails.plugin.location.'banner_general_validation_common'="../banner_general_validation_common.git"
@@ -25,7 +25,7 @@ grails.project.fork = [
 //grails.plugin.location.'banner_general_person'="../banner_general_person.git"
 //grails.plugin.location.'banner-general-common-ui-ss'="../banner_general_common_ui_ss.git"
 //
-//grails.plugin.location.'web-app-extensibility' = "../web-app-extensibility.git"
+grails.plugin.location.'web-app-extensibility' = "../web-app-extensibility.git"
 
 grails.project.dependency.resolver = "maven" // or ivy
 grails.project.dependency.resolution = {

@@ -19,6 +19,7 @@
 <body>
 <div id="content" ng-app="bannercsr">
     <div id="title-panel" class="aurora-theme"><h1>List Items</h1></div>
+    <div ng-view></div>
     <div class="listItemContainer" layout-margin ng-controller="AdminItemListViewCtrl">
         <div layout="row" layout-sm="column">
             <md-input-container class="md-block" flex-gt-sm>
