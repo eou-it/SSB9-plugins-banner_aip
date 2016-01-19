@@ -1,4 +1,5 @@
 ///<reference path="../../typings/tsd.d.ts"/>
+///<reference path="../common/services/csrBreadcrumbService.ts"/>
 
 declare var register;
 
@@ -8,11 +9,17 @@ interface IAdminLandingCtrlScrope extends ng.IScope {
 
 module CSR {
     export class AdminLandingCtrl {
-        $inject = ["$scope"];
+        $inject = ["$scope", "CsrBreadcrumbService"];
         testValue: string;
-        constructor($scope:IAdminLandingCtrlScrope) {
+        breadcrumbService: CSR.CsrBreadcrumbService;
+        constructor($scope:IAdminLandingCtrlScrope, CsrBreadcrumbService:CSR.CsrBreadcrumbService) {
             $scope.vm = this;
+            this.breadcrumbService = CsrBreadcrumbService;
             this.testValue = "TEST";
+            var breadItem = {
+                "Admin Landing": "/landing"
+            };
+            this.breadcrumbService.updateBreadcrumb(breadItem);
         }
     }
 }

@@ -1,5 +1,6 @@
 ///<reference path="../../../typings/tsd.d.ts"/>
 ///<reference path="../../common/services/adminItemListViewService.ts"/>
+///<reference path="../../common/services/csrBreadcrumbService.ts"/>
 
 declare var register;
 
@@ -24,7 +25,7 @@ module CSR {
     }
 
     export class AdminListItemCtrl implements IAdminListItem {
-        static $inject=["$scope", "AdminItemListViewService"];
+        static $inject=["$scope", "AdminItemListViewService", "CsrBreadcrumbService"];
         public gridData: IGridData;
         public codeTypes: string[];
         public disableDelete:boolean;
@@ -34,8 +35,10 @@ module CSR {
         mdMedia: angular.material.IMedia;
         listEndPoint:string;
         adminItemListViewService: CSR.AdminItemListViewService;
-        constructor($scope:IAdminItemListViewScope, AdminItemListViewService:CSR.AdminItemListViewService) {
+        breadcrumbService: CSR.CsrBreadcrumbService;
+        constructor($scope:IAdminItemListViewScope, AdminItemListViewService:CSR.AdminItemListViewService, CsrBreadcrumbService) {
             this.adminItemListViewService = AdminItemListViewService;
+            this.breadcrumbService = CsrBreadcrumbService;
             this.init();
             $scope.vm = this;
             $scope.$watch(()=>{
@@ -53,6 +56,10 @@ module CSR {
             this.gridData = this.adminItemListViewService.gridData;
             this.disableDelete = true;
             this.disableUpdate = true;
+            var breadItem = {
+                "Admin List": "/list"
+            };
+            this.breadcrumbService.updateBreadcrumb(breadItem);
         }
         chkboxCallback(filteredItems) {
             var selected = filteredItems.filter((item)=>{return item.selected;});

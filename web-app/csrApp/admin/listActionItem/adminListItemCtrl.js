@@ -1,11 +1,13 @@
 ///<reference path="../../../typings/tsd.d.ts"/>
 ///<reference path="../../common/services/adminItemListViewService.ts"/>
+///<reference path="../../common/services/csrBreadcrumbService.ts"/>
 var CSR;
 (function (CSR) {
     var AdminListItemCtrl = (function () {
-        function AdminListItemCtrl($scope, AdminItemListViewService) {
+        function AdminListItemCtrl($scope, AdminItemListViewService, CsrBreadcrumbService) {
             var _this = this;
             this.adminItemListViewService = AdminItemListViewService;
+            this.breadcrumbService = CsrBreadcrumbService;
             this.init();
             $scope.vm = this;
             $scope.$watch(function () {
@@ -25,6 +27,10 @@ var CSR;
             this.gridData = this.adminItemListViewService.gridData;
             this.disableDelete = true;
             this.disableUpdate = true;
+            var breadItem = {
+                "Admin List": "/list"
+            };
+            this.breadcrumbService.updateBreadcrumb(breadItem);
         };
         AdminListItemCtrl.prototype.chkboxCallback = function (filteredItems) {
             var selected = filteredItems.filter(function (item) { return item.selected; });
@@ -52,7 +58,7 @@ var CSR;
         AdminListItemCtrl.prototype.updateItems = function () {
             this.disableUpdate = true;
         };
-        AdminListItemCtrl.$inject = ["$scope", "AdminItemListViewService"];
+        AdminListItemCtrl.$inject = ["$scope", "AdminItemListViewService", "CsrBreadcrumbService"];
         return AdminListItemCtrl;
     })();
     CSR.AdminListItemCtrl = AdminListItemCtrl;
