@@ -18,7 +18,7 @@
 
 <body>
 
-<div id="content" role="main">
+<div role="main">
     <div id="title-panel" class="aurora-theme"><h1>List Items</h1></div>
     <div ng-app="bannercsr">
         <div class="container">

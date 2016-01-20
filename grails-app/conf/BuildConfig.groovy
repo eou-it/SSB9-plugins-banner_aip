@@ -17,15 +17,7 @@ grails.project.fork = [
     console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]
 ]
 
-grails.plugin.location.'banner-ui-ss'="../banner_ui_ss.git"
-//grails.plugin.location.'sghe-aurora'="../sghe_aurora.git"
-//
-//grails.plugin.location.'banner_general_validation_common'="../banner_general_validation_common.git"
-//grails.plugin.location.'banner_general_common'="../banner_general_common.git"
-//grails.plugin.location.'banner_general_person'="../banner_general_person.git"
-//grails.plugin.location.'banner-general-common-ui-ss'="../banner_general_common_ui_ss.git"
-//
-grails.plugin.location.'web-app-extensibility' = "../web-app-extensibility.git"
+grails.plugin.location.'banner-csr-ui' = "../banner_csr_ui.git"
 
 grails.project.dependency.resolver = "maven" // or ivy
 grails.project.dependency.resolution = {
@@ -45,13 +37,14 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://download.java.net/maven/2/"
         //mavenRepo "http://repository.jboss.com/maven2/"
     }
+    plugins {
+        runtime "org.grails.plugins:resources:1.2.14"
+        compile ':restful-api:1.0.0'
+    }
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
         // runtime 'mysql:mysql-connector-java:5.1.27'
     }
 
-    plugins {
-        runtime "org.grails.plugins:resources:1.2.14"
-        compile ':restful-api:1.0.0'
-    }
+
 }
