@@ -10,20 +10,18 @@
 <head>
     <meta name="headerAttributes" content=""/>
     <title></title>
-
     <meta name="layout" content="bannerSelfServicePage"/>
-
     <r:require modules="bannerCSR"/>
 </head>
 
 <body>
-
-<div role="main">
-    <div id="title-panel" class="aurora-theme"><h1>List Items</h1></div>
-    <div ng-app="bannercsr">
-        <div class="container">
-            <div ui-view></div>
+    <div role="main">
+        <div id="title-panel" class="aurora-theme"><h1>List Items</h1></div>
+        <div ng-app="bannercsr">
+            <div class="viewContainer">
+                <div ui-view></div>
+            </div>
         </div>
-</div>
+    </div>
 </body>
 </html>
