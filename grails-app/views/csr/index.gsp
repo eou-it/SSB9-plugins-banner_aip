@@ -16,11 +16,9 @@
 
 <body>
     <div role="main">
-        <div id="title-panel" class="aurora-theme"><h1>List Items</h1></div>
-        <div ng-app="bannercsr">
-            <div class="viewContainer">
-                <div ui-view></div>
-            </div>
+        <div id="title-panel" class="aurora-theme"></div>
+        <div class="viewContainer" ng-app="bannercsr">
+            <div ui-view></div>
         </div>
     </div>
 </body>
