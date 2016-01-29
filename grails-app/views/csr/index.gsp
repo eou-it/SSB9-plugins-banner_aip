@@ -15,11 +15,11 @@
 </head>
 
 <body>
-    <div role="main">
-        <div id="title-panel" class="aurora-theme"></div>
-        <div class="viewContainer" ng-app="bannercsr">
-            <div ui-view></div>
-        </div>
+<div id="content" role="main">
+    <div id="title-panel" class="aurora-theme"></div>
+    <div class="viewContainer container-fluid" ng-app="bannercsr">
+        <div ui-view></div>
     </div>
+</div>
 </body>
 </html>
