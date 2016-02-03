@@ -8,7 +8,9 @@
 
 modules = {
     'bannerCSR' {
-        dependsOn 'csr-angular'
         dependsOn 'bannerCSRUI'
+    }
+    'bannerCSRRTL' {
+        dependsOn 'bannerCSRUIRTL'
     }
 }
