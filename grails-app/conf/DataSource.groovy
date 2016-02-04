@@ -13,7 +13,6 @@ dataSource {
     configClass = GrailsAnnotationConfiguration.class
     dialect = "org.hibernate.dialect.Oracle10gDialect"
     loggingSql = false
-
 }
 
 
@@ -34,7 +33,8 @@ hibernate {
             "classpath:hibernate-banner-accountsreceivable-validation-common.cfg.xml",
             "classpath:hibernate-banner-accountsreceivable-common.cfg.xml",
             "classpath:hibernate-banner-student-validation.cfg.xml",
-            "classpath:hibernate-banner-student-common.cfg.xml"
+            "classpath:hibernate-banner-student-common.cfg.xml",
+            "classpath:hibernate-banner-csr.cfg.xml"
     ]
 }
 
