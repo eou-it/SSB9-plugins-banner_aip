@@ -12,6 +12,12 @@
     <title></title>
     <meta name="layout" content="bannerSelfServicePage"/>
     <r:require modules="bannerCSR"/>
+    <g:if test="${message(code: 'default.language.direction')  == 'rtl'}">
+        <r:require modules="bannerCSRRTL"/>
+    </g:if>
+    <script type="text/javascript">
+        <g:i18n_setup/>
+    </script>
 </head>
 
 <body>

@@ -6,6 +6,7 @@ package net.hedtech.banner.csr
 import grails.converters.JSON
 
 import java.security.InvalidParameterException
+import org.springframework.context.i18n.LocaleContextHolder
 
 class CsrController {
 
@@ -14,7 +15,11 @@ class CsrController {
     def adminLanding() {
         render(model: model, view: "index")
     }
-
+    def checkActionItem() {
+        def model=[:]
+        model.isActionItem = true;
+        render model as JSON;
+    }
     def adminActionItems() {
         def jsonTestHeaderData = '[' +
                 '{name: "id", title: "ID", options:{visible:false, isSortable: false}},' +
@@ -47,20 +52,20 @@ class CsrController {
                 [
                     name: "registration",
                     info: getActionGroupDescription("registration"),
-                    header: ["title", "status", "description"],
+                    header: ["title", "state", "description"],
                     items: [
-                        [name: "drugAndAlcohol", status: "pending", title: getItemInfo("drugAndAlcohol").title, description: getItemInfo("drugAndAlcohol").description],
-                        [name: "registrationTraining", status: "pending", title: getItemInfo("registrationTraining").title, description: getItemInfo("registrationTraining").description],
-                        [name: "personalInfo", status: "pending", title: getItemInfo("personalInfo").title, description: getItemInfo("personalInfo").description],
-                        [name: "meetAdvisor", status: "pending", title: getItemInfo("meetAdvisor").title, description: getItemInfo("meetAdvisor").description],
-                        [name: "meetAdvisor", status: "pending", title: getItemInfo("meetAdvisor").title, description: getItemInfo("meetAdvisor").description]
+                        [id: 1, name: "drugAndAlcohol", state: "csr.user.list.item.state.pending", title: getItemInfo("drugAndAlcohol").title, description: getItemInfo("drugAndAlcohol").description],
+                        [id: 2, name: "registrationTraining", state: "csr.user.list.item.state.pending", title: getItemInfo("registrationTraining").title, description: getItemInfo("registrationTraining").description],
+                        [id: 3, name: "personalInfo", state: "csr.user.list.item.state.pending", title: getItemInfo("personalInfo").title, description: getItemInfo("personalInfo").description],
+                        [id: 4, name: "meetAdvisor", state: "csr.user.list.item.state.pending", title: getItemInfo("meetAdvisor").title, description: getItemInfo("meetAdvisor").description],
+                        [id: 5, name: "residenceProof", state: "csr.user.list.item.state.pending", title: getItemInfo("residenceProof").title, description: getItemInfo("residenceProof").description]
                     ]
                 ], [
                     name: "graduation",
                     info: getActionGroupDescription("graduation"),
-                    header: ["title", "status", "description"],
+                    header: ["title", "state", "description"],
                     items: [
-                        [name: "meetAdvisor", status: "pending", title: getItemInfo("meetAdvisor").title, description: getItemInfo("meetAdvisor").description],
+                        [id: 4, name: "meetAdvisor", state: "csr.user.list.item.state.pending", title: getItemInfo("meetAdvisor").title, description: getItemInfo("meetAdvisor").description],
                     ]
                 ]
             ]
@@ -68,28 +73,24 @@ class CsrController {
     }
 
 
+
     def getItemInfo(type) {
         Map item = [:]
         switch(type) {
             case "drugAndAlcohol":
-                item.put("description", "You must review and confirm the Ellucian University Campus " +
-                        "Drug and Alcohol Policy prior to registering for classes")
+                item.put("description", "You must review and confirm the Ellucian University Campus Drug and Alcohol Policy prior to registering for classes.")
                 item.put("title", "Drug and Alcohol Policy")
                 break
             case "registrationTraining":
-                item.put("description", "It is takes 10 minutes, review the training video provided " +
-                        "to help expedite your registration experience.")
+                item.put("description", "It is takes 10 minutes, review the training video provided to help expedite your registration experience.")
                 item.put("title", "Registration Process Training")
                 break;
             case "personalInfo":
-                item.put("description", "It is important that we have you current information such as " +
-                        "your name, and contact information therefore it is required that " +
-                        "you review, update and confirm your personal information.")
+                item.put("description", "It is important that we have you current information such as your name, and contact information therefore it is required that you review, update and confirm your personal information.")
                 item.put("title", "Personal Information")
                 break;
             case "meetAdvisor":
-                item.put("description", "You must meet with you Advisor or ensure you are on target " +
-                        "to meet your educational goals for graduation.")
+                item.put("description", "You must meet with you Advisor or ensure you are on target to meet your educational goals for graduation.")
                 item.put("title", "Meet with Advisor")
                 break;
             case "residenceProof":
@@ -107,13 +108,11 @@ class CsrController {
         switch (type) {
             case "registration":
                 item.put("title", "Prepare for Registration")
-                item.put("description", "you must complete the confirmation action items below you will be permitted to register for " +
-                        "Spring Term 2016. Select each pending item in the list to complete the requirements")
+                item.put("description", "You must complete the confirmation action items below you will be permitted to register for Spring Term 2016. Select each pending item in the list to complete the requirements.")
                 break;
             case "graduation":
                 item.put("title", "Prepare for Graduation")
-                item.put("description", "you must have a minimum of 121 credits to graduate, when you are in your final semester "+
-                        "you must complete the steps below prior to applying to graduate.")
+                item.put("description", "You must have a minimum of 121 credits to graduate, when you are in your final semester you must complete the steps below prior to applying to graduate.")
                 break;
             default:
                 item.put("title", "")

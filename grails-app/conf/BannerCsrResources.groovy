@@ -8,7 +8,12 @@
 
 modules = {
     'bannerCSR' {
-        dependsOn 'csr-angular'
         dependsOn 'bannerCSRUI'
+    }
+    'bannerCSRRTL' {
+        dependsOn 'bannerCSRUIRTL'
+    }
+    'csrCheck' {
+        resource url:[plugin: 'banner-csr', file: 'js/csrCheck.js']
     }
 }
