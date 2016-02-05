@@ -16,7 +16,11 @@
         <r:require modules="bannerCSRRTL"/>
     </g:if>
     <script type="text/javascript">
+        console.log("run i18n setup");
         <g:i18n_setup/>
+        console.log("setup done");
+        console.log(window.i18n.csr.default);
+        console.log(window.i18n.csr-ui.default);
     </script>
 </head>
 
