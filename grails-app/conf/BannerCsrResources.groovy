@@ -13,4 +13,7 @@ modules = {
     'bannerCSRRTL' {
         dependsOn 'bannerCSRUIRTL'
     }
+    'csrCheck' {
+        resource url:[plugin: 'banner-csr', file: 'js/csrCheck.js']
+    }
 }
