@@ -6,15 +6,9 @@ package net.hedtech.banner.csr
 import grails.converters.JSON
 
 import java.security.InvalidParameterException
-import org.springframework.context.i18n.LocaleContextHolder
 
-class CsrController {
+class CsrTestController {
 
-    static defaultAction = "adminLanding"
-    def model=[:]
-    def adminLanding() {
-        render(model: model, view: "index")
-    }
     def checkActionItem() {
         def model=[:]
         model.isActionItem = true;
