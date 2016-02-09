@@ -66,7 +66,15 @@ class CsrTestController {
         render actionItems as JSON
     }
 
-
+    def userInfo() {
+        def userInfo = [
+                firstName: "First",
+                lastName: "Last",
+                preferredName: "Test User",
+                graduateCredit: 121
+        ]
+        render userInfo as JSON
+    }
 
     def getItemInfo(type) {
         Map item = [:]
@@ -98,15 +106,15 @@ class CsrTestController {
         return item
     }
     def getActionGroupDescription(type) {
-        Map item=[:]
+        Map item = [:]
         switch (type) {
             case "registration":
-                item.put("title", "Prepare for Registration")
-                item.put("description", "You must complete the confirmation action items below you will be permitted to register for Spring Term 2016. Select each pending item in the list to complete the requirements.")
+                item.put("title", "csr.user.list.header.title.registration")
+                item.put("description", "csr.user.list.header.description.registration")
                 break;
             case "graduation":
-                item.put("title", "Prepare for Graduation")
-                item.put("description", "You must have a minimum of 121 credits to graduate, when you are in your final semester you must complete the steps below prior to applying to graduate.")
+                item.put("title", "csr.user.list.header.title.graduation")
+                item.put("description", "csr.user.list.header.description.graduation")
                 break;
             default:
                 item.put("title", "")
