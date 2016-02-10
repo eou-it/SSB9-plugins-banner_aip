@@ -8,10 +8,9 @@ import org.junit.Test
 import org.junit.After
 
 import net.hedtech.banner.testing.BaseIntegrationTestCase
-import net.hedtech.banner.csr.*
 
 
-class ActionItemIntegrationTests extends BaseIntegrationTestCase {
+class ActionItemListIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
     public void setUp() {
@@ -29,7 +28,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testFetchActionItems() {
 
-        def actionItems = fetchActionItems().size().isEmpty()
+        def actionItems = ActionItemList.fetchActionItems().size().isEmpty()
         assertFalse actionItems
     }
 }
