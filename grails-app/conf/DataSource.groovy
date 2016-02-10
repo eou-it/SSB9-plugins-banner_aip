@@ -26,14 +26,12 @@ hibernate {
     dialect = "org.hibernate.dialect.Oracle10gDialect"
 
     config.location = [
-            "classpath:hibernate-banner-core.cfg.xml",
-            "classpath:hibernate-banner-general-validation-common.cfg.xml",
-            "classpath:hibernate-banner-general-person.cfg.xml",
-            "classpath:hibernate-banner-general-common.cfg.xml",
-            "classpath:hibernate-banner-accountsreceivable-validation-common.cfg.xml",
-            "classpath:hibernate-banner-accountsreceivable-common.cfg.xml",
-            "classpath:hibernate-banner-student-validation.cfg.xml",
-            "classpath:hibernate-banner-student-common.cfg.xml",
+           // "classpath:hibernate-banner-core.cfg.xml",
+            //"classpath:hibernate-banner-general-validation-common.cfg.xml",
+           // "classpath:hibernate-banner-general-person.cfg.xml",
+           // "classpath:hibernate-banner-general-common.cfg.xml",
+           // "classpath:hibernate-banner-student-validation.cfg.xml",
+           // "classpath:hibernate-banner-student-common.cfg.xml",
             "classpath:hibernate-banner-csr.cfg.xml"
     ]
 }
