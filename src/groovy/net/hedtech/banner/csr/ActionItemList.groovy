@@ -3,8 +3,8 @@
  **********************************************************************************/
 package net.hedtech.banner.csr
 
-import org.hibernate.annotations.Type
 import javax.persistence.*
+
 
 @NamedQueries(value = [
         @NamedQuery(name = "ActionItemList.fetchActionItems",
@@ -21,8 +21,11 @@ class ActionItemList implements Serializable {
     /**
      * Surrogate ID for GCBCSRT
      */
+
     @Id
-    @Column(name = "GCBCSRT_SURROGATE_ID", length = 19)
+    @Column(name = "GCBCSRT_SURROGATE_ID")
+    @SequenceGenerator(name = "GCBCSRT_SEQ_GEN", allocationSize = 1, sequenceName = "GCBCSRT_SURROGATE_ID_SEQUENCE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GCBCSRT_SEQ_GEN")
     Long id
 
     /**
@@ -35,7 +38,7 @@ class ActionItemList implements Serializable {
      * Indicator that the action item is active
      */
     @Column(name = "GCBCSRT_ACTIVE", length = 1)
-    Integer active
+    String active
 
     /**
      * User action item pertains to
@@ -46,13 +49,13 @@ class ActionItemList implements Serializable {
     /**
      * Last activity date for the action item
      */
-    @Column(name = "GCBCSRT_ACTIVITY_DATE", length = 30)
+    @Column(name = "GCBCSRT_ACTIVITY_DATE")
     Date activityDate
 
     /**
      * Description for action item
      */
-    @Column(name = "GCBCSRT_DESCRIPTION", length = 4000)
+    @Column(name = "GCBCSRT_DESCRIPTION")
     /*need to figure out what to limit length to for display*/
     String description
 
@@ -129,7 +132,7 @@ class ActionItemList implements Serializable {
         def actionItem
         ActionItemList.withSession { session ->
             actionItem = session.getNamedQuery(
-                    'ActionItemList.fetchActionItems').list()[0]
+                    'ActionItemList.fetchActionItems').list()
         }
         return actionItem
     }
