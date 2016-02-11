@@ -27,8 +27,7 @@ class ActionItemListIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testFetchActionItems() {
-
-        def actionItems = ActionItemList.fetchActionItems().size().isEmpty()
-        assertFalse actionItems
+        List<ActionItemList> actionItems = ActionItemList.fetchActionItems()
+        assertFalse actionItems.isEmpty(  )
     }
 }
