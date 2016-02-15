@@ -146,7 +146,7 @@ class ActionItemList implements Serializable {
 
     public static def fetchActionItemById( Long theId ) {
         ActionItemList.withSession { session ->
-            List actionItem = session.getNamedQuery('ActionItemList.fetchActionItemById').setLong( 'myId', theId ).list()[0]
+            def actionItem = session.getNamedQuery('ActionItemList.fetchActionItemById').setLong( 'myId', theId ).list()[0]
             return actionItem
         }
     }
