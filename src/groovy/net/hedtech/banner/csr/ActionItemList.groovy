@@ -10,6 +10,11 @@ import javax.persistence.*
         @NamedQuery(name = "ActionItemList.fetchActionItems",
                 query = """
            FROM ActionItemList a
+          """),
+        @NamedQuery(name = "ActionItemList.fetchActionItemById",
+                query = """
+           FROM ActionItemList a
+           WHERE a.id = :myId
           """)
 ])
 
@@ -88,7 +93,9 @@ class ActionItemList implements Serializable {
     public String toString() {
         """ActionItemList[
                 id:$id,
-                actionItem:$actionItem,
+                name:$actionItem,
+                state:$active,
+                title:$actionItem,
                 active:$active,
                 userId:$userId,
                 activityDate:$activityDate,
@@ -96,7 +103,7 @@ class ActionItemList implements Serializable {
                 creatorId:$creatorId
                 createDate:$createDate,
                 version:$version,        ],
-                dataOrigin=$dataOrigin, ]"""
+                dataOrigin=$dataOrigin ]"""
     }
 
     int hashCode() {
@@ -133,6 +140,15 @@ class ActionItemList implements Serializable {
         ActionItemList.withSession { session ->
             actionItem = session.getNamedQuery(
                     'ActionItemList.fetchActionItems').list()
+        }
+        return actionItem
+    }
+
+    public static def fetchActionItemById( Long theId ) {
+        def actionItem
+        ActionItemList.withSession { session ->
+            actionItem = session.getNamedQuery(
+                    'ActionItemList.fetchActionItemById' ).setLong( 'myId', theId ).list()[0]
         }
         return actionItem
     }

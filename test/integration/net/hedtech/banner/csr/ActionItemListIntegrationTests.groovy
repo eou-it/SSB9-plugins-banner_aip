@@ -12,6 +12,8 @@ import net.hedtech.banner.testing.BaseIntegrationTestCase
 
 class ActionItemListIntegrationTests extends BaseIntegrationTestCase {
 
+    def actionItemListService
+
     @Before
     public void setUp() {
         formContext = ['GUAGMNU']
@@ -29,5 +31,21 @@ class ActionItemListIntegrationTests extends BaseIntegrationTestCase {
     void testFetchActionItems() {
         List<ActionItemList> actionItems = ActionItemList.fetchActionItems()
         assertFalse actionItems.isEmpty(  )
+    }
+
+
+    @Test
+    void testFetchActionItemsService() {
+        List<ActionItemList> actionItemsList = actionItemListService.listActionItems()
+        assertFalse actionItemsList.isEmpty(  )
+    }
+
+
+    @Test
+    void testFetchActionItemByIdService() {
+        def actionItemId = 2
+
+        String actionItemText = actionItemListService.listActionItemById(actionItemId)
+        assertEquals('Drug and Alcohol Policy', actionItemText)
     }
 }
