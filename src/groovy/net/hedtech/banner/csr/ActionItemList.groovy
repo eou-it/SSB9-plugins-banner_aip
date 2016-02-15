@@ -135,21 +135,20 @@ class ActionItemList implements Serializable {
         dataOrigin(nullable: true, maxSize: 19)
     }
 
-    public static def fetchActionItems() {
-        def actionItem
+
+    public static def fetchActionItems( ) {
         ActionItemList.withSession { session ->
-            actionItem = session.getNamedQuery(
-                    'ActionItemList.fetchActionItems').list()
+            List actionItem = session.getNamedQuery('ActionItemList.fetchActionItems').list()
+            return actionItem
         }
-        return actionItem
     }
 
+
     public static def fetchActionItemById( Long theId ) {
-        def actionItem
         ActionItemList.withSession { session ->
-            actionItem = session.getNamedQuery(
-                    'ActionItemList.fetchActionItemById' ).setLong( 'myId', theId ).list()[0]
+            List actionItem = session.getNamedQuery('ActionItemList.fetchActionItemById').setLong( 'myId', theId ).list()[0]
+            return actionItem
         }
-        return actionItem
     }
+
 }
