@@ -3,6 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.csr
 
+import org.hibernate.annotations.Type
 import javax.persistence.*
 
 
@@ -91,7 +92,7 @@ class ActionItemList implements Serializable {
 
 
     public String toString() {
-        """ActionItemList[
+        """items[
                 id:$id,
                 name:$actionItem,
                 state:$active,

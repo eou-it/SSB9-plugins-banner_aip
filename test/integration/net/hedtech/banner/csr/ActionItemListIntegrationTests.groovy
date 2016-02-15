@@ -28,15 +28,15 @@ class ActionItemListIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
-    void testFetchActionItems() {
+    void testFetchActionItems( ) {
         List<ActionItemList> actionItems = ActionItemList.fetchActionItems()
         assertFalse actionItems.isEmpty(  )
     }
 
 
     @Test
-    void testFetchActionItemsService() {
-        List<ActionItemList> actionItemsList = actionItemListService.listActionItems()
+    void testFetchActionItemsService( ) {
+        List<ActionItemList> actionItemsList = actionItemListService.listActionItems( )
         assertFalse actionItemsList.isEmpty(  )
     }
 

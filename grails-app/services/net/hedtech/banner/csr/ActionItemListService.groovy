@@ -10,13 +10,12 @@ class ActionItemListService extends ServiceBase {
 
     //simple return of all action items
     def listActionItems() {
-        return ActionItemList.fetchActionItems()
+        return ActionItemList.fetchActionItems( )
     }
 
     def listActionItemById(Long actionItemId) {
-    ActionItemList itemById = ActionItemList.fetchActionItemById( actionItemId )
-            return itemById.actionItem.encodeAsHTML ()
+        ActionItemList itemById = ActionItemList.fetchActionItemById( actionItemId )
+        return itemById.actionItem.encodeAsHTML()
     }
 
 }
-
