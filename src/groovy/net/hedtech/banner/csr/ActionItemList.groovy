@@ -38,7 +38,7 @@ class ActionItemList implements Serializable {
      * Name of the action item
      */
     @Column(name = "GCBCSRT_NAME", length = 2048)
-    String actionItem
+    String title
 
     /**
      * Indicator that the action item is active
@@ -92,7 +92,7 @@ class ActionItemList implements Serializable {
 
 
     public String toString() {
-        """items[
+        """ActionItemList[
                 id:$id,
                 name:$actionItem,
                 state:$active,
@@ -103,15 +103,15 @@ class ActionItemList implements Serializable {
                 description:$description,
                 creatorId:$creatorId
                 createDate:$createDate,
-                version:$version,        ],
-                dataOrigin=$dataOrigin ]"""
+                version:$version,
+                dataOrigin=$dataOrigin]"""
     }
 
     int hashCode() {
         int result;
         result = (id != null ? id.hashCode() : 0);
         result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (actionItem != null ? actionItem.hashCode() : 0);
+        result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (active != null ? active.hashCode() : 0);
         result = 31 * result + (userId != null ? userId.hashCode() : 0);
         result = 31 * result + (activityDate != null ? activityDate.hashCode() : 0);
@@ -125,7 +125,7 @@ class ActionItemList implements Serializable {
 
     static constraints = {
         id(nullable: false, maxSize: 19)
-        actionItem(nullable: false, maxSize: 2048)
+        title(nullable: false, maxSize: 2048)
         active(nullable: false, maxSize: 1)
         userId(nullable: false, maxSize: 30)
         activityDate(nullable: false, maxSize: 30)
