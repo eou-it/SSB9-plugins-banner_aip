@@ -94,9 +94,9 @@ class ActionItemList implements Serializable {
     public String toString() {
         """ActionItemList[
                 id:$id,
-                name:$actionItem,
+                name:$title,
                 state:$active,
-                title:$actionItem,
+                title:$title,
                 active:$active,
                 userId:$userId,
                 activityDate:$activityDate,
