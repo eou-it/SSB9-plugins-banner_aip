@@ -8,99 +8,106 @@ import javax.persistence.*
 
 
 @NamedQueries(value = [
-        @NamedQuery(name = "ActionItemList.fetchActionItems",
+
+        @NamedQuery(name = "UserActionItem.fetchActionItemById",
                 query = """
-           FROM ActionItemList a
-          """),
-        @NamedQuery(name = "ActionItemList.fetchActionItemById",
-                query = """
-           FROM ActionItemList a
+           FROM UserActionItem a
            WHERE a.id = :myId
+          """),
+        @NamedQuery(name = "UserActionItem.fetchActionItemByPidm",
+                query = """
+           FROM UserActionItem a
+           WHERE a.pidm = :myPidm
           """)
 ])
 
 @Entity
-@Table(name = "GCBCSRT")
+@Table(name = "GCRCSRS")
 
-class ActionItemList implements Serializable {
+class UserActionItem implements Serializable {
 
     /**
      * Surrogate ID for GCBCSRT
      */
 
     @Id
-    @Column(name = "GCBCSRT_SURROGATE_ID")
-    @SequenceGenerator(name = "GCBCSRT_SEQ_GEN", allocationSize = 1, sequenceName = "GCBCSRT_SURROGATE_ID_SEQUENCE")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GCBCSRT_SEQ_GEN")
+    @Column(name = "GCRCSRS_SURROGATE_ID")
+    @SequenceGenerator(name = "GCRCSRS_SEQ_GEN", allocationSize = 1, sequenceName = "GCRCSRS_SURROGATE_ID_SEQUENCE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GCRCSRS_SEQ_GEN")
     Long id
 
     /**
      * Name of the action item
      */
-    @Column(name = "GCBCSRT_NAME", length = 2048)
-    String title
+    @Column(name = "GCRCSRS_CSRT_ID", length = 19)
+    Long csrtId
 
     /**
-     * Indicator that the action item is active
+     * PIDM of the user action item belongs to
      */
-    @Column(name = "GCBCSRT_ACTIVE", length = 1)
-    String active
+    @Column(name = "GCRCSRS_PIDM", length = 9)
+    Long pidm
+
+    /**
+     * Status of action item
+     */
+    @Column(name = "GCRCSRS_STATUS", length = 30)
+    String status
+
+    /**
+     * Last activity date for the action item
+     */
+    @Column(name = "GCRCSRS_COMPLETED_DATE")
+    Date completedDate
+
 
     /**
      * User action item pertains to
      */
-    @Column(name = "GCBCSRT_USER_ID", length = 30)
+    @Column(name = "GCRCSRS_USER_ID", length = 30)
     String userId
 
     /**
      * Last activity date for the action item
      */
-    @Column(name = "GCBCSRT_ACTIVITY_DATE")
+    @Column(name = "GCRCSRS_ACTIVITY_DATE")
     Date activityDate
-
-    /**
-     * Description for action item
-     */
-    @Column(name = "GCBCSRT_DESCRIPTION")
-    /*need to figure out what to limit length to for display*/
-    String description
 
     /**
      * UserID that created the action item
      */
-    @Column(name = "GCBCSRT_CREATOR_ID", length = 30)
+    @Column(name = "GCRCSRS_CREATOR_ID", length = 30)
     String creatorId
 
     /**
      * Date the action item was created
      */
-    @Column(name = "GCBCSRT_CREATE_DATE", length = 30)
+    @Column(name = "GCRCSRS_CREATE_DATE", length = 30)
     Date createDate
 
     /**
      * Version of the action item
      */
     @Version
-    @Column(name = "GCBCSRT_VERSION", length = 19)
+    @Column(name = "GCRCSRS_VERSION", length = 19)
     Long version
 
     /**
      * Data Origin column for SORNOTE
      */
-    @Column(name = "GCBCSRT_DATA_ORIGIN", length = 30)
+    @Column(name = "GCRCSRS_DATA_ORIGIN", length = 30)
     String dataOrigin
 
 
     public String toString() {
-        """ActionItemList[
+        """UserActionItem[
                 id:$id,
-                name:$title,
-                state:$active,
-                title:$title,
-                active:$active,
+                csrtId:$csrtId,
+                status:$status,
+                pidm:$pidm,
+                completedDate:$completedDate,
                 userId:$userId,
                 activityDate:$activityDate,
-                description:$description,
                 creatorId:$creatorId
                 createDate:$createDate,
                 version:$version,
@@ -137,18 +144,18 @@ class ActionItemList implements Serializable {
     }
 
 
-    public static def fetchActionItems( ) {
-        ActionItemList.withSession { session ->
-            List actionItem = session.getNamedQuery('ActionItemList.fetchActionItems').list()
-            return actionItem
+    public static def fetchUserActionItemById( Long id ) {
+        UserActionItem.withSession { session ->
+            def userActionItem = session.getNamedQuery('UserActionItem.fetchUserActionItemById').setLong( 'myId', theId ).list()[0]
+            return userActionItem
         }
     }
 
-
-    public static def fetchActionItemById( Long theId ) {
-        ActionItemList.withSession { session ->
-            def actionItem = session.getNamedQuery('ActionItemList.fetchActionItemById').setLong( 'myId', theId ).list()[0]
-            return actionItem
+    public static def fetchUserActionItemByPidm( Long pidm ) {
+        UserActionItem.withSession { session ->
+            def userActionItem = session.getNamedQuery('UserActionItem.fetchUserActionItemByPidm').setLong( 'myPidm',
+                    pidm ).list()[0]
+            return userActionItem
         }
     }
 
