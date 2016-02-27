@@ -6,16 +6,16 @@ package net.hedtech.banner.csr
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
 
-class ActionItemListService extends ServiceBase {
-
-    //simple return of all action items
-    def listActionItems() {
-        return ActionItemList.fetchActionItems( )
-    }
+class ActionItemService extends ServiceBase {
 
     def listActionItemById(Long actionItemId) {
-        ActionItemList itemById = ActionItemList.fetchActionItemById( actionItemId )
+        ActionItem itemById = ActionItem.fetchActionItemById( actionItemId )
         return itemById.actionItem.encodeAsHTML()
     }
 
+
+    def listActionItemByPidm(Long actionItemPidm) {
+        ActionItem itemByPidm = ActionItem.fetchActionItemByPidm( actionItemPidm )
+        return itemByPidm.actionItem.encodeAsHTML()
+    }
 }

@@ -29,7 +29,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     void testFetchActionItemByIdService() {
         def actionItemId = 114
 
-        String actionItemStatus = actionItemListService.listActionItemById(actionItemId)
+        String actionItemStatus = actionItemService.listActionItemById(actionItemId)
         assertEquals('Pending', actionItemStatus)
     }
 
@@ -37,7 +37,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     void testFetchActionItemByPidmService() {
         def actionItemPidm = 124018
 
-        String actionItemStatus = actionItemListService.listActionItemByPidm(actionItemPidm)
+        String actionItemStatus = actionItemService.listActionItemByPidm(actionItemPidm)
         assertEquals('Completed', actionItemStatus)
     }
 }
