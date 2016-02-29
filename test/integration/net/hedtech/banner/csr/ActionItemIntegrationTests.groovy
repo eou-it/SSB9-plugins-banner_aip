@@ -30,6 +30,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testFetchActionItems( ) {
         List<ActionItem> actionItems = ActionItem.fetchActionItems()
+        //println actionItems
         assertFalse actionItems.isEmpty(  )
     }
 
@@ -40,12 +41,4 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         assertFalse actionItems.isEmpty(  )
     }
 
-
-    @Test
-    void testFetchActionItemByIdService() {
-        def actionItemId = 2
-
-        String actionItemText = actionItemService.listActionItemById(actionItemId)
-        assertEquals('Drug and Alcohol Policy', actionItemText)
-    }
 }

@@ -6,16 +6,17 @@ package net.hedtech.banner.csr
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
 
-class UserActionItemService extends ServiceBase {
+class UserActionItemReadOnlyService extends ServiceBase {
 
+    /*
     def listActionItemById(Long actionItemId) {
-        UserActionItem itemById = UserActionItem.fetchUserActionItemById( actionItemId )
-        return itemById.encodeAsHTML()
+        ActionItem itemById = UserActionItemReadOnly.fetchActionItemById( actionItemId )
+        return itemById.actionItem.encodeAsHTML()
     }
-
+    */
 
     def listActionItemByPidm(Long actionItemPidm) {
-        UserActionItem itemByPidm = UserActionItem.fetchUserActionItemByPidm( actionItemPidm )
+        UserActionItemReadOnly itemByPidm = UserActionItemReadOnly.fetchUserActionItemROByPidm( actionItemPidm )
         return itemByPidm.encodeAsHTML()
     }
 }

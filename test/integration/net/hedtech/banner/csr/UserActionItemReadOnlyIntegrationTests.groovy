@@ -10,9 +10,9 @@ import org.junit.After
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 
 
-class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
+class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
-    def userActionItemService
+    def userActionItemReadOnlyService
 
     @Before
     public void setUp() {
@@ -26,21 +26,11 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     }
 
     @Test
-    void testFetchUserActionItemById() {
-        def actionItemId = 114
-
-        List<UserActionItem> userActionItemId = UserActionItem.fetchUserActionItemById(actionItemId)
-        //println userActionItemId
-        assertFalse userActionItemId.isEmpty(  )
-        assert 1 == userActionItemId.size()
-
-    }
-
-    @Test
-    void testFetchUserActionItemByPidm() {
+    void testFetchUserActionItemByROPidmService() {
         def actionItemPidm = 124018
 
-        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemByPidm(actionItemPidm)
-        assert 10 == userActionItems.size()
+        List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemROByPidm(actionItemPidm)
+        //assert 10 == userActionItems.size()
+        println userActionItems
     }
 }

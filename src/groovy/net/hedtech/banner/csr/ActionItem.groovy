@@ -129,7 +129,7 @@ class ActionItem implements Serializable {
         active(nullable: false, maxSize: 1)
         userId(nullable: false, maxSize: 30)
         activityDate(nullable: false, maxSize: 30)
-        description(nullable: true, maxSize: 4000) //summary length only for now
+        description(nullable: true) //summary length only for now
         creatorId(nullable: true, maxSize: 30)
         createDate(nullable: true, maxSize: 30)
         version(nullable: false, maxSize: 30)
@@ -140,14 +140,6 @@ class ActionItem implements Serializable {
     public static def fetchActionItems( ) {
         ActionItem.withSession { session ->
             List actionItem = session.getNamedQuery('ActionItem.fetchActionItems').list()
-            return actionItem
-        }
-    }
-
-
-    public static def fetchActionItemById( Long theId ) {
-        ActionItem.withSession { session ->
-            def actionItem = session.getNamedQuery('ActionItem.fetchActionItemById').setLong( 'myId', theId ).list()[0]
             return actionItem
         }
     }

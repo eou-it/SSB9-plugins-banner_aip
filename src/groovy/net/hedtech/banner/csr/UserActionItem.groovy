@@ -9,12 +9,12 @@ import javax.persistence.*
 
 @NamedQueries(value = [
 
-        @NamedQuery(name = "UserActionItem.fetchActionItemById",
+        @NamedQuery(name = "UserActionItem.fetchUserActionItemById",
                 query = """
            FROM UserActionItem a
            WHERE a.id = :myId
           """),
-        @NamedQuery(name = "UserActionItem.fetchActionItemByPidm",
+        @NamedQuery(name = "UserActionItem.fetchUserActionItemByPidm",
                 query = """
            FROM UserActionItem a
            WHERE a.pidm = :myPidm
@@ -118,13 +118,14 @@ class UserActionItem implements Serializable {
         int result;
         result = (id != null ? id.hashCode() : 0);
         result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (active != null ? active.hashCode() : 0);
-        result = 31 * result + (userId != null ? userId.hashCode() : 0);
+        result = 31 * result + (csrtId != null ? title.hashCode() : 0);
+        result = 31 * result + (status != null ? active.hashCode() : 0);
+        result = 31 * result + (pidm != null ? userId.hashCode() : 0);
+        result = 31 * result + (userId != null ? creatorId.hashCode() : 0);
         result = 31 * result + (activityDate != null ? activityDate.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (completedDate != null ? description.hashCode() : 0);
         result = 31 * result + (creatorId != null ? creatorId.hashCode() : 0);
-        result = 31 * result + (createDate != null ? createDate.hashCode() : 0);
+        result = 31 * result + (createdDate != null ? creatorId.hashCode() : 0);
         result = 31 * result + (version != null ? version.hashCode() : 0);
         result = 31 * result + (dataOrigin != null ? dataOrigin.hashCode() : 0);
         return result;
@@ -132,29 +133,29 @@ class UserActionItem implements Serializable {
 
     static constraints = {
         id(nullable: false, maxSize: 19)
-        title(nullable: false, maxSize: 2048)
-        active(nullable: false, maxSize: 1)
+        csrtId(nullable: false, maxSize: 19)
+        pidm(nullable: false, maxSize: 9)
+        status(nullable: false, maxSize: 30)
         userId(nullable: false, maxSize: 30)
+        completedDate(nullable: true, maxSize: 30)
         activityDate(nullable: false, maxSize: 30)
-        description(nullable: true, maxSize: 4000) //summary length only for now
         creatorId(nullable: true, maxSize: 30)
         createDate(nullable: true, maxSize: 30)
-        version(nullable: false, maxSize: 30)
+        version(nullable: false, maxSize: 19)
         dataOrigin(nullable: true, maxSize: 19)
     }
 
 
     public static def fetchUserActionItemById( Long id ) {
         UserActionItem.withSession { session ->
-            def userActionItem = session.getNamedQuery('UserActionItem.fetchUserActionItemById').setLong( 'myId', theId ).list()[0]
+            List userActionItem = session.getNamedQuery('UserActionItem.fetchUserActionItemById').setLong( 'myId', id ).list()
             return userActionItem
         }
     }
 
     public static def fetchUserActionItemByPidm( Long pidm ) {
         UserActionItem.withSession { session ->
-            def userActionItem = session.getNamedQuery('UserActionItem.fetchUserActionItemByPidm').setLong( 'myPidm',
-                    pidm ).list()[0]
+            List userActionItem = session.getNamedQuery('UserActionItem.fetchUserActionItemByPidm').setLong( 'myPidm', pidm ).list()
             return userActionItem
         }
     }
