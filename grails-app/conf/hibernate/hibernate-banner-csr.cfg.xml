@@ -16,6 +16,6 @@ Copyright 2016 Ellucian Company L.P. and its affiliates.
 <hibernate-configuration>
     <session-factory>
         <property name="dialect">org.hibernate.dialect.Oracle10gDialect</property>
-        <mapping class="net.hedtech.banner.csr.ActionItemList"/>
+        <mapping class="net.hedtech.banner.csr.ActionItem"/>
     </session-factory>
 </hibernate-configuration>

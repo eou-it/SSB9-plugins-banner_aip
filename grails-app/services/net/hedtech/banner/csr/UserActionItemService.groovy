@@ -6,7 +6,7 @@ package net.hedtech.banner.csr
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
 
-class ActionItemService extends ServiceBase {
+class UserActionItemService extends ServiceBase {
 
     def listActionItemById(Long actionItemId) {
         ActionItem itemById = ActionItem.fetchActionItemById( actionItemId )

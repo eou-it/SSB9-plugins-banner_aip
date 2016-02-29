@@ -12,11 +12,5 @@ class ActionItemService extends ServiceBase {
     def listActionItems() {
         return ActionItem.fetchActionItems( )
     }
-
-
-    def listActionItemById(Long actionItemId) {
-        ActionItem itemById = ActionItem.fetchActionItemById( actionItemId )
-        return itemById.actionItem.encodeAsHTML()
-    }
     
 }

@@ -22,7 +22,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "GCBCSRT")
 
-class ActionItemList implements Serializable {
+class ActionItem implements Serializable {
 
     /**
      * Surrogate ID for GCBCSRT
