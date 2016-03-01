@@ -26,10 +26,20 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     }
 
     @Test
-    void testFetchUserActionItemByROPidmService() {
+    void testFetchUserActionItemByROPidm() {
         def actionItemPidm = 124018
 
         List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemROByPidm(actionItemPidm)
+        assert 10 == userActionItems.size()
+        //println userActionItems
+    }
+
+
+    @Test
+    void testFetchUserActionItemByROPidmService() {
+        def actionItemPidm = 124018
+
+        List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listActionItemByPidm(actionItemPidm)
         assert 10 == userActionItems.size()
         //println userActionItems
     }

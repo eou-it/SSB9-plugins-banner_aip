@@ -9,13 +9,13 @@ import net.hedtech.banner.service.ServiceBase
 class UserActionItemService extends ServiceBase {
 
     def listActionItemById(Long actionItemId) {
-        UserActionItem itemById = UserActionItem.fetchUserActionItemById( actionItemId )
-        return itemById.encodeAsHTML()
+        return UserActionItem.fetchUserActionItemById( actionItemId )
+        //return itemById.encodeAsHTML()
     }
 
 
     def listActionItemByPidm(Long actionItemPidm) {
-        UserActionItem itemByPidm = UserActionItem.fetchUserActionItemByPidm( actionItemPidm )
-        return itemByPidm.encodeAsHTML()
+       return UserActionItem.fetchUserActionItemByPidm( actionItemPidm )
+        //return itemByPidm.encodeAsHTML()
     }
 }

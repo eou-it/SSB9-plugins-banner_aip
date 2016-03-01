@@ -29,7 +29,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     void testFetchUserActionItemById() {
         def actionItemId = 114
 
-        List<UserActionItem> userActionItemId = UserActionItem.fetchUserActionItemById(actionItemId)
+        List<UserActionItem> userActionItemId = userActionItemService.listActionItemById( actionItemId )
         //println userActionItemId
         assertFalse userActionItemId.isEmpty(  )
         assert 1 == userActionItemId.size()
@@ -40,7 +40,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     void testFetchUserActionItemByPidm() {
         def actionItemPidm = 124018
 
-        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemByPidm(actionItemPidm)
+        List<UserActionItem> userActionItems = userActionItemService.listActionItemByPidm( actionItemPidm )
         assert 10 == userActionItems.size()
     }
 }
