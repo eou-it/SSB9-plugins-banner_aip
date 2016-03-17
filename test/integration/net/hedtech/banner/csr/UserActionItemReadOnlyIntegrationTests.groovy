@@ -3,11 +3,12 @@
  **********************************************************************************/
 
 package net.hedtech.banner.csr
+
+import net.hedtech.banner.general.person.PersonUtility
+import net.hedtech.banner.testing.BaseIntegrationTestCase
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.After
-
-import net.hedtech.banner.testing.BaseIntegrationTestCase
 
 
 class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
@@ -19,7 +20,7 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         formContext = ['GUAGMNU']
         super.setUp()
     }
-    
+
     @After
     public void tearDown() {
         super.tearDown()
@@ -27,7 +28,8 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testFetchUserActionItemByROPidm() {
-        def actionItemPidm = 124018
+        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
+        //def actionItemPidm = 124018 // FIXME lookup pidm from person
 
         List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemROByPidm(actionItemPidm)
         assert 10 == userActionItems.size()
@@ -36,8 +38,19 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
-    void testFetchUserActionItemByROPidmService() {
-        def actionItemPidm = 124018
+    void testFetchUserActionItemByROPidmNoReuslts() {
+        def actionItemPidm = PersonUtility.getPerson( "STUADV425" ).pidm
+        //def actionItemPidm = 124018 // FIXME lookup pidm from person
+
+        List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemROByPidm( actionItemPidm )
+        assert 0 == userActionItems.size()
+    }
+
+
+    @Test
+    void testFetchUserActionItemByROPidmService() { // FIXME: do in service test
+        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
+        //def actionItemPidm = 124018 // FIXME lookup pidm from person
 
         List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listActionItemByPidm(actionItemPidm)
         assert 10 == userActionItems.size()
