@@ -3,7 +3,6 @@
  **********************************************************************************/
 package net.hedtech.banner.csr
 
-import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
 
 class UserActionItemReadOnlyService extends ServiceBase {

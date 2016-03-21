@@ -3,7 +3,6 @@
  **********************************************************************************/
 package net.hedtech.banner.csr
 
-import org.hibernate.annotations.Type
 import javax.persistence.*
 
 @NamedQueries(value = [
@@ -164,7 +163,7 @@ class UserActionItemReadOnly implements Serializable {
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (status != null ? description.hashCode() : 0);
         result = 31 * result + (pidm != null ? description.hashCode() : 0);
-        result = 31 * result + (activeTmpl != null ? active.hashCode() : 0);
+        result = 31 * result + (activeTmpl != null ? activeTmpl.hashCode() : 0);
         result = 31 * result + (userId != null ? userId.hashCode() : 0);
         result = 31 * result + (activityDate != null ? activityDate.hashCode() : 0);
         result = 31 * result + (creatorId != null ? creatorId.hashCode() : 0);
