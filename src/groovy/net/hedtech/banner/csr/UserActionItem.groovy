@@ -37,7 +37,7 @@ class UserActionItem implements Serializable {
     Long id
 
     /**
-     * Name of the action item
+     * Related ID of the action item
      */
     @Column(name = "GCRCSRS_CSRT_ID", length = 19)
     Long csrtId
