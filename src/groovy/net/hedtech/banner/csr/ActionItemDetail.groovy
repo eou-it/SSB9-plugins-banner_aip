@@ -11,7 +11,7 @@ import javax.persistence.*
         @NamedQuery(name = "ActionItemDetail.fetchActionItemDetailById",
                 query = """
            FROM ActionItemDetail a
-           WHERE a.id = :myId
+           WHERE a.actionItemId = :myId
           """)
 ])
 
