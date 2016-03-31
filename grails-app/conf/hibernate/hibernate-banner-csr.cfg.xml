@@ -20,5 +20,6 @@ Copyright 2016 Ellucian Company L.P. and its affiliates.
         <mapping class="net.hedtech.banner.csr.UserActionItem"/>
         <mapping class="net.hedtech.banner.csr.UserActionItemReadOnly"/>
         <mapping class="net.hedtech.banner.csr.ActionItemDetail"/>
+        <mapping class="net.hedtech.banner.csr.ActionItemGroup"/>
     </session-factory>
 </hibernate-configuration>
