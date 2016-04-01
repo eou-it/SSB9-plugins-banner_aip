@@ -40,7 +40,7 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-
+          test ':code-coverage:1.2.5'
     }
 
 }
