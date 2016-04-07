@@ -35,8 +35,8 @@ target(checkCopyrightXe: "Find incorrect copyright years") {
     def appPlugins = []
     appPlugins.add(appDirectoryName)
     // find plugins that are on same branch
-    def plugins = findPlugins(appDirectoryName, ln, branch)
-    appPlugins.addAll(plugins)
+    //def plugins = findPlugins(appDirectoryName, ln, branch)
+    //appPlugins.addAll(plugins)
     //
     def year = new Date().format("YYYY")
 
@@ -46,7 +46,7 @@ target(checkCopyrightXe: "Find incorrect copyright years") {
 
     appPlugins.each {
         def directoryname = it
-        def command = "git diff --name-only origin/master"
+        def command = "git diff --name-only -- origin/master"
         def proc = command.execute(null, directoryname)
         proc.waitFor()
         if (proc.exitValue() != 0) {
@@ -227,8 +227,9 @@ def parseYearFromVCLog(date) {
 
 def findPlugins(def directoryname, def pathSep, def appBranch) {
     def plugins = new File(directoryname.toString() + pathSep + "plugins")
+println "crr: " + plugins
     def pluginPaths = []
-    plugins.eachDir { plugin ->
+    plugins?.eachDir { plugin ->
         if (plugin.isDirectory()) {
             def pluginName = plugin.toString().split(pathSep)[-1]
 
