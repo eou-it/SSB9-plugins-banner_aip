@@ -22,10 +22,9 @@ class CsrControllerUtilsIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testGetPersonForCSR() {
         def params = [:]
-        def person = PersonUtility.getPerson("ADVS00032")
+        def person = PersonUtility.getPerson("CSRSTU002")
         assertNotNull person
         def csrUser = CsrControllerUtils.getPersonForCSR(params, person.pidm)
-        println csrUser
-        assertNull csrUser
+        assertEquals( "Dallas",csrUser.firstName  )
     }
 }
