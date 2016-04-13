@@ -53,7 +53,6 @@ class ActionItemGroup implements Serializable {
     /*need to figure out what to limit length to for display*/
     String description
 
-
     /**
      * Indicator that the action item is active
      */
@@ -71,7 +70,6 @@ class ActionItemGroup implements Serializable {
      */
     @Column(name = "GCBAGRP_ACTIVITY_DATE")
     Date activityDate
-
 
     /**
      * Version of the action item
@@ -129,11 +127,19 @@ class ActionItemGroup implements Serializable {
     }
 
 
-    public static def fetchActionItemGroups( ) {
+    public static def fetchActionItemGroups() {
         ActionItemGroup.withSession { session ->
             List ActionItemGroup = session.getNamedQuery('ActionItemGroup.fetchActionItemGroups').list()
             return ActionItemGroup
         }
     }
 
+    public static def fetchActionItemGroupById(Long id) {
+        ActionItemGroup.withSession { session ->
+            List actionItemGroupById = session.getNamedQuery('ActionItemGroup.fetchActionItemGroupById').setLong('myId', id).list()
+            return actionItemGroupById
+        }
+
+
+    }
 }

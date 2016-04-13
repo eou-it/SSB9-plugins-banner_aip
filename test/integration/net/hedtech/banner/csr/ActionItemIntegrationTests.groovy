@@ -30,8 +30,8 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testFetchActionItems( ) {
         List<ActionItem> actionItems = ActionItem.fetchActionItems()
-        //println actionItems
         assertFalse actionItems.isEmpty(  )
+        println actionItems
     }
 
 
@@ -39,6 +39,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
     void testFetchActionItemsService( ) {
         List<ActionItem> actionItems = actionItemService.listActionItems( )
         assertFalse actionItems.isEmpty(  )
+        println actionItems
     }
 
 }

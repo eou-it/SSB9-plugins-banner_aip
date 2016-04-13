@@ -39,8 +39,8 @@ class UserActionItem implements Serializable {
     /**
      * Related ID of the action item
      */
-    @Column(name = "GCRCSRS_CSRT_ID", length = 19)
-    Long csrtId
+    @Column(name = "GCRCSRS_ACTION_ITEM_ID", length = 19)
+    Long actionItemId
 
     /**
      * PIDM of the user action item belongs to
@@ -102,7 +102,7 @@ class UserActionItem implements Serializable {
     public String toString() {
         """UserActionItem[
                 id:$id,
-                csrtId:$csrtId,
+                actionItemId:$actionItemId,
                 status:$status,
                 pidm:$pidm,
                 completedDate:$completedDate,
@@ -118,7 +118,7 @@ class UserActionItem implements Serializable {
         int result;
         result = (id != null ? id.hashCode() : 0);
         result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (csrtId != null ? title.hashCode() : 0);
+        result = 31 * result + (actionItemId != null ? title.hashCode() : 0);
         result = 31 * result + (status != null ? active.hashCode() : 0);
         result = 31 * result + (pidm != null ? userId.hashCode() : 0);
         result = 31 * result + (userId != null ? creatorId.hashCode() : 0);
@@ -133,7 +133,7 @@ class UserActionItem implements Serializable {
 
     static constraints = {
         id(nullable: false, maxSize: 19)
-        csrtId(nullable: false, maxSize: 19)
+        actionItemId(nullable: false, maxSize: 19)
         pidm(nullable: false, maxSize: 9)
         status(nullable: false, maxSize: 30)
         userId(nullable: false, maxSize: 30)

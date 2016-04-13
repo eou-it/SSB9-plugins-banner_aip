@@ -13,6 +13,7 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemGroupService
 
+
     @Before
     public void setUp() {
         formContext = ['GUAGMNU']
@@ -27,20 +28,18 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testFetchActionItemGroups( ) {
-        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
-        //println actionItems
+        List<ActionItemGroup> actionItemGroups = actionItemGroupService.listActionItemGroups()
         assertFalse actionItemGroups.isEmpty(  )
+        println actionItemGroups
     }
 
     @Test
     void testFetchActionItemGroupById() {
-        def actionItemGroupId = 25
-
+        List<ActionItemGroup> actionItemGroups = actionItemGroupService.listActionItemGroups()
+        def actionItemGroupId = actionItemGroups[0].id
         List<ActionItemGroup> actionItemGroup = actionItemGroupService.listActionItemGroupById( actionItemGroupId )
+        assert 1 >= actionItemGroup.size()
         println actionItemGroup
-        assertFalse actionItemGroup.isEmpty(  )
-        assert 1 == actionItemGroup.size()
-
     }
 
 }

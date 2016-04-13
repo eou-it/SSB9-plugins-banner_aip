@@ -29,31 +29,25 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testFetchUserActionItemByROPidm() {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        //def actionItemPidm = 124018 // FIXME lookup pidm from person
-
         List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemROByPidm(actionItemPidm)
         assert 10 == userActionItems.size()
-        //println userActionItems
     }
 
 
     @Test
     void testFetchUserActionItemByROPidmNoReuslts() {
         def actionItemPidm = PersonUtility.getPerson( "STUADV425" ).pidm
-        //def actionItemPidm = 124018 // FIXME lookup pidm from person
-
         List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemROByPidm( actionItemPidm )
         assert 0 == userActionItems.size()
+        println userActionItems
     }
 
 
     @Test
     void testFetchUserActionItemByROPidmService() { // FIXME: do in service test
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        //def actionItemPidm = 124018 // FIXME lookup pidm from person
-
         List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listActionItemByPidm(actionItemPidm)
         assert 10 == userActionItems.size()
-        //println userActionItems
+        println userActionItems
     }
 }
