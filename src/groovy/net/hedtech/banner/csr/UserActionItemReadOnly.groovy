@@ -155,53 +155,81 @@ class UserActionItemReadOnly implements Serializable {
                 version:$version]"""
     }
 
-    int hashCode() {
-        int result;
-        result = (id != null ? id.hashCode() : 0);
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (status != null ? description.hashCode() : 0);
-        result = 31 * result + (pidm != null ? description.hashCode() : 0);
-        result = 31 * result + (activeTmpl != null ? activeTmpl.hashCode() : 0);
-        result = 31 * result + (userId != null ? userId.hashCode() : 0);
-        result = 31 * result + (activityDate != null ? activityDate.hashCode() : 0);
-        result = 31 * result + (creatorId != null ? creatorId.hashCode() : 0);
-        result = 31 * result + (createDate != null ? createDate.hashCode() : 0);
-        result = 31 * result + (version != null ? version.hashCode() : 0);
-        result = 31 * result + (userIdTmpl != null ? version.hashCode() : 0);
-        result = 31 * result + (activityDateTmpl != null ? version.hashCode() : 0);
-        result = 31 * result + (creatorIdTmpl != null ? version.hashCode() : 0);
-        result = 31 * result + (createDateTmpl != null ? version.hashCode() : 0);
-        result = 31 * result + (versionTmpl != null ? version.hashCode() : 0);
 
-        return result;
+    boolean equals( o ) {
+        if (this.is( o )) return true
+        if (!(o instanceof UserActionItemReadOnly)) return false
+
+        UserActionItemReadOnly that = (UserActionItemReadOnly) o
+
+        if (activeTmpl != that.activeTmpl) return false
+        if (activityDate != that.activityDate) return false
+        if (activityDateTmpl != that.activityDateTmpl) return false
+        if (completedDate != that.completedDate) return false
+        if (createDate != that.createDate) return false
+        if (createDateTmpl != that.createDateTmpl) return false
+        if (creatorId != that.creatorId) return false
+        if (creatorIdTmpl != that.creatorIdTmpl) return false
+        if (description != that.description) return false
+        if (id != that.id) return false
+        if (pidm != that.pidm) return false
+        if (status != that.status) return false
+        if (title != that.title) return false
+        if (userId != that.userId) return false
+        if (userIdTmpl != that.userIdTmpl) return false
+        if (version != that.version) return false
+        if (versionTmpl != that.versionTmpl) return false
+
+        return true
+    }
+
+
+    int hashCode() {
+        int result
+        result = (id != null ? id.hashCode() : 0)
+        result = 31 * result + (title != null ? title.hashCode() : 0)
+        result = 31 * result + (activeTmpl != null ? activeTmpl.hashCode() : 0)
+        result = 31 * result + (activityDateTmpl != null ? activityDateTmpl.hashCode() : 0)
+        result = 31 * result + (userIdTmpl != null ? userIdTmpl.hashCode() : 0)
+        result = 31 * result + (description != null ? description.hashCode() : 0)
+        result = 31 * result + (creatorIdTmpl != null ? creatorIdTmpl.hashCode() : 0)
+        result = 31 * result + (createDateTmpl != null ? createDateTmpl.hashCode() : 0)
+        result = 31 * result + (versionTmpl != null ? versionTmpl.hashCode() : 0)
+        result = 31 * result + (pidm != null ? pidm.hashCode() : 0)
+        result = 31 * result + (status != null ? status.hashCode() : 0)
+        result = 31 * result + (completedDate != null ? completedDate.hashCode() : 0)
+        result = 31 * result + (activityDate != null ? activityDate.hashCode() : 0)
+        result = 31 * result + (userId != null ? userId.hashCode() : 0)
+        result = 31 * result + (creatorId != null ? creatorId.hashCode() : 0)
+        result = 31 * result + (createDate != null ? createDate.hashCode() : 0)
+        result = 31 * result + (version != null ? version.hashCode() : 0)
+        return result
     }
 
     static constraints = {
-        id(nullable: false, maxSize: 19)
-        title(nullable: false, maxSize: 2048)
-        description(nullable: true)
-        activeTmpl(nullable: false, maxSize: 1)
-        completedDate(nullable: true, maxSize: 30)
-        userId(nullable: false, maxSize: 30)
-        activityDate(nullable: false, maxSize: 30)
-        creatorId(nullable: true, maxSize: 30)
-        createDate(nullable: true, maxSize: 30)
-        version(nullable: false, maxSize: 19)
-        pidm(nullable: false, maxSize: 9)
-        status(nullable: false, maxSize: 30)
-        userIdTmpl(nullable: false, maxSize: 30)
-        activityDateTmpl(nullable: false, maxSize: 30)
-        creatorIdTmpl(nullable: true, maxSize: 30)
-        createDateTmpl(nullable: true, maxSize: 30)
-        versionTmpl(nullable: false, maxSize: 19)
+        id( nullable: false, maxSize: 19 )
+        title( nullable: false, maxSize: 2048 )
+        description( nullable: true )
+        activeTmpl( nullable: false, maxSize: 1 )
+        completedDate( nullable: true, maxSize: 30 )
+        userId( nullable: false, maxSize: 30 )
+        activityDate( nullable: false, maxSize: 30 )
+        creatorId( nullable: true, maxSize: 30 )
+        createDate( nullable: true, maxSize: 30 )
+        version( nullable: false, maxSize: 19 )
+        pidm( nullable: false, maxSize: 9 )
+        status( nullable: false, maxSize: 30 )
+        userIdTmpl( nullable: false, maxSize: 30 )
+        activityDateTmpl( nullable: false, maxSize: 30 )
+        creatorIdTmpl( nullable: true, maxSize: 30 )
+        createDateTmpl( nullable: true, maxSize: 30 )
+        versionTmpl( nullable: false, maxSize: 19 )
     }
 
 
     public static def fetchUserActionItemROByPidm( Long pidm ) {
         UserActionItemReadOnly.withSession { session ->
-            List userActionItemReadOnly = session.getNamedQuery('UserActionItemReadOnly.fetchUserActionItemROByPidm').setLong( 'myPidm', pidm ).list()
+            List userActionItemReadOnly = session.getNamedQuery( 'UserActionItemReadOnly.fetchUserActionItemROByPidm' ).setLong( 'myPidm', pidm ).list()
             return userActionItemReadOnly
         }
     }

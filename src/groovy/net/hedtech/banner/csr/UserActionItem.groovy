@@ -3,7 +3,6 @@
  **********************************************************************************/
 package net.hedtech.banner.csr
 
-import org.hibernate.annotations.Type
 import javax.persistence.*
 
 
@@ -99,50 +98,56 @@ class UserActionItem implements Serializable {
     String dataOrigin
 
 
-    public String toString() {
-        """UserActionItem[
-                id:$id,
-                actionItemId:$actionItemId,
-                status:$status,
-                pidm:$pidm,
-                completedDate:$completedDate,
-                userId:$userId,
-                activityDate:$activityDate,
-                creatorId:$creatorId
-                createDate:$createDate,
-                version:$version,
-                dataOrigin=$dataOrigin]"""
+    boolean equals( o ) {
+        if (this.is( o )) return true
+        if (!(o instanceof UserActionItem)) return false
+
+        UserActionItem that = (UserActionItem) o
+
+        if (actionItemId != that.actionItemId) return false
+        if (activityDate != that.activityDate) return false
+        if (completedDate != that.completedDate) return false
+        if (createDate != that.createDate) return false
+        if (creatorId != that.creatorId) return false
+        if (dataOrigin != that.dataOrigin) return false
+        if (id != that.id) return false
+        if (pidm != that.pidm) return false
+        if (status != that.status) return false
+        if (userId != that.userId) return false
+        if (version != that.version) return false
+
+        return true
     }
 
+
     int hashCode() {
-        int result;
-        result = (id != null ? id.hashCode() : 0);
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (actionItemId != null ? title.hashCode() : 0);
-        result = 31 * result + (status != null ? active.hashCode() : 0);
-        result = 31 * result + (pidm != null ? userId.hashCode() : 0);
-        result = 31 * result + (userId != null ? creatorId.hashCode() : 0);
-        result = 31 * result + (activityDate != null ? activityDate.hashCode() : 0);
-        result = 31 * result + (completedDate != null ? description.hashCode() : 0);
-        result = 31 * result + (creatorId != null ? creatorId.hashCode() : 0);
-        result = 31 * result + (createdDate != null ? creatorId.hashCode() : 0);
-        result = 31 * result + (version != null ? version.hashCode() : 0);
-        result = 31 * result + (dataOrigin != null ? dataOrigin.hashCode() : 0);
-        return result;
+        int result
+        result = id.hashCode()
+        result = 31 * result + actionItemId.hashCode()
+        result = 31 * result + pidm.hashCode()
+        result = 31 * result + status.hashCode()
+        result = 31 * result + completedDate.hashCode()
+        result = 31 * result + (userId != null ? userId.hashCode() : 0)
+        result = 31 * result + activityDate.hashCode()
+        result = 31 * result + (creatorId != null ? creatorId.hashCode() : 0)
+        result = 31 * result + (createDate != null ? createDate.hashCode() : 0)
+        result = 31 * result + version.hashCode()
+        result = 31 * result + (dataOrigin != null ? dataOrigin.hashCode() : 0)
+        return result
     }
 
     static constraints = {
-        id(nullable: false, maxSize: 19)
-        actionItemId(nullable: false, maxSize: 19)
-        pidm(nullable: false, maxSize: 9)
-        status(nullable: false, maxSize: 30)
-        userId(nullable: false, maxSize: 30)
-        completedDate(nullable: true, maxSize: 30)
-        activityDate(nullable: false, maxSize: 30)
-        creatorId(nullable: true, maxSize: 30)
-        createDate(nullable: true, maxSize: 30)
-        version(nullable: false, maxSize: 19)
-        dataOrigin(nullable: true, maxSize: 19)
+        id( nullable: false, maxSize: 19 )
+        actionItemId( nullable: false, maxSize: 19 )
+        pidm( nullable: false, maxSize: 9 )
+        status( nullable: false, maxSize: 30 )
+        userId( nullable: false, maxSize: 30 )
+        completedDate( nullable: true, maxSize: 30 )
+        activityDate( nullable: false, maxSize: 30 )
+        creatorId( nullable: true, maxSize: 30 )
+        createDate( nullable: true, maxSize: 30 )
+        version( nullable: false, maxSize: 19 )
+        dataOrigin( nullable: true, maxSize: 19 )
     }
 
 
