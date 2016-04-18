@@ -3,7 +3,6 @@
  **********************************************************************************/
 package net.hedtech.banner.csr
 
-import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
 
 class ActionItemService extends ServiceBase {
@@ -12,5 +11,5 @@ class ActionItemService extends ServiceBase {
     def listActionItems() {
         return ActionItem.fetchActionItems( )
     }
-    
+
 }

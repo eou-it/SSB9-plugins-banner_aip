@@ -3,7 +3,6 @@
  **********************************************************************************/
 package net.hedtech.banner.csr
 
-import org.hibernate.annotations.Type
 import javax.persistence.*
 
 
@@ -80,6 +79,25 @@ class ActionItemDetail implements Serializable {
                 version:$version,
                 dataOrigin=$dataOrigin]"""
     }
+
+
+    boolean equals( o ) {
+        if (this.is( o )) return true
+        if (!(o instanceof ActionItemDetail)) return false
+
+        ActionItemDetail that = (ActionItemDetail) o
+
+        if (actionItemId != that.actionItemId) return false
+        if (activityDate != that.activityDate) return false
+        if (dataOrigin != that.dataOrigin) return false
+        if (id != that.id) return false
+        if (text != that.text) return false
+        if (userId != that.userId) return false
+        if (version != that.version) return false
+
+        return true
+    }
+
 
     int hashCode() {
         int result;
