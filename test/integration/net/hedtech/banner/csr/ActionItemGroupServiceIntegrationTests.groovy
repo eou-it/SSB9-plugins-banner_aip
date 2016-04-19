@@ -9,7 +9,9 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
+class ActionItemGroupServiceIntegrationTests extends BaseIntegrationTestCase {
+
+    def actionItemGroupService
 
 
     @Before
@@ -25,17 +27,17 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
     }
 
     @Test
-    void testFetchActionItemGroups( ) {
-        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+    void testFetchActionItemGroupsService( ) {
+        List<ActionItemGroup> actionItemGroups = actionItemGroupService.listActionItemGroups()
         assertFalse actionItemGroups.isEmpty(  )
         println actionItemGroups
     }
 
     @Test
-    void testFetchActionItemGroupById() {
-        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+    void testFetchActionItemGroupByIdService() {
+        List<ActionItemGroup> actionItemGroups = actionItemGroupService.listActionItemGroups()
         def actionItemGroupId = actionItemGroups[0].id
-        List<ActionItemGroup> actionItemGroup = ActionItemGroup.fetchActionItemGroupById( actionItemGroupId )
+        List<ActionItemGroup> actionItemGroup = actionItemGroupService.listActionItemGroupById( actionItemGroupId )
         assert 1 <= actionItemGroup.size()
         println actionItemGroup
     }

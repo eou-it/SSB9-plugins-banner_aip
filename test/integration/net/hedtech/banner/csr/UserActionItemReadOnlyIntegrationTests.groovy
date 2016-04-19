@@ -13,8 +13,6 @@ import org.junit.Test
 
 class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
-    def userActionItemReadOnlyService
-
     @Before
     public void setUp() {
         formContext = ['GUAGMNU']
@@ -42,12 +40,4 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         println userActionItems
     }
 
-
-    @Test
-    void testFetchUserActionItemByROPidmService() { // FIXME: do in service test
-        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listActionItemByPidm(actionItemPidm)
-        assert 10 == userActionItems.size()
-        println userActionItems
-    }
 }

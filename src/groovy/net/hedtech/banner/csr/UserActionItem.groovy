@@ -97,10 +97,9 @@ class UserActionItem implements Serializable {
     @Column(name = "GCRCSRS_DATA_ORIGIN", length = 30)
     String dataOrigin
 
-
-    boolean equals( o ) {
-        if (this.is( o )) return true
-        if (!(o instanceof UserActionItem)) return false
+    boolean equals(o) {
+        if (this.is(o)) return true
+        if (getClass() != o.class) return false
 
         UserActionItem that = (UserActionItem) o
 
@@ -119,19 +118,18 @@ class UserActionItem implements Serializable {
         return true
     }
 
-
     int hashCode() {
         int result
-        result = id.hashCode()
-        result = 31 * result + actionItemId.hashCode()
-        result = 31 * result + pidm.hashCode()
-        result = 31 * result + status.hashCode()
-        result = 31 * result + completedDate.hashCode()
+        result = (id != null ? id.hashCode() : 0)
+        result = 31 * result + (actionItemId != null ? actionItemId.hashCode() : 0)
+        result = 31 * result + (pidm != null ? pidm.hashCode() : 0)
+        result = 31 * result + (status != null ? status.hashCode() : 0)
+        result = 31 * result + (completedDate != null ? completedDate.hashCode() : 0)
         result = 31 * result + (userId != null ? userId.hashCode() : 0)
-        result = 31 * result + activityDate.hashCode()
+        result = 31 * result + (activityDate != null ? activityDate.hashCode() : 0)
         result = 31 * result + (creatorId != null ? creatorId.hashCode() : 0)
         result = 31 * result + (createDate != null ? createDate.hashCode() : 0)
-        result = 31 * result + version.hashCode()
+        result = 31 * result + (version != null ? version.hashCode() : 0)
         result = 31 * result + (dataOrigin != null ? dataOrigin.hashCode() : 0)
         return result
     }

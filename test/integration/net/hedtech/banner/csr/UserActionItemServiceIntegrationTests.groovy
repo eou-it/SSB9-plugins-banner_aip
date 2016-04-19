@@ -5,13 +5,15 @@
 package net.hedtech.banner.csr
 
 import net.hedtech.banner.general.person.PersonUtility
+import net.hedtech.banner.testing.BaseIntegrationTestCase
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.After
-import net.hedtech.banner.testing.BaseIntegrationTestCase
 
+class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
-class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
+    def actionItemService
+    def userActionItemService
 
     @Before
     public void setUp() {
@@ -25,28 +27,27 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     }
 
     @Test
-    void testFetchUserActionItemByPidmService() {
+    void testFetchUserActionItemByPidm() {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemByPidm( actionItemPidm )
+        List<UserActionItem> userActionItems = userActionItemService.listActionItemByPidm( actionItemPidm )
         assert 10 == userActionItems.size()
         println userActionItems
     }
 
     @Test
-    void testFetchUserActionItemByIdService() {
+    void testFetchUserActionItemById() {
         //get the user's action items by a pidm
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemByPidm( actionItemPidm )
+        List<UserActionItem> userActionItems = userActionItemService.listActionItemByPidm( actionItemPidm )
 
         // select the first id of an action from that id list
         def actionItemId = userActionItems[0].id
         println actionItemId
 
         //get action item by id for that user
-        List<UserActionItem> userActionItemId = UserActionItem.fetchUserActionItemById( actionItemId )
+        List<UserActionItem> userActionItemId = userActionItemService.listActionItemById( actionItemId )
         assert 1 <= userActionItemId.size()
         println userActionItemId.size()
     }
-
 
 }

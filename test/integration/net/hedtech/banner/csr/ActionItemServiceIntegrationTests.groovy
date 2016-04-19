@@ -3,14 +3,13 @@
  **********************************************************************************/
 
 package net.hedtech.banner.csr
-import org.junit.Before
-import org.junit.Test
-import org.junit.After
 
 import net.hedtech.banner.testing.BaseIntegrationTestCase
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 
-
-class ActionItemIntegrationTests extends BaseIntegrationTestCase {
+class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemService
 
@@ -28,11 +27,10 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
-    void testFetchActionItems( ) {
-        List<ActionItem> actionItems = ActionItem.fetchActionItems()
+    void testFetchActionItemsService( ) {
+        List<ActionItem> actionItems = actionItemService.listActionItems( )
         assertFalse actionItems.isEmpty(  )
         println actionItems
     }
-
 
 }
