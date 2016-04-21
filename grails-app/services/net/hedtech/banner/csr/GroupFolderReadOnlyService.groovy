@@ -9,11 +9,11 @@ class GroupFolderReadOnlyService extends ServiceBase {
 
     //simple return of all action items
     def listActionItemGroups() {
-        return GroupFolderReadOnly.fetchActionItemGroups( )
+        return GroupFolderReadOnly.fetchGroupFolders( )
     }
 
     def listActionItemGroupById(Long actionItemGroupId) {
-        return GroupFolderReadOnly.fetchActionItemGroupById( actionItemGroupId )
+        return GroupFolderReadOnly.fetchGroupFoldersById( actionItemGroupId )
     }
     
 }
