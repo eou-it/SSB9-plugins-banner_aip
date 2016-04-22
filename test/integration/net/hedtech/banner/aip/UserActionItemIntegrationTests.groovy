@@ -2,8 +2,9 @@
  Copyright 2016 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
-package net.hedtech.banner.csr
+package net.hedtech.banner.aip
 
+import net.hedtech.banner.aip.UserActionItem
 import net.hedtech.banner.general.person.PersonUtility
 import org.junit.Before
 import org.junit.Test
@@ -18,7 +19,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         formContext = ['GUAGMNU']
         super.setUp()
     }
-    
+
     @After
     public void tearDown() {
         super.tearDown()

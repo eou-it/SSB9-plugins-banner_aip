@@ -2,15 +2,16 @@
  Copyright 2016 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
-package net.hedtech.banner.csr
+package net.hedtech.banner.aip
 
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
+class GroupFolderReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase {
 
+    def groupFolderReadOnlyService
 
     @Before
     public void setUp() {
@@ -25,17 +26,17 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     }
 
     @Test
-    void testFetchGroupFolder( ) {
-        List<GroupFolderReadOnly> groupFolderList = GroupFolderReadOnly.fetchGroupFolders()
+    void testFetchGroupFolderService( ) {
+        List<GroupFolderReadOnlyService> groupFolderList = groupFolderReadOnlyService.listActionItemGroups()
         assertFalse groupFolderList.isEmpty(  )
         println groupFolderList
     }
 
     @Test
-    void testFetchGroupFolderById() {
-        List<GroupFolderReadOnly> groupFolderList = GroupFolderReadOnly.fetchGroupFolders()
+    void testFetchGroupFolderByIdService() {
+        List<GroupFolderReadOnly> groupFolderList = groupFolderReadOnlyService.listActionItemGroups()
         def groupFolderId = groupFolderList[0].groupId
-        List<GroupFolderReadOnly> groupFolderListById = GroupFolderReadOnly.fetchGroupFoldersById( groupFolderId )
+        List<GroupFolderReadOnly> groupFolderListById = groupFolderReadOnlyService.listActionItemGroupById( groupFolderId )
         assert 1 <= groupFolderListById.size()
         println groupFolderListById
     }

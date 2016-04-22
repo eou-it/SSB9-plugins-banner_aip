@@ -1,12 +1,12 @@
-package net.hedtech.banner.csr
+package net.hedtech.banner.aip
 
 import org.apache.log4j.Logger
 import net.hedtech.banner.general.person.PersonUtility
 
-class CsrControllerUtils {
-    static def log = Logger.getLogger(CsrControllerUtils)
+class AipControllerUtils {
+    static def log = Logger.getLogger(AipControllerUtils)
 
-    static def getPersonForCSR( def params, def loginPidm) {
+    static def getPersonForAip( def params, def loginPidm) {
         // If there is a bannerId in the params, then we are to get the profile of that person
         // Otherwise, we get the profile of the person logged in
         if (params.studentId) {

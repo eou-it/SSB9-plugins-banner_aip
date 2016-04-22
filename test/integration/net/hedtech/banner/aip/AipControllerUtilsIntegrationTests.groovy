@@ -1,5 +1,6 @@
-package net.hedtech.banner.csr
+package net.hedtech.banner.aip
 
+import net.hedtech.banner.aip.AipControllerUtils
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
@@ -7,7 +8,7 @@ import org.junit.Before
 import org.junit.Test
 
 
-class CsrControllerUtilsIntegrationTests extends BaseIntegrationTestCase {
+class AipControllerUtilsIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
     public void setUp() {
@@ -22,11 +23,11 @@ class CsrControllerUtilsIntegrationTests extends BaseIntegrationTestCase {
     }
 
     @Test
-    void testGetPersonForCSR() {
+    void testGetPersonForAip() {
         def params = [:]
         def person = PersonUtility.getPerson("CSRSTU002")
         assertNotNull person
-        def csrUser = CsrControllerUtils.getPersonForCSR( params, person.pidm )
+        def csrUser = AipControllerUtils.getPersonForAip( params, person.pidm )
         assertEquals( "Dallas", csrUser.firstName )
     }
 }

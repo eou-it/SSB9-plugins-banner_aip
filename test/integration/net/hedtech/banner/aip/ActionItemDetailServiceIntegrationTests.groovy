@@ -2,14 +2,19 @@
  Copyright 2016 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
-package net.hedtech.banner.csr
+package net.hedtech.banner.aip
 
+import net.hedtech.banner.aip.ActionItem
+import net.hedtech.banner.aip.ActionItemDetail
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
+class ActionItemDetailServiceIntegrationTests extends BaseIntegrationTestCase {
+
+    def actionItemDetailService
+    def actionItemService
 
     @Before
     public void setUp() {
@@ -25,11 +30,11 @@ class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
-    void testFetchActionItemDetailById() {
-        List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
+    void testFetchActionItemDetailByIdService() {
+        List<ActionItem> actionItemsList = actionItemService.listActionItems()
         def actionItemId = actionItemsList[0].id
-        List<ActionItemDetail> actionItemDetailId = ActionItemDetail.fetchActionItemDetailById( actionItemId )
-        assert 1 <= actionItemDetailId.size()
+        List<ActionItemDetail> actionItemDetailId = actionItemDetailService.listActionItemDetailById( actionItemId )
+        assert 1 >= actionItemDetailId.size()
         println actionItemDetailId
     }
 

@@ -1,98 +1,107 @@
 /*********************************************************************************
  Copyright 2016 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
-package net.hedtech.banner.csr
+package net.hedtech.banner.aip
 
 import javax.persistence.*
 
 
 @NamedQueries(value = [
-        @NamedQuery(name = "ActionItemGroup.fetchActionItemGroups",
+        @NamedQuery(name = "ActionItem.fetchActionItems",
                 query = """
-           FROM ActionItemGroup a
+           FROM ActionItem a
           """),
-        @NamedQuery(name = "ActionItemGroup.fetchActionItemGroupById",
+        @NamedQuery(name = "ActionItem.fetchActionItemById",
                 query = """
-           FROM ActionItemGroup a
+           FROM ActionItem a
            WHERE a.id = :myId
           """)
 ])
 
 @Entity
-@Table(name = "GCBAGRP")
+@Table(name = "GCBCSRT")
 
-class ActionItemGroup implements Serializable {
+class ActionItem implements Serializable {
 
     /**
-     * Surrogate ID for GCBAGRP
+     * Surrogate ID for GCBCSRT
      */
 
     @Id
-    @Column(name = "GCBAGRP_SURROGATE_ID")
-    @SequenceGenerator(name = "GCBAGRP_SEQ_GEN", allocationSize = 1, sequenceName = "GCBAGRP_SURROGATE_ID_SEQUENCE")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GCBAGRP_SEQ_GEN")
+    @Column(name = "GCBCSRT_SURROGATE_ID")
+    @SequenceGenerator(name = "GCBCSRT_SEQ_GEN", allocationSize = 1, sequenceName = "GCBCSRT_SURROGATE_ID_SEQUENCE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GCBCSRT_SEQ_GEN")
     Long id
 
     /**
      * Name of the action item
      */
-    @Column(name = "GCBAGRP_TITLE", length = 60)
+    @Column(name = "GCBCSRT_NAME", length = 2048)
     String title
-
-    /***
-     * Related ID of the action item
-     */
-    @Column(name = "GCBAGRP_FOLDER_ID", length = 19)
-    Long folderId
-
-    /**
-     * Description for action item
-     */
-    @Column(name = "GCBAGRP_DESCRIPTION")
-    /*need to figure out what to limit length to for display*/
-    String description
 
     /**
      * Indicator that the action item is active
      */
-    @Column(name = "GCBAGRP_STATUS", length = 30)
-    String status
+    @Column(name = "GCBCSRT_ACTIVE", length = 1)
+    String active
 
     /**
      * User action item pertains to
      */
-    @Column(name = "GCBAGRP_USER_ID", length = 30)
+    @Column(name = "GCBCSRT_USER_ID", length = 30)
     String userId
 
     /**
      * Last activity date for the action item
      */
-    @Column(name = "GCBAGRP_ACTIVITY_DATE")
+    @Column(name = "GCBCSRT_ACTIVITY_DATE")
     Date activityDate
+
+    /**
+     * Description for action item
+     */
+    @Column(name = "GCBCSRT_DESCRIPTION")
+    /*need to figure out what to limit length to for display*/
+    String description
+
+    /**
+     * UserID that created the action item
+     */
+    @Column(name = "GCBCSRT_CREATOR_ID", length = 30)
+    String creatorId
+
+    /**
+     * Date the action item was created
+     */
+    @Column(name = "GCBCSRT_CREATE_DATE", length = 30)
+    Date createDate
 
     /**
      * Version of the action item
      */
     @Version
-    @Column(name = "GCBAGRP_VERSION", length = 19)
+    @Column(name = "GCBCSRT_VERSION", length = 19)
     Long version
 
     /**
      * Data Origin column for SORNOTE
      */
-    @Column(name = "GCBAGRP_DATA_ORIGIN", length = 30)
+    @Column(name = "GCBCSRT_DATA_ORIGIN", length = 30)
     String dataOrigin
 
 
     public String toString() {
-        """ActionItemGroup[
+        """ActionItem[
                 id:$id,
+                name:$title,
+                state:$active,
                 title:$title,
-                folderId: $folderId,
-                description:$description,
-                status:$status,
+                active:$active,
                 userId:$userId,
                 activityDate:$activityDate,
+                description:$description,
+                creatorId:$creatorId
+                createDate:$createDate,
                 version:$version,
                 dataOrigin=$dataOrigin]"""
     }
@@ -100,16 +109,17 @@ class ActionItemGroup implements Serializable {
 
     boolean equals( o ) {
         if (this.is( o )) return true
-        if (!(o instanceof ActionItemGroup)) return false
+        if (!(o instanceof ActionItem)) return false
 
-        ActionItemGroup that = (ActionItemGroup) o
+        ActionItem that = (ActionItem) o
 
+        if (active != that.active) return false
         if (activityDate != that.activityDate) return false
+        if (createDate != that.createDate) return false
+        if (creatorId != that.creatorId) return false
         if (dataOrigin != that.dataOrigin) return false
         if (description != that.description) return false
-        if (folderId != that.folderId) return false
         if (id != that.id) return false
-        if (status != that.status) return false
         if (title != that.title) return false
         if (userId != that.userId) return false
         if (version != that.version) return false
@@ -137,29 +147,22 @@ class ActionItemGroup implements Serializable {
     static constraints = {
         id(nullable: false, maxSize: 19)
         title(nullable: false, maxSize: 2048)
-        description(nullable: true) //summary length only for now
-        folderId(nullable: false, maxSize: 30)
-        status(nullable: false, maxSize: 30)
+        active(nullable: false, maxSize: 1)
         userId(nullable: false, maxSize: 30)
         activityDate(nullable: false, maxSize: 30)
+        description(nullable: true) //summary length only for now
+        creatorId(nullable: true, maxSize: 30)
+        createDate(nullable: true, maxSize: 30)
         version(nullable: false, maxSize: 30)
         dataOrigin(nullable: true, maxSize: 19)
     }
 
 
-    public static def fetchActionItemGroups() {
-        ActionItemGroup.withSession { session ->
-            List ActionItemGroup = session.getNamedQuery('ActionItemGroup.fetchActionItemGroups').list()
-            return ActionItemGroup
+    public static def fetchActionItems( ) {
+        ActionItem.withSession { session ->
+            List actionItem = session.getNamedQuery('ActionItem.fetchActionItems').list()
+            return actionItem
         }
     }
 
-    public static def fetchActionItemGroupById(Long id) {
-        ActionItemGroup.withSession { session ->
-            List actionItemGroupById = session.getNamedQuery('ActionItemGroup.fetchActionItemGroupById').setLong('myId', id).list()
-            return actionItemGroupById
-        }
-
-
-    }
 }

@@ -1,14 +1,15 @@
 /*********************************************************************************
  Copyright 2016 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
-package net.hedtech.banner.csr
+package net.hedtech.banner.aip
 
 import net.hedtech.banner.service.ServiceBase
 
-class UserActionItemReadOnlyService extends ServiceBase {
+class ActionItemService extends ServiceBase {
 
-    def listActionItemByPidm(Long actionItemPidm) {
-        return UserActionItemReadOnly.fetchUserActionItemROByPidm( actionItemPidm )
-       //return itemByPidm.encodeAsHTML()
+    //simple return of all action items
+    def listActionItems() {
+        return ActionItem.fetchActionItems( )
     }
+
 }

@@ -2,15 +2,15 @@
  Copyright 2016 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
-package net.hedtech.banner.csr
+package net.hedtech.banner.aip
+
+import net.hedtech.banner.aip.ActionItem
+import net.hedtech.banner.testing.BaseIntegrationTestCase
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.After
 
-import net.hedtech.banner.testing.BaseIntegrationTestCase
-
-
-class ActionItemIntegrationTests extends BaseIntegrationTestCase {
+class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemService
 
@@ -28,11 +28,10 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
-    void testFetchActionItems( ) {
-        List<ActionItem> actionItems = ActionItem.fetchActionItems()
+    void testFetchActionItemsService( ) {
+        List<ActionItem> actionItems = actionItemService.listActionItems( )
         assertFalse actionItems.isEmpty(  )
         println actionItems
     }
-
 
 }

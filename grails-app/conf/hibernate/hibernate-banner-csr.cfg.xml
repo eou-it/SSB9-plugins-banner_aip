@@ -16,11 +16,11 @@ Copyright 2016 Ellucian Company L.P. and its affiliates.
 <hibernate-configuration>
     <session-factory>
         <property name="dialect">org.hibernate.dialect.Oracle10gDialect</property>
-        <mapping class="net.hedtech.banner.csr.ActionItem"/>
-        <mapping class="net.hedtech.banner.csr.UserActionItem"/>
-        <mapping class="net.hedtech.banner.csr.UserActionItemReadOnly"/>
-        <mapping class="net.hedtech.banner.csr.ActionItemDetail"/>
-        <mapping class="net.hedtech.banner.csr.ActionItemGroup"/>
-        <mapping class="net.hedtech.banner.csr.GroupFolderReadOnly"/>
+        <mapping class="net.hedtech.banner.aip.ActionItem"/>
+        <mapping class="net.hedtech.banner.aip.UserActionItem"/>
+        <mapping class="net.hedtech.banner.aip.UserActionItemReadOnly"/>
+        <mapping class="net.hedtech.banner.aip.ActionItemDetail"/>
+        <mapping class="net.hedtech.banner.aip.ActionItemGroup"/>
+        <mapping class="net.hedtech.banner.aip.GroupFolderReadOnly"/>
     </session-factory>
 </hibernate-configuration>
