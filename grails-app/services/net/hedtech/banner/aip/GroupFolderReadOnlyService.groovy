@@ -3,7 +3,6 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.GroupFolderReadOnly
 import net.hedtech.banner.service.ServiceBase
 
 class GroupFolderReadOnlyService extends ServiceBase {
