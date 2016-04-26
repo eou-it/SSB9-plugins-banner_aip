@@ -135,15 +135,13 @@ class ActionItemGroup implements Serializable {
     }
 
     static constraints = {
-        id(nullable: false, maxSize: 19)
         title(nullable: false, maxSize: 2048)
         description(nullable: true) //summary length only for now
         folderId(nullable: false, maxSize: 30)
         status(nullable: false, maxSize: 30)
         userId(nullable: false, maxSize: 30)
         activityDate(nullable: false, maxSize: 30)
-        version(nullable: false, maxSize: 30)
-        dataOrigin(nullable: true, maxSize: 19)
+        //dataOrigin(nullable: true, maxSize: 19)
     }
 
 
