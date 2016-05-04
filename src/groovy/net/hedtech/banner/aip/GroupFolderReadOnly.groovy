@@ -147,14 +147,14 @@ class GroupFolderReadOnly implements Serializable {
 
     public static def fetchGroupFolders( ) {
         GroupFolderReadOnly.withSession { session ->
-            List groupFolderList = session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolders' ).list()
+            List groupFolderList = session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolders' ).list().sort{it.groupTitle}
             return groupFolderList
         }
     }
 
     public static def fetchGroupFoldersById(Long id) {
         GroupFolderReadOnly.withSession { session ->
-            List groupFolderListById = session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFoldersById' ).setLong( 'myId', id ).list()
+            List groupFolderListById = session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFoldersById' ).setLong( 'myId', id ).list().sort{it.groupTitle}
             return groupFolderListById
         }
     }
