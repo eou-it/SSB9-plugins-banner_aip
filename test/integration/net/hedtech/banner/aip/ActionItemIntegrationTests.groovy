@@ -34,6 +34,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         List<ActionItem> actionItems = ActionItem.fetchActionItems()
         assertFalse actionItems.isEmpty(  )
         println actionItems
+        println actionItems.hashCode()
     }
 
 
