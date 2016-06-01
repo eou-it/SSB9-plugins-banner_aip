@@ -51,4 +51,26 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     }
 
 
+    @Test
+    void testUserActionItemHashCode() {
+        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
+        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemByPidm( actionItemPidm )
+        // select the first id of an action from that id list
+        def actionItemId = userActionItems[0].id
+        def hashCode = userActionItems.hashCode()
+        assertNotNull hashCode
+    }
+
+
+    @Test
+    void testUserActionItemEquals() {
+        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
+        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemByPidm( actionItemPidm )
+        // select the first id of an action from that id list
+        def actionItemId = userActionItems[0].id
+        def equalsRtn = userActionItems.equals( userActionItems )
+        assertTrue equalsRtn
+    }
+
+
 }

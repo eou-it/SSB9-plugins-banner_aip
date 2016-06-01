@@ -37,4 +37,26 @@ class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
         //println actionItemDetailId
     }
 
+
+    @Test
+    void testActionItemDetailHashCode() {
+        List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
+        def actionItemId = actionItemsList[0].id
+        List<ActionItemDetail> actionItemDetailId = ActionItemDetail.fetchActionItemDetailById( actionItemId )
+        def hashCode = actionItemDetailId.hashCode()
+        assertNotNull hashCode
+        // println actionItems
+    }
+
+
+    @Test
+    void testActionItemDetailEquals() {
+        List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
+        def actionItemId = actionItemsList[0].id
+        List<ActionItemDetail> actionItemDetailId = ActionItemDetail.fetchActionItemDetailById( actionItemId )
+        def equalsRtn = actionItemDetailId.equals( actionItemDetailId )
+        assertTrue equalsRtn
+        // println actionItems
+    }
+
 }

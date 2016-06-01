@@ -46,4 +46,22 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         //println actionItemGroup
     }
 
+
+    @Test
+    void testActionItemGroupHashCode() {
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+        def hashCode = actionItemGroups.hashCode()
+        assertNotNull hashCode
+        // println actionItems
+    }
+
+
+    @Test
+    void testActionItemGroupEquals() {
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+        def equalsRtn = actionItemGroups.equals( actionItemGroups )
+        assertTrue equalsRtn
+        // println actionItems
+    }
+
 }

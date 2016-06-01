@@ -46,4 +46,27 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         //println groupFolderListById
     }
 
+
+    @Test
+    void testGroupFolderHashCode() {
+        List<GroupFolderReadOnly> groupFolderList = GroupFolderReadOnly.fetchGroupFolders()
+        def groupFolderId = groupFolderList[0].groupId
+        List<GroupFolderReadOnly> groupFolderListById = GroupFolderReadOnly.fetchGroupFoldersById( groupFolderId )
+        def hashCode = groupFolderListById.hashCode()
+        assertNotNull hashCode
+        // println actionItems
+    }
+
+
+    @Test
+    void testGroupFolderEquals() {
+        List<GroupFolderReadOnly> groupFolderList = GroupFolderReadOnly.fetchGroupFolders()
+        def groupFolderId = groupFolderList[0].groupId
+        List<GroupFolderReadOnly> groupFolderListById = GroupFolderReadOnly.fetchGroupFoldersById( groupFolderId )
+        def equalsRtn = groupFolderListById.equals( groupFolderListById )
+        assertTrue equalsRtn
+        // println actionItems
+    }
+
+
 }

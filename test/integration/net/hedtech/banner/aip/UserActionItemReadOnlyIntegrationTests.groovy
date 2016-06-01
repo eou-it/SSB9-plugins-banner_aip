@@ -43,4 +43,25 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         //println userActionItems
     }
 
+
+    @Test
+    void testFetchUserActionItemByROPidmHashCode() {
+        def actionItemPidm = PersonUtility.getPerson( "STUADV425" ).pidm
+        List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemROByPidm( actionItemPidm )
+        // select the first id of an action from that id list
+        def hashCode = userActionItems.hashCode()
+        assertNotNull hashCode
+    }
+
+
+    @Test
+    void testFetchUserActionItemByROPidmEquals() {
+        def actionItemPidm = PersonUtility.getPerson( "STUADV425" ).pidm
+        List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemROByPidm( actionItemPidm )
+        // select the first id of an action from that id list
+        def equalsRtn = userActionItems.equals( userActionItems )
+        assertTrue equalsRtn
+    }
+
+
 }
