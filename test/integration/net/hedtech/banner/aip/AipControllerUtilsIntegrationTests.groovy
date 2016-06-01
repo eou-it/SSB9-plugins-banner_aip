@@ -27,7 +27,8 @@ class AipControllerUtilsIntegrationTests extends BaseIntegrationTestCase {
         def params = [:]
         def person = PersonUtility.getPerson("CSRSTU002")
         assertNotNull person
-        def csrUser = AipControllerUtils.getPersonForAip( params, person.pidm )
+        def csrUser = AipControllerUtils.getPersonForAip( params, person.pidm)
+        assertEquals ("CSRSTU002", csrUser.bannerId)
         assertEquals( "Dallas", csrUser.firstName )
     }
 }

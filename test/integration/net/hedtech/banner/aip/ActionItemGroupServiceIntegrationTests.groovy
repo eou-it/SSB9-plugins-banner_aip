@@ -39,7 +39,7 @@ class ActionItemGroupServiceIntegrationTests extends BaseIntegrationTestCase {
         List<ActionItemGroup> actionItemGroups = actionItemGroupService.listActionItemGroups()
         def actionItemGroupId = actionItemGroups[0].id
         List<ActionItemGroup> actionItemGroup = actionItemGroupService.listActionItemGroupById( actionItemGroupId )
-        assert 1 <= actionItemGroup.size()
+        assert 1 == actionItemGroup.size()
         println actionItemGroup
     }
 

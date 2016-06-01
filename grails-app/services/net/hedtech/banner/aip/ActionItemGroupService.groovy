@@ -20,9 +20,11 @@ class ActionItemGroupService extends ServiceBase {
         return ActionItemGroup.fetchActionItemGroupById( actionItemGroupId )
     }
 
+    /*
     void preCreate( map ) {
         def group = map.domainModel
         //group.summary = generateSummary( group.group )
     }
+    */
 
 }
