@@ -10,9 +10,11 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+
 class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemService
+
 
     @Before
     public void setUp() {
@@ -28,10 +30,10 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
-    void testFetchActionItemsService( ) {
-        List<ActionItem> actionItems = actionItemService.listActionItems( )
-        assertFalse actionItems.isEmpty(  )
-        println actionItems
+    void testFetchActionItemsService() {
+        List<ActionItem> actionItems = actionItemService.listActionItems()
+        assertFalse actionItems.isEmpty()
+        //println actionItems
     }
 
 }

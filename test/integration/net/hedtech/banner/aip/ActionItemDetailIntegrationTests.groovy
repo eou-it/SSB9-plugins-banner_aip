@@ -11,6 +11,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+
 class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
@@ -31,8 +32,9 @@ class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
         List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
         def actionItemId = actionItemsList[0].id
         List<ActionItemDetail> actionItemDetailId = ActionItemDetail.fetchActionItemDetailById( actionItemId )
-        assert 1 <= actionItemDetailId.size()
-        println actionItemDetailId
+        assertEquals( actionItemId, actionItemDetailId[0].actionItemId )
+        assertEquals( 1, actionItemDetailId.size() )
+        //println actionItemDetailId
     }
 
 }

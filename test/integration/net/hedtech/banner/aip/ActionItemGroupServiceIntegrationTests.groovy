@@ -10,6 +10,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+
 class ActionItemGroupServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemGroupService
@@ -27,20 +28,24 @@ class ActionItemGroupServiceIntegrationTests extends BaseIntegrationTestCase {
         super.tearDown()
     }
 
+
     @Test
-    void testFetchActionItemGroupsService( ) {
+    void testFetchActionItemGroupsService() {
         List<ActionItemGroup> actionItemGroups = actionItemGroupService.listActionItemGroups()
-        assertFalse actionItemGroups.isEmpty(  )
-        println actionItemGroups
+        assertFalse actionItemGroups.isEmpty()
+        //println actionItemGroups
     }
+
 
     @Test
     void testFetchActionItemGroupByIdService() {
         List<ActionItemGroup> actionItemGroups = actionItemGroupService.listActionItemGroups()
         def actionItemGroupId = actionItemGroups[0].id
+        def actionItemGroupTitle = actionItemGroups[0].title
         List<ActionItemGroup> actionItemGroup = actionItemGroupService.listActionItemGroupById( actionItemGroupId )
-        assert 1 == actionItemGroup.size()
-        println actionItemGroup
+        assertEquals( actionItemGroupTitle, actionItemGroup[0].title )
+        assertEquals( 1, actionItemGroup.size() )
+        //println actionItemGroup
     }
 
 }

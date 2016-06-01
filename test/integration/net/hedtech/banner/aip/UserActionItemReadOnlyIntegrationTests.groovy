@@ -20,16 +20,18 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         super.setUp()
     }
 
+
     @After
     public void tearDown() {
         super.tearDown()
     }
 
+
     @Test
     void testFetchUserActionItemByROPidm() {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemROByPidm(actionItemPidm)
-        assert 10 == userActionItems.size()
+        List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemROByPidm( actionItemPidm )
+        assertEquals( 10, userActionItems.size() )
     }
 
 
@@ -37,8 +39,8 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     void testFetchUserActionItemByROPidmNoReuslts() {
         def actionItemPidm = PersonUtility.getPerson( "STUADV425" ).pidm
         List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemROByPidm( actionItemPidm )
-        assert 0 == userActionItems.size()
-        println userActionItems
+        assertEquals( 0, userActionItems.size() )
+        //println userActionItems
     }
 
 }
