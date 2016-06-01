@@ -16,6 +16,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemService
 
+
     @Before
     public void setUp() {
         formContext = ['GUAGMNU']
@@ -30,11 +31,29 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
-    void testFetchActionItems( ) {
+    void testFetchActionItems() {
         List<ActionItem> actionItems = ActionItem.fetchActionItems()
-        assertFalse actionItems.isEmpty(  )
-        println actionItems
-        println actionItems.hashCode()
+        assertFalse actionItems.isEmpty()
+        // println actionItems
+        // println actionItems.hashCode()
+    }
+
+
+    @Test
+    void testActionItemsHashCode() {
+        List<ActionItem> actionItems = ActionItem.fetchActionItems()
+        def hashCode = actionItems.hashCode()
+        assertNotNull hashCode
+        // println actionItems
+    }
+
+
+    @Test
+    void testActionItemsEquals() {
+        List<ActionItem> actionItems = ActionItem.fetchActionItems()
+        def equalsRtn = actionItems.equals( actionItems )
+        assertTrue equalsRtn
+        // println actionItems
     }
 
 

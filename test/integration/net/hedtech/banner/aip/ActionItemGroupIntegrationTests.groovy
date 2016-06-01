@@ -10,6 +10,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+
 class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
 
 
@@ -25,20 +26,42 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         super.tearDown()
     }
 
+
     @Test
-    void testFetchActionItemGroups( ) {
+    void testFetchActionItemGroups() {
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
-        assertFalse actionItemGroups.isEmpty(  )
-        println actionItemGroups
+        assertFalse actionItemGroups.isEmpty()
+        //println actionItemGroups
     }
+
 
     @Test
     void testFetchActionItemGroupById() {
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
         def actionItemGroupId = actionItemGroups[0].id
+        def actionItemGroupTitle = actionItemGroups[0].title
         List<ActionItemGroup> actionItemGroup = ActionItemGroup.fetchActionItemGroupById( actionItemGroupId )
-        assert 1 <= actionItemGroup.size()
-        println actionItemGroup
+        assertEquals( actionItemGroupTitle, actionItemGroup[0].title )
+        assertEquals( 1, actionItemGroup.size() )
+        //println actionItemGroup
+    }
+
+
+    @Test
+    void testActionItemGroupHashCode() {
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+        def hashCode = actionItemGroups.hashCode()
+        assertNotNull hashCode
+        // println actionItems
+    }
+
+
+    @Test
+    void testActionItemGroupEquals() {
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+        def equalsRtn = actionItemGroups.equals( actionItemGroups )
+        assertTrue equalsRtn
+        // println actionItems
     }
 
 }

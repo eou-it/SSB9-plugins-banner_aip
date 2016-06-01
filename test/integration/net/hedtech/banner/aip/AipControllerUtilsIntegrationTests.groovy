@@ -22,13 +22,23 @@ class AipControllerUtilsIntegrationTests extends BaseIntegrationTestCase {
         super.tearDown()
     }
 
+
     @Test
-    void testGetPersonForAip() {
-        def params = [:]
-        def person = PersonUtility.getPerson("CSRSTU002")
+    void testGetPersonForAipParams() {
+        def params = [studentId: "CSRSTU002"]
+        def person = PersonUtility.getPerson( "CSRSTU002" )
         assertNotNull person
-        def csrUser = AipControllerUtils.getPersonForAip( params, person.pidm)
-        assertEquals ("CSRSTU002", csrUser.bannerId)
+        def csrUser = AipControllerUtils.getPersonForAip( params, person.pidm )
+        assertEquals( "Dallas", csrUser.firstName )
+    }
+
+
+    @Test
+    void testGetPersonForAipUtil() {
+        def params = [:]
+        def person = PersonUtility.getPerson( "CSRSTU002" )
+        assertNotNull person
+        def csrUser = AipControllerUtils.getPersonForAip( params, person.pidm )
         assertEquals( "Dallas", csrUser.firstName )
     }
 }

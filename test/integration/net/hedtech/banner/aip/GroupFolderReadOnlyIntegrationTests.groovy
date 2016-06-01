@@ -9,6 +9,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+
 class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
 
@@ -24,21 +25,48 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         super.tearDown()
     }
 
+
     @Test
-    void testFetchGroupFolder( ) {
+    void testFetchGroupFolder() {
         List<GroupFolderReadOnly> groupFolderList = GroupFolderReadOnly.fetchGroupFolders()
-        assertFalse groupFolderList.isEmpty(  )
-        println groupFolderList
+        assertFalse groupFolderList.isEmpty()
+        //println groupFolderList
     }
+
 
     @Test
     void testFetchGroupFolderById() {
         List<GroupFolderReadOnly> groupFolderList = GroupFolderReadOnly.fetchGroupFolders()
         def groupFolderId = groupFolderList[0].groupId
+        def groupFolderTitle = groupFolderList[0].groupTitle
         List<GroupFolderReadOnly> groupFolderListById = GroupFolderReadOnly.fetchGroupFoldersById( groupFolderId )
-        assertFalse groupFolderListById.isEmpty(  )
-        assert 1 == groupFolderListById.size()
-        println groupFolderListById
+        assertFalse groupFolderListById.isEmpty()
+        assertEquals( groupFolderListById[0].groupTitle, groupFolderTitle )
+        assertEquals( 1, groupFolderListById.size() )
+        //println groupFolderListById
     }
+
+
+    @Test
+    void testGroupFolderHashCode() {
+        List<GroupFolderReadOnly> groupFolderList = GroupFolderReadOnly.fetchGroupFolders()
+        def groupFolderId = groupFolderList[0].groupId
+        List<GroupFolderReadOnly> groupFolderListById = GroupFolderReadOnly.fetchGroupFoldersById( groupFolderId )
+        def hashCode = groupFolderListById.hashCode()
+        assertNotNull hashCode
+        // println actionItems
+    }
+
+
+    @Test
+    void testGroupFolderEquals() {
+        List<GroupFolderReadOnly> groupFolderList = GroupFolderReadOnly.fetchGroupFolders()
+        def groupFolderId = groupFolderList[0].groupId
+        List<GroupFolderReadOnly> groupFolderListById = GroupFolderReadOnly.fetchGroupFoldersById( groupFolderId )
+        def equalsRtn = groupFolderListById.equals( groupFolderListById )
+        assertTrue equalsRtn
+        // println actionItems
+    }
+
 
 }

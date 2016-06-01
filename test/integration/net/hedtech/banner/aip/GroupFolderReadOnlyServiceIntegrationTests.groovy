@@ -29,17 +29,19 @@ class GroupFolderReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase
     void testFetchGroupFolderService( ) {
         List<GroupFolderReadOnlyService> groupFolderList = groupFolderReadOnlyService.listActionItemGroups()
         assertFalse groupFolderList.isEmpty(  )
-        println groupFolderList
+        //println groupFolderList
     }
 
     @Test
     void testFetchGroupFolderByIdService() {
         List<GroupFolderReadOnly> groupFolderList = groupFolderReadOnlyService.listActionItemGroups()
         def groupFolderId = groupFolderList[0].groupId
+        def groupFolderTitle = groupFolderList[0].groupTitle
         List<GroupFolderReadOnly> groupFolderListById = groupFolderReadOnlyService.listActionItemGroupById( groupFolderId )
         assertFalse groupFolderListById.isEmpty(  )
-        assert 1 <= groupFolderListById.size()
-        println groupFolderListById
+        assertEquals(groupFolderListById[0].groupTitle, groupFolderTitle)
+        assertEquals( 1, groupFolderListById.size() )
+        //println groupFolderListById
     }
 
 }

@@ -20,33 +20,56 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         super.setUp()
     }
 
+
     @After
     public void tearDown() {
         super.tearDown()
     }
 
+
     @Test
     void testFetchUserActionItemByPidmService() {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
         List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemByPidm( actionItemPidm )
-        assert 10 == userActionItems.size()
-        println userActionItems
+        assertEquals( 10, userActionItems.size() )
+        //println userActionItems
     }
+
 
     @Test
     void testFetchUserActionItemByIdService() {
         //get the user's action items by a pidm
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
         List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemByPidm( actionItemPidm )
-
         // select the first id of an action from that id list
         def actionItemId = userActionItems[0].id
-        println actionItemId
-
         //get action item by id for that user
         List<UserActionItem> userActionItemId = UserActionItem.fetchUserActionItemById( actionItemId )
-        assert 1 <= userActionItemId.size()
-        println userActionItemId.size()
+        assertEquals( actionItemId, userActionItemId[0].id )
+        assertEquals( 1, userActionItemId.size() )
+        //println userActionItemId.size()
+    }
+
+
+    @Test
+    void testUserActionItemHashCode() {
+        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
+        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemByPidm( actionItemPidm )
+        // select the first id of an action from that id list
+        def actionItemId = userActionItems[0].id
+        def hashCode = userActionItems.hashCode()
+        assertNotNull hashCode
+    }
+
+
+    @Test
+    void testUserActionItemEquals() {
+        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
+        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemByPidm( actionItemPidm )
+        // select the first id of an action from that id list
+        def actionItemId = userActionItems[0].id
+        def equalsRtn = userActionItems.equals( userActionItems )
+        assertTrue equalsRtn
     }
 
 
