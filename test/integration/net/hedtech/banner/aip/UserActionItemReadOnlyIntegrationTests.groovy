@@ -43,7 +43,7 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         //println userActionItems
     }
 
-
+/*
     @Test
     void testFetchUserActionItemByROPidmHashCode() {
         def actionItemPidm = PersonUtility.getPerson( "STUADV425" ).pidm
@@ -58,10 +58,74 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     void testFetchUserActionItemByROPidmEquals() {
         def actionItemPidm = PersonUtility.getPerson( "STUADV425" ).pidm
         List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemROByPidm( actionItemPidm )
-        // select the first id of an action from that id list
         def equalsRtn = userActionItems.equals( userActionItems )
         assertTrue equalsRtn
     }
 
+*/
 
+
+    @Test
+    void testUserActionItemROToString() {
+        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
+        List<UserActionItemReadOnly> userActionItemsRO = UserActionItemReadOnly.fetchUserActionItemROByPidm( actionItemPidm )
+        assertNotNull( userActionItemsRO.toString() )
+        assertFalse userActionItemsRO.isEmpty()
+    }
+
+
+    @Test
+    void testUserActionItemROHashCode() {
+        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
+        List<UserActionItemReadOnly> userActionItemsRO = UserActionItemReadOnly.fetchUserActionItemROByPidm( actionItemPidm )
+
+        def result = userActionItemsRO.hashCode()
+        assertNotNull result
+
+        def userActionItemROObj = new UserActionItemReadOnly()
+        result = userActionItemROObj.hashCode()
+        assertNotNull result
+
+    }
+
+
+    @Test
+    void testUserActionItemROEquals() {
+
+        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
+        List<UserActionItemReadOnly> userActionItemsRO = UserActionItemReadOnly.fetchUserActionItemROByPidm( actionItemPidm )
+
+
+        def userActionItemListRO = userActionItemsRO[0]
+        def userActionItemRONewList = new UserActionItemReadOnly()
+
+        userActionItemRONewList.id = userActionItemListRO.id
+        userActionItemRONewList.title = userActionItemListRO.title
+        userActionItemRONewList.activeTmpl = userActionItemListRO.activeTmpl
+        userActionItemRONewList.activityDateTmpl = userActionItemListRO.activityDateTmpl
+        userActionItemRONewList.userIdTmpl = userActionItemListRO.userIdTmpl
+        userActionItemRONewList.description = userActionItemListRO.description
+        userActionItemRONewList.creatorIdTmpl = userActionItemListRO.creatorIdTmpl
+        userActionItemRONewList.createDateTmpl = userActionItemListRO.createDateTmpl
+        userActionItemRONewList.versionTmpl = userActionItemListRO.versionTmpl
+        userActionItemRONewList.pidm = userActionItemListRO.pidm
+        userActionItemRONewList.status = userActionItemListRO.status
+        userActionItemRONewList.completedDate = userActionItemListRO.completedDate
+        userActionItemRONewList.activityDate = userActionItemListRO.activityDate
+        userActionItemRONewList.userId = userActionItemListRO.userId
+        userActionItemRONewList.creatorId = userActionItemListRO.creatorId
+        userActionItemRONewList.createDate = userActionItemListRO.createDate
+        userActionItemRONewList.version = userActionItemListRO.version
+
+        def result = userActionItemRONewList.equals( userActionItemListRO )
+        assertTrue result
+
+        result = userActionItemListRO.equals( null )
+        assertFalse result
+
+        def userActionItemListNull = new UserActionItemReadOnly( null )
+        result = userActionItemListRO.equals( userActionItemListNull )
+        assertFalse result
+
+    }
 }

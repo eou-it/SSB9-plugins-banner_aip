@@ -31,7 +31,6 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
     void testFetchActionItemGroups() {
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
         assertFalse actionItemGroups.isEmpty()
-        //println actionItemGroups
     }
 
 
@@ -43,7 +42,18 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         List<ActionItemGroup> actionItemGroup = ActionItemGroup.fetchActionItemGroupById( actionItemGroupId )
         assertEquals( actionItemGroupTitle, actionItemGroup[0].title )
         assertEquals( 1, actionItemGroup.size() )
-        //println actionItemGroup
+    }
+
+
+    @Test
+    void testActionItemGroupToString() {
+        List<ActionItemGroup> actionItemGroups = ActionItem.fetchActionItems()
+        def actionItemGroupId = actionItemGroups[0].id
+        List<ActionItemGroup> actionItemGroupById = ActionItemGroup.fetchActionItemGroupById( actionItemGroupId )
+        assertNotNull( actionItemGroups.toString() )
+        assertFalse actionItemGroups.isEmpty()
+        assertNotNull( actionItemGroupById.toString() )
+        assertFalse actionItemGroupById.isEmpty()
     }
 
 
@@ -52,16 +62,35 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
         def hashCode = actionItemGroups.hashCode()
         assertNotNull hashCode
-        // println actionItems
     }
 
 
     @Test
     void testActionItemGroupEquals() {
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
-        def equalsRtn = actionItemGroups.equals( actionItemGroups )
-        assertTrue equalsRtn
-        // println actionItems
+        def actionItemGroup = actionItemGroups[0]
+        def actionItemGroupNewList = new ActionItemGroup()
+
+        actionItemGroupNewList.id = actionItemGroup.id
+        actionItemGroupNewList.title = actionItemGroup.title
+        actionItemGroupNewList.folderId = actionItemGroup.folderId
+        actionItemGroupNewList.description = actionItemGroup.description
+        actionItemGroupNewList.status = actionItemGroup.status
+        actionItemGroupNewList.userId = actionItemGroup.userId
+        actionItemGroupNewList.activityDate = actionItemGroup.activityDate
+        actionItemGroupNewList.version = actionItemGroup.version
+        actionItemGroupNewList.dataOrigin = actionItemGroup.dataOrigin
+
+        def result = actionItemGroupNewList.equals( actionItemGroup )
+        assertTrue result
+
+        result = actionItemGroups.equals( null )
+        assertFalse result
+
+        def actionItemsGroupListNull = new ActionItemGroup( null )
+        result = actionItemGroups.equals( actionItemsGroupListNull )
+        assertFalse result
+
     }
 
 }

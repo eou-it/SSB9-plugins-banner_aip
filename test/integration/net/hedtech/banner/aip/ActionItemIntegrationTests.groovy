@@ -8,7 +8,6 @@ import net.hedtech.banner.aip.ActionItem
 import org.junit.Before
 import org.junit.Test
 import org.junit.After
-
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 
 
@@ -31,30 +30,66 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
+    void testFetchActionItemsString() {
+        List<ActionItem> actionItems = ActionItem.fetchActionItems()
+        def actionItemList = actionItems[0]
+        assertNotNull( actionItemList.toString() )
+        assertFalse actionItems.isEmpty()
+    }
+
+
+    @Test
     void testFetchActionItems() {
         List<ActionItem> actionItems = ActionItem.fetchActionItems()
         assertFalse actionItems.isEmpty()
-        // println actionItems
-        // println actionItems.hashCode()
     }
 
 
     @Test
     void testActionItemsHashCode() {
+
         List<ActionItem> actionItems = ActionItem.fetchActionItems()
-        def hashCode = actionItems.hashCode()
-        assertNotNull hashCode
-        // println actionItems
+        def actionItemList = actionItems[0]
+
+        def result = actionItemList.hashCode()
+        assertNotNull result
+
+        def actionItemListObj = new ActionItem()
+        assertNotNull actionItemListObj
     }
 
 
     @Test
     void testActionItemsEquals() {
+
         List<ActionItem> actionItems = ActionItem.fetchActionItems()
-        def equalsRtn = actionItems.equals( actionItems )
-        assertTrue equalsRtn
-        // println actionItems
+        def actionItemsList = actionItems[0]
+        def actionItemNewList = new ActionItem(
+                active: actionItemsList.active,
+                activityDate: actionItemsList.activityDate,
+                createDate: actionItemsList.createDate,
+                creatorId: actionItemsList.creatorId,
+                dataOrigin: actionItemsList.dataOrigin,
+                description: actionItemsList.description,
+                title: actionItemsList.title,
+                userId: actionItemsList.userId )
+        long actionItemListId = actionItemsList.id
+        long actionItemListVersion = actionItemsList.version
+        actionItemNewList.id = actionItemListId
+        actionItemNewList.version = actionItemListVersion
+
+        def result = actionItemsList.equals( actionItemsList )
+        assertTrue result
+
+        result = actionItemsList.equals( actionItemNewList )
+        assertTrue result
+
+        result = actionItemsList.equals( null )
+        assertFalse result
+
+        def actionItemsListNull = new ActionItem( null )
+        result = actionItemsList.equals( actionItemsListNull )
+        assertFalse result
+
     }
-
-
 }

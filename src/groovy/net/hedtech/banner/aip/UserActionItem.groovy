@@ -97,6 +97,23 @@ class UserActionItem implements Serializable {
     @Column(name = "GCRCSRS_DATA_ORIGIN", length = 30)
     String dataOrigin
 
+    @Override
+    public String toString() {
+        return "UserActionItem{" +
+                "id=" + id +
+                ", actionItemId=" + actionItemId +
+                ", pidm=" + pidm +
+                ", status='" + status + '\'' +
+                ", completedDate=" + completedDate +
+                ", userId='" + userId + '\'' +
+                ", activityDate=" + activityDate +
+                ", creatorId='" + creatorId + '\'' +
+                ", createDate=" + createDate +
+                ", version=" + version +
+                ", dataOrigin='" + dataOrigin + '\'' +
+                '}';
+    }
+
     boolean equals(o) {
         if (this.is(o)) return true
         if (getClass() != o.class) return false
@@ -162,5 +179,6 @@ class UserActionItem implements Serializable {
             return userActionItem
         }
     }
+
 
 }
