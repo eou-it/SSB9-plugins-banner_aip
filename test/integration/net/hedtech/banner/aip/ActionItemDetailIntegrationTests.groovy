@@ -31,10 +31,19 @@ class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
     void testFetchActionItemDetailById() {
         List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
         def actionItemId = actionItemsList[0].id
-        List<ActionItemDetail> actionItemDetailId = ActionItemDetail.fetchActionItemDetailById( actionItemId )
-        assertEquals( actionItemId, actionItemDetailId[0].actionItemId )
-        assertEquals( 1, actionItemDetailId.size() )
-        //println actionItemDetailId
+        List<ActionItemDetail> actionItemDetailList = ActionItemDetail.fetchActionItemDetailById( actionItemId )
+        assertEquals( actionItemId, actionItemDetailList[0].actionItemId )
+        assertEquals( 1, actionItemDetailList.size() )
+    }
+
+
+    @Test
+    void testFetchActionItemDetailString() {
+        List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
+        def actionItemId = actionItemsList[0].id
+        List<ActionItemDetail> actionItemDetailList = ActionItemDetail.fetchActionItemDetailById( actionItemId )
+        assertNotNull( actionItemDetailList.toString() )
+        assertFalse actionItemDetailList.isEmpty()
     }
 
 
@@ -42,21 +51,45 @@ class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
     void testActionItemDetailHashCode() {
         List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
         def actionItemId = actionItemsList[0].id
-        List<ActionItemDetail> actionItemDetailId = ActionItemDetail.fetchActionItemDetailById( actionItemId )
-        def hashCode = actionItemDetailId.hashCode()
-        assertNotNull hashCode
-        // println actionItems
+        List<ActionItemDetail> actionItemDetailList = ActionItemDetail.fetchActionItemDetailById( actionItemId )
+
+        def result = actionItemDetailList.hashCode()
+        assertNotNull result
+
+        def actionItemDetailObj = new ActionItemDetail()
+        result = actionItemDetailObj.hashCode()
+        assertNotNull result
     }
 
 
     @Test
     void testActionItemDetailEquals() {
-        List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
-        def actionItemId = actionItemsList[0].id
-        List<ActionItemDetail> actionItemDetailId = ActionItemDetail.fetchActionItemDetailById( actionItemId )
-        def equalsRtn = actionItemDetailId.equals( actionItemDetailId )
-        assertTrue equalsRtn
-        // println actionItems
+
+        List<ActionItem> actionItems = ActionItem.fetchActionItems()
+        def actionItemsList = actionItems[0]
+        def actionItemId = actionItemsList.id
+        List<ActionItemDetail> actionItemDetailList = ActionItemDetail.fetchActionItemDetailById( actionItemId )
+        def actionItemDetail = actionItemDetailList[0]
+        def actionItemNewDetail = new ActionItemDetail()
+
+        actionItemNewDetail.id = actionItemDetail.id
+        actionItemNewDetail.actionItemId = actionItemDetail.actionItemId
+        actionItemNewDetail.text = actionItemDetail.text
+        actionItemNewDetail.userId = actionItemDetail.userId
+        actionItemNewDetail.activityDate = actionItemDetail.activityDate
+        actionItemNewDetail.version = actionItemDetail.version
+        actionItemNewDetail.dataOrigin = actionItemDetail.dataOrigin
+
+        def result = actionItemNewDetail.equals( actionItemDetail )
+        assertTrue result
+
+        result = actionItemDetailList.equals( null )
+        assertFalse result
+
+        def actionItemsListNull = new ActionItemDetail( null )
+        result = actionItemDetailList.equals( actionItemsListNull )
+        assertFalse result
+
     }
 
 }

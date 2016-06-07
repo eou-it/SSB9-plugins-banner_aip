@@ -119,10 +119,10 @@ class ActionItem implements Serializable {
         if (creatorId != that.creatorId) return false
         if (dataOrigin != that.dataOrigin) return false
         if (description != that.description) return false
-        if (id != that.id) return false
         if (title != that.title) return false
         if (userId != that.userId) return false
         if (version != that.version) return false
+        if (id != that.id) return false
 
         return true
     }
