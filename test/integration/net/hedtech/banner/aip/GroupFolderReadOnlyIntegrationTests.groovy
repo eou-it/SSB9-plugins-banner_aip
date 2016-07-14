@@ -30,7 +30,6 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     void testFetchGroupFolder() {
         List<GroupFolderReadOnly> groupFolderList = GroupFolderReadOnly.fetchGroupFolders()
         assertFalse groupFolderList.isEmpty()
-        //println groupFolderList
     }
 
 
