@@ -55,7 +55,6 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     void testUserActionItemsToString() {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
         List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemByPidm( actionItemPidm )
-        println userActionItems
         assertNotNull( userActionItems.toString() )
         assertFalse userActionItems.isEmpty()
     }

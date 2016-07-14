@@ -39,21 +39,21 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
         def actionItemGroupId = actionItemGroups[0].id
         def actionItemGroupTitle = actionItemGroups[0].title
-        List<ActionItemGroup> actionItemGroup = ActionItemGroup.fetchActionItemGroupById( actionItemGroupId )
-        assertEquals( actionItemGroupTitle, actionItemGroup[0].title )
-        assertEquals( 1, actionItemGroup.size() )
+        def actionItemGroup = ActionItemGroup.fetchActionItemGroupById( actionItemGroupId )
+        assertEquals( actionItemGroupTitle, actionItemGroup.title )
     }
 
 
     @Test
     void testActionItemGroupToString() {
-        List<ActionItemGroup> actionItemGroups = ActionItem.fetchActionItems()
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups(  )
         def actionItemGroupId = actionItemGroups[0].id
-        List<ActionItemGroup> actionItemGroupById = ActionItemGroup.fetchActionItemGroupById( actionItemGroupId )
+        def expected = actionItemGroups[0].title
+        ActionItemGroup actionItemGroupById = ActionItemGroup.fetchActionItemGroupById( actionItemGroupId )
         assertNotNull( actionItemGroups.toString() )
         assertFalse actionItemGroups.isEmpty()
         assertNotNull( actionItemGroupById.toString() )
-        assertFalse actionItemGroupById.isEmpty()
+        assertEquals( expected, actionItemGroupById.title )
     }
 
 

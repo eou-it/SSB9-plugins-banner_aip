@@ -144,14 +144,14 @@ class ActionItemGroup implements Serializable {
 
     public static def fetchActionItemGroups() {
         ActionItemGroup.withSession { session ->
-            List ActionItemGroup = session.getNamedQuery('ActionItemGroup.fetchActionItemGroups').list()
-            return ActionItemGroup
+            List<ActionItemGroup> actionItemGroup = session.getNamedQuery('ActionItemGroup.fetchActionItemGroups').list()
+            return actionItemGroup
         }
     }
 
     public static def fetchActionItemGroupById(Long id) {
         ActionItemGroup.withSession { session ->
-            List actionItemGroupById = session.getNamedQuery('ActionItemGroup.fetchActionItemGroupById').setLong('myId', id).list()
+            ActionItemGroup actionItemGroupById = session.getNamedQuery('ActionItemGroup.fetchActionItemGroupById').setLong('myId', id).list()[0]
             return actionItemGroupById
         }
 

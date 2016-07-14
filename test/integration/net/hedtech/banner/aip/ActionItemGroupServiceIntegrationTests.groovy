@@ -33,7 +33,6 @@ class ActionItemGroupServiceIntegrationTests extends BaseIntegrationTestCase {
     void testFetchActionItemGroupsService() {
         List<ActionItemGroup> actionItemGroups = actionItemGroupService.listActionItemGroups()
         assertFalse actionItemGroups.isEmpty()
-        //println actionItemGroups
     }
 
 
@@ -42,10 +41,8 @@ class ActionItemGroupServiceIntegrationTests extends BaseIntegrationTestCase {
         List<ActionItemGroup> actionItemGroups = actionItemGroupService.listActionItemGroups()
         def actionItemGroupId = actionItemGroups[0].id
         def actionItemGroupTitle = actionItemGroups[0].title
-        List<ActionItemGroup> actionItemGroup = actionItemGroupService.listActionItemGroupById( actionItemGroupId )
-        assertEquals( actionItemGroupTitle, actionItemGroup[0].title )
-        assertEquals( 1, actionItemGroup.size() )
-        //println actionItemGroup
+        def actionItemGroup = actionItemGroupService.listActionItemGroupById( actionItemGroupId )
+        assertEquals( actionItemGroupTitle, actionItemGroup.title )
     }
 
 }
