@@ -40,7 +40,7 @@ class ActionItemGroupServiceIntegrationTests extends BaseIntegrationTestCase {
         List<ActionItemGroup> actionItemGroups = actionItemGroupService.listActionItemGroups()
         def actionItemGroupId = actionItemGroups[0].id
         def actionItemGroupTitle = actionItemGroups[0].title
-        def actionItemGroup = actionItemGroupService.listActionItemGroupById( actionItemGroupId )
+        def actionItemGroup = actionItemGroupService.getActionItemGroupById( actionItemGroupId )
         assertEquals( actionItemGroupTitle, actionItemGroup.title )
     }
 

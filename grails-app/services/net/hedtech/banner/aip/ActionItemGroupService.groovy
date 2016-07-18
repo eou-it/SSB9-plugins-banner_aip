@@ -16,7 +16,7 @@ class ActionItemGroupService extends ServiceBase {
         return ActionItemGroup.fetchActionItemGroups( )
     }
 
-    def listActionItemGroupById(Long actionItemGroupId) {
+    def getActionItemGroupById(Long actionItemGroupId) {
         return ActionItemGroup.fetchActionItemGroupById( actionItemGroupId )
     }
 
