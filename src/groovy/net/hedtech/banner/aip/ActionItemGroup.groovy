@@ -138,6 +138,7 @@ class ActionItemGroup implements Serializable {
         status(nullable: false, maxSize: 30)
         userId(nullable: false, maxSize: 30)
         activityDate(nullable: false, maxSize: 30)
+        title(unique: ['title', 'folderId'])
         //dataOrigin(nullable: true, maxSize: 19)
     }
 
