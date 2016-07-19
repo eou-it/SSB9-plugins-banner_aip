@@ -35,7 +35,7 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testFetchUserActionItemByPidm() {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItem> userActionItems = userActionItemService.listActionItemByPidm( actionItemPidm )
+        List<UserActionItem> userActionItems = userActionItemService.listActionItemsByPidm( actionItemPidm )
         assertEquals( 10, userActionItems.size() )
         //println userActionItems
     }
@@ -45,14 +45,12 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
     void testFetchUserActionItemById() {
         //get the user's action items by a pidm
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItem> userActionItems = userActionItemService.listActionItemByPidm( actionItemPidm )
+        List<UserActionItem> userActionItems = userActionItemService.listActionItemsByPidm( actionItemPidm )
         // select the first id of an action from that id list
         def actionItemId = userActionItems[0].id
         //get action item by id for that user
-        List<UserActionItem> userActionItemId = userActionItemService.listActionItemById( actionItemId )
-        assertEquals( actionItemId, userActionItemId[0].id )
-        assertEquals( 1, userActionItemId.size() )
-        //println userActionItemId.size()
+        UserActionItem userActionItemId = userActionItemService.getActionItemById( actionItemId )
+        assertEquals( actionItemId, userActionItemId.id )
     }
 
 }

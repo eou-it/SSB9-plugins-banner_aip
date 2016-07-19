@@ -30,7 +30,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testFetchUserActionItemByPidmService() {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemByPidm( actionItemPidm )
+        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemsByPidm( actionItemPidm )
         assertEquals( 10, userActionItems.size() )
         //println userActionItems
     }
@@ -40,21 +40,19 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     void testFetchUserActionItemByIdService() {
         //get the user's action items by a pidm
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemByPidm( actionItemPidm )
+        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemsByPidm( actionItemPidm )
         // select the first id of an action from that id list
         def actionItemId = userActionItems[0].id
         //get action item by id for that user
-        List<UserActionItem> userActionItemId = UserActionItem.fetchUserActionItemById( actionItemId )
-        assertEquals( actionItemId, userActionItemId[0].id )
-        assertEquals( 1, userActionItemId.size() )
-        //println userActionItemId.size()
+        UserActionItem userActionItemId = UserActionItem.fetchUserActionItemById( actionItemId )
+        assertEquals( actionItemId, userActionItemId.id )
     }
 
 
     @Test
     void testUserActionItemsToString() {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemByPidm( actionItemPidm )
+        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemsByPidm( actionItemPidm )
         assertNotNull( userActionItems.toString() )
         assertFalse userActionItems.isEmpty()
     }
@@ -63,10 +61,10 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testUserActionItemHashCode() {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemByPidm( actionItemPidm )
+        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemsByPidm( actionItemPidm )
 
         def userActionItemId = userActionItems[0].id
-        List<UserActionItem> userActionItemList = UserActionItem.fetchUserActionItemById( userActionItemId )
+        UserActionItem userActionItemList = UserActionItem.fetchUserActionItemById( userActionItemId )
 
         def result = userActionItemList.hashCode()
         assertNotNull result
@@ -82,34 +80,33 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     void testUserActionItemEquals() {
 
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemByPidm( actionItemPidm )
+        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemsByPidm( actionItemPidm )
 
         def userActionItemId = userActionItems[0].id
-        List<UserActionItem> userActionItemListById = UserActionItem.fetchUserActionItemById( userActionItemId )
+        UserActionItem userActionItem = UserActionItem.fetchUserActionItemById( userActionItemId )
 
-        def userActionItemList = userActionItemListById[0]
         def userActionItemNewList = new UserActionItem()
 
-        userActionItemNewList.id = userActionItemList.id
-        userActionItemNewList.actionItemId = userActionItemList.actionItemId
-        userActionItemNewList.pidm = userActionItemList.pidm
-        userActionItemNewList.status = userActionItemList.status
-        userActionItemNewList.completedDate = userActionItemList.completedDate
-        userActionItemNewList.userId = userActionItemList.userId
-        userActionItemNewList.activityDate = userActionItemList.activityDate
-        userActionItemNewList.creatorId = userActionItemList.creatorId
-        userActionItemNewList.createDate = userActionItemList.createDate
-        userActionItemNewList.version = userActionItemList.version
-        userActionItemNewList.dataOrigin = userActionItemList.dataOrigin
+        userActionItemNewList.id = userActionItem.id
+        userActionItemNewList.actionItemId = userActionItem.actionItemId
+        userActionItemNewList.pidm = userActionItem.pidm
+        userActionItemNewList.status = userActionItem.status
+        userActionItemNewList.completedDate = userActionItem.completedDate
+        userActionItemNewList.userId = userActionItem.userId
+        userActionItemNewList.activityDate = userActionItem.activityDate
+        userActionItemNewList.creatorId = userActionItem.creatorId
+        userActionItemNewList.createDate = userActionItem.createDate
+        userActionItemNewList.version = userActionItem.version
+        userActionItemNewList.dataOrigin = userActionItem.dataOrigin
 
-        def result = userActionItemNewList.equals( userActionItemList )
+        def result = userActionItemNewList.equals( userActionItem )
         assertTrue result
 
-        result = userActionItemListById.equals( null )
+        result = userActionItem.equals( '' )
         assertFalse result
 
-        def userActionItemListNull = new UserActionItem( null )
-        result = userActionItemListById.equals( userActionItemListNull )
+        def userActionItemNull = new UserActionItem( null )
+        result = userActionItem.equals( userActionItemNull )
         assertFalse result
 
     }

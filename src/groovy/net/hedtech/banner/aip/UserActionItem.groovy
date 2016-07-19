@@ -168,12 +168,12 @@ class UserActionItem implements Serializable {
 
     public static def fetchUserActionItemById( Long id ) {
         UserActionItem.withSession { session ->
-            List userActionItem = session.getNamedQuery('UserActionItem.fetchUserActionItemById').setLong( 'myId', id ).list()
+            UserActionItem userActionItem = session.getNamedQuery('UserActionItem.fetchUserActionItemById').setLong( 'myId', id ).list()[0]
             return userActionItem
         }
     }
 
-    public static def fetchUserActionItemByPidm( Long pidm ) {
+    public static def fetchUserActionItemsByPidm( Long pidm ) {
         UserActionItem.withSession { session ->
             List userActionItem = session.getNamedQuery('UserActionItem.fetchUserActionItemByPidm').setLong( 'myPidm', pidm ).list()
             return userActionItem
