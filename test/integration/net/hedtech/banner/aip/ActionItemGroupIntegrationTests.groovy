@@ -92,4 +92,75 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
 
     }
 
+    @Test // duplicate group name in a folder
+    void testActionItemGroupConstraint() { //title and folder pair must be unique
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+        def actionItemGroup = actionItemGroups[0]
+        def actionItemGroupNewList = new ActionItemGroup()
+
+        actionItemGroupNewList.title = actionItemGroup.title
+        actionItemGroupNewList.folderId = actionItemGroup.folderId
+        actionItemGroupNewList.description = actionItemGroup.description
+        actionItemGroupNewList.status = actionItemGroup.status
+        actionItemGroupNewList.userId = actionItemGroup.userId
+        actionItemGroupNewList.activityDate = actionItemGroup.activityDate
+        actionItemGroupNewList.version = actionItemGroup.version
+        actionItemGroupNewList.dataOrigin = actionItemGroup.dataOrigin
+
+        shouldFail { actionItemGroupNewList.save(failOnError: true, flush: false) }
+    }
+
+
+    @Test
+    void testActionItemGroupConstraintDifferentFolder() { //title can be the same if in a different folder
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+        def actionItemGroup = actionItemGroups[0]
+
+        def z = 0
+        def keepGoing = true
+        def otherFolderId
+        while (keepGoing) {
+            z++
+            keepGoing = actionItemGroups[z].folderId == actionItemGroup.folderId
+            if (!keepGoing) {
+                otherFolderId = actionItemGroups[z].folderId
+                break
+            }
+        }
+
+        def actionItemGroupNewList = new ActionItemGroup()
+
+        actionItemGroupNewList.title = actionItemGroup.title
+        actionItemGroupNewList.folderId = otherFolderId
+        actionItemGroupNewList.description = actionItemGroup.description
+        actionItemGroupNewList.status = actionItemGroup.status
+        actionItemGroupNewList.userId = actionItemGroup.userId
+        actionItemGroupNewList.activityDate = actionItemGroup.activityDate
+        actionItemGroupNewList.version = actionItemGroup.version
+        actionItemGroupNewList.dataOrigin = actionItemGroup.dataOrigin
+
+        def didSave = actionItemGroupNewList.save(failOnError: true, flush: false)
+        assertEquals( actionItemGroup.title, didSave.title )
+        assertEquals( otherFolderId, didSave.folderId )
+        // version update?
+    }
+
+
+    @Test
+    void testActionItemGroupStatusMaxSize() { //title and folder pair must be unique
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+        def actionItemGroup = actionItemGroups[0]
+        def actionItemGroupNewList = new ActionItemGroup()
+
+        actionItemGroupNewList.title = "a unique title oifvh43"
+        actionItemGroupNewList.folderId = actionItemGroup.folderId
+        actionItemGroupNewList.description = actionItemGroup.description
+        actionItemGroupNewList.status = "pendingstatusoverthe30characterlimit"
+        actionItemGroupNewList.userId = actionItemGroup.userId
+        actionItemGroupNewList.activityDate = actionItemGroup.activityDate
+        actionItemGroupNewList.version = actionItemGroup.version
+        actionItemGroupNewList.dataOrigin = actionItemGroup.dataOrigin
+
+        shouldFail { actionItemGroupNewList.save( failOnError: true, flush: false ) }
+    }
 }

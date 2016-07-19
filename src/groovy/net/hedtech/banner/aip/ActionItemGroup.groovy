@@ -34,6 +34,14 @@ class ActionItemGroup implements Serializable {
     Long id
 
     /**
+     * Version of the action item
+     */
+
+    @Version
+    @Column(name = "GCBAGRP_VERSION", length = 19, nullable = false)
+    Long version
+
+    /**
      * Name of the action item
      */
     @Column(name = "GCBAGRP_TITLE", length = 60)
@@ -71,13 +79,6 @@ class ActionItemGroup implements Serializable {
     Date activityDate
 
     /**
-     * Version of the action item
-     */
-    @Version
-    @Column(name = "GCBAGRP_VERSION", length = 19)
-    Long version
-
-    /**
      * Data Origin column for SORNOTE
      */
     @Column(name = "GCBAGRP_DATA_ORIGIN", length = 30)
@@ -88,13 +89,13 @@ class ActionItemGroup implements Serializable {
         """ActionItemGroup[
                 id:$id,
                 title:$title,
-                folderId: $folderId,
+                folderId:$folderId,
                 description:$description,
                 status:$status,
                 userId:$userId,
                 activityDate:$activityDate,
                 version:$version,
-                dataOrigin=$dataOrigin]"""
+                dataOrigin:$dataOrigin]"""
     }
 
 
@@ -132,13 +133,12 @@ class ActionItemGroup implements Serializable {
     }
 
     static constraints = {
-        title(nullable: false, maxSize: 2048)
+        title(nullable: false, maxSize: 2048, unique: 'folderId')
         description(nullable: true) //summary length only for now
         folderId(nullable: false, maxSize: 30)
         status(nullable: false, maxSize: 30)
         userId(nullable: false, maxSize: 30)
         activityDate(nullable: false, maxSize: 30)
-        title(unique: ['title', 'folderId'])
         //dataOrigin(nullable: true, maxSize: 19)
     }
 
