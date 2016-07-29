@@ -14,7 +14,7 @@ grails.war.resources = { stagingDir ->
     delete(file: "${stagingDir}/WEB-INF/lib/ojdbc6.jar")
 }
 
-grails.plugin.location.'banner-student-common'="../banner_student_common.git"
+//grails.plugin.location.'banner-student-common'="../banner_student_common.git"
 grails.plugin.location.'banner-general-person'="../banner_general_person.git"
 
 grails.project.dependency.resolver = "maven" // or maven
