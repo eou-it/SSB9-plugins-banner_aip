@@ -13,7 +13,7 @@ import javax.persistence.*
 ])
 
 @Entity
-@Table(name = "GVQ_GCRCSRS")
+@Table(name = "GVQ_GCRACCT")
 
 class UserActionItemReadOnly implements Serializable {
 
