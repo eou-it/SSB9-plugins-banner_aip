@@ -21,7 +21,7 @@ import javax.persistence.*
 ])
 
 @Entity
-@Table(name = "GCRACCT")
+@Table(name = "GCRAACT")
 
 class UserActionItem implements Serializable {
 
@@ -30,71 +30,71 @@ class UserActionItem implements Serializable {
      */
 
     @Id
-    @Column(name = "GCRACCT_SURROGATE_ID")
-    @SequenceGenerator(name = "GCRACCT_SEQ_GEN", allocationSize = 1, sequenceName = "GCRACCT_SURROGATE_ID_SEQUENCE")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GCRACCT_SEQ_GEN")
+    @Column(name = "GCRAACT_SURROGATE_ID")
+    @SequenceGenerator(name = "GCRAACT_SEQ_GEN", allocationSize = 1, sequenceName = "GCRAACT_SURROGATE_ID_SEQUENCE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GCRAACT_SEQ_GEN")
     Long id
 
     /**
      * Related ID of the action item
      */
-    @Column(name = "GCRACCT_ACTION_ITEM_ID", length = 19)
+    @Column(name = "GCRAACT_ACTION_ITEM_ID", length = 19)
     Long actionItemId
 
     /**
      * PIDM of the user action item belongs to
      */
-    @Column(name = "GCRACCT_PIDM", length = 9)
+    @Column(name = "GCRAACT_PIDM", length = 9)
     Long pidm
 
     /**
      * Status of action item
      */
-    @Column(name = "GCRACCT_STATUS", length = 30)
+    @Column(name = "GCRAACT_STATUS", length = 30)
     String status
 
     /**
      * Last activity date for the action item
      */
-    @Column(name = "GCRACCT_COMPLETED_DATE")
+    @Column(name = "GCRAACT_COMPLETED_DATE")
     Date completedDate
 
 
     /**
      * User action item pertains to
      */
-    @Column(name = "GCRACCT_USER_ID", length = 30)
+    @Column(name = "GCRAACT_USER_ID", length = 30)
     String userId
 
     /**
      * Last activity date for the action item
      */
-    @Column(name = "GCRACCT_ACTIVITY_DATE")
+    @Column(name = "GCRAACT_ACTIVITY_DATE")
     Date activityDate
 
     /**
      * UserID that created the action item
      */
-    @Column(name = "GCRACCT_CREATOR_ID", length = 30)
+    @Column(name = "GCRAACT_CREATOR_ID", length = 30)
     String creatorId
 
     /**
      * Date the action item was created
      */
-    @Column(name = "GCRACCT_CREATE_DATE", length = 30)
+    @Column(name = "GCRAACT_CREATE_DATE", length = 30)
     Date createDate
 
     /**
      * Version of the action item
      */
     @Version
-    @Column(name = "GCRACCT_VERSION", length = 19)
+    @Column(name = "GCRAACT_VERSION", length = 19)
     Long version
 
     /**
      * Data Origin column for SORNOTE
      */
-    @Column(name = "GCRACCT_DATA_ORIGIN", length = 30)
+    @Column(name = "GCRAACT_DATA_ORIGIN", length = 30)
     String dataOrigin
 
     @Override
