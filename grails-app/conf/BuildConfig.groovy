@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2010-2015 Ellucian Company L.P. and its affiliates.
+ Copyright 2016 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 grails.project.class.dir = "target/classes"
