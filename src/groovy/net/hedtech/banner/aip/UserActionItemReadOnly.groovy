@@ -36,7 +36,7 @@ class UserActionItemReadOnly implements Serializable {
      * Indicator that the action item is active
      */
     @Id
-    @Column(name = "ACTION_ITEM_TMPL_ACTIVE")
+    @Column(name = "ACTION_ITEM_TMPL_STATUS")
     String activeTmpl
 
     /**
