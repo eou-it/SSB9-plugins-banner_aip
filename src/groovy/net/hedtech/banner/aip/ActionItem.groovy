@@ -42,7 +42,7 @@ class ActionItem implements Serializable {
     /**
      * Indicator that the action item is active
      */
-    @Column(name = "GCBACTM_ACTIVE", length = 1)
+    @Column(name = "GCBACTM_STATUS", length = 1)
     String active
 
     /**
