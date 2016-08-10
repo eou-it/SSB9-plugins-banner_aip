@@ -28,21 +28,18 @@ class UserActionItemReadOnly implements Serializable {
     /**
      * Name of the action item
      */
-    @Id
     @Column(name = "ACTION_ITEM_NAME")
     String title
 
     /**
      * Indicator that the action item is active
      */
-    @Id
     @Column(name = "ACTION_ITEM_TMPL_STATUS")
     String activeTmpl
 
     /**
      * Last activity date for the action item
      */
-    @Id
     @Column(name = "ACTION_ITEM_TMPL_ACTIVITY_DATE")
     Date activityDateTmpl
 
