@@ -15,5 +15,4 @@ class ActionItemReadOnlyService extends ServiceBase {
     def listActionItemROByFolder(Long folderId) {
         return ActionItemReadOnly.fetchActionItemROByFolder( folderId )
     }
-
 }
