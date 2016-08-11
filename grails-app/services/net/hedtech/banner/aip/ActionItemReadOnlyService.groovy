@@ -16,6 +16,17 @@ class ActionItemReadOnlyService extends ServiceBase {
         return ActionItemReadOnly.fetchActionItemROByFolder( folderId )
     }
 
+    def listActionItemsPageSort(Map params ) {
+
+        return ActionItemReadOnly.fetchWithPagingAndSortParams(
+                [params: [name: params?.filterName]],
+                [sortColumn: params?.sortColumn, sortDirection: params?.sortDirection, max: params?.max, offset: params?.offset] )
+
+    }
+
+
+
+
 
 
 }

@@ -36,6 +36,7 @@ class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase 
     }
 
 
+
     @Test
     void testFetchUserActionItemByROFolderService() {
         List<ActionItemReadOnly> actionItemROList = actionItemReadOnlyService.listActionItemRO()
@@ -43,6 +44,17 @@ class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase 
 
         List<ActionItemReadOnly> actionItemsRO = actionItemReadOnlyService.listActionItemROByFolder(folderId)
         assert 0 < actionItemsRO.size()
+    }
+
+
+    @Test
+    void testFetchUserActionItemROPageSortService() {
+        Map params = [filterName:"%",sortColumn:"folderName", sortDirection:"desc", max:20, offset:0]
+        List<ActionItemReadOnly> actionItemROList = actionItemReadOnlyService.listActionItemsPageSort(params)
+
+        println actionItemROList
+
+        assertEquals( 20, actionItemROList.size() )
     }
 
 
