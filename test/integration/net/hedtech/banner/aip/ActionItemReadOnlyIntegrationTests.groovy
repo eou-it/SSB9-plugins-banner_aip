@@ -47,7 +47,7 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
-    void testUserActionItemROToString() {
+    void testActionItemROToString() {
         List<ActionItemReadOnly> actionItemReadOnlyList = ActionItemReadOnly.fetchActionItemRO()
         def folderId = actionItemReadOnlyList[0].folderId
 
@@ -56,9 +56,28 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         assertFalse actionItemsRO.isEmpty()
     }
 
+    @Test
+    void testActionItemSortNameAsc() {
+        def results = ActionItemReadOnly.fetchWithPagingAndSortParams(
+                [params: [name: "%"]],
+                [sortColumn: "actionItemName", sortDirection: "asc", max: 5, offset: 0])
+
+        assertEquals( 5, results.size() )
+        println results
+    }
 
     @Test
-    void testUserActionItemROHashCode() {
+    void testActionItemSortNameDesc() {
+        def results = ActionItemReadOnly.fetchWithPagingAndSortParams(
+                [params: [name: "%"]],
+                [sortColumn: "actionItemName", sortDirection: "desc", max: 10, offset: 0] )
+
+        assertEquals( 10, results.size() )
+        println results
+    }
+
+    @Test
+    void testActionItemROHashCode() {
         List<ActionItemReadOnly> actionItemReadOnlyList = ActionItemReadOnly.fetchActionItemRO()
         def folderId = actionItemReadOnlyList[0].folderId
 
@@ -73,7 +92,7 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     }
     
     @Test
-    void testUserActionItemROEquals() {
+    void testActionItemROEquals() {
         List<ActionItemReadOnly> actionItemReadOnlyList = ActionItemReadOnly.fetchActionItemRO()
         def folderId = actionItemReadOnlyList[0].folderId
 
@@ -82,17 +101,17 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         def actionItemListRO = actionItemsRO[0]
         def actionItemRONewList = new ActionItemReadOnly()
 
-        actionItemRONewList.id = actionItemListRO.id
-        actionItemRONewList.name = actionItemListRO.name
+        actionItemRONewList.actionItemId = actionItemListRO.actionItemId
+        actionItemRONewList.actionItemName = actionItemListRO.actionItemName
         actionItemRONewList.folderId = actionItemListRO.folderId
         actionItemRONewList.folderName = actionItemListRO.folderName
-        actionItemRONewList.description = actionItemListRO.description
-        actionItemRONewList.status = actionItemListRO.status
-        actionItemRONewList.activityDate = actionItemListRO.activityDate
-        actionItemRONewList.userId = actionItemListRO.userId
-        actionItemRONewList.creatorId = actionItemListRO.creatorId
-        actionItemRONewList.createDate = actionItemListRO.createDate
-        actionItemRONewList.version = actionItemListRO.version
+        actionItemRONewList.actionItemDesc = actionItemListRO.actionItemDesc
+        actionItemRONewList.actionItemStatus = actionItemListRO.actionItemStatus
+        actionItemRONewList.actionItemActivityDate = actionItemListRO.actionItemActivityDate
+        actionItemRONewList.actionItemUserId = actionItemListRO.actionItemUserId
+        actionItemRONewList.actionItemCreatorId = actionItemListRO.actionItemCreatorId
+        actionItemRONewList.actionItemCreateDate = actionItemListRO.actionItemCreateDate
+        actionItemRONewList.actionItemVersion = actionItemListRO.actionItemVersion
 
         def result = actionItemRONewList.equals( actionItemListRO )
         assertTrue result

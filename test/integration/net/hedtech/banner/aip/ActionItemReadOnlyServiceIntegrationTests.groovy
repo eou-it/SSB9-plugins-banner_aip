@@ -44,4 +44,6 @@ class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase 
         List<ActionItemReadOnly> actionItemsRO = actionItemReadOnlyService.listActionItemROByFolder(folderId)
         assert 0 < actionItemsRO.size()
     }
+
+
 }
