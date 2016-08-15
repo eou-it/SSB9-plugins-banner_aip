@@ -12,21 +12,30 @@ class ActionItemReadOnlyService extends ServiceBase {
         return ActionItemReadOnly.fetchActionItemRO()
     }
 
+    def listActionItemROCount() {
+        return ActionItemReadOnly.fetchActionItemROCount()
+    }
+
     def listActionItemROByFolder(Long folderId) {
         return ActionItemReadOnly.fetchActionItemROByFolder( folderId )
     }
 
     def listActionItemsPageSort(Map params ) {
 
-        return ActionItemReadOnly.fetchWithPagingAndSortParams(
+        def results =  ActionItemReadOnly.fetchWithPagingAndSortParams(
                 [params: [name: params?.filterName]],
                 [sortColumn: params?.sortColumn, sortDirection: params?.sortDirection, max: params?.max, offset: params?.offset] )
 
+        def resultCount = listActionItemROCount(  )
+
+
+       def resultMap = [
+             result: results,
+             length: resultCount[0]
+       ]
+
+        return resultMap
+
     }
-
-
-
-
-
 
 }

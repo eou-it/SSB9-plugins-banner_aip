@@ -22,7 +22,11 @@ import javax.persistence.*
         @NamedQuery(name = "ActionItemReadOnly.fetchActionItemROByFolder",
                 query = """FROM ActionItemReadOnly a
            WHERE a.folderId = :myFolder
-           """)
+           """),
+        @NamedQuery(name="ActionItemReadOnly.fetchActionItemROCount",
+            query = """SELECT COUNT(a.actionItemId) FROM ActionItemReadOnly a
+            """
+        )
 
 ])
 @Entity
@@ -181,18 +185,27 @@ class ActionItemReadOnly implements Serializable {
         }
     }
 
+    public static def fetchActionItemROCount() {
+        ActionItemReadOnly.withSession { session ->
+            List actionItemReadOnlyCount = session.getNamedQuery( 'ActionItemReadOnly.fetchActionItemROCount' ).list()
+            return actionItemReadOnlyCount
+        }
+    }
+
     public static fetchWithPagingAndSortParams(filterData, pagingAndSortParams) {
 
         def ascdir = pagingAndSortParams?.sortDirection?.toLowerCase() == 'asc'
         def searchStatus = filterData?.params?.status
 
         def queryCriteria = ActionItemReadOnly.createCriteria()
+
         def results = queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
 
             ilike("actionItemName", CommunicationCommonUtility.getScrubbedInput(filterData?.params?.name))
 
             order((ascdir ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
         }
+
         return results
     }
 
