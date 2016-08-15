@@ -65,7 +65,11 @@ class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase 
         println "page 3"
         println actionItemROList2
 
-       // assertEquals( 5, actionItemROList1.result.size() )
+        def totalCount = actionItemROList1.result.size() + actionItemROList2.result.size() + actionItemROList3.result.size()
+
+        def actualLength = actionItemROList1.length
+
+        assertEquals( actualLength, totalCount )
     }
 
 
