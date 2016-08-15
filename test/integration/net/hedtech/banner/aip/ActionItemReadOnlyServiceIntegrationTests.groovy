@@ -48,12 +48,17 @@ class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase 
 
     @Test
     void testFetchUserActionItemROPageSortService() {
-        Map params = [filterName:"%",sortColumn:"folderName", sortDirection:"desc", max:20, offset:0]
-        def actionItemROList = actionItemReadOnlyService.listActionItemsPageSort(params)
+        Map params1 = [filterName:"%",sortColumn:"folderName", sortDirection:"desc", max:5, offset:0]
 
-        println actionItemROList
+        Map params2 = [filterName:"%",sortColumn:"folderName", sortDirection:"desc", max:5, offset:5]
 
-        //assertEquals( 20, actionItemROList.result.size() )
+        def actionItemROList1 = actionItemReadOnlyService.listActionItemsPageSort(params1)
+        def actionItemROList2 = actionItemReadOnlyService.listActionItemsPageSort(params2)
+
+        println actionItemROList1
+        println actionItemROList2
+
+        assertEquals( 5, actionItemROList1.result.size() )
     }
 
 
