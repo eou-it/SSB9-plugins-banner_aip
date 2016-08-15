@@ -22,11 +22,9 @@ class ActionItemReadOnlyService extends ServiceBase {
 
     def listActionItemsPageSort(Map params ) {
 
-        def sortDir = ( params?.sortDirection = true ) ? "asc" : "desc"
-
         def results =  ActionItemReadOnly.fetchWithPagingAndSortParams(
                 [params: [name: params?.filterName]],
-                [sortColumn: params?.sortColumn, sortDirection: sortDir, max: params?.max, offset: params?.offset] )
+                [sortColumn: params?.sortColumn, sortAscending:params?.sortAscending, max: params?.max, offset: params?.offset] )
 
         def resultCount = listActionItemROCount(  )
 

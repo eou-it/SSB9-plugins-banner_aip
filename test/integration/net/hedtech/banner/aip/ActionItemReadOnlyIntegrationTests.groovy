@@ -60,9 +60,9 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     void testActionItemSortNameAsc() {
         def results = ActionItemReadOnly.fetchWithPagingAndSortParams(
                 [params: [name: "%"]],
-                [sortColumn: "actionItemName", sortDirection: "asc", max: 5, offset: 0])
+                [sortColumn: "actionItemName", sortAscending: true, max: 10, offset: 0])
 
-        assertEquals( 5, results.size() )
+        assertEquals( 10, results.size() )
         println results
     }
 
@@ -70,7 +70,7 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     void testActionItemSortNameDesc() {
         def results = ActionItemReadOnly.fetchWithPagingAndSortParams(
                 [params: [name: "%"]],
-                [sortColumn: "actionItemName", sortDirection: "desc", max: 10, offset: 0] )
+                [sortColumn: "actionItemName", sortAscending: false, max: 10, offset: 0] )
 
         assertEquals( 10, results.size() )
         println results
