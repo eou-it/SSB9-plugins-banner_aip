@@ -45,6 +45,13 @@ class ActionItem implements Serializable {
     @Column(name = "GCBACTM_STATUS", length = 1)
     String active
 
+    /***
+     * Related ID of the action item
+     */
+
+    @Column(name = "GCBACTM_FOLDER_ID", length = 19)
+    Long folderId
+
     /**
      * User action item pertains to
      */
@@ -90,20 +97,21 @@ class ActionItem implements Serializable {
     String dataOrigin
 
 
+    @Override
     public String toString() {
-        """ActionItem[
-                id:$id,
-                name:$title,
-                state:$active,
-                title:$title,
-                active:$active,
-                userId:$userId,
-                activityDate:$activityDate,
-                description:$description,
-                creatorId:$creatorId
-                createDate:$createDate,
-                version:$version,
-                dataOrigin=$dataOrigin]"""
+        return "ActionItem{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", active='" + active + '\'' +
+                ", folderId=" + folderId +
+                ", userId='" + userId + '\'' +
+                ", activityDate=" + activityDate +
+                ", description='" + description + '\'' +
+                ", creatorId='" + creatorId + '\'' +
+                ", createDate=" + createDate +
+                ", version=" + version +
+                ", dataOrigin='" + dataOrigin + '\'' +
+                '}';
     }
 
 
@@ -145,7 +153,6 @@ class ActionItem implements Serializable {
     }
 
     static constraints = {
-        id(nullable: false, maxSize: 19)
         title(nullable: false, maxSize: 2048)
         active(nullable: false, maxSize: 1)
         userId(nullable: false, maxSize: 30)
@@ -153,7 +160,6 @@ class ActionItem implements Serializable {
         description(nullable: true) //summary length only for now
         creatorId(nullable: true, maxSize: 30)
         createDate(nullable: true, maxSize: 30)
-        version(nullable: false, maxSize: 30)
         dataOrigin(nullable: true, maxSize: 19)
     }
 
@@ -164,5 +170,4 @@ class ActionItem implements Serializable {
             return actionItem
         }
     }
-
 }
