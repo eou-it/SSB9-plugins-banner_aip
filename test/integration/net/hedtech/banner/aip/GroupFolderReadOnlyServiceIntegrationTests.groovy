@@ -42,4 +42,22 @@ class GroupFolderReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase
         assertEquals( 1, groupFolderListById.size() )
     }
 
+
+    @Test
+    void testFetchGroupFolderROPageSortService() {
+        Map params1 = [filterName:"%",sortColumn:"groupTitle", sortAscending:true, max:10, offset:0]
+        Map params2 = [filterName:"%",sortColumn:"groupTitle", sortAscending:true, max:10, offset:10]
+       // Map params3 = [filterName:"%",sortColumn:"groupTitle", sortAscending:true, max:10, offset:20]
+
+        def groupFolderROList1 = groupFolderReadOnlyService.listGroupFolderPageSort(params1)
+        def groupFolderROList2 = groupFolderReadOnlyService.listGroupFolderPageSort(params2)
+        //def groupFolderROList3 = groupFolderReadOnlyService.listGroupFolderPageSort(params3)
+
+        def totalCount = groupFolderROList1.result.size() + groupFolderROList2.result.size()
+
+        def actualLength = groupFolderROList1.length
+
+        assertEquals( actualLength, totalCount )
+    }
+
 }

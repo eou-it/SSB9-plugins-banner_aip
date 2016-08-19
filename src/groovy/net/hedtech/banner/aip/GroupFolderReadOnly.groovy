@@ -3,6 +3,12 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
+import org.hibernate.annotations.Type
+import org.hibernate.criterion.Order
+import net.hedtech.banner.general.CommunicationCommonUtility
+
 import javax.persistence.*
 
 
@@ -15,7 +21,11 @@ import javax.persistence.*
                 query = """
            FROM GroupFolderReadOnly a
            WHERE a.id = :myId
-          """)
+          """),
+        @NamedQuery(name="GroupFolderReadOnly.fetchGroupFolderROCount",
+                query = """SELECT COUNT(a.groupId) FROM GroupFolderReadOnly a
+            """
+        )
 ])
 
 @Entity
@@ -157,5 +167,22 @@ class GroupFolderReadOnly implements Serializable {
             List groupFolderListById = session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFoldersById' ).setLong( 'myId', id ).list()
             return groupFolderListById
         }
+    }
+
+    public static def fetchGroupFolderROCount() {
+        GroupFolderReadOnly.withSession { session ->
+            List groupFolderReadOnlyCount = session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolderROCount' ).list()
+            return groupFolderReadOnlyCount
+        }
+    }
+
+    public static fetchWithPagingAndSortParams(filterData, pagingAndSortParams) {
+        def searchStatus = filterData?.params?.status
+        def queryCriteria = GroupFolderReadOnly.createCriteria()
+        def results = queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
+            ilike("groupTitle", CommunicationCommonUtility.getScrubbedInput(filterData?.params?.name))
+            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+        }
+        return results
     }
 }

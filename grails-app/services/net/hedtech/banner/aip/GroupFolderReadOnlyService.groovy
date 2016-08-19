@@ -16,4 +16,22 @@ class GroupFolderReadOnlyService extends ServiceBase {
         return GroupFolderReadOnly.fetchGroupFoldersById( actionItemGroupId )
     }
 
+    def listGroupFolderROCount() {
+        return GroupFolderReadOnly.fetchGroupFolderROCount(  )
+    }
+
+    def listGroupFolderPageSort(Map params ) {
+        def results =  GroupFolderReadOnly.fetchWithPagingAndSortParams(
+                [params: [name: params?.filterName]],
+                [sortColumn: params?.sortColumn, sortAscending:params?.sortAscending, max: params?.max, offset: params?.offset] )
+
+        def resultCount = listGroupFolderROCount(  )
+        def resultMap = [
+                result: results,
+                length: resultCount[0]
+        ]
+
+        return resultMap
+    }
+
 }

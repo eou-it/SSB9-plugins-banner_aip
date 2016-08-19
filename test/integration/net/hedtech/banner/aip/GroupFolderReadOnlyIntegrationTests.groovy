@@ -71,6 +71,26 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         assertNotNull result
     }
 
+    @Test
+    void testGroupFolderSortNameAsc() {
+        def results = GroupFolderReadOnly.fetchWithPagingAndSortParams(
+                [params: [name: "%"]],
+                [sortColumn: "groupTitle", sortAscending: true, max: 10, offset: 0])
+
+        assertEquals( 10, results.size() )
+        println results
+    }
+
+    @Test
+    void testGroupFolderSortNameDesc() {
+        def results = GroupFolderReadOnly.fetchWithPagingAndSortParams(
+                [params: [name: "%"]],
+                [sortColumn: "groupTitle", sortAscending: false, max: 10, offset: 0] )
+
+        assertEquals( 10, results.size() )
+        println results
+    }
+
 
     @Test
     void testGroupFolderEquals() {
@@ -104,6 +124,4 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         assertFalse result
 
     }
-
-
 }

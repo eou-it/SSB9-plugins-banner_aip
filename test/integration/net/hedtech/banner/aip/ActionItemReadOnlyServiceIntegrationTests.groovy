@@ -27,7 +27,7 @@ class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase 
     }
 
     @Test
-    void testFetchUserActionItemByROFolderNoResults() {
+    void testFetchActionItemByROFolderNoResults() {
 
         def folderId = 0
 
@@ -37,7 +37,7 @@ class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase 
 
 
     @Test
-    void testFetchUserActionItemByROFolderService() {
+    void testFetchActionItemByROFolderService() {
         List<ActionItemReadOnly> actionItemROList = actionItemReadOnlyService.listActionItemRO()
         def folderId = actionItemROList[0].folderId
 
@@ -47,7 +47,7 @@ class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase 
 
 
     @Test
-    void testFetchUserActionItemROPageSortService() {
+    void testFetchActionItemROPageSortService() {
         Map params1 = [filterName:"%",sortColumn:"actionItemName", sortAscending:true, max:10, offset:0]
 
         Map params2 = [filterName:"%",sortColumn:"actionItemName", sortAscending:true, max:10, offset:10]
@@ -57,13 +57,6 @@ class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase 
         def actionItemROList1 = actionItemReadOnlyService.listActionItemsPageSort(params1)
         def actionItemROList2 = actionItemReadOnlyService.listActionItemsPageSort(params2)
         def actionItemROList3 = actionItemReadOnlyService.listActionItemsPageSort(params3)
-
-        println "page 1"
-        println actionItemROList1
-        println "page 2"
-        println actionItemROList2
-        println "page 3"
-        println actionItemROList2
 
         def totalCount = actionItemROList1.result.size() + actionItemROList2.result.size() + actionItemROList3.result.size()
 
