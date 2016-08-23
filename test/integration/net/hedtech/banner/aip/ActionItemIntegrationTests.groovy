@@ -4,11 +4,10 @@
 
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.ActionItem
+import net.hedtech.banner.testing.BaseIntegrationTestCase
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.After
-import net.hedtech.banner.testing.BaseIntegrationTestCase
 
 
 class ActionItemIntegrationTests extends BaseIntegrationTestCase {
@@ -91,5 +90,93 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         result = actionItemsList.equals( actionItemsListNull )
         assertFalse result
 
+    }
+
+
+    @Test
+    // duplicate title in a folder
+    void testActionItemConstraint() { //title and folder pair must be unique
+        List<ActionItem> actionItems = ActionItem.fetchActionItems()
+        def actionItem = actionItems[0]
+        def actionNew = new ActionItem()
+
+        actionNew.title = actionItem.title
+        actionNew.folderId = actionItem.folderId
+        actionNew.active = actionItem.active
+        actionNew.userId = actionItem.userId
+        actionNew.activityDate = actionItem.activityDate
+        actionNew.description = actionItem.description
+        actionNew.creatorId = actionItem.creatorId
+        actionNew.createDate = actionItem.createDate
+        actionNew.dataOrigin = actionItem.dataOrigin
+
+        shouldFail { actionNew.save( failOnError: true, flush: false ) }
+    }
+
+
+    // TODO: more verify constriants
+    @Test
+    void testUniqueTitleFolderCombo() {
+        List<ActionItem> actionItems = ActionItem.fetchActionItems()
+        def actionItem = actionItems[7]
+        def actionNew = new ActionItem()
+
+        actionNew.title = actionItem.title
+        actionNew.folderId = actionItem.folderId
+        actionNew.active = actionItem.active
+        actionNew.userId = actionItem.userId
+        actionNew.activityDate = actionItem.activityDate
+        actionNew.description = actionItem.description
+        actionNew.creatorId = actionItem.creatorId
+        actionNew.createDate = actionItem.createDate
+        actionNew.dataOrigin = actionItem.dataOrigin
+        //
+        assertFalse actionNew.validate()
+        // TODO: verify something
+        assertTrue (actionNew.errors.allErrors.codes[0].contains('actionItem.title.unique.error'))
+    }
+
+
+    @Test
+    void testNullTitleError() {
+        List<ActionItem> actionItems = ActionItem.fetchActionItems()
+        def actionItem = actionItems[7]
+        def actionNew = new ActionItem()
+
+        actionNew.title = null
+        actionNew.folderId = actionItem.folderId
+        actionNew.active = actionItem.active
+        actionNew.userId = actionItem.userId
+        actionNew.activityDate = actionItem.activityDate
+        actionNew.description = actionItem.description
+        actionNew.creatorId = actionItem.creatorId
+        actionNew.createDate = actionItem.createDate
+        actionNew.dataOrigin = actionItem.dataOrigin
+        //
+        assertFalse actionNew.validate()
+        // TODO: verify something
+        assertTrue (actionNew.errors.allErrors.codes[0].contains('actionItem.title.nullable.error'))
+    }
+
+
+    @Test
+    void testEmptyTitleError() {
+        List<ActionItem> actionItems = ActionItem.fetchActionItems()
+        def actionItem = actionItems[7]
+        def actionNew = new ActionItem()
+
+        actionNew.title = ''
+        actionNew.folderId = actionItem.folderId
+        actionNew.active = actionItem.active
+        actionNew.userId = actionItem.userId
+        actionNew.activityDate = actionItem.activityDate
+        actionNew.description = actionItem.description
+        actionNew.creatorId = actionItem.creatorId
+        actionNew.createDate = actionItem.createDate
+        actionNew.dataOrigin = actionItem.dataOrigin
+        //
+        assertFalse actionNew.validate()
+        // TODO: verify something
+        assertTrue (actionNew.errors.allErrors.codes[0].contains('actionItem.title.blank.error'))
     }
 }

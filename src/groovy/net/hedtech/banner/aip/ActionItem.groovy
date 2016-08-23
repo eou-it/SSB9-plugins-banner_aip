@@ -153,10 +153,11 @@ class ActionItem implements Serializable {
     }
 
     static constraints = {
-        title(nullable: false, maxSize: 2048)
-        active(nullable: false, maxSize: 1)
-        userId(nullable: false, maxSize: 30)
-        activityDate(nullable: false, maxSize: 30)
+        folderId(blank: false, nullable: false, maxSize: 30)
+        title(blank: false, nullable: false, maxSize: 2048, unique: 'folderId')
+        active(blank: false, nullable: false, maxSize: 1)
+        userId(blank: false, nullable: false, maxSize: 30)
+        activityDate(blank: false, nullable: false, maxSize: 30)
         description(nullable: true) //summary length only for now
         creatorId(nullable: true, maxSize: 30)
         createDate(nullable: true, maxSize: 30)
@@ -167,6 +168,15 @@ class ActionItem implements Serializable {
     public static def fetchActionItems( ) {
         ActionItem.withSession { session ->
             List actionItem = session.getNamedQuery('ActionItem.fetchActionItems').list()
+            return actionItem
+        }
+    }
+
+
+    // ReadOnly View?
+    public static def fetchActionItemById( Long myId) {
+        ActionItem.withSession { session ->
+            ActionItem actionItem = session.getNamedQuery( 'ActionItem.fetchActionItemById' ).setLong('myId', myId)?.list()[0]
             return actionItem
         }
     }

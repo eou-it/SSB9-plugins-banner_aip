@@ -78,7 +78,6 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
                 [sortColumn: "groupTitle", sortAscending: true, max: 10, offset: 0])
 
         assertEquals( 10, results.size() )
-        println results
     }
 
     @Test
@@ -88,7 +87,6 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
                 [sortColumn: "groupTitle", sortAscending: false, max: 10, offset: 0] )
 
         assertEquals( 10, results.size() )
-        println results
     }
 
 
