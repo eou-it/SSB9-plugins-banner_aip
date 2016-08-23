@@ -64,7 +64,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         List<ActionItem> actionItems = ActionItem.fetchActionItems()
         def actionItemsList = actionItems[0]
         def actionItemNewList = new ActionItem(
-                active: actionItemsList.active,
+                status: actionItemsList.status,
                 activityDate: actionItemsList.activityDate,
                 createDate: actionItemsList.createDate,
                 creatorId: actionItemsList.creatorId,
@@ -94,36 +94,14 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
-    // duplicate title in a folder
-    void testActionItemConstraint() { //title and folder pair must be unique
-        List<ActionItem> actionItems = ActionItem.fetchActionItems()
-        def actionItem = actionItems[0]
-        def actionNew = new ActionItem()
-
-        actionNew.title = actionItem.title
-        actionNew.folderId = actionItem.folderId
-        actionNew.active = actionItem.active
-        actionNew.userId = actionItem.userId
-        actionNew.activityDate = actionItem.activityDate
-        actionNew.description = actionItem.description
-        actionNew.creatorId = actionItem.creatorId
-        actionNew.createDate = actionItem.createDate
-        actionNew.dataOrigin = actionItem.dataOrigin
-
-        shouldFail { actionNew.save( failOnError: true, flush: false ) }
-    }
-
-
-    // TODO: more verify constriants
-    @Test
-    void testUniqueTitleFolderCombo() {
+    void testUniqueTitleFolderComboMethod() {
         List<ActionItem> actionItems = ActionItem.fetchActionItems()
         def actionItem = actionItems[7]
         def actionNew = new ActionItem()
 
         actionNew.title = actionItem.title
         actionNew.folderId = actionItem.folderId
-        actionNew.active = actionItem.active
+        actionNew.status = actionItem.status
         actionNew.userId = actionItem.userId
         actionNew.activityDate = actionItem.activityDate
         actionNew.description = actionItem.description
@@ -131,9 +109,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         actionNew.createDate = actionItem.createDate
         actionNew.dataOrigin = actionItem.dataOrigin
         //
-        assertFalse actionNew.validate()
-        // TODO: verify something
-        assertTrue (actionNew.errors.allErrors.codes[0].contains('actionItem.title.unique.error'))
+        assertTrue ActionItem.existsSameTitleInFolder( actionItem.folderId, actionItem.title )
     }
 
 
@@ -145,7 +121,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
 
         actionNew.title = null
         actionNew.folderId = actionItem.folderId
-        actionNew.active = actionItem.active
+        actionNew.status = actionItem.status
         actionNew.userId = actionItem.userId
         actionNew.activityDate = actionItem.activityDate
         actionNew.description = actionItem.description
@@ -167,7 +143,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
 
         actionNew.title = ''
         actionNew.folderId = actionItem.folderId
-        actionNew.active = actionItem.active
+        actionNew.status = actionItem.status
         actionNew.userId = actionItem.userId
         actionNew.activityDate = actionItem.activityDate
         actionNew.description = actionItem.description

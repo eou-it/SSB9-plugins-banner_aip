@@ -28,9 +28,7 @@ class ActionItemService extends ServiceBase {
 
         if (!ai.validate()) {
             def errorCodes = ai.errors.allErrors.codes[0]
-            if (errorCodes.contains( 'actionItem.title.unique' )) {
-                throw new ApplicationException( ActionItem, "@@r1:UniqueTitleInFolderError@@" )
-            } else if (errorCodes.contains( 'actionItem.title.nullable' )) {
+            if (errorCodes.contains( 'actionItem.title.nullable' )) {
                 throw new ApplicationException( ActionItem, "@@r1:TitleCanNotBeNullError@@" )
             } else {
                 throw new ApplicationException( ActionItem, "@@r1:ValidationError@@" )
@@ -39,6 +37,10 @@ class ActionItemService extends ServiceBase {
 
         if (!CommunicationFolder.fetchById( ai.folderId )) {
             throw new ApplicationException( ActionItem, "@@r1:FolderDoesNotExist@@" )
+        }
+
+        if (ActionItem.existsSameTitleInFolder( ai.folderId, ai.title )) {
+            throw new ApplicationException( ActionItem, "@@r1:UniqueTitleInFolderError@@" )
         }
     }
 

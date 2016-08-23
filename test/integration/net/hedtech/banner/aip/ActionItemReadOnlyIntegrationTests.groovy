@@ -30,7 +30,7 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
         List<ActionItemReadOnly> actionItemReadOnlyList = ActionItemReadOnly.fetchActionItemRO()
         def folderId = actionItemReadOnlyList[0].folderId
-        
+
         List<ActionItemReadOnly> actionItems = ActionItemReadOnly.fetchActionItemROByFolder( folderId )
         //assertEquals( 10, actionItems.size() )
         assert 0 < actionItems.size()
@@ -39,7 +39,7 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testFetchUserActionItemROByFolderNoResults() {
         def folderId = 0
-        
+
         List<ActionItemReadOnly> actionItems = ActionItemReadOnly.fetchActionItemROByFolder( folderId )
         assertEquals( 0, actionItems.size() )
         //println actionItems
@@ -63,7 +63,6 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
                 [sortColumn: "actionItemName", sortAscending: true, max: 10, offset: 0])
 
         assertEquals( 10, results.size() )
-        println results
     }
 
     @Test
@@ -73,7 +72,6 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
                 [sortColumn: "actionItemName", sortAscending: false, max: 10, offset: 0] )
 
         assertEquals( 10, results.size() )
-        println results
     }
 
     @Test
@@ -90,14 +88,14 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         result = actionItemROObj.hashCode()
         assertNotNull result
     }
-    
+
     @Test
     void testActionItemROEquals() {
         List<ActionItemReadOnly> actionItemReadOnlyList = ActionItemReadOnly.fetchActionItemRO()
         def folderId = actionItemReadOnlyList[0].folderId
 
         List<ActionItemReadOnly> actionItemsRO = ActionItemReadOnly.fetchActionItemROByFolder( folderId )
-        
+
         def actionItemListRO = actionItemsRO[0]
         def actionItemRONewList = new ActionItemReadOnly()
 

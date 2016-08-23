@@ -3,6 +3,8 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import org.hibernate.FlushMode
+
 import javax.persistence.*
 
 
@@ -15,7 +17,11 @@ import javax.persistence.*
                 query = """
            FROM ActionItem a
            WHERE a.id = :myId
-          """)
+          """),
+        @NamedQuery(name = "ActionItem.existsSameTitleInFolder",
+                query = """ FROM ActionItem a
+                    WHERE upper(a.title) = upper(:title)
+                    AND   a.folderId = :folderId"""),
 ])
 
 @Entity
@@ -36,20 +42,20 @@ class ActionItem implements Serializable {
     /**
      * Name of the action item
      */
-    @Column(name = "GCBACTM_NAME", length = 2048)
+    @Column(name = "GCBACTM_NAME")
     String title
 
     /**
-     * Indicator that the action item is active
+     * Status (Pending, Complete, other...)
      */
-    @Column(name = "GCBACTM_STATUS", length = 1)
-    String active
+    @Column(name = "GCBACTM_STATUS")
+    String status
 
     /***
      * Related ID of the action item
      */
 
-    @Column(name = "GCBACTM_FOLDER_ID", length = 19)
+    @Column(name = "GCBACTM_FOLDER_ID")
     Long folderId
 
     /**
@@ -91,9 +97,9 @@ class ActionItem implements Serializable {
     Long version
 
     /**
-     * Data Origin column for SORNOTE
+     * Data Origin column for GCBACTM
      */
-    @Column(name = "GCBACTM_DATA_ORIGIN", length = 30)
+    @Column(name = "GCBACTM_DATA_ORIGIN")
     String dataOrigin
 
 
@@ -102,7 +108,7 @@ class ActionItem implements Serializable {
         return "ActionItem{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", active='" + active + '\'' +
+                ", status='" + status + '\'' +
                 ", folderId=" + folderId +
                 ", userId='" + userId + '\'' +
                 ", activityDate=" + activityDate +
@@ -121,7 +127,7 @@ class ActionItem implements Serializable {
 
         ActionItem that = (ActionItem) o
 
-        if (active != that.active) return false
+        if (status != that.status) return false
         if (activityDate != that.activityDate) return false
         if (createDate != that.createDate) return false
         if (creatorId != that.creatorId) return false
@@ -141,7 +147,7 @@ class ActionItem implements Serializable {
         result = (id != null ? id.hashCode() : 0);
         result = 31 * result + (id != null ? id.hashCode() : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (active != null ? active.hashCode() : 0);
+        result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (userId != null ? userId.hashCode() : 0);
         result = 31 * result + (activityDate != null ? activityDate.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
@@ -153,9 +159,10 @@ class ActionItem implements Serializable {
     }
 
     static constraints = {
-        folderId(blank: false, nullable: false, maxSize: 30)
-        title(blank: false, nullable: false, maxSize: 2048, unique: 'folderId')
-        active(blank: false, nullable: false, maxSize: 1)
+        folderId(blank: false, nullable: false, maxSize: 19)
+        //title(blank: false, nullable: false, maxSize: 2048, unique: 'folderId') // This works but logs an error. Using existsSameTitleInFolder
+        title(blank: false, nullable: false, maxSize: 2048)
+        status(blank: false, nullable: false, maxSize: 30)
         userId(blank: false, nullable: false, maxSize: 30)
         activityDate(blank: false, nullable: false, maxSize: 30)
         description(nullable: true) //summary length only for now
@@ -179,5 +186,22 @@ class ActionItem implements Serializable {
             ActionItem actionItem = session.getNamedQuery( 'ActionItem.fetchActionItemById' ).setLong('myId', myId)?.list()[0]
             return actionItem
         }
+    }
+
+    // Check constraint requirement that a title in a folder must be unique
+    public static Boolean existsSameTitleInFolder( Long folderId, String title ) {
+        def query
+        ActionItem.withSession { session ->
+            session.setFlushMode( FlushMode.MANUAL );
+            try {
+                query = session.getNamedQuery( 'ActionItem.existsSameTitleInFolder' )
+                        .setString( 'title', title )
+                        .setLong( 'folderId', folderId )
+                        .list()[0]
+            } finally {
+                session.setFlushMode( FlushMode.AUTO )
+            }
+        }
+        return (query != null)
     }
 }

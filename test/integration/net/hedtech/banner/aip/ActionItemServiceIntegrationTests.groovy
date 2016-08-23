@@ -44,7 +44,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         def folderId = communicationFolderService.list()[0].id
         ActionItem ai = new ActionItem()
         ai.folderId = folderId
-        ai.active = 'Y'
+        ai.status = 'Pending'
         ai.title = 'Test Action Item. unique 98d7efh'
         ai.userId = 'something'
         ai.description = 'this is some action item'
@@ -53,7 +53,6 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         assertEquals( 'Test Action Item. unique 98d7efh', createdItem.title )
         assertEquals( folderId, createdItem.folderId )
         def verifyActionItem = actionItemService.getActionItemById( createdItem.id )
-        println verifyActionItem
         assertNotNull( verifyActionItem )
         assertEquals( 'Test Action Item. unique 98d7efh', verifyActionItem.title )
         assertEquals( folderId, verifyActionItem.folderId )
@@ -65,7 +64,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         def folderId = 919278
         ActionItem ai = new ActionItem()
         ai.folderId = folderId
-        ai.active = 'Y'
+        ai.status = 'Pending'
         ai.title = 'Test Action Item'
         ai.userId = 'something'
         ai.description = 'this is some action item'
@@ -86,7 +85,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ActionItem existingAI = actionItemService.list()[7]
         ActionItem ai = new ActionItem()
         ai.folderId = existingAI.folderId
-        ai.active = 'Y'
+        ai.status = 'Pending'
         ai.title = null
         ai.userId = 'something'
         ai.description = 'this is some action item'
@@ -107,7 +106,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ActionItem existingAI = actionItemService.list()[7]
         ActionItem ai = new ActionItem()
         ai.folderId = existingAI.folderId
-        ai.active = 'Y'
+        ai.status = 'Pending'
         ai.title = existingAI.title
         ai.userId = 'something'
         ai.description = 'this is some action item'
