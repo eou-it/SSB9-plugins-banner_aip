@@ -102,6 +102,27 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
+    void testCreateActionItemFailsNoStatus() {
+        ActionItem existingAI = actionItemService.list()[7]
+        ActionItem ai = new ActionItem()
+        ai.folderId = existingAI.folderId
+        ai.status = null
+        ai.title = ' a title ds8f4h3'
+        ai.userId = 'something'
+        ai.description = 'this is some action item'
+        ai.activityDate = new java.util.Date( System.currentTimeMillis() )
+        // fails due to no folder matching id
+        try {
+            actionItemService.create( ai )
+            Assert.fail "Expected to fail because folder does not exist."
+        } catch (ApplicationException e) {
+            assertTrue( e.getMessage().toString().contains( "@@r1:StatusCanNotBeNullError@@" ) )
+
+        }
+    }
+
+
+    @Test
     void testCreateActionItemFailsFolderTitleCombo() {
         ActionItem existingAI = actionItemService.list()[7]
         ActionItem ai = new ActionItem()

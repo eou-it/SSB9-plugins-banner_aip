@@ -131,7 +131,51 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         //
         assertFalse actionNew.validate()
         // TODO: verify something
-        assertTrue (actionNew.errors.allErrors.codes[0].contains('actionItem.title.nullable.error'))
+        assertTrue (actionNew.errors.allErrors.codes[0].contains( 'actionItem.title.nullable.error' ) )
+    }
+
+
+    @Test
+    void testNullStatusError() {
+        List<ActionItem> actionItems = ActionItem.fetchActionItems()
+        def actionItem = actionItems[7]
+        def actionNew = new ActionItem()
+
+        actionNew.title = 'a title f984h'
+        actionNew.folderId = actionItem.folderId
+        actionNew.status = null
+        actionNew.userId = actionItem.userId
+        actionNew.activityDate = actionItem.activityDate
+        actionNew.description = actionItem.description
+        actionNew.creatorId = actionItem.creatorId
+        actionNew.createDate = actionItem.createDate
+        actionNew.dataOrigin = actionItem.dataOrigin
+        //
+        assertFalse actionNew.validate()
+        // TODO: verify something
+        assertTrue( actionNew.errors.allErrors.codes[0].contains( 'actionItem.status.nullable.error' ) )
+    }
+
+
+    @Test
+    void testNullFolderError() {
+        List<ActionItem> actionItems = ActionItem.fetchActionItems()
+        def actionItem = actionItems[7]
+        def actionNew = new ActionItem()
+
+        actionNew.title = 'a title f984h'
+        actionNew.folderId = null
+        actionNew.status = 'Pending'
+        actionNew.userId = actionItem.userId
+        actionNew.activityDate = actionItem.activityDate
+        actionNew.description = actionItem.description
+        actionNew.creatorId = actionItem.creatorId
+        actionNew.createDate = actionItem.createDate
+        actionNew.dataOrigin = actionItem.dataOrigin
+        //
+        assertFalse actionNew.validate()
+        // TODO: verify something
+        assertTrue( actionNew.errors.allErrors.codes[0].contains( 'actionItem.folderId.nullable.error' ) )
     }
 
 

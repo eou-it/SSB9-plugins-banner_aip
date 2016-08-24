@@ -10,6 +10,14 @@ import net.hedtech.banner.service.ServiceBase
 
 class ActionItemService extends ServiceBase {
 
+    static final String UNIQUE_TITLE_ERROR = '@@r1:UniqueTitleInFolderError@@'
+    static final String NO_TITLE_ERROR = '@@r1:TitleCanNotBeNullError@@'
+    static final String FOLDER_VALIDATION_ERROR = '@@r1:FolderDoesNotExist@@'
+    static final String NO_FOLDER_ERROR = '@@r1:FolderCanNotBeNullError@@'
+    static final String NO_STATUS_ERROR = '@@r1:StatusCanNotBeNullError@@'
+    static final String OTHER_VALIDATION_ERROR = '@@r1:ValidationError@@'
+
+
     def communicationFolderService
 
     //simple return of all action items
@@ -29,18 +37,22 @@ class ActionItemService extends ServiceBase {
         if (!ai.validate()) {
             def errorCodes = ai.errors.allErrors.codes[0]
             if (errorCodes.contains( 'actionItem.title.nullable' )) {
-                throw new ApplicationException( ActionItem, "@@r1:TitleCanNotBeNullError@@" )
+                throw new ApplicationException( ActionItem, NO_TITLE_ERROR, 'actionItem.title.nullable.error' )
+            } else if (errorCodes.contains( 'actionItem.folderId.nullable' )) {
+                throw new ApplicationException( ActionItem, NO_FOLDER_ERROR, 'actionItem.folderId.nullable.error' )
+            } else if (errorCodes.contains( 'actionItem.status.nullable' )) {
+                throw new ApplicationException( ActionItem, NO_STATUS_ERROR, 'actionItem.status.nullable.error' )
             } else {
-                throw new ApplicationException( ActionItem, "@@r1:ValidationError@@" )
+                throw new ApplicationException( ActionItem, OTHER_VALIDATION_ERROR, 'actionItem.operation.not.permitted' )
             }
         }
 
         if (!CommunicationFolder.fetchById( ai.folderId )) {
-            throw new ApplicationException( ActionItem, "@@r1:FolderDoesNotExist@@" )
+            throw new ApplicationException( ActionItem, FOLDER_VALIDATION_ERROR, 'actionItem.folder.validation.error' )
         }
 
         if (ActionItem.existsSameTitleInFolder( ai.folderId, ai.title )) {
-            throw new ApplicationException( ActionItem, "@@r1:UniqueTitleInFolderError@@" )
+            throw new ApplicationException( ActionItem, UNIQUE_TITLE_ERROR, 'actionItem.title.unique.error' )
         }
     }
 
