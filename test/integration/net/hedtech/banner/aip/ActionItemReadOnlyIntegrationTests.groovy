@@ -103,6 +103,7 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         actionItemRONewList.actionItemName = actionItemListRO.actionItemName
         actionItemRONewList.folderId = actionItemListRO.folderId
         actionItemRONewList.folderName = actionItemListRO.folderName
+        actionItemRONewList.folderDesc = actionItemListRO.folderDesc
         actionItemRONewList.actionItemDesc = actionItemListRO.actionItemDesc
         actionItemRONewList.actionItemStatus = actionItemListRO.actionItemStatus
         actionItemRONewList.actionItemActivityDate = actionItemListRO.actionItemActivityDate

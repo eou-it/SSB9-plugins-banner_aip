@@ -110,6 +110,7 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         groupFolderNewList.groupVpdiCode = groupFolderByIdList.groupVpdiCode
         groupFolderNewList.folderDesc = groupFolderByIdList.folderDesc
         groupFolderNewList.folderName = groupFolderByIdList.folderName
+        groupFolderNewList.folderId = groupFolderByIdList.folderId
 
         def result = groupFolderNewList.equals( groupFolderByIdList )
         assertTrue result

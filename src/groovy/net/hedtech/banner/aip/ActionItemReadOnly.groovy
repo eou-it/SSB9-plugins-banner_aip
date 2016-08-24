@@ -57,11 +57,19 @@ class ActionItemReadOnly implements Serializable {
     Long folderId
 
     /**
-     * ID of the action item folder
+     * Name of the action item folder
      */
 
     @Column(name = "ACTION_ITEM_FOLDER_NAME")
     String folderName
+
+    /**
+     * Description of the action item folder
+     */
+
+    @Column(name = "ACTION_ITEM_FOLDER_DESCRIPTION")
+    String folderDesc
+
 
     /**
      * PIDM of the user action item belongs to
@@ -121,6 +129,7 @@ class ActionItemReadOnly implements Serializable {
                 ", actionItemName='" + actionItemName + '\'' +
                 ", folderId=" + folderId +
                 ", folderName='" + folderName + '\'' +
+                ", folderDesc='" + folderDesc + '\'' +
                 ", actionItemDesc='" + actionItemDesc + '\'' +
                 ", actionItemStatus='" + actionItemStatus + '\'' +
                 ", actionItemActivityDate=" + actionItemActivityDate +
@@ -148,6 +157,7 @@ class ActionItemReadOnly implements Serializable {
         if (actionItemVersion != that.actionItemVersion) return false
         if (folderId != that.folderId) return false
         if (folderName != that.folderName) return false
+        if (folderDesc != that.folderDesc) return false
 
         return true
     }
@@ -159,6 +169,7 @@ class ActionItemReadOnly implements Serializable {
         result = 31 * result + (actionItemName != null ? actionItemName.hashCode() : 0)
         result = 31 * result + (folderId != null ? folderId.hashCode() : 0)
         result = 31 * result + (folderName != null ? folderName.hashCode() : 0)
+        result = 31 * result + (folderDesc != null ? folderDesc.hashCode() : 0)
         result = 31 * result + (actionItemDesc != null ? actionItemDesc.hashCode() : 0)
         result = 31 * result + (actionItemStatus != null ? actionItemStatus.hashCode() : 0)
         result = 31 * result + (actionItemActivityDate != null ? actionItemActivityDate.hashCode() : 0)

@@ -52,7 +52,7 @@ class GroupFolderReadOnly implements Serializable {
      * Indicator that the action item is active
      */
 
-    @Column(name = "ACTION_ITEM_GROUP_DESC")
+    @Column(name = "ACTION_ITEM_GROUP_DESCRIPTION")
     String groupDesc
 
     /**
@@ -92,16 +92,23 @@ class GroupFolderReadOnly implements Serializable {
     String groupVpdiCode
 
     /**
-     * Folder name
+     * Folder ID
      */
 
     @Column(name = "ACTION_ITEM_FOLDER_NAME")
     String folderName
 
     /**
+     * Folder name
+     */
+
+    @Column(name = "ACTION_ITEM_FOLDER_ID")
+    String folderId
+
+    /**
      * Folder Description
      */
-    @Column(name = "ACTION_ITEM_FOLDER_DESC")
+    @Column(name = "ACTION_ITEM_FOLDER_DESCRIPTION")
     String folderDesc
 
 
@@ -115,6 +122,7 @@ class GroupFolderReadOnly implements Serializable {
                 ", groupUserId='" + groupUserId + '\'' +
                 ", groupVersion=" + groupVersion +
                 ", groupVpdiCode='" + groupVpdiCode + '\'' +
+                ", folderId='" + folderId + '\'' +
                 ", folderName='" + folderName + '\'' +
                 ", folderDesc='" + folderDesc + '\'' +
                 '}';
@@ -128,6 +136,7 @@ class GroupFolderReadOnly implements Serializable {
 
         if (folderDesc != that.folderDesc) return false
         if (folderName != that.folderName) return false
+        if (folderId != that.folderId) return false
         if (groupActivityDate != that.groupActivityDate) return false
         if (groupDesc != that.groupDesc) return false
         if (groupId != that.groupId) return false
@@ -150,6 +159,7 @@ class GroupFolderReadOnly implements Serializable {
         result = 31 * result + (groupUserId != null ? groupUserId.hashCode() : 0)
         result = 31 * result + (groupVersion != null ? groupVersion.hashCode() : 0)
         result = 31 * result + (groupVpdiCode != null ? groupVpdiCode.hashCode() : 0)
+        result = 31 * result + (folderId != null ? folderId.hashCode() : 0)
         result = 31 * result + (folderName != null ? folderName.hashCode() : 0)
         result = 31 * result + (folderDesc != null ? folderDesc.hashCode() : 0)
         return result
