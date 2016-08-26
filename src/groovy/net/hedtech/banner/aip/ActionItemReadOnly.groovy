@@ -3,18 +3,19 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
-import org.hibernate.annotations.Type
-import org.hibernate.criterion.Order
 import net.hedtech.banner.general.CommunicationCommonUtility
-
+import org.hibernate.criterion.Order
 
 import javax.persistence.*
 
 
 @NamedQueries(value = [
 
+        @NamedQuery(name = "ActionItemReadOnly.fetchActionItemROById",
+                query = """
+           FROM ActionItemReadOnly a
+           WHERE a.actionItemId = :myId
+          """),
         @NamedQuery(name = "ActionItemReadOnly.fetchActionItemRO",
                 query = """
            FROM ActionItemReadOnly a
@@ -178,6 +179,15 @@ class ActionItemReadOnly implements Serializable {
         result = 31 * result + (actionItemCreateDate != null ? actionItemCreateDate.hashCode() : 0)
         result = 31 * result + (actionItemVersion != null ? actionItemVersion.hashCode() : 0)
         return result
+    }
+
+
+    public static def fetchActionItemROById( Long myId ) {
+        ActionItemReadOnly.withSession { session ->
+            ActionItemReadOnly actionItemReadOnly = session.getNamedQuery( 'ActionItemReadOnly.fetchActionItemROById' ).setLong( 'myId',
+                    myId ).list()[0]
+            return actionItemReadOnly
+        }
     }
 
 

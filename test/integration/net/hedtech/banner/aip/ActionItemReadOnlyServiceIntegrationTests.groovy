@@ -27,8 +27,18 @@ class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase 
     }
 
     @Test
-    void testFetchActionItemByROFolderNoResults() {
+    void testGetActionItemROById() {
+        ActionItemReadOnly aiReadOnly = actionItemReadOnlyService.listActionItemRO(  )[3]
+        assertNotNull( aiReadOnly )
+        ActionItemReadOnly actionItemRO = actionItemReadOnlyService.getActionItemROById( aiReadOnly.actionItemId )
+        assertEquals( aiReadOnly.actionItemId, actionItemRO.actionItemId )
+        assertEquals( aiReadOnly.actionItemDesc, actionItemRO.actionItemDesc )
+        assertEquals( aiReadOnly.folderDesc, actionItemRO.folderDesc )
+        assertEquals( aiReadOnly.folderName, actionItemRO.folderName )
+    }
 
+    @Test
+    void testFetchActionItemByROFolderNoResults() {
         def folderId = 0
 
         List<ActionItemReadOnly> actionItemsRO = actionItemReadOnlyService.listActionItemROByFolder( folderId )

@@ -7,32 +7,39 @@ import net.hedtech.banner.service.ServiceBase
 
 class ActionItemReadOnlyService extends ServiceBase {
 
+    def getActionItemROById( Long aiId) {
+        return ActionItemReadOnly.fetchActionItemROById( aiId )
+    }
+
     //simple return of all action items
     def listActionItemRO() {
         return ActionItemReadOnly.fetchActionItemRO()
     }
 
+
     def listActionItemROCount() {
         return ActionItemReadOnly.fetchActionItemROCount()
     }
 
-    def listActionItemROByFolder(Long folderId) {
+
+    def listActionItemROByFolder( Long folderId ) {
         return ActionItemReadOnly.fetchActionItemROByFolder( folderId )
     }
 
-    def listActionItemsPageSort(Map params ) {
 
-        def results =  ActionItemReadOnly.fetchWithPagingAndSortParams(
+    def listActionItemsPageSort( Map params ) {
+
+        def results = ActionItemReadOnly.fetchWithPagingAndSortParams(
                 [params: [name: params?.filterName]],
-                [sortColumn: params?.sortColumn, sortAscending:params?.sortAscending, max: params?.max, offset: params?.offset] )
+                [sortColumn: params?.sortColumn, sortAscending: params?.sortAscending, max: params?.max, offset: params?.offset] )
 
-        def resultCount = listActionItemROCount(  )
+        def resultCount = listActionItemROCount()
 
 
-       def resultMap = [
-             result: results,
-             length: resultCount[0]
-       ]
+        def resultMap = [
+                result: results,
+                length: resultCount[0]
+        ]
 
         return resultMap
 
