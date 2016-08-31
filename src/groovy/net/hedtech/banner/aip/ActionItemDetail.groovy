@@ -38,7 +38,7 @@ class ActionItemDetail implements Serializable {
     /**
      * Text for action item detail
      */
-    @Column(name = "GCRACNT_ACTION_ITEM_TEXT")
+    @Column(name = "GCRACNT_ACTION_ITEM_TEXT", columnDefinition = "TEXT")
     /*need to figure out what to limit length to for display*/
     String text
 

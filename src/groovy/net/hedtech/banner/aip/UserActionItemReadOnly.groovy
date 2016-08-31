@@ -53,7 +53,7 @@ class UserActionItemReadOnly implements Serializable {
     /**
      * Description for action item
      */
-    @Column(name = "ACTION_ITEM_DESCRIPTION")
+    @Column(name = "ACTION_ITEM_DESCRIPTION", columnDefinition = "TEXT")
     /*need to figure out what to limit length to for display*/
     String description
 

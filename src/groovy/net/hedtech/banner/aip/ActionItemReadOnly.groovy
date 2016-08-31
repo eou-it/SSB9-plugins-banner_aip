@@ -76,7 +76,7 @@ class ActionItemReadOnly implements Serializable {
      * PIDM of the user action item belongs to
      */
 
-    @Column(name = "ACTION_ITEM_DESCRIPTION")
+    @Column(name = "ACTION_ITEM_DESCRIPTION", columnDefinition = "TEXT")
     String actionItemDesc
 
     /**
