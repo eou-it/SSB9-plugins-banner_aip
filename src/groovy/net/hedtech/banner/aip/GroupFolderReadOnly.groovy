@@ -10,6 +10,7 @@ import org.hibernate.criterion.Order
 import net.hedtech.banner.general.CommunicationCommonUtility
 
 import javax.persistence.*
+import java.awt.TextArea
 
 
 @NamedQueries(value = [
@@ -52,7 +53,7 @@ class GroupFolderReadOnly implements Serializable {
      * Indicator that the action item is active
      */
 
-    @Column(name = "ACTION_ITEM_GROUP_DESCRIPTION")
+    @Column(name = "ACTION_ITEM_GROUP_DESCRIPTION", columnDefinition = "TEXT")
     String groupDesc
 
     /**

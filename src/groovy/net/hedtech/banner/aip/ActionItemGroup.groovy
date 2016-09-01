@@ -56,7 +56,7 @@ class ActionItemGroup implements Serializable {
     /**
      * Description for action item
      */
-    @Column(name = "GCBAGRP_DESCRIPTION")
+    @Column(name = "GCBAGRP_DESCRIPTION", columnDefinition = "TEXT")
     /*need to figure out what to limit length to for display*/
     String description
 

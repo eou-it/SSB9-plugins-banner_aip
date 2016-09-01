@@ -50,7 +50,7 @@ class UserActionItem implements Serializable {
     /**
      * Status of action item
      */
-    @Column(name = "GCRAACT_STATUS", length = 30)
+    @Column(name = "GCRAACT_STATUS_ID", length = 19)
     String status
 
     /**

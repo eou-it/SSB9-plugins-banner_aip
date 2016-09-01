@@ -73,7 +73,7 @@ class ActionItem implements Serializable {
     /**
      * Description for action item
      */
-    @Column(name = "GCBACTM_DESCRIPTION")
+    @Column(name = "GCBACTM_DESCRIPTION", columnDefinition = "TEXT")
     /*need to figure out what to limit length to for display*/
     String description
 
