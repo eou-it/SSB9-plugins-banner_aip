@@ -3,6 +3,8 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import org.hibernate.FlushMode
+
 import javax.persistence.*
 
 
@@ -15,7 +17,11 @@ import javax.persistence.*
                 query = """
            FROM ActionItemGroup a
            WHERE a.id = :myId
-          """)
+          """),
+        @NamedQuery(name = "ActionItemGroup.existsSameTitleInFolder",
+                query = """ FROM ActionItemGroup a
+                    WHERE upper(a.title) = upper(:title)
+                    AND   a.folderId = :folderId""")
 ])
 
 @Entity
@@ -61,7 +67,7 @@ class ActionItemGroup implements Serializable {
     String description
 
     /**
-     * Indicator that the action item is active
+     * Pending, Active, InActive ...
      */
     @Column(name = "GCBAGRP_STATUS", length = 30)
     String status
@@ -133,13 +139,13 @@ class ActionItemGroup implements Serializable {
     }
 
     static constraints = {
-        title(nullable: false, maxSize: 2048, unique: 'folderId')
+        title(nullable: false, maxSize: 2048)
         description(nullable: true) //summary length only for now
         folderId(nullable: false, maxSize: 30)
         status(nullable: false, maxSize: 30)
         userId(nullable: false, maxSize: 30)
         activityDate(nullable: false, maxSize: 30)
-        //dataOrigin(nullable: true, maxSize: 19)
+        dataOrigin(nullable: true, maxSize: 19)
     }
 
 
@@ -152,10 +158,24 @@ class ActionItemGroup implements Serializable {
 
     public static def fetchActionItemGroupById(Long id) {
         ActionItemGroup.withSession { session ->
-            ActionItemGroup actionItemGroupById = session.getNamedQuery('ActionItemGroup.fetchActionItemGroupById').setLong('myId', id).list()[0]
+            ActionItemGroup actionItemGroupById = session.getNamedQuery( 'ActionItemGroup.fetchActionItemGroupById' ).setLong( 'myId', id ).list()[0]
             return actionItemGroupById
         }
-
-
+    }
+    // Check constraint requirement that a title in a folder must be unique
+    public static Boolean existsSameTitleInFolder( Long folderId, String title ) {
+        def query
+        ActionItem.withSession { session ->
+            session.setFlushMode( FlushMode.MANUAL );
+            try {
+                query = session.getNamedQuery( 'ActionItemGroup.existsSameTitleInFolder' )
+                        .setString( 'title', title )
+                        .setLong( 'folderId', folderId )
+                        .list()[0]
+            } finally {
+                session.setFlushMode( FlushMode.AUTO )
+            }
+        }
+        return (query != null)
     }
 }
