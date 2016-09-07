@@ -159,8 +159,8 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
             actionItemService.create( ai )
             Assert.fail "Expected to fail because folder does not exist."
         } catch (ApplicationException e) {
-            assertTrue( e.getMessage().toString().contains( ActionItemService.OTHER_VALIDATION_ERROR ) )
-            assertTrue( e.getDefaultMessage(  ).toString().contains( 'actionItem.operation.not.permitted' ) )
+            assertTrue( e.getMessage().toString().contains( ActionItemService.MAX_SIZE_ERROR ) )
+            assertTrue( e.getDefaultMessage(  ).toString().contains( 'max.size' ) )
         }
     }
 

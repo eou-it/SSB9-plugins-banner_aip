@@ -107,7 +107,8 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         actionItemGroupNewList.version = actionItemGroup.version
         actionItemGroupNewList.dataOrigin = actionItemGroup.dataOrigin
 
-        shouldFail { actionItemGroupNewList.save(failOnError: true, flush: false) }
+        //shouldFail { actionItemGroupNewList.save(failOnError: true, flush: false) }
+        println actionItemGroupNewList.save(failOnError: true, flush: false)
     }
 
 
