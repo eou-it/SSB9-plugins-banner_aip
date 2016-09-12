@@ -111,6 +111,8 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         actionItemRONewList.actionItemCreatorId = actionItemListRO.actionItemCreatorId
         actionItemRONewList.actionItemCreateDate = actionItemListRO.actionItemCreateDate
         actionItemRONewList.actionItemVersion = actionItemListRO.actionItemVersion
+        actionItemRONewList.actionItemTemplateId = actionItemListRO.actionItemTemplateId
+        actionItemRONewList.actionItemContent = actionItemListRO.actionItemContent
 
         def result = actionItemRONewList.equals( actionItemListRO )
         assertTrue result
