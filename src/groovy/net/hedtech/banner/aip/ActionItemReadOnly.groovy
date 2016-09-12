@@ -154,9 +154,10 @@ class ActionItemReadOnly implements Serializable {
                 ", actionItemCreateDate=" + actionItemCreateDate +
                 ", actionItemVersion=" + actionItemVersion +
                 ", actionItemTemplateId=" + actionItemTemplateId +
-                ", actionItemContent=" + actionItemContent +
+                ", actionItemContent='" + actionItemContent + '\'' +
                 '}';
     }
+
 
     boolean equals( o ) {
         if (this.is( o )) return true
@@ -165,19 +166,19 @@ class ActionItemReadOnly implements Serializable {
         ActionItemReadOnly that = (ActionItemReadOnly) o
 
         if (actionItemActivityDate != that.actionItemActivityDate) return false
+        if (actionItemContent != that.actionItemContent) return false
         if (actionItemCreateDate != that.actionItemCreateDate) return false
         if (actionItemCreatorId != that.actionItemCreatorId) return false
         if (actionItemDesc != that.actionItemDesc) return false
         if (actionItemId != that.actionItemId) return false
         if (actionItemName != that.actionItemName) return false
         if (actionItemStatus != that.actionItemStatus) return false
+        if (actionItemTemplateId != that.actionItemTemplateId) return false
         if (actionItemUserId != that.actionItemUserId) return false
         if (actionItemVersion != that.actionItemVersion) return false
-        if (actionItemTemplateId != that.actionItemTemplateId) return false
-        if (actionItemContent != that.actionItemContent) return false
+        if (folderDesc != that.folderDesc) return false
         if (folderId != that.folderId) return false
         if (folderName != that.folderName) return false
-        if (folderDesc != that.folderDesc) return false
 
         return true
     }
@@ -249,6 +250,5 @@ class ActionItemReadOnly implements Serializable {
 
         return results
     }
-
 
 }

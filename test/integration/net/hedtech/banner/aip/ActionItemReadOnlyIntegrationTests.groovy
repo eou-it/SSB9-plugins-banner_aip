@@ -33,6 +33,9 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
         List<ActionItemReadOnly> actionItems = ActionItemReadOnly.fetchActionItemROByFolder( folderId )
         //assertEquals( 10, actionItems.size() )
+
+        println actionItems
+
         assert 0 < actionItems.size()
     }
 
