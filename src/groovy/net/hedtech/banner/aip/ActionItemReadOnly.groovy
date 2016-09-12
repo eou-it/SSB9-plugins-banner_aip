@@ -130,6 +130,15 @@ class ActionItemReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_TEMPLATE_ID", length = 19)
     Long actionItemTemplateId
 
+
+    /**
+     * ID of the action item content record
+     */
+
+
+    @Column(name = "ACTION_ITEM_CONTENT_ID", length = 19)
+    Long actionItemContentId
+
     /**
      * Content for the action item
      */
@@ -154,6 +163,7 @@ class ActionItemReadOnly implements Serializable {
                 ", actionItemCreateDate=" + actionItemCreateDate +
                 ", actionItemVersion=" + actionItemVersion +
                 ", actionItemTemplateId=" + actionItemTemplateId +
+                ", actionItemContentId='" + actionItemContentId + '\'' +
                 ", actionItemContent='" + actionItemContent + '\'' +
                 '}';
     }
@@ -166,6 +176,7 @@ class ActionItemReadOnly implements Serializable {
         ActionItemReadOnly that = (ActionItemReadOnly) o
 
         if (actionItemActivityDate != that.actionItemActivityDate) return false
+        if (actionItemContentId != that.actionItemContentId) return false
         if (actionItemContent != that.actionItemContent) return false
         if (actionItemCreateDate != that.actionItemCreateDate) return false
         if (actionItemCreatorId != that.actionItemCreatorId) return false
@@ -199,6 +210,7 @@ class ActionItemReadOnly implements Serializable {
         result = 31 * result + (actionItemCreateDate != null ? actionItemCreateDate.hashCode() : 0)
         result = 31 * result + (actionItemVersion != null ? actionItemVersion.hashCode() : 0)
         result = 31 * result + (actionItemTemplateId != null ? actionItemTemplateId.hashCode() : 0)
+        result = 31 * result + (actionItemContentId != null ? actionItemContentId.hashCode() : 0)
         result = 31 * result + (actionItemContent != null ? actionItemContent.hashCode() : 0)
         return result
     }
