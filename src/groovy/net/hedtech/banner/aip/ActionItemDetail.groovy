@@ -42,6 +42,12 @@ class ActionItemDetail implements Serializable {
     /*need to figure out what to limit length to for display*/
     String text
 
+    /***
+    * Related ID of the action item template
+    */
+    @Column(name = "GCRACNT_TEMPLATE_REFERENCE_ID", length = 19)
+    Long actionItemTemplateId
+
 
     /**
      * User action item pertains to
@@ -80,6 +86,7 @@ class ActionItemDetail implements Serializable {
                 id:$id,
                 actionItemId:$actionItemId,
                 text:$text,
+                actionItemTemplateId:$actionItemTemplateId,
                 userId:$userId,
                 activityDate:$activityDate,
                 version:$version,
@@ -99,6 +106,7 @@ class ActionItemDetail implements Serializable {
         if (dataOrigin != that.dataOrigin) return false
         if (id != that.id) return false
         if (text != that.text) return false
+        if (actionItemTemplateId != that.actionItemTemplateId) return false
         if (userId != that.userId) return false
         if (version != that.version) return false
 
@@ -112,6 +120,7 @@ class ActionItemDetail implements Serializable {
         result = 31 * result + (id != null ? id.hashCode() : 0);
         result = 31 * result + (actionItemId != null ? actionItemId.hashCode() : 0);
         result = 31 * result + (text != null ? text.hashCode() : 0);
+        result = 31 * result + (actionItemTemplateId != null ? actionItemTemplateId.hashCode() : 0);
         result = 31 * result + (userId != null ? userId.hashCode() : 0);
         result = 31 * result + (activityDate != null ? activityDate.hashCode() : 0);
         result = 31 * result + (templateReferenceId != null ? templateReferenceId.hashCode() : 0);
@@ -124,6 +133,7 @@ class ActionItemDetail implements Serializable {
         id(nullable: false, maxSize: 19)
         actionItemId(nullable: false, maxSize: 19)
         text(nullable: true) //summary length only for now
+        actionItemTemplateId(nullable: true)
         userId(nullable: false, maxSize: 30)
         activityDate(nullable: false, maxSize: 30)
         templateReferenceId(nullable: true)

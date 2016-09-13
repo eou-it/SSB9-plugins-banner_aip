@@ -7,8 +7,6 @@ grails.project.lib.dir = "lib"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 
-grails.plugin.location.'banner-general-common'="../banner_general_common.git"
-
 // When deploying a war it is important to exclude the Oracle database drivers.  Not doing so will
 // result in the all-too-familiar exception:
 // "Cannot cast object 'oracle.jdbc.driver.T4CConnection@6469adc7'... to class 'oracle.jdbc.OracleConnection'
@@ -18,6 +16,7 @@ grails.war.resources = { stagingDir ->
 
 //grails.plugin.location.'banner-student-common'="../banner_student_common.git"
 grails.plugin.location.'banner-general-person'="../banner_general_person.git"
+grails.plugin.location.'banner-general-common'="../banner_general_common.git"
 
 grails.project.dependency.resolver = "maven" // or maven
 

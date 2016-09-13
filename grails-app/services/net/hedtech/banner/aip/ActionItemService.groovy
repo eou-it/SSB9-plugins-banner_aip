@@ -15,6 +15,7 @@ class ActionItemService extends ServiceBase {
     static final String FOLDER_VALIDATION_ERROR = '@@r1:FolderDoesNotExist@@'
     static final String NO_FOLDER_ERROR = '@@r1:FolderCanNotBeNullError@@'
     static final String NO_STATUS_ERROR = '@@r1:StatusCanNotBeNullError@@'
+    static final String MAX_SIZE_ERROR = '@@r1:MaxSizeError@@'
     static final String OTHER_VALIDATION_ERROR = '@@r1:ValidationError@@'
 
 
@@ -36,12 +37,15 @@ class ActionItemService extends ServiceBase {
 
         if (!ai.validate()) {
             def errorCodes = ai.errors.allErrors.codes[0]
+
             if (errorCodes.contains( 'actionItem.title.nullable' )) {
                 throw new ApplicationException( ActionItem, NO_TITLE_ERROR, 'actionItem.title.nullable.error' )
             } else if (errorCodes.contains( 'actionItem.folderId.nullable' )) {
                 throw new ApplicationException( ActionItem, NO_FOLDER_ERROR, 'actionItem.folderId.nullable.error' )
             } else if (errorCodes.contains( 'actionItem.status.nullable' )) {
                 throw new ApplicationException( ActionItem, NO_STATUS_ERROR, 'actionItem.status.nullable.error' )
+            } else if (errorCodes.contains( 'maxSize.exceeded' )) {
+                throw new ApplicationException( ActionItem, MAX_SIZE_ERROR, 'actionItem.max.size.error' )
             } else {
                 throw new ApplicationException( ActionItem, OTHER_VALIDATION_ERROR, 'actionItem.operation.not.permitted' )
             }

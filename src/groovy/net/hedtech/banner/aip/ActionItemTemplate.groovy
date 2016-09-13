@@ -40,7 +40,7 @@ class ActionItemTemplate implements Serializable{
      *
      */
     @Column(name = "GCBPBTR_PAGE_ID")
-    Long pageId
+    String pageId
 
     /**
      *

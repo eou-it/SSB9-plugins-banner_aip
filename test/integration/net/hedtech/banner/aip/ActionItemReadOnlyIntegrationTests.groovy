@@ -33,6 +33,9 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
         List<ActionItemReadOnly> actionItems = ActionItemReadOnly.fetchActionItemROByFolder( folderId )
         //assertEquals( 10, actionItems.size() )
+
+        println actionItems
+
         assert 0 < actionItems.size()
     }
 
@@ -111,6 +114,9 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         actionItemRONewList.actionItemCreatorId = actionItemListRO.actionItemCreatorId
         actionItemRONewList.actionItemCreateDate = actionItemListRO.actionItemCreateDate
         actionItemRONewList.actionItemVersion = actionItemListRO.actionItemVersion
+        actionItemRONewList.actionItemTemplateId = actionItemListRO.actionItemTemplateId
+        actionItemRONewList.actionItemContentId = actionItemListRO.actionItemContentId
+        actionItemRONewList.actionItemContent = actionItemListRO.actionItemContent
 
         def result = actionItemRONewList.equals( actionItemListRO )
         assertTrue result

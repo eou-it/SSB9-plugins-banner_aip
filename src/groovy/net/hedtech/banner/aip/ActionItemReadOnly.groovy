@@ -122,6 +122,30 @@ class ActionItemReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_VERSION", length = 19)
     Long actionItemVersion
 
+    /**
+     * ID of the action item template
+     */
+
+
+    @Column(name = "ACTION_ITEM_TEMPLATE_ID", length = 19)
+    Long actionItemTemplateId
+
+
+    /**
+     * ID of the action item content record
+     */
+
+
+    @Column(name = "ACTION_ITEM_CONTENT_ID", length = 19)
+    Long actionItemContentId
+
+    /**
+     * Content for the action item
+     */
+
+    @Column(name = "ACTION_ITEM_CONTENT", columnDefinition = "TEXT")
+    String actionItemContent
+
 
     @Override
     public String toString() {
@@ -138,8 +162,12 @@ class ActionItemReadOnly implements Serializable {
                 ", actionItemCreatorId='" + actionItemCreatorId + '\'' +
                 ", actionItemCreateDate=" + actionItemCreateDate +
                 ", actionItemVersion=" + actionItemVersion +
+                ", actionItemTemplateId=" + actionItemTemplateId +
+                ", actionItemContentId='" + actionItemContentId + '\'' +
+                ", actionItemContent='" + actionItemContent + '\'' +
                 '}';
     }
+
 
     boolean equals( o ) {
         if (this.is( o )) return true
@@ -148,17 +176,20 @@ class ActionItemReadOnly implements Serializable {
         ActionItemReadOnly that = (ActionItemReadOnly) o
 
         if (actionItemActivityDate != that.actionItemActivityDate) return false
+        if (actionItemContentId != that.actionItemContentId) return false
+        if (actionItemContent != that.actionItemContent) return false
         if (actionItemCreateDate != that.actionItemCreateDate) return false
         if (actionItemCreatorId != that.actionItemCreatorId) return false
         if (actionItemDesc != that.actionItemDesc) return false
         if (actionItemId != that.actionItemId) return false
         if (actionItemName != that.actionItemName) return false
         if (actionItemStatus != that.actionItemStatus) return false
+        if (actionItemTemplateId != that.actionItemTemplateId) return false
         if (actionItemUserId != that.actionItemUserId) return false
         if (actionItemVersion != that.actionItemVersion) return false
+        if (folderDesc != that.folderDesc) return false
         if (folderId != that.folderId) return false
         if (folderName != that.folderName) return false
-        if (folderDesc != that.folderDesc) return false
 
         return true
     }
@@ -178,6 +209,9 @@ class ActionItemReadOnly implements Serializable {
         result = 31 * result + (actionItemCreatorId != null ? actionItemCreatorId.hashCode() : 0)
         result = 31 * result + (actionItemCreateDate != null ? actionItemCreateDate.hashCode() : 0)
         result = 31 * result + (actionItemVersion != null ? actionItemVersion.hashCode() : 0)
+        result = 31 * result + (actionItemTemplateId != null ? actionItemTemplateId.hashCode() : 0)
+        result = 31 * result + (actionItemContentId != null ? actionItemContentId.hashCode() : 0)
+        result = 31 * result + (actionItemContent != null ? actionItemContent.hashCode() : 0)
         return result
     }
 
@@ -228,6 +262,5 @@ class ActionItemReadOnly implements Serializable {
 
         return results
     }
-
 
 }

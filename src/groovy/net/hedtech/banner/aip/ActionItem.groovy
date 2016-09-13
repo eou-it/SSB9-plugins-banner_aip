@@ -21,7 +21,7 @@ import javax.persistence.*
         @NamedQuery(name = "ActionItem.existsSameTitleInFolder",
                 query = """ FROM ActionItem a
                     WHERE upper(a.title) = upper(:title)
-                    AND   a.folderId = :folderId"""),
+                    AND   a.folderId = :folderId""")
 ])
 
 @Entity
