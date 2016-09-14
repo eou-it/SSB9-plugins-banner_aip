@@ -61,11 +61,6 @@ class ActionItemDetail implements Serializable {
     @Column(name = "GCRACNT_ACTIVITY_DATE")
     Date activityDate
 
-    /**
-     *
-     */
-    @Column(name = "GCRACNT_TEMPLATE_REFERENCE_ID")
-    Long templateReferenceId
 
     /**
      * Version of the action item
@@ -102,7 +97,6 @@ class ActionItemDetail implements Serializable {
 
         if (actionItemId != that.actionItemId) return false
         if (activityDate != that.activityDate) return false
-        if (templateReferenceId != that.templateReferenceId) return false
         if (dataOrigin != that.dataOrigin) return false
         if (id != that.id) return false
         if (text != that.text) return false
@@ -123,7 +117,6 @@ class ActionItemDetail implements Serializable {
         result = 31 * result + (actionItemTemplateId != null ? actionItemTemplateId.hashCode() : 0);
         result = 31 * result + (userId != null ? userId.hashCode() : 0);
         result = 31 * result + (activityDate != null ? activityDate.hashCode() : 0);
-        result = 31 * result + (templateReferenceId != null ? templateReferenceId.hashCode() : 0);
         result = 31 * result + (version != null ? version.hashCode() : 0);
         result = 31 * result + (dataOrigin != null ? dataOrigin.hashCode() : 0);
         return result;
@@ -136,7 +129,6 @@ class ActionItemDetail implements Serializable {
         actionItemTemplateId(nullable: true)
         userId(nullable: false, maxSize: 30)
         activityDate(nullable: false, maxSize: 30)
-        templateReferenceId(nullable: true)
         version(nullable: false, maxSize: 30)
         dataOrigin(nullable: true, maxSize: 19)
     }
