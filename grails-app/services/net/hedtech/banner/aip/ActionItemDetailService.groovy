@@ -20,16 +20,19 @@ class ActionItemDetailService extends ServiceBase {
 
 
 
-    def updateTemplateContent (  Long actionItemContentId, def templateText ) {
+    def update (  Long detailId, /*def templateText,*/ def templateId, def userId ) {
 
-        def ActionItemDetail actionItem = ActionItemDetail.fetchActionItemDetailById(actionItemContentId)
+        def ActionItemDetail actionItemDetail = ActionItemDetail.fetchActionItemDetailById(detailId)
 
-        if (!actionItem) {
-            throw new ApplicationException( actionItem, "@@r1:invalidTemplate:@@" )
+        if (!actionItemDetail) {
+            throw new ApplicationException( actionItemDetail, "@@r1:invalidTemplate:@@" )
         }
 
-        actionItem.text = templateText
-        actionItem.save()
+        //actionItem.text = templateText
+        actionItemDetail.activityDate = new Date()
+        actionItemDetail.actionItemTemplateId = templateId
+        actionItemDetail.userId = userId
+        actionItemDetail.save()
     }
 
 }
