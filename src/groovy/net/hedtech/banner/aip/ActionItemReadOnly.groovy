@@ -130,10 +130,16 @@ class ActionItemReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_TEMPLATE_ID", length = 19)
     Long actionItemTemplateId
 
-
     /**
-     * ID of the action item content record
+     * Name of the action item template
      */
+    @Column(name = "ACTION_ITEM_TEMPLATE_NAME", length = 2048)
+    String actionItemTemplateName
+
+
+    @Column(name = "ACTION_ITEM_PAGE_NAME", length = 60)
+    String actionItemPageName
+
 
 
     @Column(name = "ACTION_ITEM_CONTENT_ID", length = 19)
@@ -163,8 +169,10 @@ class ActionItemReadOnly implements Serializable {
                 ", actionItemCreateDate=" + actionItemCreateDate +
                 ", actionItemVersion=" + actionItemVersion +
                 ", actionItemTemplateId=" + actionItemTemplateId +
+                ", actionItemTemplateName='" + actionItemTemplateName + '\'' +
                 ", actionItemContentId='" + actionItemContentId + '\'' +
                 ", actionItemContent='" + actionItemContent + '\'' +
+                ", actionItemPageName='" + actionItemPageName + '\'' +
                 '}';
     }
 
@@ -185,11 +193,13 @@ class ActionItemReadOnly implements Serializable {
         if (actionItemName != that.actionItemName) return false
         if (actionItemStatus != that.actionItemStatus) return false
         if (actionItemTemplateId != that.actionItemTemplateId) return false
+        if (actionItemTemplateName != that.actionItemTemplateName) return false
         if (actionItemUserId != that.actionItemUserId) return false
         if (actionItemVersion != that.actionItemVersion) return false
         if (folderDesc != that.folderDesc) return false
         if (folderId != that.folderId) return false
         if (folderName != that.folderName) return false
+        if (actionItemPageName != that.actionItemPageName) return false;
 
         return true
     }
@@ -210,8 +220,10 @@ class ActionItemReadOnly implements Serializable {
         result = 31 * result + (actionItemCreateDate != null ? actionItemCreateDate.hashCode() : 0)
         result = 31 * result + (actionItemVersion != null ? actionItemVersion.hashCode() : 0)
         result = 31 * result + (actionItemTemplateId != null ? actionItemTemplateId.hashCode() : 0)
+        result = 31 * result + (actionItemTemplateName != null ? actionItemTemplateName.hashCode() : 0)
         result = 31 * result + (actionItemContentId != null ? actionItemContentId.hashCode() : 0)
         result = 31 * result + (actionItemContent != null ? actionItemContent.hashCode() : 0)
+        result = 31 * result + (actionItemPageName != null ? actionItemPageName.hashCode() : 0)
         return result
     }
 

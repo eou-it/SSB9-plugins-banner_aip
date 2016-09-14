@@ -31,9 +31,8 @@ class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
     void testFetchActionItemDetailById() {
         List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
         def actionItemId = actionItemsList[0].id
-        List<ActionItemDetail> actionItemDetailList = ActionItemDetail.fetchActionItemDetailById( actionItemId )
-        assertEquals( actionItemId, actionItemDetailList[0].actionItemId )
-        assertEquals( 1, actionItemDetailList.size() )
+        ActionItemDetail actionItemDetailList = ActionItemDetail.fetchActionItemDetailById( actionItemId )
+        assertEquals( actionItemId, actionItemDetailList.actionItemId )
     }
 
 
@@ -41,9 +40,8 @@ class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
     void testFetchActionItemDetailString() {
         List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
         def actionItemId = actionItemsList[0].id
-        List<ActionItemDetail> actionItemDetailList = ActionItemDetail.fetchActionItemDetailById( actionItemId )
+        ActionItemDetail actionItemDetailList = ActionItemDetail.fetchActionItemDetailById( actionItemId )
         assertNotNull( actionItemDetailList.toString() )
-        assertFalse actionItemDetailList.isEmpty()
     }
 
 
@@ -51,7 +49,7 @@ class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
     void testActionItemDetailHashCode() {
         List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
         def actionItemId = actionItemsList[0].id
-        List<ActionItemDetail> actionItemDetailList = ActionItemDetail.fetchActionItemDetailById( actionItemId )
+        ActionItemDetail actionItemDetailList = ActionItemDetail.fetchActionItemDetailById( actionItemId )
 
         def result = actionItemDetailList.hashCode()
         assertNotNull result
@@ -68,8 +66,7 @@ class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
         List<ActionItem> actionItems = ActionItem.fetchActionItems()
         def actionItemsList = actionItems[0]
         def actionItemId = actionItemsList.id
-        List<ActionItemDetail> actionItemDetailList = ActionItemDetail.fetchActionItemDetailById( actionItemId )
-        def actionItemDetail = actionItemDetailList[0]
+        ActionItemDetail actionItemDetail = ActionItemDetail.fetchActionItemDetailById( actionItemId )
         def actionItemNewDetail = new ActionItemDetail()
 
         actionItemNewDetail.id = actionItemDetail.id
@@ -85,11 +82,11 @@ class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
         def result = actionItemNewDetail.equals( actionItemDetail )
         assertTrue result
 
-        result = actionItemDetailList.equals( null )
+        result = actionItemDetail.equals( null )
         assertFalse result
 
         def actionItemsListNull = new ActionItemDetail( null )
-        result = actionItemDetailList.equals( actionItemsListNull )
+        result = actionItemDetail.equals( actionItemsListNull )
         assertFalse result
 
     }

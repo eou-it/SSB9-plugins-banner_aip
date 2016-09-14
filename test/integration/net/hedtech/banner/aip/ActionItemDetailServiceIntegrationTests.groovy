@@ -36,9 +36,8 @@ class ActionItemDetailServiceIntegrationTests extends BaseIntegrationTestCase {
     void testFetchActionItemDetailByIdService() {
         List<ActionItem> actionItemsList = actionItemService.listActionItems()
         def actionItemId = actionItemsList[0].id
-        List<ActionItemDetail> actionItemDetailId = actionItemDetailService.listActionItemDetailById( actionItemId )
-        assertEquals( actionItemId, actionItemDetailId[0].actionItemId )
-        assertEquals( 1, actionItemDetailId.size() )
+        ActionItemDetail actionItemDetailId = actionItemDetailService.listActionItemDetailById( actionItemId )
+        assertEquals( actionItemId, actionItemDetailId.actionItemId )
         //println actionItemDetailId
     }
 
