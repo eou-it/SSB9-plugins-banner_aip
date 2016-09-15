@@ -30,8 +30,9 @@ class GateKeepingFilters {
 
                 if ('registration'.equals( reqParams['mode'] ) && 'term'.equals( reqController ) && 'termSelection'.equals( reqAction )) {
                     // Test that we can get db items here with user info
+                    println "Verify can do actionItemLookup: pidm: " + userPidm
                     def myItems = userActionItemReadOnlyService.listActionItemsByPidm( userPidm )
-                    println "Verify can do actionItemLookup: " + myItems
+                    println myItems
                     //redirect( controller: "aip", action: "actionItems" )
                     //redirect( url: "https://anotherdomain.com/aip/actionItems", params: [optional: 'something'] )
                     //redirect( url: uri + "/aip/actionItems", params: [optional: 'something'] )
@@ -45,6 +46,7 @@ class GateKeepingFilters {
     // who am I?
     private def getUserPidm() {
         def user = SecurityContextHolder?.context?.authentication?.principal
+        println user
         if (user instanceof BannerUser) {
             //TODO:: extract necessary user information and return. (ex: remove pidm, etc)
             return user.pidm

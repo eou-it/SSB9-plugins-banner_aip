@@ -90,6 +90,9 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
 
     def request( Map params, controllerName, actionName ) {
         grailsApplication.config.formControllerMap = formControllerMap
+        // FIXME: added the next two lines to see why buildserver fails but local works
+        grailsApplication.config.hibernate.config.location = "[classpath:hibernate-banner-csr.cfg.xml]"
+        grailsApplication.config.grails.config.locations = "[classpath:hibernate-banner-csr.cfg.xml]"
         grailsWebRequest = GrailsWebUtil.bindMockWebRequest( grailsApplication.mainContext )
         grailsWebRequest.params.putAll( params )
         grailsWebRequest.controllerName = controllerName
