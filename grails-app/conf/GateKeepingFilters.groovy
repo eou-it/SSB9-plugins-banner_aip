@@ -12,11 +12,11 @@ class GateKeepingFilters {
         actionItemFilter( controller: '*', action: '*' ) {
             before = {
                 String uri = request.getScheme() + "://" +   // "http" + "://
-                        request.getServerName() +       // "myhost"
-                        ":" +                           // ":"
-                        request.getServerPort() +       // "8080"
-                        request.getRequestURI() +       // "/people"
-                        (request.getQueryString() ? "?" + request.getQueryString() : "") // "lastname=Fox&age=30"
+                        request.getServerName()// +       // "myhost"
+                //":" +                           // ":"
+                //request.getServerPort() +       // "8080"
+                //request.getRequestURI() +       // "/people"
+                //(request.getQueryString() ? "?" + request.getQueryString() : "") // "lastname=Fox&age=30"
                 println uri
                 def reqParams = request?.JSON ?: params
                 def reqController = request?.JSON ?: controllerName
@@ -26,15 +26,16 @@ class GateKeepingFilters {
                 println "controller: " + reqController
                 println "action: " + reqAction
                 println "params: " + reqParams
-                println reqParams['type']
+                println reqParams['mode']
 
-                if ('testRedirect'.equals( reqParams['type'] ) || 'testRedirect'.equals( reqAction )) {
+                if ('registration'.equals( reqParams['mode'] ) && 'term'.equals( reqController ) && 'termSelection'.equals( reqAction )) {
                     // Test that we can get db items here with user info
-                    def myItems = userActionItemReadOnlyService.listActionItemByPidm( userPidm )
-                    println "Verify can do actionItemLookup: " + myItems
+                    //def myItems = userActionItemReadOnlyService.listActionItemByPidm( userPidm )
+                    //println "Verify can do actionItemLookup: " + myItems
                     //redirect( controller: "aip", action: "actionItems" )
                     //redirect( url: "https://anotherdomain.com/aip/actionItems", params: [optional: 'something'] )
-                    redirect( url: uri + "/aip/actionItems", params: [optional: 'something'] )
+                    //redirect( url: uri + "/aip/actionItems", params: [optional: 'something'] )
+                    redirect( url: uri + ":8080/BannerGeneralSsb/ssb/aip/list" )
                     return false
                 }
             }

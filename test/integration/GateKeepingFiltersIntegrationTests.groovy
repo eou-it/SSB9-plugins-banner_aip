@@ -76,12 +76,12 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
                 new UsernamePasswordAuthenticationToken( person.bannerId, '111111' ) )
         SecurityContextHolder.getContext().setAuthentication( auth )
 
-        def result = request( [type: 'testRedirect'], "aip", "getActionGroupDescription" )
+        def result = request( [mode: 'registration'], "term", "termSelection" )
         println result
         assert !result
         println "CRR: test response: " + response.redirectedUrl
 
-        assertTrue response.redirectedUrl.endsWith( '/aip/actionItems' )
+        assertTrue response.redirectedUrl.endsWith( '/aip/list' )
     }
 
 
