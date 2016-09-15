@@ -30,8 +30,8 @@ class GateKeepingFilters {
 
                 if ('registration'.equals( reqParams['mode'] ) && 'term'.equals( reqController ) && 'termSelection'.equals( reqAction )) {
                     // Test that we can get db items here with user info
-                    //def myItems = userActionItemReadOnlyService.listActionItemByPidm( userPidm )
-                    //println "Verify can do actionItemLookup: " + myItems
+                    def myItems = userActionItemReadOnlyService.listActionItemsByPidm( userPidm )
+                    println "Verify can do actionItemLookup: " + myItems
                     //redirect( controller: "aip", action: "actionItems" )
                     //redirect( url: "https://anotherdomain.com/aip/actionItems", params: [optional: 'something'] )
                     //redirect( url: uri + "/aip/actionItems", params: [optional: 'something'] )

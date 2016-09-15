@@ -224,10 +224,13 @@ class UserActionItemReadOnly implements Serializable {
     }
 
 
-    public static def fetchUserActionItemROByPidm( Long pidm ) {
+    public static def fetchUserActionItemsROByPidm( Long pidm ) {
         UserActionItemReadOnly.withSession { session ->
-            List userActionItemReadOnly = session.getNamedQuery( 'UserActionItemReadOnly.fetchUserActionItemROByPidm' ).setLong( 'myPidm', pidm ).list()
-            return userActionItemReadOnly
+            List<UserActionItemReadOnly> userActionItemsReadOnly = session.getNamedQuery( 'UserActionItemReadOnly.fetchUserActionItemROByPidm' )
+                    .setLong(
+                    'myPidm', pidm )
+                    .list()
+            return userActionItemsReadOnly
         }
     }
 

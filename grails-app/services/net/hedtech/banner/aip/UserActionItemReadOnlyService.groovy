@@ -7,8 +7,8 @@ import net.hedtech.banner.service.ServiceBase
 
 class UserActionItemReadOnlyService extends ServiceBase {
 
-    def listActionItemByPidm(Long actionItemPidm) {
-        return UserActionItemReadOnly.fetchUserActionItemROByPidm( actionItemPidm )
+    def listActionItemsByPidm(Long actionItemPidm) {
+        return UserActionItemReadOnly.fetchUserActionItemsROByPidm( actionItemPidm )
        //return itemByPidm.encodeAsHTML()
     }
 }

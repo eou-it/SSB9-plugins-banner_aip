@@ -30,7 +30,7 @@ class UserActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
     @Test
     void testFetchUserActionItemByROPidmNoResults() {
         def actionItemPidm = PersonUtility.getPerson( "STUADV425" ).pidm
-        List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listActionItemByPidm( actionItemPidm )
+        List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listActionItemsByPidm( actionItemPidm )
         assertEquals( 0, userActionItems.size() )
         //println userActionItems
     }
@@ -39,7 +39,7 @@ class UserActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
     @Test
     void testFetchUserActionItemByROPidmService() { // FIXME: do in service test
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listActionItemByPidm(actionItemPidm)
+        List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listActionItemsByPidm(actionItemPidm)
         assertEquals( 10, userActionItems.size() )
         //println userActionItems
     }
