@@ -70,9 +70,7 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
     void testFilterRedirectsController() {
         def person = PersonUtility.getPerson( "CSRSTU002" )
         assertNotNull person
-        def auth = selfServiceBannerAuthenticationProvider.authenticate(
-                new UsernamePasswordAuthenticationToken( person.bannerId, '111111' ) )
-        SecurityContextHolder.getContext().setAuthentication( auth )
+        loginSSB( person.bannerId, '111111' )
 
         def result = request( [mode: 'registration'], "term", "termSelection" )
         println result
@@ -90,13 +88,12 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
 
     def request( Map params, controllerName, actionName ) {
         grailsApplication.config.formControllerMap = formControllerMap
-        // FIXME: added the next two lines to see why buildserver fails but local works
-        grailsApplication.config.hibernate.config.location = "[classpath:hibernate-banner-csr.cfg.xml]"
-        grailsApplication.config.grails.config.locations = "[classpath:hibernate-banner-csr.cfg.xml]"
+
         grailsWebRequest = GrailsWebUtil.bindMockWebRequest( grailsApplication.mainContext )
         grailsWebRequest.params.putAll( params )
         grailsWebRequest.controllerName = controllerName
         grailsWebRequest.actionName = actionName
+
         filterInterceptor.preHandle( grailsWebRequest.request, grailsWebRequest.response, null )
     }
 
