@@ -4,7 +4,6 @@
 
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.UserActionItemReadOnly
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
@@ -32,7 +31,6 @@ class UserActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
         def actionItemPidm = PersonUtility.getPerson( "STUADV425" ).pidm
         List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listActionItemsByPidm( actionItemPidm )
         assertEquals( 0, userActionItems.size() )
-        //println userActionItems
     }
 
 
@@ -41,6 +39,16 @@ class UserActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
         List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listActionItemsByPidm(actionItemPidm)
         assertEquals( 10, userActionItems.size() )
-        //println userActionItems
+    }
+
+    @Test
+        void testFetchBlockingUserActionItemsROByPidm() {
+            def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
+        List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listBlockingActionItemsByPidm( actionItemPidm )
+        userActionItems.each {item ->
+            assertTrue item.isBlocking
+        }
+        assertTrue( userActionItems.size() >= 5)
+        assertTrue( userActionItems.size() < 10)
     }
 }

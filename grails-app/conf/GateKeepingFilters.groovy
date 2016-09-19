@@ -27,6 +27,7 @@ class GateKeepingFilters {
                 println "action: " + reqAction
                 println "params: " + reqParams
                 println reqParams['mode']
+                println "crr:sch: " + SecurityContextHolder
 
                 if ('registration'.equals( reqParams['mode'] ) && 'term'.equals( reqController ) && 'termSelection'.equals( reqAction )) {
                     // Test that we can get db items here with user info
