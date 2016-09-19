@@ -3,13 +3,20 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import org.hibernate.annotations.Type
+
 import javax.persistence.*
 
 @NamedQueries(value = [
         @NamedQuery(name = "UserActionItemReadOnly.fetchUserActionItemROByPidm",
                 query = """FROM UserActionItemReadOnly a
            WHERE a.pidm = :myPidm
-           """)
+           """),
+        @NamedQuery(name = "UserActionItemReadOnly.fetchBlockingUserActionItemROByPidm",
+                        query = """FROM UserActionItemReadOnly a
+                   WHERE a.pidm = :myPidm
+                   AND a.isBlocking is true
+                   """)
 ])
 
 @Entity
@@ -90,6 +97,10 @@ class UserActionItemReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_STATUS", length = 30)
     String status
 
+    @Type(type = "yes_no")
+    @Column(name = "ACTION_ITEM_IS_BLOCKING")
+    Boolean isBlocking = false
+
     /**
      * Last activity date for the action item
      */
@@ -144,6 +155,7 @@ class UserActionItemReadOnly implements Serializable {
                 versionTmpl:$versionTmpl,
                 pidm:$pidm,
                 status:$status,
+                isBlocking:$isBlocking,
                 completedDate:$completedDate,
                 activityDate:$activityDate,
                 userId:$userId,
@@ -171,6 +183,7 @@ class UserActionItemReadOnly implements Serializable {
         if (id != that.id) return false
         if (pidm != that.pidm) return false
         if (status != that.status) return false
+        if (isBlocking != that.isBlocking) return false
         if (title != that.title) return false
         if (userId != that.userId) return false
         if (userIdTmpl != that.userIdTmpl) return false
@@ -194,6 +207,7 @@ class UserActionItemReadOnly implements Serializable {
         result = 31 * result + (versionTmpl != null ? versionTmpl.hashCode() : 0)
         result = 31 * result + (pidm != null ? pidm.hashCode() : 0)
         result = 31 * result + (status != null ? status.hashCode() : 0)
+        result = 31 * result + (isBlocking != null ? isBlocking.hashCode() : 0)
         result = 31 * result + (completedDate != null ? completedDate.hashCode() : 0)
         result = 31 * result + (activityDate != null ? activityDate.hashCode() : 0)
         result = 31 * result + (userId != null ? userId.hashCode() : 0)
@@ -216,6 +230,7 @@ class UserActionItemReadOnly implements Serializable {
         version( nullable: false, maxSize: 19 )
         pidm( nullable: false, maxSize: 9 )
         status( nullable: false, maxSize: 30 )
+        isBlocking( nullable: false, maxSize: 1 )
         userIdTmpl( nullable: false, maxSize: 30 )
         activityDateTmpl( nullable: false, maxSize: 30 )
         creatorIdTmpl( nullable: true, maxSize: 30 )
@@ -227,6 +242,18 @@ class UserActionItemReadOnly implements Serializable {
     public static def fetchUserActionItemsROByPidm( Long pidm ) {
         UserActionItemReadOnly.withSession { session ->
             List<UserActionItemReadOnly> userActionItemsReadOnly = session.getNamedQuery( 'UserActionItemReadOnly.fetchUserActionItemROByPidm' )
+                    .setLong(
+                    'myPidm', pidm )
+                    .list()
+            return userActionItemsReadOnly
+        }
+    }
+
+
+    public static def fetchBlockingUserActionItemsROByPidm( Long pidm ) {
+        UserActionItemReadOnly.withSession { session ->
+            List<UserActionItemReadOnly> userActionItemsReadOnly = session.getNamedQuery( 'UserActionItemReadOnly' +
+                    '.fetchBlockingUserActionItemROByPidm' )
                     .setLong(
                     'myPidm', pidm )
                     .list()
