@@ -4,8 +4,6 @@ import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.context.SecurityContextHolder
 
 /** *****************************************************************************
  © 2016 SunGard Higher Education.  All Rights Reserved.
@@ -68,7 +66,7 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testFilterRedirectsController() {
-        def person = PersonUtility.getPerson( "CSRSTU002" )
+        def person = PersonUtility.getPerson( "CSRSTU018" ) // user had blocking
         assertNotNull person
         loginSSB( person.bannerId, '111111' )
 
@@ -78,6 +76,20 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
         println "CRR: test response: " + response.redirectedUrl
 
         assertTrue response.redirectedUrl.endsWith( '/aip/list' )
+    }
+
+
+    @Test
+    void testFilterNoRedirect() {
+        def person = PersonUtility.getPerson( "CSRSTU013" ) // user has no blocking AIs
+        assertNotNull person
+        loginSSB( person.bannerId, '111111' )
+
+        def result = request( [mode: 'registration'], "term", "termSelection" )
+        println result
+        assert result
+
+        assertNull(  response.redirectedUrl )
     }
 
 

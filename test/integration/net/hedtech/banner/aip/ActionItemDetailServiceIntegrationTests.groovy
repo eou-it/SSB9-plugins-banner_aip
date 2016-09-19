@@ -38,7 +38,6 @@ class ActionItemDetailServiceIntegrationTests extends BaseIntegrationTestCase {
         def actionItemId = actionItemsList[0].id
         ActionItemDetail actionItemDetailId = actionItemDetailService.listActionItemDetailById( actionItemId )
         assertEquals( actionItemId, actionItemDetailId.actionItemId )
-        //println actionItemDetailId
     }
 
 }

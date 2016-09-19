@@ -37,18 +37,27 @@ class UserActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
     @Test
     void testFetchUserActionItemByROPidmService() { // FIXME: do in service test
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listActionItemsByPidm(actionItemPidm)
+        List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listActionItemsByPidm( actionItemPidm )
         assertEquals( 10, userActionItems.size() )
     }
 
+
     @Test
-        void testFetchBlockingUserActionItemsROByPidm() {
-            def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
+    void testFetchBlockingUserActionItemsROByPidm() {
+        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
         List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listBlockingActionItemsByPidm( actionItemPidm )
-        userActionItems.each {item ->
+        userActionItems.each { item ->
             assertTrue item.isBlocking
         }
-        assertTrue( userActionItems.size() >= 5)
-        assertTrue( userActionItems.size() < 10)
+        assertTrue( userActionItems.size() >= 5 )
+        assertTrue( userActionItems.size() < 10 )
+    }
+
+
+    @Test
+    void testFetchBlockingUserActionItemsROByPidmAllComplete() {
+        def actionItemPidm = PersonUtility.getPerson( "CSRSTU013" ).pidm
+        List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listBlockingActionItemsByPidm( actionItemPidm )
+        assertTrue( userActionItems.size() == 0 )
     }
 }

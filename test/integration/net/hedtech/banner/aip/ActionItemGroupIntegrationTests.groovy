@@ -108,7 +108,8 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         actionItemGroupNewList.dataOrigin = actionItemGroup.dataOrigin
 
         //shouldFail { actionItemGroupNewList.save(failOnError: true, flush: false) }
-        println actionItemGroupNewList.save(failOnError: true, flush: false)
+        // FIXME: Verify something
+        //println actionItemGroupNewList.save(failOnError: true, flush: false)
     }
 
 

@@ -32,13 +32,13 @@ class GateKeepingFilters {
                 if ('registration'.equals( reqParams['mode'] ) && 'term'.equals( reqController ) && 'termSelection'.equals( reqAction )) {
                     // Test that we can get db items here with user info
                     println "Verify can do actionItemLookup: pidm: " + userPidm
-                    def myItems = userActionItemReadOnlyService.listActionItemsByPidm( userPidm )
-                    println myItems
-                    //redirect( controller: "aip", action: "actionItems" )
-                    //redirect( url: "https://anotherdomain.com/aip/actionItems", params: [optional: 'something'] )
-                    //redirect( url: uri + "/aip/actionItems", params: [optional: 'something'] )
-                    redirect( url: uri + ":8080/BannerGeneralSsb/ssb/aip/list" )
-                    return false
+                    if (userActionItemReadOnlyService.listBlockingActionItemsByPidm( userPidm )) {
+                        //redirect( controller: "aip", action: "actionItems" )
+                        //redirect( url: "https://anotherdomain.com/aip/actionItems", params: [optional: 'something'] )
+                        //redirect( url: uri + "/aip/actionItems", params: [optional: 'something'] )
+                        redirect( url: uri + ":8080/BannerGeneralSsb/ssb/aip/list" )
+                        return false
+                    }
                 }
             }
         }
