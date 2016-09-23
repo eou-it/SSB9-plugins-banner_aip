@@ -14,6 +14,7 @@ import javax.persistence.*
           """)
 ])
 
+
 @Entity
 @Table(name = "GCRACNT")
 
@@ -123,13 +124,13 @@ class ActionItemDetail implements Serializable {
     }
 
     static constraints = {
-        id(nullable: false, maxSize: 19)
+//        id(nullable: false, maxSize: 19)
         actionItemId(nullable: false, maxSize: 19)
         text(nullable: true) //summary length only for now
         actionItemTemplateId(nullable: true)
         userId(nullable: false, maxSize: 30)
         activityDate(nullable: false, maxSize: 30)
-        version(nullable: false, maxSize: 30)
+        version(nullable: true, maxSize: 30)
         dataOrigin(nullable: true, maxSize: 19)
     }
 
@@ -140,5 +141,4 @@ class ActionItemDetail implements Serializable {
             return actionItemDetail[0]?actionItemDetail[0]:[]
         }
     }
-
 }
