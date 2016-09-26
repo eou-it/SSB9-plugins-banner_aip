@@ -62,7 +62,7 @@ class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase 
 
         Map params2 = [filterName:"%",sortColumn:"actionItemName", sortAscending:true, max:10, offset:10]
 
-        Map params3 = [filterName:"%",sortColumn:"actionItemName", sortAscending:true, max:10, offset:20]
+        Map params3 = [filterName:"%",sortColumn:"actionItemName", sortAscending:true, max:20, offset:20]
 
         def actionItemROList1 = actionItemReadOnlyService.listActionItemsPageSort(params1)
         def actionItemROList2 = actionItemReadOnlyService.listActionItemsPageSort(params2)
