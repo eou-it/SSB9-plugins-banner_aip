@@ -2,15 +2,22 @@ import net.hedtech.banner.security.BannerUser
 import org.apache.log4j.Logger
 import org.springframework.security.core.context.SecurityContextHolder
 
+import javax.servlet.http.HttpSession
+
 
 class GateKeepingFilters {
     private final log = Logger.getLogger( GateKeepingFilters.class )
 
     def userActionItemReadOnlyService
+    def springSecurityService
 
     def filters = {
         actionItemFilter( controller: '*', action: '*' ) {
             before = {
+                HttpSession session = request.getSession()
+                println "CRR: session: " + session
+
+                println "CRR isLogged in: " + springSecurityService.isLoggedIn()
                 String uri = request.getScheme() + "://" +   // "http" + "://
                         request.getServerName()// +       // "myhost"
                 //":" +                           // ":"
