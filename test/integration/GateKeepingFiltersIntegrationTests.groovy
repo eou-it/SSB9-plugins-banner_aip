@@ -40,8 +40,8 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
 
     @After
     public void tearDown() {
-        super.tearDown()
         logout()
+        super.tearDown()
     }
 
     def formControllerMap = [
