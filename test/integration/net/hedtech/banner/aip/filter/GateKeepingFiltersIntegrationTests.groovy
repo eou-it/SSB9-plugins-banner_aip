@@ -1,6 +1,7 @@
 package net.hedtech.banner.aip.filter
 
 import grails.util.GrailsWebUtil
+import grails.util.Holders
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
@@ -31,7 +32,6 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
     def grailsApplication
 
     def grailsWebRequest
-
 
     @Before
     public void setUp() {
@@ -101,7 +101,7 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
     def request( Map params, controllerName, actionName ) {
         grailsApplication.config.formControllerMap = formControllerMap
 
-        grailsWebRequest = GrailsWebUtil.bindMockWebRequest( grailsApplication.mainContext )
+        grailsWebRequest = GrailsWebUtil.bindMockWebRequest( Holders.getGrailsApplication(  ).mainContext )
         grailsWebRequest.params.putAll( params )
         grailsWebRequest.controllerName = controllerName
         grailsWebRequest.actionName = actionName
