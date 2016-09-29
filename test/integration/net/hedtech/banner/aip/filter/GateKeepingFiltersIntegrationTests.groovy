@@ -1,3 +1,5 @@
+package net.hedtech.banner.aip.filter
+
 import grails.util.GrailsWebUtil
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.testing.BaseIntegrationTestCase
