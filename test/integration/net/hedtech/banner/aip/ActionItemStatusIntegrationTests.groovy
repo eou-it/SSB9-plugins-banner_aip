@@ -30,7 +30,7 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testFetchActionItemStatusString() {
-        List<ActionItemStatus> actionItemStatuses = ActionItemStatus.fetchActionItemStatus()
+        List<ActionItemStatus> actionItemStatuses = ActionItemStatus.fetchActionItemStatuses()
         def actionItemStatusList = actionItemStatuses[0]
         assertNotNull( actionItemStatusList.toString() )
         assertFalse actionItemStatuses.isEmpty()
@@ -39,7 +39,7 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testFetchActionStatusItems() {
-        List<ActionItemStatus> actionItemStatuses = ActionItemStatus.fetchActionItemStatus()
+        List<ActionItemStatus> actionItemStatuses = ActionItemStatus.fetchActionItemStatuses()
         assertFalse actionItemStatuses.isEmpty()
     }
 
@@ -47,7 +47,7 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testActionStatusItemsHashCode() {
 
-        List<ActionItemStatus> actionItemStatuses = ActionItemStatus.fetchActionItemStatus()
+        List<ActionItemStatus> actionItemStatuses = ActionItemStatus.fetchActionItemStatuses()
         def actionItemStatusList = actionItemStatuses[0]
 
         def result = actionItemStatusList.hashCode()
@@ -61,7 +61,7 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testActionItemStatusEquals() {
 
-        List<ActionItemStatus> actionItemStatuses = ActionItemStatus.fetchActionItemStatus()
+        List<ActionItemStatus> actionItemStatuses = ActionItemStatus.fetchActionItemStatuses()
         def actionItemStatusList = actionItemStatuses[0]
         def actionItemStatusNewList = new ActionItemStatus(
                 actionItemStatus: actionItemStatusList.actionItemStatus,
@@ -72,9 +72,9 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
                 actionItemStatusUserId: actionItemStatusList.actionItemStatusUserId,
                 actionItemStatusVersion: actionItemStatusList.actionItemStatusVersion,
                 actionItemStatusActive: actionItemStatusList.actionItemStatusActive )
-        long actionItemStatusListId = actionItemStatusList.id
+        long actionItemStatusListId = actionItemStatusList.actionItemStatusId
         long actionItemStatusListVersion = actionItemStatusList.actionItemStatusVersion
-        actionItemStatusNewList.id = actionItemStatusListId
+        actionItemStatusNewList.actionItemStatusId = actionItemStatusListId
         actionItemStatusNewList.actionItemStatusVersion = actionItemStatusListVersion
 
         def result = actionItemStatusList.equals( actionItemStatusList )
@@ -98,7 +98,7 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testNullStatusError() {
-        List<ActionItemStatus> actionItemStatuses = ActionItemStatus.fetchActionItemStatus()
+        List<ActionItemStatus> actionItemStatuses = ActionItemStatus.fetchActionItemStatuses()
         def actionItemStatusNew = new ActionItemStatus()
 
         actionItemStatusNew.actionItemStatus = null
@@ -117,7 +117,7 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testEmptyBlockedIndError() {
-        List<ActionItemStatus> actionItemStatuses = ActionItemStatus.fetchActionItemStatus()
+        List<ActionItemStatus> actionItemStatuses = ActionItemStatus.fetchActionItemStatuses()
         def actionItemStatusNew = new ActionItemStatus()
 
         actionItemStatusNew.actionItemStatus = "New Status"

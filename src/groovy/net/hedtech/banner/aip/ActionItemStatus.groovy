@@ -3,13 +3,15 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.general.CommunicationCommonUtility
 import org.hibernate.FlushMode
+import org.hibernate.criterion.Order
 
 import javax.persistence.*
 
 
 @NamedQueries(value = [
-        @NamedQuery(name = "ActionItemStatus.fetchActionItemStatus",
+        @NamedQuery(name = "ActionItemStatus.fetchActionItemStatuses",
                 query = """
            FROM ActionItemStatus a
           """),
@@ -17,7 +19,11 @@ import javax.persistence.*
                 query = """
            FROM ActionItemStatus a
            WHERE a.id = :myId
-          """)
+          """),
+        @NamedQuery(name="ActionItemStatus.fetchActionItemStatusCount",
+                query = """SELECT COUNT(a.id) FROM ActionItemStatus a
+            """
+        )
 ])
 
 @Entity
@@ -33,7 +39,7 @@ class ActionItemStatus implements Serializable {
     @Column(name = "GCVASTS_SURROGATE_ID")
     @SequenceGenerator(name = "GCVASTS_SEQ_GEN", allocationSize = 1, sequenceName = "GCVASTS_SURROGATE_ID_SEQUENCE")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GCVASTS_SEQ_GEN")
-    Long id
+    Long actionItemStatusId
 
     /**
      * Name of the action item status
@@ -88,10 +94,6 @@ class ActionItemStatus implements Serializable {
     @Column(name = "GCVASTS_DATA_ORIGIN")
     String actionItemStatusDataOrigin
 
-
-
-
-
     static constraints = {
         actionItemStatus(blank: false, nullable: false, maxSize: 30, unique:true)
         actionItemStatusActive(blank: false, nullable: false, maxSize: 1)
@@ -109,7 +111,7 @@ class ActionItemStatus implements Serializable {
     @Override
     public String toString() {
         return "ActionItemStatus{" +
-                "id=" + id +
+                "actionItemStatusId=" + actionItemStatusId +
                 ", actionItemStatus='" + actionItemStatus + '\'' +
                 ", actionItemStatusBlockedProcess='" + actionItemStatusBlockedProcess + '\'' +
                 ", actionItemStatusSystemRequired='" + actionItemStatusSystemRequired + '\'' +
@@ -136,7 +138,7 @@ class ActionItemStatus implements Serializable {
         if (actionItemStatusSystemRequired != that.actionItemStatusSystemRequired) return false
         if (actionItemStatusUserId != that.actionItemStatusUserId) return false
         if (actionItemStatusVersion != that.actionItemStatusVersion) return false
-        if (id != that.id) return false
+        if (actionItemStatusId != that.actionItemStatusId) return false
 
         return true
     }
@@ -144,7 +146,7 @@ class ActionItemStatus implements Serializable {
 
     int hashCode() {
         int result
-        result = (id != null ? id.hashCode() : 0)
+        result = (actionItemStatusId != null ? actionItemStatusId.hashCode() : 0)
         result = 31 * result + (actionItemStatus != null ? actionItemStatus.hashCode() : 0)
         result = 31 * result + (actionItemStatusBlockedProcess != null ? actionItemStatusBlockedProcess.hashCode() : 0)
         result = 31 * result + (actionItemStatusSystemRequired != null ? actionItemStatusSystemRequired.hashCode() : 0)
@@ -158,19 +160,40 @@ class ActionItemStatus implements Serializable {
 
 
 
-    public static def fetchActionItemStatus( ) {
+    public static def fetchActionItemStatuses( ) {
         ActionItemStatus.withSession { session ->
-            List<ActionItemStatus> actionItemStatus = session.getNamedQuery('ActionItemStatus.fetchActionItemStatus').list()
+            List<ActionItemStatus> actionItemStatus = session.getNamedQuery('ActionItemStatus.fetchActionItemStatuses').list()
             return actionItemStatus
         }
     }
 
-
-    // ReadOnly View?
     public static def fetchActionItemStatusById( Long myId) {
         ActionItemStatus.withSession { session ->
             ActionItemStatus actionItemStatus = session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatusById' ).setLong('myId', myId)?.list()[0]
             return actionItemStatus
         }
+    }
+
+
+    public static def fetchActionItemStatusCount() {
+        ActionItemStatus.withSession { session ->
+            List actionItemStatuses = session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatusCount' ).list()
+            return actionItemStatuses
+        }
+    }
+
+
+    public static fetchWithPagingAndSortParams(filterData, pagingAndSortParams) {
+
+        def searchStatus = filterData?.params?.status
+        def queryCriteria = ActionItemStatus.createCriteria()
+        def results = queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
+
+            ilike("actionItemStatus", CommunicationCommonUtility.getScrubbedInput(filterData?.params?.name))
+
+            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+        }
+
+        return results
     }
 }
