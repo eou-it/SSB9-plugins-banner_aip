@@ -3,9 +3,12 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.service.ServiceBase
 
 class ActionItemStatusService extends ServiceBase {
+
+    def preferredNameService
 
     def listActionItemStatusById( Long statusId) {
         return ActionItemStatus.fetchActionItemStatusById( statusId )
@@ -29,6 +32,19 @@ class ActionItemStatusService extends ServiceBase {
 
         def resultCount = listActionItemStatusCount()
 
+        def displayName
+        def person
+        def personParams
+
+        /*todo: temporary name replace until we implement a decorator for preferred name*/
+        results?.each {
+            person = PersonUtility.getPerson( it.actionItemStatusUserId )
+            if (person) {
+                personParams = [pidm:person.pidm, usage:'DEFAULT']
+                displayName = preferredNameService.getPreferredName(personParams);
+                it.putAt('actionItemStatusUserId', displayName)
+            }
+        }
 
         def resultMap = [
                 result: results,
@@ -38,5 +54,4 @@ class ActionItemStatusService extends ServiceBase {
         return resultMap
 
     }
-
 }
