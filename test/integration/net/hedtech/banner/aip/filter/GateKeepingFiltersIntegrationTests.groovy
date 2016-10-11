@@ -71,11 +71,9 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
         loginSSB( person.bannerId, '111111' )
 
         def result = request( [mode: 'registration'], "term", "termSelection" )
-        println result
         assert !result
-        println "CRR: test response: " + response.redirectedUrl
 
-        assertTrue response.redirectedUrl.endsWith( '/aip/list' )
+        assertTrue response.redirectedUrl.equals( 'http://localhost:8080/BannerGeneralSsb/ssb/aip/list' )
     }
 
 
@@ -86,7 +84,6 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
         loginSSB( person.bannerId, '111111' )
 
         def result = request( [mode: 'registration'], "term", "termSelection" )
-        println result
         assert result
 
         assertNull(  response.redirectedUrl )

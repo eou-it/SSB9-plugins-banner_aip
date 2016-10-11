@@ -15,29 +15,21 @@ import net.hedtech.banner.security.BannerUser
 import org.apache.log4j.Logger
 import org.springframework.security.core.context.SecurityContextHolder
 
-import javax.servlet.http.HttpSession
-
 
 class GateKeepingFilters {
     private final log = Logger.getLogger( GateKeepingFilters.class )
 
     def userActionItemReadOnlyService
-    def springSecurityService
 
     def filters = {
         actionItemFilter( controller: '*', action: '*' ) {
             before = {
-                HttpSession session = request.getSession()
-                println "CRR: session: " + session
-
-                println "CRR isLogged in: " + springSecurityService.isLoggedIn()
                 String uri = request.getScheme() + "://" +   // "http" + "://
-                        request.getServerName()// +       // "myhost"
-                //":" +                           // ":"
-                //request.getServerPort() +       // "8080"
-                //request.getRequestURI() +       // "/people"
-                //(request.getQueryString() ? "?" + request.getQueryString() : "") // "lastname=Fox&age=30"
-                println uri
+                        request.getServerName() +       // "myhost"
+                        (request.getServerPort().equals( 80 ) ? "" : ":" + request.getServerPort()) + // :port if not 80
+                        //request.getServerPort() +
+                        request.getRequestURI() +       // "/people"
+                        (request.getQueryString() ? "?" + request.getQueryString() : "") // "lastname=Fox&age=30"
                 def reqParams = request?.JSON ?: params
                 def reqController = request?.JSON ?: controllerName
                 def reqAction = request?.JSON ?: actionName
@@ -46,12 +38,8 @@ class GateKeepingFilters {
                 println "controller: " + reqController
                 println "action: " + reqAction
                 println "params: " + reqParams
-                println reqParams['mode']
-                println "crr:sch: " + SecurityContextHolder
-
                 if ('registration'.equals( reqParams['mode'] ) && 'term'.equals( reqController ) && 'termSelection'.equals( reqAction )) {
                     // Test that we can get db items here with user info
-                    println "Verify can do actionItemLookup: pidm: " + userPidm
                     if (userActionItemReadOnlyService.listBlockingActionItemsByPidm( userPidm )) {
                         //redirect( controller: "aip", action: "actionItems" )
                         //redirect( url: "https://anotherdomain.com/aip/actionItems", params: [optional: 'something'] )
@@ -67,7 +55,6 @@ class GateKeepingFilters {
     // who am I?
     private def getUserPidm() {
         def user = SecurityContextHolder?.context?.authentication?.principal
-        println user
         if (user instanceof BannerUser) {
             //TODO:: extract necessary user information and return. (ex: remove pidm, etc)
             return user.pidm
