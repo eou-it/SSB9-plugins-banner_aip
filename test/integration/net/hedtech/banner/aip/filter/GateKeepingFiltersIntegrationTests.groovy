@@ -73,7 +73,7 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
         def result = request( [mode: 'registration'], "term", "termSelection" )
         assert !result
 
-        assertTrue response.redirectedUrl.equals( 'http://localhost:8080/BannerGeneralSsb/ssb/aip/list?notify=true' )
+        assertTrue response.redirectedUrl.equals( 'http://localhost:8080/BannerGeneralSsb/ssb/aip/blocked' )
     }
 
 
