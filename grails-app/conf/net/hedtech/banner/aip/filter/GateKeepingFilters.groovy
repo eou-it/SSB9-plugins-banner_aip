@@ -44,7 +44,7 @@ class GateKeepingFilters {
                         //redirect( controller: "aip", action: "actionItems" )
                         //redirect( url: "https://anotherdomain.com/aip/actionItems", params: [optional: 'something'] )
                         //redirect( url: uri + "/aip/actionItems", params: [optional: 'something'] )
-                        redirect( url: uri + ":8080/BannerGeneralSsb/ssb/aip/blocked" )
+                        redirect( url: uri + ":8080/BannerGeneralSsb/ssb/aip/informedList" )
                         return false
                     }
                 }
