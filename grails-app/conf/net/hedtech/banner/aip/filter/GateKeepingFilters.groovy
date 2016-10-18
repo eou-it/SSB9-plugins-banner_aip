@@ -26,10 +26,10 @@ class GateKeepingFilters {
             before = {
                 String uri = request.getScheme() + "://" +   // "http" + "://
                         request.getServerName() +       // "myhost"
-                        (request.getServerPort().equals( 80 ) ? "" : ":" + request.getServerPort()) + // :port if not 80
+                        (request.getServerPort().equals( 80 ) ? "" : ":" + request.getServerPort()) // + // :port if not 80
                         //request.getServerPort() +
-                        request.getRequestURI() +       // "/people"
-                        (request.getQueryString() ? "?" + request.getQueryString() : "") // "lastname=Fox&age=30"
+                        //request.getRequestURI() +       // "/people"
+                        //(request.getQueryString() ? "?" + request.getQueryString() : "") // "lastname=Fox&age=30"
                 def reqParams = request?.JSON ?: params
                 def reqController = request?.JSON ?: controllerName
                 def reqAction = request?.JSON ?: actionName
