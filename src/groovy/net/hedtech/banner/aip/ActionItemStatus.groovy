@@ -106,8 +106,6 @@ class ActionItemStatus implements Serializable {
     }
 
 
-
-
     @Override
     public String toString() {
         return "ActionItemStatus{" +
@@ -122,6 +120,7 @@ class ActionItemStatus implements Serializable {
                 ", actionItemStatusDataOrigin='" + actionItemStatusDataOrigin + '\'' +
                 '}';
     }
+
 
 
     boolean equals( o ) {
@@ -157,7 +156,6 @@ class ActionItemStatus implements Serializable {
         result = 31 * result + (actionItemStatusDataOrigin != null ? actionItemStatusDataOrigin.hashCode() : 0)
         return result
     }
-
 
 
     public static def fetchActionItemStatuses( ) {
@@ -196,4 +194,7 @@ class ActionItemStatus implements Serializable {
 
         return results
     }
+
+
+
 }

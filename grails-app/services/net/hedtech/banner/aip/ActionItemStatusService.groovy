@@ -3,12 +3,16 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.exceptions.ApplicationException
+import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.service.ServiceBase
 
 class ActionItemStatusService extends ServiceBase {
 
     def preferredNameService
+
+    //static final String UNIQUE_STATUS_ERROR = '@@r1:UniqueError@@'
 
     def listActionItemStatusById( Long statusId) {
         return ActionItemStatus.fetchActionItemStatusById( statusId )
@@ -54,4 +58,21 @@ class ActionItemStatusService extends ServiceBase {
         return resultMap
 
     }
+
+
+    /*
+    def preCreate( domainModelOrMap ) {
+        ActionItemStatus ais = (domainModelOrMap instanceof Map ? domainModelOrMap?.domainModel : domainModelOrMap) as ActionItemStatus
+
+        if (!ais.validate()) {
+            def errorCodes = ais.errors.allErrors.codes[0]
+
+            println errorCodes
+
+            if (errorCodes.contains( 'actionItemStatus.unique' )) {
+                throw new ApplicationException( ActionItemStatus, UNIQUE_STATUS_ERROR, 'actionItemStatus.status.unique.error' )
+            }
+        }
+    }
+    */
 }
