@@ -4,7 +4,6 @@
 
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.ActionItemReadOnly
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
@@ -14,6 +13,7 @@ import org.junit.Test
 class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemReadOnlyService
+    def actionItemDetailService
 
     @Before
     public void setUp() {
@@ -76,4 +76,18 @@ class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase 
     }
 
 
+    @Test
+    void testCompositeDate() {
+        List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
+        def actionItemId = actionItemsList[0].id
+        ActionItemDetail myActionItemDetail = ActionItemDetail.fetchActionItemDetailById( actionItemId )
+        assertEquals( actionItemId, myActionItemDetail.actionItemId )
+
+        // update takes care of updating date
+        myActionItemDetail.lastModified = new java.util.Date()
+        actionItemDetailService.update(myActionItemDetail)
+
+        ActionItemReadOnly updatedAIRO = actionItemReadOnlyService.getActionItemROById( actionItemId )
+        assertEquals( myActionItemDetail.lastModified, updatedAIRO.actionItemCompositeDate )
+    }
 }

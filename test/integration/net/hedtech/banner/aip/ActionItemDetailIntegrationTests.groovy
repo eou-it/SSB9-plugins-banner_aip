@@ -73,8 +73,8 @@ class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
         actionItemNewDetail.actionItemId = actionItemDetail.actionItemId
         actionItemNewDetail.text = actionItemDetail.text
         actionItemNewDetail.actionItemTemplateId = actionItemDetail.actionItemTemplateId
-        actionItemNewDetail.userId = actionItemDetail.userId
-        actionItemNewDetail.activityDate = actionItemDetail.activityDate
+        actionItemNewDetail.lastModifiedby = actionItemDetail.lastModifiedby
+        actionItemNewDetail.lastModified = actionItemDetail.lastModified
         actionItemNewDetail.version = actionItemDetail.version
         actionItemNewDetail.dataOrigin = actionItemDetail.dataOrigin
         actionItemNewDetail.actionItemTemplateId = actionItemDetail.actionItemTemplateId
