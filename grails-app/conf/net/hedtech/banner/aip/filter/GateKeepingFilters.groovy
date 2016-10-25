@@ -34,10 +34,10 @@ class GateKeepingFilters {
                 def reqController = request?.JSON ?: controllerName
                 def reqAction = request?.JSON ?: actionName
 
-                println "request came from: " + uri
-                println "controller: " + reqController
-                println "action: " + reqAction
-                println "params: " + reqParams
+      //          println "request came from: " + uri
+       //         println "controller: " + reqController
+        //        println "action: " + reqAction
+         //       println "params: " + reqParams
                 if ('registration'.equals( reqParams['mode'] ) && 'term'.equals( reqController ) && 'termSelection'.equals( reqAction )) {
                     // Test that we can get db items here with user info
                     if (userActionItemReadOnlyService.listBlockingActionItemsByPidm( userPidm )) {
