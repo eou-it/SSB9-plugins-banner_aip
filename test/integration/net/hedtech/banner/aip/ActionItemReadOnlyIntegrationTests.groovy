@@ -4,7 +4,7 @@
 
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.ActionItemReadOnly
+import groovy.sql.Sql
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
@@ -34,8 +34,6 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         List<ActionItemReadOnly> actionItems = ActionItemReadOnly.fetchActionItemROByFolder( folderId )
         //assertEquals( 10, actionItems.size() )
 
-        //println actionItems
-
         assert 0 < actionItems.size()
     }
 
@@ -45,7 +43,6 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
         List<ActionItemReadOnly> actionItems = ActionItemReadOnly.fetchActionItemROByFolder( folderId )
         assertEquals( 0, actionItems.size() )
-        //println actionItems
     }
 
 
@@ -113,10 +110,12 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         actionItemRONewList.actionItemUserId = actionItemListRO.actionItemUserId
         actionItemRONewList.actionItemCreatorId = actionItemListRO.actionItemCreatorId
         actionItemRONewList.actionItemCreateDate = actionItemListRO.actionItemCreateDate
+        actionItemRONewList.actionItemCompositeDate = actionItemListRO.actionItemCompositeDate
         actionItemRONewList.actionItemVersion = actionItemListRO.actionItemVersion
         actionItemRONewList.actionItemTemplateId = actionItemListRO.actionItemTemplateId
         actionItemRONewList.actionItemTemplateName = actionItemListRO.actionItemTemplateName
         actionItemRONewList.actionItemContentId = actionItemListRO.actionItemContentId
+        actionItemRONewList.actionItemContentDate = actionItemListRO.actionItemContentDate
         actionItemRONewList.actionItemContent = actionItemListRO.actionItemContent
         actionItemRONewList.actionItemPageName = actionItemListRO.actionItemPageName
 
@@ -125,11 +124,56 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
         //todo: figure out why null test doesn't work for actionItemListRO
         //result = actionItemListRO.equals( null )
-       // println actionItemListRO
         //assertFalse result
 
         def actionItemListNull = new ActionItemReadOnly( null )
         result = actionItemListRO.equals( actionItemListNull )
         assertFalse result
+    }
+
+    // ActionItem most recent
+    @Test
+    void testActionItemROCompositeDateGCBACTMGreater() {
+        def someRandomId = 4
+        setBackActionItemActivityDate( 1, someRandomId )
+        setBackActionItemDetailActivityDate( 4, someRandomId )
+        ActionItemReadOnly testTheDates = ActionItemReadOnly.findByActionItemId( someRandomId )
+        assertEquals( testTheDates.actionItemCompositeDate, testTheDates.actionItemActivityDate )
+        assertTrue( testTheDates.actionItemCompositeDate > testTheDates.actionItemContentDate)
+    }
+
+    // Detail most recent
+    @Test
+    void testActionItemROCompositeDateGCRACTNGreater() {
+        def someRandomId = 4
+        setBackActionItemActivityDate( 4, someRandomId )
+        setBackActionItemDetailActivityDate( 1, someRandomId )
+        ActionItemReadOnly testTheDates = ActionItemReadOnly.findByActionItemId( someRandomId )
+        assertEquals( testTheDates.actionItemCompositeDate, testTheDates.actionItemContentDate )
+        assertTrue( testTheDates.actionItemCompositeDate > testTheDates.actionItemActivityDate )
+    }
+
+
+    private void setBackActionItemActivityDate( def daysBack, def actionItemId ) {
+        def sql
+        try {
+            def updateSql = """update gcbactm set gcbactm_activity_date = (SYSDATE - ?) where gcbactm_surrogate_id = ?"""
+            sql = new Sql( sessionFactory.getCurrentSession().connection() )
+            sql.executeUpdate( updateSql, [daysBack, actionItemId] )
+        } finally {
+            sql?.close()
+        }
+    }
+
+
+    private void setBackActionItemDetailActivityDate( def daysBack, def actionItemId ) {
+        def sql
+        try {
+            def updateSql = """update gcracnt set GCRACNT_ACTIVITY_DATE = (SYSDATE - ?) where gcracnt_action_item_id = ?"""
+            sql = new Sql( sessionFactory.getCurrentSession().connection() )
+            sql.executeUpdate( updateSql, [daysBack, actionItemId] )
+        } finally {
+            sql?.close()
+        }
     }
 }

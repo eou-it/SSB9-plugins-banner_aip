@@ -54,13 +54,14 @@ class ActionItemDetail implements Serializable {
      * User action item pertains to
      */
     @Column(name = "GCRACNT_USER_ID", length = 30)
-    String userId
+    String lastModifiedby
 
     /**
      * Last activity date for the action item
      */
     @Column(name = "GCRACNT_ACTIVITY_DATE")
-    Date activityDate
+    @Temporal(TemporalType.TIMESTAMP)
+    Date lastModified
 
 
     /**
@@ -83,8 +84,8 @@ class ActionItemDetail implements Serializable {
                 actionItemId:$actionItemId,
                 text:$text,
                 actionItemTemplateId:$actionItemTemplateId,
-                userId:$userId,
-                activityDate:$activityDate,
+                userId:$lastModifiedby,
+                activityDate:$lastModified,
                 version:$version,
                 dataOrigin=$dataOrigin]"""
     }
@@ -97,12 +98,12 @@ class ActionItemDetail implements Serializable {
         ActionItemDetail that = (ActionItemDetail) o
 
         if (actionItemId != that.actionItemId) return false
-        if (activityDate != that.activityDate) return false
+        if (lastModified != that.lastModified) return false
         if (dataOrigin != that.dataOrigin) return false
         if (id != that.id) return false
         if (text != that.text) return false
         if (actionItemTemplateId != that.actionItemTemplateId) return false
-        if (userId != that.userId) return false
+        if (lastModifiedby != that.lastModifiedby) return false
         if (version != that.version) return false
 
         return true
@@ -116,8 +117,8 @@ class ActionItemDetail implements Serializable {
         result = 31 * result + (actionItemId != null ? actionItemId.hashCode() : 0);
         result = 31 * result + (text != null ? text.hashCode() : 0);
         result = 31 * result + (actionItemTemplateId != null ? actionItemTemplateId.hashCode() : 0);
-        result = 31 * result + (userId != null ? userId.hashCode() : 0);
-        result = 31 * result + (activityDate != null ? activityDate.hashCode() : 0);
+        result = 31 * result + (lastModifiedby != null ? lastModifiedby.hashCode() : 0);
+        result = 31 * result + (lastModified != null ? lastModified.hashCode() : 0);
         result = 31 * result + (version != null ? version.hashCode() : 0);
         result = 31 * result + (dataOrigin != null ? dataOrigin.hashCode() : 0);
         return result;
@@ -128,8 +129,8 @@ class ActionItemDetail implements Serializable {
         actionItemId(nullable: false, maxSize: 19)
         text(nullable: true) //summary length only for now
         actionItemTemplateId(nullable: true)
-        userId(nullable: false, maxSize: 30)
-        activityDate(nullable: false, maxSize: 30)
+        lastModifiedby(nullable: false, maxSize: 30)
+        lastModified(nullable: false, maxSize: 30)
         version(nullable: true, maxSize: 30)
         dataOrigin(nullable: true, maxSize: 19)
     }

@@ -115,6 +115,13 @@ class ActionItemReadOnly implements Serializable {
     Date actionItemCreateDate
 
     /**
+     * Date the action item or the detail was last updated
+     */
+
+    @Column(name = "ACTION_ITEM_COMPOSITE_DATE")
+    Date actionItemCompositeDate
+
+    /**
      * Version of the action item
      */
 
@@ -141,9 +148,15 @@ class ActionItemReadOnly implements Serializable {
     String actionItemPageName
 
 
-
     @Column(name = "ACTION_ITEM_CONTENT_ID", length = 19)
     Long actionItemContentId
+
+    /**
+     * Date the action item content detail was last updated
+     */
+
+    @Column(name = "ACTION_ITEM_CONTENT_DATE")
+    Date actionItemContentDate
 
     /**
      * Content for the action item
@@ -167,10 +180,12 @@ class ActionItemReadOnly implements Serializable {
                 ", actionItemUserId='" + actionItemUserId + '\'' +
                 ", actionItemCreatorId='" + actionItemCreatorId + '\'' +
                 ", actionItemCreateDate=" + actionItemCreateDate +
+                ", actionItemCompositeDate=" + actionItemCompositeDate +
                 ", actionItemVersion=" + actionItemVersion +
                 ", actionItemTemplateId=" + actionItemTemplateId +
                 ", actionItemTemplateName='" + actionItemTemplateName + '\'' +
                 ", actionItemContentId='" + actionItemContentId + '\'' +
+                ", actionItemContentDate='" + actionItemContentDate + '\'' +
                 ", actionItemContent='" + actionItemContent + '\'' +
                 ", actionItemPageName='" + actionItemPageName + '\'' +
                 '}';
@@ -185,8 +200,10 @@ class ActionItemReadOnly implements Serializable {
 
         if (actionItemActivityDate != that.actionItemActivityDate) return false
         if (actionItemContentId != that.actionItemContentId) return false
+        if (actionItemContentDate != that.actionItemContentDate) return false
         if (actionItemContent != that.actionItemContent) return false
         if (actionItemCreateDate != that.actionItemCreateDate) return false
+        if (actionItemCompositeDate != that.actionItemCompositeDate) return false
         if (actionItemCreatorId != that.actionItemCreatorId) return false
         if (actionItemDesc != that.actionItemDesc) return false
         if (actionItemId != that.actionItemId) return false
@@ -218,10 +235,12 @@ class ActionItemReadOnly implements Serializable {
         result = 31 * result + (actionItemUserId != null ? actionItemUserId.hashCode() : 0)
         result = 31 * result + (actionItemCreatorId != null ? actionItemCreatorId.hashCode() : 0)
         result = 31 * result + (actionItemCreateDate != null ? actionItemCreateDate.hashCode() : 0)
+        result = 31 * result + (actionItemCompositeDate != null ? actionItemCompositeDate.hashCode() : 0)
         result = 31 * result + (actionItemVersion != null ? actionItemVersion.hashCode() : 0)
         result = 31 * result + (actionItemTemplateId != null ? actionItemTemplateId.hashCode() : 0)
         result = 31 * result + (actionItemTemplateName != null ? actionItemTemplateName.hashCode() : 0)
         result = 31 * result + (actionItemContentId != null ? actionItemContentId.hashCode() : 0)
+        result = 31 * result + (actionItemContentDate != null ? actionItemContentDate.hashCode() : 0)
         result = 31 * result + (actionItemContent != null ? actionItemContent.hashCode() : 0)
         result = 31 * result + (actionItemPageName != null ? actionItemPageName.hashCode() : 0)
         return result
