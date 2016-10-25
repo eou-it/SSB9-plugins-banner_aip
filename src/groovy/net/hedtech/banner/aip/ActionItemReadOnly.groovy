@@ -280,15 +280,22 @@ class ActionItemReadOnly implements Serializable {
 
     public static fetchWithPagingAndSortParams(filterData, pagingAndSortParams) {
 
-        def searchStatus = filterData?.params?.status
+        //def searchStatus = filterData?.params?.status
 
         def queryCriteria = ActionItemReadOnly.createCriteria()
 
-        def results = queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
-
-            ilike("actionItemName", CommunicationCommonUtility.getScrubbedInput(filterData?.params?.name))
-
-            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+        def results
+        if (pagingAndSortParams?.sortColumn.equals( "actionItemName" )) {
+            results = queryCriteria.list( max: pagingAndSortParams.max, offset: pagingAndSortParams.offset ) {
+                //ilike( "actionItemName", CommunicationCommonUtility.getScrubbedInput( filterData?.params?.name ) )
+                order( (pagingAndSortParams.sortAscending ? Order.asc( pagingAndSortParams?.sortColumn ) : Order.desc( pagingAndSortParams?.sortColumn )).ignoreCase() )
+            }
+        } else {
+            results = queryCriteria.list( max: pagingAndSortParams.max, offset: pagingAndSortParams.offset ) {
+                //ilike( "actionItemName", CommunicationCommonUtility.getScrubbedInput( filterData?.params?.name ) )
+                order( (pagingAndSortParams.sortAscending ? Order.asc( pagingAndSortParams?.sortColumn ) : Order.desc( pagingAndSortParams?.sortColumn )).ignoreCase() )
+                order( Order.asc( 'actionItemName' ).ignoreCase() )
+            }
         }
 
         return results
