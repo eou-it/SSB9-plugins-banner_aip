@@ -279,6 +279,7 @@ class ActionItemReadOnly implements Serializable {
     }
 
     // TODO: make filter (filterData and ilike) optional
+    // TODO: filter seems to need tests.
     public static fetchWithPagingAndSortParams(filterData, pagingAndSortParams) {
         def queryCriteria = ActionItemReadOnly.createCriteria()
 
