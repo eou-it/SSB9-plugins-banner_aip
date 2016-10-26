@@ -4,7 +4,6 @@
 package net.hedtech.banner.aip
 
 import net.hedtech.banner.general.CommunicationCommonUtility
-import org.hibernate.FlushMode
 import org.hibernate.criterion.Order
 
 import javax.persistence.*

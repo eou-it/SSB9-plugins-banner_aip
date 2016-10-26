@@ -12,8 +12,6 @@ import org.junit.Test
 
 class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
 
-    def actionItemService
-
 
     @Before
     public void setUp() {
