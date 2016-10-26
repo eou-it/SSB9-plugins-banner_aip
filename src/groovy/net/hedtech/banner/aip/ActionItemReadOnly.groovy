@@ -278,17 +278,17 @@ class ActionItemReadOnly implements Serializable {
         }
     }
 
+    // TODO: make filter (filterData and ilike) optional
+    // TODO: filter seems to need tests.
     public static fetchWithPagingAndSortParams(filterData, pagingAndSortParams) {
-
-        def searchStatus = filterData?.params?.status
-
         def queryCriteria = ActionItemReadOnly.createCriteria()
 
-        def results = queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
-
-            ilike("actionItemName", CommunicationCommonUtility.getScrubbedInput(filterData?.params?.name))
-
-            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+        def results = queryCriteria.list( max: pagingAndSortParams.max, offset: pagingAndSortParams.offset ) {
+            ilike( "actionItemName", CommunicationCommonUtility.getScrubbedInput( filterData?.params?.name ) )
+            order( (pagingAndSortParams.sortAscending ? Order.asc( pagingAndSortParams?.sortColumn ) : Order.desc( pagingAndSortParams?.sortColumn )).ignoreCase() )
+            if (! pagingAndSortParams?.sortColumn.equals( "actionItemName" )) {
+                order( Order.asc( 'actionItemName' ).ignoreCase() )
+            }
         }
 
         return results

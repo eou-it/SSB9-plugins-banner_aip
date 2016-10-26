@@ -12,8 +12,6 @@ import org.junit.Test
 
 class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
 
-    def actionItemService
-
 
     @Before
     public void setUp() {
@@ -41,6 +39,62 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
     void testFetchActionStatusItems() {
         List<ActionItemStatus> actionItemStatuses = ActionItemStatus.fetchActionItemStatuses()
         assertFalse actionItemStatuses.isEmpty()
+    }
+
+    // sort by other than name is secondarily sorted by name
+    @Test
+    void testActionItemStatusSortSecondaryAsc() {
+        def results = ActionItemStatus.fetchWithPagingAndSortParams(
+                [params: [name: "%"]],
+                [sortColumn: "actionItemStatusBlockedProcess", sortAscending: true, max: 50, offset: 0] )
+
+        def foundBlocked = false
+        def foundNotBlocked = false
+        def blockedAsFound = []
+        def notBlockedAsFound = []
+        results.each { it ->
+            if (it.actionItemStatusBlockedProcess == 'N') {
+                assertFalse foundBlocked
+                foundNotBlocked = true
+                notBlockedAsFound.add( it.actionItemStatus )
+            }
+            if (it.actionItemStatusBlockedProcess == 'Y') {
+                assertTrue foundNotBlocked
+                foundBlocked = true
+                blockedAsFound.add( it.actionItemStatus )
+            }
+        }
+        assertEquals( blockedAsFound[0], blockedAsFound.sort( false )[0] )
+        assertEquals( blockedAsFound[1], blockedAsFound.sort( false )[1] )
+        assertEquals( notBlockedAsFound[0], notBlockedAsFound.sort( false )[0] )
+    }
+
+
+    @Test
+    void testActionItemStatusSortSecondaryDesc() {
+        def results = ActionItemStatus.fetchWithPagingAndSortParams(
+                [params: [name: "%"]],
+                [sortColumn: "actionItemStatusBlockedProcess", sortAscending: false, max: 50, offset: 0] )
+
+        def foundBlocked = false
+        def foundNotBlocked = false
+        def blockedAsFound = []
+        def notBlockedAsFound = []
+        results.each { it ->
+            if (it.actionItemStatusBlockedProcess == 'Y') {
+                assertFalse foundNotBlocked
+                foundBlocked = true
+                blockedAsFound.add( it.actionItemStatus )
+            }
+            if (it.actionItemStatusBlockedProcess == 'N') {
+                assertTrue foundBlocked
+                foundNotBlocked = true
+                notBlockedAsFound.add( it.actionItemStatus )
+            }
+        }
+        assertEquals( blockedAsFound[0], blockedAsFound.sort( false )[0] )
+        assertEquals( blockedAsFound[1], blockedAsFound.sort( false )[1] )
+        assertEquals( notBlockedAsFound[0], notBlockedAsFound.sort( false )[0] )
     }
 
 

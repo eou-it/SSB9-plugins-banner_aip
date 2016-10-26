@@ -56,23 +56,121 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         assertFalse actionItemsRO.isEmpty()
     }
 
+
     @Test
     void testActionItemSortNameAsc() {
         def results = ActionItemReadOnly.fetchWithPagingAndSortParams(
                 [params: [name: "%"]],
-                [sortColumn: "actionItemName", sortAscending: true, max: 10, offset: 0])
+                [sortColumn: "actionItemName", sortAscending: true, max: 20, offset: 0] )
 
-        assertEquals( 10, results.size() )
+        assertEquals( 20, results.size() )
+        def asFound = []
+        results.each { it ->
+            asFound.add( it.actionItemName )
+        }
+        (0..4).each { it ->
+            assertEquals( asFound[it], asFound.sort( false )[it] )
+        }
     }
+
 
     @Test
     void testActionItemSortNameDesc() {
         def results = ActionItemReadOnly.fetchWithPagingAndSortParams(
                 [params: [name: "%"]],
-                [sortColumn: "actionItemName", sortAscending: false, max: 10, offset: 0] )
+                [sortColumn: "actionItemName", sortAscending: false, max: 20, offset: 0] )
 
-        assertEquals( 10, results.size() )
+        assertEquals( 20, results.size() )
+        def asFound = []
+        results.each { it ->
+            asFound.add( it.actionItemName )
+        }
+        (0..4).each { it ->
+            assertEquals( asFound[it], asFound.sort( false ).reverse( false )[it] )
+        }
     }
+
+    // sort by other than name is secondarily sorted by name
+    @Test
+    void testActionItemSortSecondaryAsc() {
+        def results = ActionItemReadOnly.fetchWithPagingAndSortParams(
+                [params: [name: "%"]],
+                [sortColumn: "actionItemStatus", sortAscending: true, max: 50, offset: 0] )
+
+        def foundActive = false
+        def foundPending = false
+        def foundInactive = false
+        def activeAsFound = []
+        def pendingAsFound = []
+        def inactiveAsFound = []
+        results.each { it ->
+            if (it.actionItemStatus == 'Active') {
+                assertFalse foundPending
+                assertFalse foundInactive
+                foundActive = true
+                activeAsFound.add( it.actionItemName )
+            }
+            if (it.actionItemStatus == 'Inactive') {
+                assertTrue foundActive
+                assertFalse foundPending
+                foundInactive = true
+                inactiveAsFound.add( it.actionItemName )
+            }
+            if (it.actionItemStatus == 'Pending') {
+                assertTrue foundActive
+                assertTrue foundInactive
+                foundPending = true
+                pendingAsFound.add( it.actionItemName )
+            }
+        }
+        (0..4).each { it ->
+            assertEquals( activeAsFound[it], activeAsFound.sort( false )[it] )
+            assertEquals( pendingAsFound[it], pendingAsFound.sort( false )[it] )
+            assertEquals( inactiveAsFound[it], inactiveAsFound.sort( false )[it] )
+        }
+    }
+
+
+    @Test
+    void testActionItemSortSecondaryDesc() {
+        def results = ActionItemReadOnly.fetchWithPagingAndSortParams(
+                [params: [name: "%"]],
+                [sortColumn: "actionItemStatus", sortAscending: false, max: 50, offset: 0] )
+
+        def foundActive = false
+        def foundPending = false
+        def foundInactive = false
+        def activeAsFound = []
+        def pendingAsFound = []
+        def inactiveAsFound = []
+        results.each { it ->
+            if (it.actionItemStatus == 'Pending') {
+                assertFalse foundActive
+                assertFalse foundInactive
+                foundPending = true
+                pendingAsFound.add( it.actionItemName )
+            }
+            if (it.actionItemStatus == 'Inactive') {
+                assertFalse foundActive
+                assertTrue foundPending
+                foundInactive = true
+                inactiveAsFound.add( it.actionItemName )
+            }
+            if (it.actionItemStatus == 'Active') {
+                assertTrue foundPending
+                assertTrue foundInactive
+                foundActive = true
+                activeAsFound.add( it.actionItemName )
+            }
+
+        }
+        (0..4).each { it ->
+            assertEquals( pendingAsFound[it], pendingAsFound.sort( false )[it] )
+            assertEquals( inactiveAsFound[it], inactiveAsFound.sort( false )[it] )
+            assertEquals( activeAsFound[it], activeAsFound.sort( false )[it] )
+        }
+    }
+
 
     @Test
     void testActionItemROHashCode() {

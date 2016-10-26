@@ -3,14 +3,10 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
-import org.hibernate.annotations.Type
-import org.hibernate.criterion.Order
 import net.hedtech.banner.general.CommunicationCommonUtility
+import org.hibernate.criterion.Order
 
 import javax.persistence.*
-import java.awt.TextArea
 
 
 @NamedQueries(value = [
@@ -86,13 +82,6 @@ class GroupFolderReadOnly implements Serializable {
 
 
     /**
-     * VPDI Code
-     */
-
-    @Column(name = "ACTION_ITEM_GROUP_VPDI_CODE")
-    String groupVpdiCode
-
-    /**
      * Folder ID
      */
 
@@ -122,7 +111,6 @@ class GroupFolderReadOnly implements Serializable {
                 ", groupActivityDate=" + groupActivityDate +
                 ", groupUserId='" + groupUserId + '\'' +
                 ", groupVersion=" + groupVersion +
-                ", groupVpdiCode='" + groupVpdiCode + '\'' +
                 ", folderId='" + folderId + '\'' +
                 ", folderName='" + folderName + '\'' +
                 ", folderDesc='" + folderDesc + '\'' +
@@ -145,7 +133,6 @@ class GroupFolderReadOnly implements Serializable {
         if (groupTitle != that.groupTitle) return false
         if (groupUserId != that.groupUserId) return false
         if (groupVersion != that.groupVersion) return false
-        if (groupVpdiCode != that.groupVpdiCode) return false
 
         return true
     }
@@ -159,7 +146,6 @@ class GroupFolderReadOnly implements Serializable {
         result = 31 * result + (groupActivityDate != null ? groupActivityDate.hashCode() : 0)
         result = 31 * result + (groupUserId != null ? groupUserId.hashCode() : 0)
         result = 31 * result + (groupVersion != null ? groupVersion.hashCode() : 0)
-        result = 31 * result + (groupVpdiCode != null ? groupVpdiCode.hashCode() : 0)
         result = 31 * result + (folderId != null ? folderId.hashCode() : 0)
         result = 31 * result + (folderName != null ? folderName.hashCode() : 0)
         result = 31 * result + (folderDesc != null ? folderDesc.hashCode() : 0)
@@ -190,9 +176,12 @@ class GroupFolderReadOnly implements Serializable {
     public static fetchWithPagingAndSortParams(filterData, pagingAndSortParams) {
         def searchStatus = filterData?.params?.status
         def queryCriteria = GroupFolderReadOnly.createCriteria()
-        def results = queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
-            ilike("groupTitle", CommunicationCommonUtility.getScrubbedInput(filterData?.params?.name))
-            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+        def results = queryCriteria.list( max: pagingAndSortParams.max, offset: pagingAndSortParams.offset ) {
+            ilike( "groupTitle", CommunicationCommonUtility.getScrubbedInput( filterData?.params?.name ) )
+            order( (pagingAndSortParams.sortAscending ? Order.asc( pagingAndSortParams?.sortColumn ) : Order.desc( pagingAndSortParams?.sortColumn )).ignoreCase() )
+            if (!pagingAndSortParams?.sortColumn.equals( "groupTitle" )) {
+                order( Order.asc( 'groupTitle' ).ignoreCase() )
+            }
         }
         return results
     }
