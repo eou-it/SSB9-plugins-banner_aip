@@ -4,7 +4,6 @@
 package net.hedtech.banner.aip
 
 import net.hedtech.banner.general.CommunicationCommonUtility
-import org.hibernate.FlushMode
 import org.hibernate.criterion.Order
 
 import javax.persistence.*
@@ -182,14 +181,13 @@ class ActionItemStatus implements Serializable {
 
 
     public static fetchWithPagingAndSortParams(filterData, pagingAndSortParams) {
-
-        def searchStatus = filterData?.params?.status
         def queryCriteria = ActionItemStatus.createCriteria()
         def results = queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
-
             ilike("actionItemStatus", CommunicationCommonUtility.getScrubbedInput(filterData?.params?.name))
-
             order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+            if (! pagingAndSortParams?.sortColumn.equals( "actionItemStatus" )) {
+                order( Order.asc( 'actionItemStatus' ).ignoreCase() )
+            }
         }
 
         return results

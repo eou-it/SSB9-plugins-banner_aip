@@ -71,14 +71,16 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         assertNotNull result
     }
 
+
     @Test
     void testGroupFolderSortNameAsc() {
         def results = GroupFolderReadOnly.fetchWithPagingAndSortParams(
                 [params: [name: "%"]],
-                [sortColumn: "groupTitle", sortAscending: true, max: 10, offset: 0])
+                [sortColumn: "groupTitle", sortAscending: true, max: 10, offset: 0] )
 
         assertEquals( 10, results.size() )
     }
+
 
     @Test
     void testGroupFolderSortNameDesc() {
@@ -87,6 +89,86 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
                 [sortColumn: "groupTitle", sortAscending: false, max: 10, offset: 0] )
 
         assertEquals( 10, results.size() )
+    }
+
+    // sort by other than name is secondarily sorted by name
+    @Test
+    void testGroupFolderSortSecondaryAsc() {
+        def results = GroupFolderReadOnly.fetchWithPagingAndSortParams(
+                [params: [name: "%"]],
+                [sortColumn: "groupStatus", sortAscending: true, max: 50, offset: 0] )
+
+        def foundActive = false
+        def foundInactive = false
+        def foundPending = false
+        def activeAsFound = []
+        def inactiveAsFound = []
+        def pendingAsFound = []
+        results.each { it ->
+            if (it.groupStatus == 'active') {
+                assertFalse foundInactive
+                assertFalse foundPending
+                foundActive = true
+                activeAsFound.add( it.groupTitle )
+            }
+            if (it.groupStatus == 'inactive') {
+                assertTrue( foundActive )
+                assertFalse foundPending
+                foundInactive = true
+                inactiveAsFound.add( it.groupTitle )
+            }
+            if (it.groupStatus == 'pending') {
+                assertTrue foundInactive
+                assertTrue foundPending
+                foundPending = true
+                pendingAsFound.add( it.groupTitle )
+            }
+        }
+        (0..9).each() { it ->
+            assertEquals( activeAsFound[it], activeAsFound.sort( false )[it] )
+        }
+        assertEquals( inactiveAsFound[0], inactiveAsFound.sort( false )[0] )
+        assertEquals( pendingAsFound[0], pendingAsFound.sort( false )[0] )
+    }
+
+
+    @Test
+    void testGroupFolderSortSecondaryDesc() {
+        def results = GroupFolderReadOnly.fetchWithPagingAndSortParams(
+                [params: [name: "%"]],
+                [sortColumn: "groupStatus", sortAscending: false, max: 50, offset: 0] )
+        def foundActive = false
+        def foundInactive = false
+        def foundPending = false
+        def activeAsFound = []
+        def inactiveAsFound = []
+        def pendingAsFound = []
+        results.each { it ->
+            if (it.groupStatus == 'pending') {
+                assertFalse foundInactive
+                assertFalse foundPending
+                foundPending = true
+                pendingAsFound.add( it.groupTitle )
+            }
+            if (it.groupStatus == 'inactive') {
+                assertFalse( foundActive )
+                assertTrue foundPending
+                foundInactive = true
+                inactiveAsFound.add( it.groupTitle )
+            }
+            if (it.groupStatus == 'active') {
+                assertTrue foundInactive
+                assertTrue foundPending
+                foundActive = true
+                activeAsFound.add( it.groupTitle )
+            }
+
+        }
+        (0..9).each() { it ->
+            assertEquals( activeAsFound[it], activeAsFound.sort( false )[it] )
+        }
+        assertEquals( inactiveAsFound[0], inactiveAsFound.sort( false )[0] )
+        assertEquals( pendingAsFound[0], pendingAsFound.sort( false )[0] )
     }
 
 
@@ -107,7 +189,6 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         groupFolderNewList.groupUserId = groupFolderByIdList.groupUserId
         groupFolderNewList.groupActivityDate = groupFolderByIdList.groupActivityDate
         groupFolderNewList.groupVersion = groupFolderByIdList.groupVersion
-        groupFolderNewList.groupVpdiCode = groupFolderByIdList.groupVpdiCode
         groupFolderNewList.folderDesc = groupFolderByIdList.folderDesc
         groupFolderNewList.folderName = groupFolderByIdList.folderName
         groupFolderNewList.folderId = groupFolderByIdList.folderId
