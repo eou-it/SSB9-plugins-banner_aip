@@ -31,14 +31,13 @@ class ActionItemStatusRuleReadOnlyIntegrationTest extends BaseIntegrationTestCas
     void testFetchActionItemStatusReadOnlyById() {
         List<ActionItemStatusRuleReadOnly> actionItemStatusROs = ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleRO()
         ActionItemStatusRuleReadOnly actionItemStatusRuleReadOnly = ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleROById(actionItemStatusROs[0].statusRuleId)
-        assertTrue actionItemStatusRuleReadOnly.hasProperty("id")
-        assertEquals (actionItemStatusROs.id, actionItemStatusRuleReadOnly.id)
+        assertEquals (actionItemStatusROs[0].statusRuleId, actionItemStatusRuleReadOnly.statusRuleId)
     }
 
     @Test
     void testFetchActionItemStatusReadOnluByActionItemId() {
         List<ActionItemStatusRuleReadOnly> actionItemStatusROs = ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleRO()
-        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlys = ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleROByActionItemId(actionItemStatusROs.statusRuleActionItemId)
+        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlys = ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleROByActionItemId(actionItemStatusROs[0].statusRuleActionItemId)
         assertFalse actionItemStatusRuleReadOnlys.isEmpty()
         assertEquals(actionItemStatusRuleReadOnlys[0].statusRuleActionItemId, actionItemStatusROs[0].statusRuleActionItemId)
     }
@@ -48,7 +47,7 @@ class ActionItemStatusRuleReadOnlyIntegrationTest extends BaseIntegrationTestCas
         List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies = ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleRO()
         def actionItemStatusRuleRO = actionItemStatusRuleReadOnlies[0]
         assertNotNull actionItemStatusRuleRO.toString()
-        assertFalse actionItemStatusRuleRO.isEmpty()
+        assertFalse actionItemStatusRuleRO.toString().isEmpty()
     }
 
     @Test
@@ -68,7 +67,7 @@ class ActionItemStatusRuleReadOnlyIntegrationTest extends BaseIntegrationTestCas
         def newActionItemStatusRuleRO = new ActionItemStatusRuleReadOnly(
                 statusRuleSeqOrder: actionItemStatusRuleRO.statusRuleSeqOrder,
                 statusRuleLabelText: actionItemStatusRuleRO.statusRuleLabelText,
-                statusRuleActivityDate: actionItemStatusRuleRO.statusActivityDate,
+                statusRuleActivityDate: actionItemStatusRuleRO.statusRuleActivityDate,
                 statusRuleActionItemId: actionItemStatusRuleRO.statusRuleActionItemId,
                 statusId: actionItemStatusRuleRO.statusId,
                 statusName: actionItemStatusRuleRO.statusName,

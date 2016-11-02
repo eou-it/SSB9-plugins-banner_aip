@@ -27,4 +27,27 @@ class ActionItemStatusRuleReadOnlyServiceIntegrationTest extends BaseIntegration
     public void tearDown() {
         super.tearDown()
     }
+
+    @Test
+    void testListActionItemStatusRuleRO() {
+        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies = actionItemStatusRuleReadOnlyService.listActionItemStatusRulesRO()
+        assertFalse actionItemStatusRuleReadOnlies.isEmpty()
+        assertTrue (actionItemStatusRuleReadOnlies.size()>0)
+    }
+
+    @Test
+    void testGetActionItemStatusRuleROById() {
+        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies = actionItemStatusRuleReadOnlyService.listActionItemStatusRulesRO()
+        ActionItemStatusRuleReadOnly actionItemStatusRuleReadOnly = actionItemStatusRuleReadOnlyService.getActionItemStatusRuleROById(actionItemStatusRuleReadOnlies[0].statusRuleId)
+        assertTrue (actionItemStatusRuleReadOnlies[0].equals(actionItemStatusRuleReadOnly))
+    }
+
+    @Test
+    void testGetAcionItemStatusRuleROByActionItemId() {
+        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies = actionItemStatusRuleReadOnlyService.listActionItemStatusRulesRO()
+        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies1 = actionItemStatusRuleReadOnlyService.getActionItemStatusRuleROByActionItemId(actionItemStatusRuleReadOnlies[0].statusRuleActionItemId)
+        assertFalse(actionItemStatusRuleReadOnlies1.isEmpty())
+        assertEquals(actionItemStatusRuleReadOnlies[0].statusRuleActionItemId, actionItemStatusRuleReadOnlies1[0].statusRuleActionItemId)
+
+    }
 }

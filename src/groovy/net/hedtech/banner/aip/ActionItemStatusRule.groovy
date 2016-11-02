@@ -74,7 +74,7 @@ class ActionItemStatusRule implements Serializable {
     /***
      * User action item status rule was last updated by
      */
-    @Column(name = "GCRAIDR_USER_ID")
+    @Column(name = "GCRAISR_USER_ID")
     String userId
 
     /***
@@ -120,7 +120,7 @@ class ActionItemStatusRule implements Serializable {
         if (activityDate != that.activityDate) return false
         if (dataOrigin != that.dataOrigin) return false
 
-        reutrn true
+        return true
     }
 
     int hashCode() {

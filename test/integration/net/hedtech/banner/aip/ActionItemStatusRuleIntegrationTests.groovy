@@ -35,7 +35,6 @@ class ActionItemStatusRuleIntegrationTests extends BaseIntegrationTestCase {
         List<ActionItemStatusRule> actionItemStatusRules = ActionItemStatusRule.fetchActionItemStatusRules()
         def actionItemStatusRuleTemp = actionItemStatusRules[0]
         ActionItemStatusRule actionItemStatusRule = ActionItemStatusRule.fetchActionItemStatusRuleById(actionItemStatusRuleTemp.id)
-        assertTrue actionItemStatusRule.hasProperty("id")
         assertEquals(actionItemStatusRuleTemp.id, actionItemStatusRule.id )
     }
 
@@ -43,7 +42,7 @@ class ActionItemStatusRuleIntegrationTests extends BaseIntegrationTestCase {
     void testFetchActionItemStatusRuleByActionItemId() {
         List<ActionItemStatusRule> actionItemStatusRules = ActionItemStatusRule.fetchActionItemStatusRules()
         def actionItemStatusRuleTemp = actionItemStatusRules[0]
-        List<ActionItemStatusRule> actionItemStatusRulesNew = ActionItemStatusRule.fetchActionItemStatusRulesById(actionItemStatusRuleTemp.actionItemId)
+        List<ActionItemStatusRule> actionItemStatusRulesNew = ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId(actionItemStatusRuleTemp.actionItemId)
         assertNotNull actionItemStatusRulesNew
         assertTrue actionItemStatusRulesNew.size()>1
     }

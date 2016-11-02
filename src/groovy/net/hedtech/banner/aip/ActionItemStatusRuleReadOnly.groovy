@@ -45,7 +45,7 @@ class ActionItemStatusRuleReadOnly implements Serializable{
      * State Rule Label Text for display
      */
     @Column (name = "STATUS_RULE_LABEL_TEXT")
-    Long statusRuleLabelText
+    String statusRuleLabelText
 
     /**
      *
@@ -142,7 +142,7 @@ class ActionItemStatusRuleReadOnly implements Serializable{
         result = 31 * result + (statusId != null ? statusId.hashCode() : 0)
         result = 31 * result + (statusName != null ? statusName.hashCode() : 0)
         result = 31 * result + (statusBlockProcessInd != null ? statusBlockProcessInd.hashCode() : 0)
-        rerule = 31 * result + (statusActiveInd != null ? statusActiveInd.hashCode() : 0)
+        result = 31 * result + (statusActiveInd != null ? statusActiveInd.hashCode() : 0)
         result = 31 * result + (statusSystemRequired != null ? statusSystemRequired.hashCode() : 0)
         result = 31 * result + (statusActivityDate != null ? statusActivityDate.hashCode() : 0)
         return result;
@@ -156,7 +156,7 @@ class ActionItemStatusRuleReadOnly implements Serializable{
     }
     public static fetchActionItemStatusRuleRO() {
         ActionItemStatusRuleReadOnly.withSession { session ->
-            List<ActionItemStatusRuleReadOnly> actionItemStatusRule = session.getNamedQuery("ActionItemStatusRuleReadOnl.fetchActionItemStatusRuleRO").list()
+            List<ActionItemStatusRuleReadOnly> actionItemStatusRule = session.getNamedQuery("ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleRO").list()
             return actionItemStatusRule
         }
     }
