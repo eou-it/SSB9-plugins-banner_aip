@@ -3,9 +3,6 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import com.sun.tools.corba.se.idl.SequenceGen
-import org.hibernate.FlushMode
-
 import javax.persistence.*
 
 
