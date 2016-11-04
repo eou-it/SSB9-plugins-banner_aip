@@ -48,6 +48,13 @@ class ActionItemStatusRuleReadOnly implements Serializable{
     String statusRuleLabelText
 
     /**
+     * version
+     */
+    @Version
+    @Column (name = "STATUS_RULE_VERSION")
+    Long statusRuleVersion
+
+    /**
      *
      */
     @Column (name = "STATUS_RULE_ACTIVITY_DATE")
@@ -98,18 +105,18 @@ class ActionItemStatusRuleReadOnly implements Serializable{
 
     @Override
     public String toString() {
-        return "ActionItemStatusRuleReadOnly{" +
-                "statusRuleId=" + statusRuleId +
-                ", statusRuleSeqOrder=" + statusRuleSeqOrder +
-                ", statusRuleLabelText='" + statusRuleLabelText + "\'" +
-                ", statusRuleActionItemId=" + statusRuleActionItemId +
-                ", statusId=" + statusId +
-                ", statusName='" + statusName + "\'" +
-                ", statusBlockProcessInd='" + statusBlockProcessInd + "\'" +
-                ", statusSystemRequired='" + statusSystemRequired + "\'" +
-                ", statusActiveInd='" + statusActiveInd + "\'" +
-                ", statusActivityDate=" + statusActivityDate +
-                "}"
+        return """{statusRuleId:$statusRuleId,
+                statusRuleSeqOrder:$statusRuleSeqOrder,
+                statusRuleLabelText:"$statusRuleLabelText",
+                statusRuleVersion:$statusRuleVersion,
+                statusRuleActionItemId:$statusRuleActionItemId,
+                statusId:$statusId,
+                statusName:"$statusName",
+                statusBlockProcessInd:"$statusBlockProcessInd",
+                statusSystemRequired:"$statusSystemRequired",
+                statusActiveInd:"$statusActiveInd",
+                statusActivityDate:"$statusActivityDate"}"""
+
     }
 
     boolean equals( o ) {
@@ -121,6 +128,7 @@ class ActionItemStatusRuleReadOnly implements Serializable{
         if (statusRuleId != that.statusRuleId) return false
         if (statusRuleSeqOrder != that.statusRuleSeqOrder) return false
         if (statusRuleLabelText != that.statusRuleLabelText) return false
+        if (statusRuleVersion != that.statusRuleVersion) return false
         if (statusRuleActivityDate != that.statusRuleActivityDate) return false
         if (statusRuleActionItemId != that.statusRuleActionItemId) return false
         if (statusId != that.statusId) return false
@@ -137,6 +145,7 @@ class ActionItemStatusRuleReadOnly implements Serializable{
         result = 31 * result + (statusRuleId != null ? statusRuleId.hashCode() : 0)
         result = 31 * result + (statusRuleSeqOrder != null ? statusRuleSeqOrder.hashCode() : 0)
         result = 31 * result + (statusRuleLabelText != null ? statusRuleLabelText.hashCode() : 0)
+        rerult = 31 * result + (statusRuleVersion != null ? statusRuleVersion.hashCode() : 0)
         result = 31 * result + (statusRuleActivityDate != null ? statusRuleActivityDate.hashCode() : 0)
         result = 31 * result + (statusRuleActionItemId != null ? statusRuleActionItemId.hashCode() : 0)
         result = 31 * result + (statusId != null ? statusId.hashCode() : 0)
