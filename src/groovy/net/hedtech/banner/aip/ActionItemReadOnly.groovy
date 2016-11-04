@@ -94,11 +94,18 @@ class ActionItemReadOnly implements Serializable {
     Date actionItemActivityDate
 
     /**
-     * User action item pertains to
+     * * User who last updated the Action Item
      */
 
     @Column(name = "ACTION_ITEM_USER_ID", length = 30)
     String actionItemUserId
+
+    /**
+     * User who last updated the content
+     */
+
+    @Column(name = "ACTION_ITEM_CONTENT_USER_ID", length = 30)
+    String actionItemContentUserId
 
     /**
      * UserID that created the action item
@@ -120,6 +127,13 @@ class ActionItemReadOnly implements Serializable {
 
     @Column(name = "ACTION_ITEM_COMPOSITE_DATE")
     Date actionItemCompositeDate
+
+    /**
+     * User who last updated either the action item or the detail
+     */
+
+    @Column(name = "ACTION_ITEM_LAST_USER_ID")
+    String actionItemLastUserId
 
     /**
      * Version of the action item
@@ -178,9 +192,11 @@ class ActionItemReadOnly implements Serializable {
                 ", actionItemStatus='" + actionItemStatus + '\'' +
                 ", actionItemActivityDate=" + actionItemActivityDate +
                 ", actionItemUserId='" + actionItemUserId + '\'' +
+                ", actionItemContentUserId='" + actionItemContentUserId + '\'' +
                 ", actionItemCreatorId='" + actionItemCreatorId + '\'' +
                 ", actionItemCreateDate=" + actionItemCreateDate +
                 ", actionItemCompositeDate=" + actionItemCompositeDate +
+                ", actionItemLastUserId=" + actionItemLastUserId +
                 ", actionItemVersion=" + actionItemVersion +
                 ", actionItemTemplateId=" + actionItemTemplateId +
                 ", actionItemTemplateName='" + actionItemTemplateName + '\'' +
@@ -204,6 +220,7 @@ class ActionItemReadOnly implements Serializable {
         if (actionItemContent != that.actionItemContent) return false
         if (actionItemCreateDate != that.actionItemCreateDate) return false
         if (actionItemCompositeDate != that.actionItemCompositeDate) return false
+        if (actionItemLastUserId != that.actionItemLastUserId) return false
         if (actionItemCreatorId != that.actionItemCreatorId) return false
         if (actionItemDesc != that.actionItemDesc) return false
         if (actionItemId != that.actionItemId) return false
@@ -212,6 +229,7 @@ class ActionItemReadOnly implements Serializable {
         if (actionItemTemplateId != that.actionItemTemplateId) return false
         if (actionItemTemplateName != that.actionItemTemplateName) return false
         if (actionItemUserId != that.actionItemUserId) return false
+        if (actionItemContentUserId != that.actionItemContentUserId) return false
         if (actionItemVersion != that.actionItemVersion) return false
         if (folderDesc != that.folderDesc) return false
         if (folderId != that.folderId) return false
@@ -233,9 +251,11 @@ class ActionItemReadOnly implements Serializable {
         result = 31 * result + (actionItemStatus != null ? actionItemStatus.hashCode() : 0)
         result = 31 * result + (actionItemActivityDate != null ? actionItemActivityDate.hashCode() : 0)
         result = 31 * result + (actionItemUserId != null ? actionItemUserId.hashCode() : 0)
+        result = 31 * result + (actionItemContentUserId != null ? actionItemContentUserId.hashCode() : 0)
         result = 31 * result + (actionItemCreatorId != null ? actionItemCreatorId.hashCode() : 0)
         result = 31 * result + (actionItemCreateDate != null ? actionItemCreateDate.hashCode() : 0)
         result = 31 * result + (actionItemCompositeDate != null ? actionItemCompositeDate.hashCode() : 0)
+        result = 31 * result + (actionItemLastUserId != null ? actionItemLastUserId.hashCode() : 0)
         result = 31 * result + (actionItemVersion != null ? actionItemVersion.hashCode() : 0)
         result = 31 * result + (actionItemTemplateId != null ? actionItemTemplateId.hashCode() : 0)
         result = 31 * result + (actionItemTemplateName != null ? actionItemTemplateName.hashCode() : 0)
