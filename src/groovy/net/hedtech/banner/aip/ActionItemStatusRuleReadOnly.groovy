@@ -145,7 +145,7 @@ class ActionItemStatusRuleReadOnly implements Serializable{
         result = 31 * result + (statusRuleId != null ? statusRuleId.hashCode() : 0)
         result = 31 * result + (statusRuleSeqOrder != null ? statusRuleSeqOrder.hashCode() : 0)
         result = 31 * result + (statusRuleLabelText != null ? statusRuleLabelText.hashCode() : 0)
-        rerult = 31 * result + (statusRuleVersion != null ? statusRuleVersion.hashCode() : 0)
+        result = 31 * result + (statusRuleVersion != null ? statusRuleVersion.hashCode() : 0)
         result = 31 * result + (statusRuleActivityDate != null ? statusRuleActivityDate.hashCode() : 0)
         result = 31 * result + (statusRuleActionItemId != null ? statusRuleActionItemId.hashCode() : 0)
         result = 31 * result + (statusId != null ? statusId.hashCode() : 0)

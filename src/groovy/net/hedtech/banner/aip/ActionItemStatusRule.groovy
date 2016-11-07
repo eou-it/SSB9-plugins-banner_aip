@@ -78,7 +78,7 @@ class ActionItemStatusRule implements Serializable {
      * Last activity date for the action item status rule
      */
     @Column(name="GCRAISR_ACTIVITY_DATE")
-    String activityDate
+    Date activityDate
 
     /***
      * Data Origin column for GCRAISR
