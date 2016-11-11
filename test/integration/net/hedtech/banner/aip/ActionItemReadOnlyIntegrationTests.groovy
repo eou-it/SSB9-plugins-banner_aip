@@ -234,10 +234,13 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     // ActionItem most recent
     @Test
     void testActionItemROCompositeDateGCBACTMGreater() {
-        def someRandomId = 4
-        setBackActionItemActivityDate( 1, someRandomId )
-        setBackActionItemDetailActivityDate( 4, someRandomId )
-        ActionItemReadOnly testTheDates = ActionItemReadOnly.findByActionItemId( someRandomId )
+        def someRandomItemName = 'Policy Handbook'
+        setBackActionItemActivityDate( 1, someRandomItemName )
+        List <ActionItem> ais = ActionItem.findAllByTitle (someRandomItemName)
+        ais.each {
+            setBackActionItemDetailActivityDate( 4, it.id )
+        }
+        ActionItemReadOnly testTheDates = ActionItemReadOnly.findAllByActionItemName( someRandomItemName )[0]
         assertEquals( testTheDates.actionItemCompositeDate, testTheDates.actionItemActivityDate )
         assertTrue( testTheDates.actionItemCompositeDate > testTheDates.actionItemContentDate )
         assertEquals( testTheDates.actionItemLastUserId, testTheDates.actionItemUserId )
@@ -247,10 +250,13 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     // Detail most recent
     @Test
     void testActionItemROCompositeDateGCRACTNGreater() {
-        def someRandomId = 4
-        setBackActionItemActivityDate( 4, someRandomId )
-        setBackActionItemDetailActivityDate( 1, someRandomId )
-        ActionItemReadOnly testTheDates = ActionItemReadOnly.findByActionItemId( someRandomId )
+        def someRandomItemName = 'Policy Handbook'
+        setBackActionItemActivityDate( 4, someRandomItemName )
+        List<ActionItem> ais = ActionItem.findAllByTitle( someRandomItemName )
+        ais.each {
+            setBackActionItemDetailActivityDate( 1, it.id )
+        }
+        ActionItemReadOnly testTheDates = ActionItemReadOnly.findAllByActionItemName( someRandomItemName )[0]
         assertEquals( testTheDates.actionItemCompositeDate, testTheDates.actionItemContentDate )
         assertTrue( testTheDates.actionItemCompositeDate > testTheDates.actionItemActivityDate )
         assertNotEquals( testTheDates.actionItemLastUserId, testTheDates.actionItemUserId )
@@ -261,7 +267,7 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     private void setBackActionItemActivityDate( def daysBack, def actionItemId ) {
         def sql
         try {
-            def updateSql = """update gcbactm set gcbactm_activity_date = (SYSDATE - ?), gcbactm_user_id = 'jack' where gcbactm_surrogate_id = ?"""
+            def updateSql = """update gcbactm set gcbactm_activity_date = (SYSDATE - ?), gcbactm_user_id = 'jack' where gcbactm_name = ?"""
             sql = new Sql( sessionFactory.getCurrentSession().connection() )
             sql.executeUpdate( updateSql, [daysBack, actionItemId] )
         } finally {

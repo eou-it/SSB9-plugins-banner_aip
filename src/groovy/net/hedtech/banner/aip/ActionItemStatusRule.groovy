@@ -7,7 +7,7 @@ import javax.persistence.*
 
 
 @NamedQueries(value = [
-        @NamedQuery(name = "ActioinItemStatusRule.fetchActionItemStatusRules",
+        @NamedQuery(name = "ActionItemStatusRule.fetchActionItemStatusRules",
                 query = """
            FROM ActionItemStatusRule a
           """),
@@ -147,7 +147,7 @@ class ActionItemStatusRule implements Serializable {
 
     public static def fetchActionItemStatusRules() {
         ActionItemStatusRule.withSession { session ->
-            List actionItemStatusRules = session.getNamedQuery("ActioinItemStatusRule.fetchActionItemStatusRules").list()
+            List actionItemStatusRules = session.getNamedQuery("ActionItemStatusRule.fetchActionItemStatusRules").list()
             return actionItemStatusRules
         }
     }
