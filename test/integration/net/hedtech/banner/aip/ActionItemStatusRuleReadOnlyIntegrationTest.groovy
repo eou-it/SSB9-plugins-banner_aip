@@ -74,7 +74,8 @@ class ActionItemStatusRuleReadOnlyIntegrationTest extends BaseIntegrationTestCas
                 statusBlockProcessInd: actionItemStatusRuleRO.statusBlockProcessInd,
                 statusSystemRequired: actionItemStatusRuleRO.statusSystemRequired,
                 statusActiveInd: actionItemStatusRuleRO.statusActiveInd,
-                statusActivityDate: actionItemStatusRuleRO.statusActivityDate
+                statusActivityDate: actionItemStatusRuleRO.statusActivityDate,
+                statusRuleVersion: actionItemStatusRuleRO.statusRuleVersion
         )
         newActionItemStatusRuleRO.statusRuleId = actionItemStatusRuleRO.statusRuleId
 
