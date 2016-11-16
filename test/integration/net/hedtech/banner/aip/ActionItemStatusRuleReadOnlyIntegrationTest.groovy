@@ -23,28 +23,30 @@ class ActionItemStatusRuleReadOnlyIntegrationTest extends BaseIntegrationTestCas
 
     @Test
     void testFetchActionItemStatusReadOnly() {
-        List<ActionItemStatusRuleReadOnly> actionItemStatusROs = ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleRO()
+        List<ActionItemStatusRuleReadOnly> actionItemStatusROs = ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesRO()
         assertFalse actionItemStatusROs.isEmpty()
     }
 
     @Test
     void testFetchActionItemStatusReadOnlyById() {
-        List<ActionItemStatusRuleReadOnly> actionItemStatusROs = ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleRO()
-        ActionItemStatusRuleReadOnly actionItemStatusRuleReadOnly = ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleROById(actionItemStatusROs[0].statusRuleId)
+        List<ActionItemStatusRuleReadOnly> actionItemStatusROs = ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesRO()
+        ActionItemStatusRuleReadOnly actionItemStatusRuleReadOnly =
+                ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleROById(actionItemStatusROs[0].statusRuleId)
         assertEquals (actionItemStatusROs[0].statusRuleId, actionItemStatusRuleReadOnly.statusRuleId)
     }
 
     @Test
     void testFetchActionItemStatusReadOnluByActionItemId() {
-        List<ActionItemStatusRuleReadOnly> actionItemStatusROs = ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleRO()
-        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlys = ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleROByActionItemId(actionItemStatusROs[0].statusRuleActionItemId)
+        List<ActionItemStatusRuleReadOnly> actionItemStatusROs = ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesRO()
+        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlys =
+                ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesROByActionItemId(actionItemStatusROs[0].statusRuleActionItemId)
         assertFalse actionItemStatusRuleReadOnlys.isEmpty()
         assertEquals(actionItemStatusRuleReadOnlys[0].statusRuleActionItemId, actionItemStatusROs[0].statusRuleActionItemId)
     }
 
     @Test
     void testFetchActionItemStatusRuleReadOnlyString() {
-        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies = ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleRO()
+        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies = ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesRO()
         def actionItemStatusRuleRO = actionItemStatusRuleReadOnlies[0]
         assertNotNull actionItemStatusRuleRO.toString()
         assertFalse actionItemStatusRuleRO.toString().isEmpty()
@@ -52,7 +54,7 @@ class ActionItemStatusRuleReadOnlyIntegrationTest extends BaseIntegrationTestCas
 
     @Test
     void testActionItemStatusRuleROHashCode() {
-        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies = ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleRO()
+        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies = ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesRO()
         def actionItemStatusRO = actionItemStatusRuleReadOnlies[0]
         def result = actionItemStatusRO.hashCode()
         assertNotNull result
@@ -62,7 +64,7 @@ class ActionItemStatusRuleReadOnlyIntegrationTest extends BaseIntegrationTestCas
 
     @Test
     void testActionItemStatusRuleROEquals() {
-        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies = ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleRO()
+        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies = ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesRO()
         def actionItemStatusRuleRO = actionItemStatusRuleReadOnlies[0]
         def newActionItemStatusRuleRO = new ActionItemStatusRuleReadOnly(
                 statusRuleSeqOrder: actionItemStatusRuleRO.statusRuleSeqOrder,

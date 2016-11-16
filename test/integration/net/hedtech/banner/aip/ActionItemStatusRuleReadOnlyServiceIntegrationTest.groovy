@@ -45,7 +45,8 @@ class ActionItemStatusRuleReadOnlyServiceIntegrationTest extends BaseIntegration
     @Test
     void testGetAcionItemStatusRuleROByActionItemId() {
         List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies = actionItemStatusRuleReadOnlyService.listActionItemStatusRulesRO()
-        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies1 = actionItemStatusRuleReadOnlyService.getActionItemStatusRuleROByActionItemId(actionItemStatusRuleReadOnlies[0].statusRuleActionItemId)
+        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies1 = actionItemStatusRuleReadOnlyService
+                .getActionItemStatusRulesROByActionItemId(actionItemStatusRuleReadOnlies[0].statusRuleActionItemId)
         assertFalse(actionItemStatusRuleReadOnlies1.isEmpty())
         assertEquals(actionItemStatusRuleReadOnlies[0].statusRuleActionItemId, actionItemStatusRuleReadOnlies1[0].statusRuleActionItemId)
 

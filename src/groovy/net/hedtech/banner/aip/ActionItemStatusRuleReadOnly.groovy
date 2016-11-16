@@ -7,7 +7,7 @@ import javax.persistence.*
 
 @NamedQueries(value = [
 
-        @NamedQuery(name = "ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleROById",
+        @NamedQuery(name = "ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesROById",
                 query = """
            FROM ActionItemStatusRuleReadOnly a
            WHERE a.statusRuleId = :myId
@@ -159,17 +159,18 @@ class ActionItemStatusRuleReadOnly implements Serializable{
 
     public static def fetchActionItemStatusRuleROById (Long myId) {
         ActionItemStatusRuleReadOnly.withSession { session ->
-            ActionItemStatusRuleReadOnly actionitemStatusRuleRO = session.getNamedQuery ("ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleROById").setLong("myId", myId).list()[0]
+            ActionItemStatusRuleReadOnly actionitemStatusRuleRO = session.getNamedQuery ("ActionItemStatusRuleReadOnly" +
+                    ".fetchActionItemStatusRulesROById").setLong("myId", myId).list()[0]
             return actionitemStatusRuleRO
         }
     }
-    public static fetchActionItemStatusRuleRO() {
+    public static fetchActionItemStatusRulesRO() {
         ActionItemStatusRuleReadOnly.withSession { session ->
             List<ActionItemStatusRuleReadOnly> actionItemStatusRule = session.getNamedQuery("ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleRO").list()
             return actionItemStatusRule
         }
     }
-    public static fetchActionItemStatusRuleROByActionItemId (Long myId) {
+    public static fetchActionItemStatusRulesROByActionItemId (Long myId) {
         ActionItemStatusRuleReadOnly.withSession { session ->
             List<ActionItemStatusRuleReadOnly> actionItemStatusRuleROs = session.getNamedQuery("ActionItemStatusRuleReadOnly.fetchActionItemStatusByActionItem").setLong("myId", myId).list()
             return actionItemStatusRuleROs
