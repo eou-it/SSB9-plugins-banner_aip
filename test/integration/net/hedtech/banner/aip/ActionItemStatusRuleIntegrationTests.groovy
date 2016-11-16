@@ -24,36 +24,41 @@ class ActionItemStatusRuleIntegrationTests extends BaseIntegrationTestCase {
         super.tearDown()
     }
 
+
     @Test
     void testFetchActionItemStatusRules() {
         List<ActionItemStatusRule> actionItemStatusRules = ActionItemStatusRule.fetchActionItemStatusRules()
         assertFalse actionItemStatusRules.isEmpty()
     }
 
+
     @Test
     void testFetchActoinItemStatusRuleById() {
         List<ActionItemStatusRule> actionItemStatusRules = ActionItemStatusRule.fetchActionItemStatusRules()
         def actionItemStatusRuleTemp = actionItemStatusRules[0]
-        ActionItemStatusRule actionItemStatusRule = ActionItemStatusRule.fetchActionItemStatusRuleById(actionItemStatusRuleTemp.id)
-        assertEquals(actionItemStatusRuleTemp.id, actionItemStatusRule.id )
+        ActionItemStatusRule actionItemStatusRule = ActionItemStatusRule.fetchActionItemStatusRuleById( actionItemStatusRuleTemp.id )
+        assertEquals( actionItemStatusRuleTemp.id, actionItemStatusRule.id )
     }
+
 
     @Test
     void testFetchActionItemStatusRuleByActionItemId() {
         List<ActionItemStatusRule> actionItemStatusRules = ActionItemStatusRule.fetchActionItemStatusRules()
         def actionItemStatusRuleTemp = actionItemStatusRules[0]
-        List<ActionItemStatusRule> actionItemStatusRulesNew = ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId(actionItemStatusRuleTemp.actionItemId)
+        List<ActionItemStatusRule> actionItemStatusRulesNew = ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId( actionItemStatusRuleTemp.actionItemId )
         assertNotNull actionItemStatusRulesNew
-        assertTrue actionItemStatusRulesNew.size()>1
+        assertTrue actionItemStatusRulesNew.size() >= 1
     }
+
 
     @Test
     void testFetchActionItemStatusRulesString() {
         List<ActionItemStatusRule> actionItemStatusRules = ActionItemStatusRule.fetchActionItemStatusRules()
         def actionItemStatusRule = actionItemStatusRules[0]
-        assertNotNull (actionItemStatusRule.toString())
+        assertNotNull( actionItemStatusRule.toString() )
         assertFalse actionItemStatusRules.isEmpty()
     }
+
 
     @Test
     void testActionItemStatusRuleHashCode() {
@@ -66,6 +71,7 @@ class ActionItemStatusRuleIntegrationTests extends BaseIntegrationTestCase {
         def actionItemStatusRuleObj = new ActionItemStatusRule()
         assertNotNull actionItemStatusRuleObj
     }
+
 
     @Test
     void testActionItemStatusRuleEquals() {
@@ -83,19 +89,20 @@ class ActionItemStatusRuleIntegrationTests extends BaseIntegrationTestCase {
         newActionItemStatusRule.id = actionItemStatusRule.id
         newActionItemStatusRule.version = actionItemStatusRule.version
 
-        def result = actionItemStatusRule.equals(actionItemStatusRule)
+        def result = actionItemStatusRule.equals( actionItemStatusRule )
         assertTrue result
 
-        result = actionItemStatusRule.equals(newActionItemStatusRule)
+        result = actionItemStatusRule.equals( newActionItemStatusRule )
         assertTrue result
 
-        result = actionItemStatusRule.equals(null)
+        result = actionItemStatusRule.equals( null )
         assertFalse result
 
-        def actionItemStatusRuleNull = new ActionItemStatusRule(null)
-        result = actionItemStatusRule.equals(actionItemStatusRuleNull)
+        def actionItemStatusRuleNull = new ActionItemStatusRule( null )
+        result = actionItemStatusRule.equals( actionItemStatusRuleNull )
         assertFalse result
     }
+
 
     @Test
     void testNullActionItemIdError() {
@@ -109,8 +116,9 @@ class ActionItemStatusRuleIntegrationTests extends BaseIntegrationTestCase {
         newActionItemStatusRule.labelText = actionItemStatusRule.labelText
 
         assertFalse newActionItemStatusRule.validate()
-        assertTrue (newActionItemStatusRule.errors.allErrors.codes[0].contains('actionItemStatusRule.actionItemId.nullable.error'))
+        assertTrue( newActionItemStatusRule.errors.allErrors.codes[0].contains( 'actionItemStatusRule.actionItemId.nullable.error' ) )
     }
+
 
     @Test
     void testNullSeqOrderError() {
@@ -124,8 +132,9 @@ class ActionItemStatusRuleIntegrationTests extends BaseIntegrationTestCase {
         newActionItemStatusRule.labelText = actionItemStatusRule.labelText
 
         assertFalse newActionItemStatusRule.validate()
-        assertTrue (newActionItemStatusRule.errors.allErrors.codes[0].contains('actionItemStatusRule.seqOrder.nullable.error'))
+        assertTrue( newActionItemStatusRule.errors.allErrors.codes[0].contains( 'actionItemStatusRule.seqOrder.nullable.error' ) )
     }
+
 
     @Test
     void testNullLabelTextError() {
@@ -139,7 +148,7 @@ class ActionItemStatusRuleIntegrationTests extends BaseIntegrationTestCase {
         newActionItemStatusRule.version = actionItemStatusRule.version
 
         assertFalse newActionItemStatusRule.validate()
-        assertTrue (newActionItemStatusRule.errors.allErrors.codes[0].contains('actionItemStatusRule.labelText.nullable.error'))
+        assertTrue( newActionItemStatusRule.errors.allErrors.codes[0].contains( 'actionItemStatusRule.labelText.nullable.error' ) )
     }
 
 }
