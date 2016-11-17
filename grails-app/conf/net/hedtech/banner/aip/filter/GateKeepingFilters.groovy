@@ -19,6 +19,9 @@ import org.springframework.security.core.context.SecurityContextHolder
 class GateKeepingFilters {
     private final log = Logger.getLogger( GateKeepingFilters.class )
 
+//    ApplicationContext ctx = Holders.grailsApplication.mainContext
+//    UserActionItemReadOnlyService userActionItemReadOnlyService = (UserActionItemReadOnlyService) ctx.getBean("userActionItemReadOnlyService")
+
     def userActionItemReadOnlyService
 
     def filters = {
@@ -26,33 +29,55 @@ class GateKeepingFilters {
             before = {
                 String uri = request.getScheme() + "://" +   // "http" + "://
                         request.getServerName() //+       // "myhost"
-                        //(request.getServerPort().equals( 80 ) ? "" : ":" + request.getServerPort()) // + // :port if not 80
-                        //request.getServerPort() +
-                        //request.getRequestURI() +       // "/people"
-                        //(request.getQueryString() ? "?" + request.getQueryString() : "") // "lastname=Fox&age=30"
+                //(request.getServerPort().equals( 80 ) ? "" : ":" + request.getServerPort()) // + // :port if not 80
+                //request.getServerPort() +
+                //request.getRequestURI() +       // "/people"
+                //(request.getQueryString() ? "?" + request.getQueryString() : "") // "lastname=Fox&age=30"
                 def reqParams = request?.JSON ?: params
                 def reqController = request?.JSON ?: controllerName
                 def reqAction = request?.JSON ?: actionName
 
-      //          println "request came from: " + uri
-       //         println "controller: " + reqController
-        //        println "action: " + reqAction
-         //       println "params: " + reqParams
-                if ('registration'.equals( reqParams['mode'] ) && 'term'.equals( reqController ) && 'termSelection'.equals( reqAction )) {
+                log.debug "controller: " + reqController
+                log.debug "action: " + reqAction
+                log.debug "params: " + reqParams
+                log.debug "origin: " + request.getHeader("Origin");
+                //if ('registration'.equals( reqParams['mode'] ) && 'term'.equals( reqController ) && !'search'.equals( reqAction )) {
+                if ('classRegistration'.equals( reqController ) && ! 'getTerms'.equals( reqAction )) {
                     // Test that we can get db items here with user info
-                    if (userActionItemReadOnlyService.listBlockingActionItemsByPidm( userPidm )) {
-                        //redirect( controller: "aip", action: "actionItems" )
-                        //redirect( url: "https://anotherdomain.com/aip/actionItems", params: [optional: 'something'] )
-                        //redirect( url: uri + "/aip/actionItems", params: [optional: 'something'] )
-                        redirect( url: uri + ":8080/BannerGeneralSsb/ssb/aip/informedList" )
-                        return false
+                    log.debug "session parms: " + session.getAttributeNames(  ) // do we add our reason to this?
+                    Enumeration keys = session.getAttributeNames();
+                    while (keys.hasMoreElements())
+                    {
+                      String key = (String)keys.nextElement();
+                      //log.debug(key + ": " + session.getAttribute(key));
                     }
+                    log.debug "roleCode: " + session.getAttribute( 'selectedRole' )?.persona?.code
+                    //if ('STUDENT'.equals( session.getAttribute( 'selectedRole' )?.persona?.code )) {
+                    def isBlocked = false
+                    try {
+                        isBlocked = userActionItemReadOnlyService.listBlockingActionItemsByPidm( userPidm )
+                        log.debug "isBlocked: "
+                        log.debug isBlocked ? true : false
+                    } catch (Throwable t) {
+                        log.debug "isBlocked: crap"
+                        log.debug t
+                    }
+
+                    //if (isBlocked) {
+                    //response.addHeader("Access-Control-Allow-Origin", "*");
+                    // FIXME: goto general app. Trying same port for dev environment
+                    log.debug "do redirect"
+                    redirect( url: uri + ":8080/BannerGeneralSsb/ssb/aip/informedList" )
+                    //    redirect( url: uri + ":8090/StudentRegistrationSsb/ssb/registrationHistory/registrationHistory" )
+                    return false
+                    //}
+                    //}
                 }
             }
         }
     }
 
-    // who am I?
+// who am I?
     private def getUserPidm() {
         def user = SecurityContextHolder?.context?.authentication?.principal
         if (user instanceof BannerUser) {
