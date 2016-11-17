@@ -24,6 +24,8 @@ class GateKeepingFilters {
 
     def userActionItemReadOnlyService
 
+    def dependsOn = [net.hedtech.banner.security.AccessControlFilters.class]
+
     def filters = {
         actionItemFilter( controller: '*', action: '*' ) {
             before = {
