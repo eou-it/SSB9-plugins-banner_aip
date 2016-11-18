@@ -70,7 +70,7 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
         assertNotNull person
         loginSSB( person.bannerId, '111111' )
 
-        def result = request( [:], 'classRegistration', 'anything' )
+        def result = request( [mode: 'registration'], "term", "termSelection" )
         assert !result
 
         assertTrue response.redirectedUrl.endsWith( 'aip/informedList' )
@@ -83,7 +83,7 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
         assertNotNull person
         loginSSB( person.bannerId, '111111' )
 
-        def result = request( [:], 'classRegistration', 'getTerms' )
+        def result = request( [mode: 'registration'], "term", "termSelection" )
         assert result
 
         assertNull(  response.redirectedUrl )

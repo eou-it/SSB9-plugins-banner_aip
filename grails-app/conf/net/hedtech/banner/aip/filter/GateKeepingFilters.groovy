@@ -42,16 +42,15 @@ class GateKeepingFilters {
                 log.debug "controller: " + reqController
                 log.debug "action: " + reqAction
                 log.debug "params: " + reqParams
-                log.debug "origin: " + request.getHeader("Origin");
-                //if ('registration'.equals( reqParams['mode'] ) && 'term'.equals( reqController ) && !'search'.equals( reqAction )) {
-                if ('classRegistration'.equals( reqController ) && ! 'getTerms'.equals( reqAction )) {
+                log.debug "origin: " + request.getHeader( "Origin" );
+                if ('registration'.equals( reqParams['mode'] ) && 'term'.equals( reqController ) && !'search'.equals( reqAction )) {
+                    //if ('classRegistration'.equals( reqController ) && ! 'getTerms'.equals( reqAction )) {
                     // Test that we can get db items here with user info
-                    log.debug "session parms: " + session.getAttributeNames(  ) // do we add our reason to this?
+                    log.debug "session parms: " + session.getAttributeNames() // do we add our reason to this?
                     Enumeration keys = session.getAttributeNames();
-                    while (keys.hasMoreElements())
-                    {
-                      String key = (String)keys.nextElement();
-                      //log.debug(key + ": " + session.getAttribute(key));
+                    while (keys.hasMoreElements()) {
+                        String key = (String) keys.nextElement();
+                        //log.debug(key + ": " + session.getAttribute(key));
                     }
                     log.debug "roleCode: " + session.getAttribute( 'selectedRole' )?.persona?.code
                     //if ('STUDENT'.equals( session.getAttribute( 'selectedRole' )?.persona?.code )) {
@@ -65,14 +64,14 @@ class GateKeepingFilters {
                         log.debug t
                     }
 
-                    //if (isBlocked) {
-                    //response.addHeader("Access-Control-Allow-Origin", "*");
-                    // FIXME: goto general app. Trying same port for dev environment
-                    log.debug "do redirect"
-                    redirect( url: uri + ":8080/BannerGeneralSsb/ssb/aip/informedList" )
-                    //    redirect( url: uri + ":8090/StudentRegistrationSsb/ssb/registrationHistory/registrationHistory" )
-                    return false
-                    //}
+                    if (isBlocked) {
+                        //response.addHeader("Access-Control-Allow-Origin", "*");
+                        // FIXME: goto general app. Trying same port for dev environment
+                        log.debug "do redirect"
+                        redirect( url: uri + ":8080/BannerGeneralSsb/ssb/aip/informedList" )
+                        //    redirect( url: uri + ":8090/StudentRegistrationSsb/ssb/registrationHistory/registrationHistory" )
+                        return false
+                    }
                     //}
                 }
             }
