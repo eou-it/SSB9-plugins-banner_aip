@@ -27,7 +27,7 @@ class GateKeepingFilters {
     def dependsOn = [net.hedtech.banner.security.AccessControlFilters.class]
 
     def filters = {
-        actionItemFilter( controller: '*', action: '*' ) {
+        actionItemFilter( controller: "selfServiceMenu|login|logout|error|dateConverter", invert: true ) {
             before = {
                 String uri = request.getScheme() + "://" +   // "http" + "://
                         request.getServerName() //+       // "myhost"
@@ -60,7 +60,7 @@ class GateKeepingFilters {
                         log.debug "isBlocked: "
                         log.debug isBlocked ? true : false
                     } catch (Throwable t) {
-                        log.debug "isBlocked: crap"
+                        println "isBlocked: crap. service call failed"
                         log.debug t
                     }
 
