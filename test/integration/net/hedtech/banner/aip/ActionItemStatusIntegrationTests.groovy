@@ -125,7 +125,8 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
                 actionItemStatusDataOrigin: actionItemStatusList.actionItemStatusDataOrigin,
                 actionItemStatusUserId: actionItemStatusList.actionItemStatusUserId,
                 actionItemStatusVersion: actionItemStatusList.actionItemStatusVersion,
-                actionItemStatusActive: actionItemStatusList.actionItemStatusActive )
+                actionItemStatusActive: actionItemStatusList.actionItemStatusActive ,
+                actionItemStatusDefault: actionItemStatusList.actionItemStatusDefault)
         long actionItemStatusListId = actionItemStatusList.actionItemStatusId
         long actionItemStatusListVersion = actionItemStatusList.actionItemStatusVersion
         actionItemStatusNewList.actionItemStatusId = actionItemStatusListId
