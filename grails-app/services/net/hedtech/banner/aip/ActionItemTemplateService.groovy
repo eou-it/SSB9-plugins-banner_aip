@@ -26,13 +26,13 @@ class ActionItemTemplateService extends ServiceBase{
         if(!at.validate()) {
             def errorCodes = at.errors.allErrors.codes[0]
             if(errorCodes.contains('actionItemTemplate.title.nullable')) {
-                thorw new ApplicationException(ActionItemTemplate, NO_TITLE_ERROR, 'actionItemTemplate.title.nullable.error')
+                throw new ApplicationException(ActionItemTemplate, NO_TITLE_ERROR, 'actionItemTemplate.title.nullable.error')
             } else if (errorCodes.contains('actionItemTemplate.SourceInd.nullable')) {
                 throw new ApplicationException(ActionItemTemplate, NO_SOURCEIND_ERROR, 'actionItemTemplate.sourceInd.nullable.error')
             } else if (errorCodes.contains('actionItemTemplate.SystemReq.nullable')) {
                 throw new ApplicationException(ActionItemTemplate, NO_SYSTEMREQ_ERROR, 'actionItemTemplate.systemReq.nullable.error')
             } else if (errorCodes.contains('actionItemTemplate.activeInd.nullable')) {
-                thorw new ApplicationException(ActionItemTemplate, NO_ACTIVEIND_ERROR, 'actionItemTemplate.activeInd.nullable.error')
+                throw new ApplicationException(ActionItemTemplate, NO_ACTIVEIND_ERROR, 'actionItemTemplate.activeInd.nullable.error')
             }
         }
     }
