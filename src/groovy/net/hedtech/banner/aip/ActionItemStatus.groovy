@@ -67,6 +67,9 @@ class ActionItemStatus implements Serializable {
     @Column(name = "GCVASTS_ACTIVE_IND")
     String  actionItemStatusActive
 
+    @Column(name = "GCVASTS_DEFAULT_IND")
+    String  actionItemStatusDefault
+
 
     /**
      * User action item status was last updated by
@@ -98,6 +101,7 @@ class ActionItemStatus implements Serializable {
         actionItemStatusActive(blank: false, nullable: false, maxSize: 1)
         actionItemStatusActivityDate(blank: false, nullable: false, maxSize: 30)
         actionItemStatusBlockedProcess(blank: false, nullable: false, maxSize: 1)
+        actionItemStatusDefault(blank: true, nullable: true, maxSize: 1)
         actionItemStatusSystemRequired(blank: false, nullable: false, maxSize: 1) //summary length only for now
         actionItemStatusUserId(blank: false, nullable: false, maxSize: 30)
         actionItemStatusVersion(nullable: true, maxSize: 30)
@@ -113,6 +117,7 @@ class ActionItemStatus implements Serializable {
                 ", actionItemStatusBlockedProcess='" + actionItemStatusBlockedProcess + '\'' +
                 ", actionItemStatusSystemRequired='" + actionItemStatusSystemRequired + '\'' +
                 ", actionItemStatusActive='" + actionItemStatusActive + '\'' +
+                ", actionItemStatusDefault='" + actionItemStatusDefault + '\'' +
                 ", actionItemStatusUserId='" + actionItemStatusUserId + '\'' +
                 ", actionItemStatusActivityDate=" + actionItemStatusActivityDate +
                 ", actionItemStatusVersion=" + actionItemStatusVersion +
@@ -130,6 +135,7 @@ class ActionItemStatus implements Serializable {
 
         if (actionItemStatus != that.actionItemStatus) return false
         if (actionItemStatusActive != that.actionItemStatusActive) return false
+        if (actionItemStatusDefault != that.actionItemStatusDefault) return false
         if (actionItemStatusActivityDate != that.actionItemStatusActivityDate) return false
         if (actionItemStatusBlockedProcess != that.actionItemStatusBlockedProcess) return false
         if (actionItemStatusDataOrigin != that.actionItemStatusDataOrigin) return false
