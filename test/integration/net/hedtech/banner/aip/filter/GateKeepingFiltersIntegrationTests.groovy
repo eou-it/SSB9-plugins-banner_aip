@@ -86,6 +86,7 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
         loginSSB( person.bannerId, '111111' )
 
         MockHttpServletRequest request = new MockHttpServletRequest()
+        request.getSession( true )
         request.characterEncoding = 'UTF-8'
         request.setRequestURI( BLOCKREGISTERFORCOURSES )
         request.addHeader( 'X-Requested-With', "XMLHttpRequest" )
@@ -104,10 +105,11 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
         loginSSB( person.bannerId, '111111' )
 
         MockHttpServletRequest request = new MockHttpServletRequest()
+        request.getSession( true )
         request.characterEncoding = 'UTF-8'
         request.setRequestURI( BLOCKREGISTERFORCOURSES )
 
-        // mock persona? mught need for registration student selected
+        // mock persona? might need for registration student selected
         //request.session.setAttribute('selectedRole', persona)
 
         def result = doRequest( request )
@@ -124,6 +126,7 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
         loginSSB( person.bannerId, '111111' )
 
         MockHttpServletRequest request = new MockHttpServletRequest()
+        request.getSession( true )
         request.characterEncoding = 'UTF-8'
         request.setRequestURI( UNBLOCKEDURI )
 
@@ -142,7 +145,7 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
     def doRequest( MockHttpServletRequest mockRequest ) {
         grailsApplication.config.formControllerMap = formControllerMap
         grailsWebRequest = GrailsWebUtil.bindMockWebRequest(
-                Holders.getGrailsApplication(  ).mainContext, mockRequest, new MockHttpServletResponse() )
+                Holders.getGrailsApplication().mainContext, mockRequest, new MockHttpServletResponse() )
 
         filterInterceptor.preHandle( grailsWebRequest.request, grailsWebRequest.response, null )
     }
