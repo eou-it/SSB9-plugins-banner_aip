@@ -11,16 +11,24 @@
 
 package net.hedtech.banner.aip.filter
 
+import net.hedtech.banner.apisupport.ApiUtils
 import net.hedtech.banner.security.BannerUser
 import org.apache.log4j.Logger
+import org.codehaus.groovy.grails.web.servlet.GrailsUrlPathHelper
 import org.springframework.security.core.context.SecurityContextHolder
+
+import javax.servlet.http.HttpSession
 
 
 class GateKeepingFilters {
     private final log = Logger.getLogger( GateKeepingFilters.class )
+    public static final String BLOCKREGISTERFORCOURSES = '/ssb/term/termSelection?mode=registration'
+    private static final String SLASH = "/"
 
-//    ApplicationContext ctx = Holders.grailsApplication.mainContext
-//    UserActionItemReadOnlyService userActionItemReadOnlyService = (UserActionItemReadOnlyService) ctx.getBean("userActionItemReadOnlyService")
+    private static final String QUESTION_MARK = "?"
+
+
+    def springSecurityService
 
     def userActionItemReadOnlyService
 
@@ -29,55 +37,46 @@ class GateKeepingFilters {
     def filters = {
         actionItemFilter( controller: "selfServiceMenu|login|logout|error|dateConverter", invert: true ) {
             before = {
-                String uri = request.getScheme() + "://" +   // "http" + "://
-                        request.getServerName() //+       // "myhost"
-                //(request.getServerPort().equals( 80 ) ? "" : ":" + request.getServerPort()) // + // :port if not 80
-                //request.getServerPort() +
-                //request.getRequestURI() +       // "/people"
-                //(request.getQueryString() ? "?" + request.getQueryString() : "") // "lastname=Fox&age=30"
-                def reqParams = request?.JSON ?: params
-                def reqController = request?.JSON ?: controllerName
-                def reqAction = request?.JSON ?: actionName
+                if (!ApiUtils.isApiRequest() && !request.xhr) {
+                    HttpSession session = request.getSession()
+                    String path = getServletPath( request )
+                    if (springSecurityService.isLoggedIn() && path != null) {
 
-                log.debug "controller: " + reqController
-                log.debug "action: " + reqAction
-                log.debug "params: " + reqParams
-                log.debug "origin: " + request.getHeader( "Origin" );
-                if ('registration'.equals( reqParams['mode'] ) && 'term'.equals( reqController ) && !'search'.equals( reqAction )) {
-                    //if ('classRegistration'.equals( reqController ) && ! 'getTerms'.equals( reqAction )) {
-                    // Test that we can get db items here with user info
-                    log.debug "session parms: " + session.getAttributeNames() // do we add our reason to this?
-                    Enumeration keys = session.getAttributeNames();
-                    while (keys.hasMoreElements()) {
-                        String key = (String) keys.nextElement();
-                        //log.debug(key + ": " + session.getAttribute(key));
-                    }
-                    log.debug "roleCode: " + session.getAttribute( 'selectedRole' )?.persona?.code
-                    //if ('STUDENT'.equals( session.getAttribute( 'selectedRole' )?.persona?.code )) {
-                    def isBlocked = false
-                    try {
-                        isBlocked = userActionItemReadOnlyService.listBlockingActionItemsByPidm( userPidm )
-                        log.debug "isBlocked: "
-                        log.debug isBlocked ? true : false
-                    } catch (Throwable t) {
-                        println "isBlocked: crap. service call failed"
-                        log.debug t
-                    }
+                        if (path.equals( BLOCKREGISTERFORCOURSES )) {
+                            //if ('classRegistration'.equals( reqController ) && ! 'getTerms'.equals( reqAction )) {
+                            // Test that we can get db items here with user info
 
-                    if (isBlocked) {
-                        //response.addHeader("Access-Control-Allow-Origin", "*");
-                        // FIXME: goto general app. Trying same port for dev environment
-                        log.debug "do redirect"
-                        redirect( url: uri + ":8080/BannerGeneralSsb/ssb/aip/informedList" )
-                        //    redirect( url: uri + ":8090/StudentRegistrationSsb/ssb/registrationHistory/registrationHistory" )
-                        return false
+                            // TODO: may need to look at session variable to see if student in Registration
+                            //println "session parms: " + session.getAttributeNames() // do we add our reason to this?
+                            //println "roleCode: " + session.getAttribute( 'selectedRole' )?.persona?.code
+                            //if ('STUDENT'.equals( session.getAttribute( 'selectedRole' )?.persona?.code )) {
+                                def isBlocked = false
+                                try {
+                                    isBlocked = userActionItemReadOnlyService.listBlockingActionItemsByPidm( userPidm )
+                                    println "isBlocked: "
+                                    println isBlocked ? true : false
+                                } catch (Throwable t) {
+                                    println "isBlocked: crap. service call failed"
+                                    println t
+                                }
+
+                                if (isBlocked) {
+                                    String uri = request.getScheme() + "://" +   // "http" + "://
+                                            request.getServerName()
+                                    //response.addHeader("Access-Control-Allow-Origin", "*");
+                                    // FIXME: goto general app. Trying same port for dev environment
+                                    redirect( url: uri + ":8080/BannerGeneralSsb/ssb/aip/informedList" )
+                                    //    redirect( url: uri + ":8090/StudentRegistrationSsb/ssb/registrationHistory/registrationHistory" )
+                                    return false
+                                }
+                            //}
+                        }
                     }
-                    //}
+                    return true
                 }
             }
         }
     }
-
 // who am I?
     private def getUserPidm() {
         def user = SecurityContextHolder?.context?.authentication?.principal
@@ -86,5 +85,20 @@ class GateKeepingFilters {
             return user.pidm
         }
         return null
+    }
+
+
+    private getServletPath( request ) {
+        GrailsUrlPathHelper urlPathHelper = new GrailsUrlPathHelper();
+        String path = urlPathHelper.getOriginatingRequestUri( request );
+        if (path != null) {
+            path = path.substring( request.getContextPath().length() )
+            if (SLASH.equals( path )) {
+                path = null
+            } else if (request?.getQueryString()) {
+                path = path + QUESTION_MARK + request?.getQueryString()
+            }
+        }
+        return path
     }
 }

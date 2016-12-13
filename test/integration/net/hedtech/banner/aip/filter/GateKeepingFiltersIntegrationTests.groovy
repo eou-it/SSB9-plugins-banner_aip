@@ -7,6 +7,8 @@ import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.springframework.mock.web.MockHttpServletRequest
+import org.springframework.mock.web.MockHttpServletResponse
 
 /** *****************************************************************************
  © 2016 SunGard Higher Education.  All Rights Reserved.
@@ -26,6 +28,10 @@ import org.junit.Test
  * Time: 4:44 PM
  */
 class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
+
+    public static final String BLOCKREGISTERFORCOURSES = '/ssb/term/termSelection?mode=registration'
+    public static final String BLOCKPLANAHEAD = '/what is this'
+    public static final String UNBLOCKEDURI = '/somethingrandom'
 
     def filterInterceptor
 
@@ -74,12 +80,37 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
+    void testFilterAPI() { // do not evaluate apis
+        def person = PersonUtility.getPerson( "CSRSTU018" ) // user has blocking
+        assertNotNull person
+        loginSSB( person.bannerId, '111111' )
+
+        MockHttpServletRequest request = new MockHttpServletRequest()
+        request.characterEncoding = 'UTF-8'
+        request.setRequestURI( BLOCKREGISTERFORCOURSES )
+        request.addHeader( 'X-Requested-With', "XMLHttpRequest" )
+
+        def result = doRequest( request )
+        assert result
+
+        assertNull(  response.redirectedUrl )
+    }
+
+
+    @Test
     void testFilterRedirectsController() {
         def person = PersonUtility.getPerson( "CSRSTU018" ) // user had blocking
         assertNotNull person
         loginSSB( person.bannerId, '111111' )
 
-        def result = request( [mode: 'registration'], "term", "termSelection" )
+        MockHttpServletRequest request = new MockHttpServletRequest()
+        request.characterEncoding = 'UTF-8'
+        request.setRequestURI( BLOCKREGISTERFORCOURSES )
+
+        // mock persona? mught need for registration student selected
+        //request.session.setAttribute('selectedRole', persona)
+
+        def result = doRequest( request )
         assert !result
 
         assertTrue response.redirectedUrl.endsWith( 'aip/informedList' )
@@ -92,7 +123,11 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
         assertNotNull person
         loginSSB( person.bannerId, '111111' )
 
-        def result = request( [mode: 'registration'], "term", "termSelection" )
+        MockHttpServletRequest request = new MockHttpServletRequest()
+        request.characterEncoding = 'UTF-8'
+        request.setRequestURI( UNBLOCKEDURI )
+
+        def result = doRequest( request )
         assert result
 
         assertNull(  response.redirectedUrl )
@@ -104,15 +139,23 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
     }
 
 
-    def request( Map params, controllerName, actionName ) {
+    def doRequest( MockHttpServletRequest mockRequest ) {
         grailsApplication.config.formControllerMap = formControllerMap
-
-        grailsWebRequest = GrailsWebUtil.bindMockWebRequest( Holders.getGrailsApplication(  ).mainContext )
-        grailsWebRequest.params.putAll( params )
-        grailsWebRequest.controllerName = controllerName
-        grailsWebRequest.actionName = actionName
+        grailsWebRequest = GrailsWebUtil.bindMockWebRequest(
+                Holders.getGrailsApplication(  ).mainContext, mockRequest, new MockHttpServletResponse() )
 
         filterInterceptor.preHandle( grailsWebRequest.request, grailsWebRequest.response, null )
     }
+
+
+    static class PersonaRule {
+        def persona = GateKeepingFiltersIntegrationTests.Persona
+    }
+
+
+    static class Persona {
+        String code = 'STUDENT'
+    }
+
 
 }
