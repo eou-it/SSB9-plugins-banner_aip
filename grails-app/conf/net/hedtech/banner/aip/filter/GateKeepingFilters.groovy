@@ -37,19 +37,20 @@ class GateKeepingFilters {
     def filters = {
         actionItemFilter( controller: "selfServiceMenu|login|logout|error|dateConverter", invert: true ) {
             before = {
+                // FIXME: get urls from tables. Check and cache
                 if (!ApiUtils.isApiRequest() && !request.xhr) {
                     HttpSession session = request.getSession()
                     String path = getServletPath( request )
                     if (springSecurityService.isLoggedIn() && path != null) {
-
                         if (path.equals( BLOCKREGISTERFORCOURSES )) {
                             //if ('classRegistration'.equals( reqController ) && ! 'getTerms'.equals( reqAction )) {
                             // Test that we can get db items here with user info
 
+                            // FIXME: pull in registration info (urls and session variable) from tables
                             // TODO: may need to look at session variable to see if student in Registration
                             //println "session parms: " + session.getAttributeNames() // do we add our reason to this?
-                            //println "roleCode: " + session.getAttribute( 'selectedRole' )?.persona?.code
-                            //if ('STUDENT'.equals( session.getAttribute( 'selectedRole' )?.persona?.code )) {
+                            println "roleCode: " + session.getAttribute( 'selectedRole' )?.persona?.code
+                            if ('STUDENT'.equals( session.getAttribute( 'selectedRole' )?.persona?.code )) {
                                 def isBlocked = false
                                 try {
                                     isBlocked = userActionItemReadOnlyService.listBlockingActionItemsByPidm( userPidm )
@@ -69,7 +70,7 @@ class GateKeepingFilters {
                                     //    redirect( url: uri + ":8090/StudentRegistrationSsb/ssb/registrationHistory/registrationHistory" )
                                     return false
                                 }
-                            //}
+                            }
                         }
                     }
                     return true
