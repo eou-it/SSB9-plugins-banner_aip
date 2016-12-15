@@ -16,6 +16,7 @@ import net.hedtech.banner.security.BannerUser
 import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.web.servlet.GrailsUrlPathHelper
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.util.WebUtils
 
 import javax.servlet.http.HttpSession
 
@@ -38,9 +39,15 @@ class GateKeepingFilters {
         actionItemFilter( controller: "selfServiceMenu|login|logout|error|dateConverter", invert: true ) {
             before = {
                 // FIXME: get urls from tables. Check and cache
+                // only want to look at type 'document'? not stylesheet, script, gif, font, ? ?
+                // at this point he getRequestURI returns the forwared dispatcher URL */aip/myplace.dispatch
+
+                String path = getServletPath( request )
+                println path
                 if (!ApiUtils.isApiRequest() && !request.xhr) {
+                //if (AIPUtils.isBlockingUrl()) { // checks path against list from DB
+                    println "take a look at: " + request.getRequestURI(  )
                     HttpSession session = request.getSession()
-                    String path = getServletPath( request )
                     if (springSecurityService.isLoggedIn() && path != null) {
                         if (path.equals( BLOCKREGISTERFORCOURSES )) {
                             //if ('classRegistration'.equals( reqController ) && ! 'getTerms'.equals( reqAction )) {
@@ -66,6 +73,7 @@ class GateKeepingFilters {
                                             request.getServerName()
                                     //response.addHeader("Access-Control-Allow-Origin", "*");
                                     // FIXME: goto general app. Trying same port for dev environment
+                                    // FIXME: make this configurable
                                     redirect( url: uri + ":8080/BannerGeneralSsb/ssb/aip/informedList" )
                                     //    redirect( url: uri + ":8090/StudentRegistrationSsb/ssb/registrationHistory/registrationHistory" )
                                     return false
