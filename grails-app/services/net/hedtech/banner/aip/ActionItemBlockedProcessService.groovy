@@ -7,7 +7,7 @@ package net.hedtech.banner.aip
 
 import grails.converters.JSON
 import org.apache.log4j.Logger
-import net.hedtech.banner.general.ConfigurationData
+import net.hedtech.banner.configuration.ConfigurationData
 
 
 class ActionItemBlockedProcessService {
