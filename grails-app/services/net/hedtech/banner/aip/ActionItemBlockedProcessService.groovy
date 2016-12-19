@@ -5,36 +5,33 @@
 package net.hedtech.banner.aip
 
 import grails.converters.JSON
-import org.apache.log4j.Logger
 import net.hedtech.banner.configuration.ConfigurationData
-import net.hedtech.banner.aip.ActionItemBlockedProcess
+import net.hedtech.banner.service.ServiceBase
 
 
 
-class ActionItemBlockedProcessService {
+class ActionItemBlockedProcessService extends ServiceBase {
 
-    def listBlockedProcesses() {
-        return ConfigurationData.fetchConfigurationData()
+    private static BLOCKING_CONFIG_NAME = 'json/aipBlock'
+
+    def listBlockedProcessesByType() {
+        return ConfigurationData.fetchConfigurationDataByType( BLOCKING_CONFIG_NAME )
     }
 
-    def listBlockedProcessesByName( String myConfigName ) {
-        return ConfigurationData.fetchConfigurationDataByName( myConfigName )
-    }
+    def listBlockedProcessesByNameAndType(  String myConfigName ) {
+        def configData =  ConfigurationData.fetchConfigurationDataByNameAndType( BLOCKING_CONFIG_NAME, myConfigName )
 
-    def listBlockedProcessProps(String myConfigName) {
-
-        def configData = ConfigurationData.fetchConfigurationDataByName( myConfigName )
         def configDataJson = JSON.parse( configData.value.toString() ) as ConfigObject
         def configProps = configDataJson.toProperties()
 
-        String urlProp = "aipBlockedProcess." + myConfigName + ".urls"
-        String i18nProp = "aipBlockedProcess." + myConfigName + ".i18n"
+        String urlProp = "aipBlock.urls"
+        String i18nProp = "aipBlock.processNamei18n"
 
-        def processMap = [ url: configProps[urlProp], i18n:configProps[i18nProp] ]
+        def processMap = [ url: configProps[urlProp], processNamei18n:configProps[i18nProp] ]
 
         return processMap
-
     }
+
 
     def listBlockedActionItems() {
         return ActionItemBlockedProcess.fetchActionItemBlockedProcessList()
@@ -47,5 +44,7 @@ class ActionItemBlockedProcessService {
     def listBlockedProcessByActionItemId(Long myId) {
         return ActionItemBlockedProcess.fetchActionItemBlockProcessByActionId( myId )
     }
+
+    /*todo: future work - add methods for exclude/include configs and url redirect destination for action item list*/
 
 }

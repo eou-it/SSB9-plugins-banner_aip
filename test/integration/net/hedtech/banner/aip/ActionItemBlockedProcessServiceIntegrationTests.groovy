@@ -34,23 +34,23 @@ class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTes
 
 
     @Test
-    void testListBlockedProcesses() {
+    void testListBlockedProcessesByType() {
 
-        List<ConfigurationData> configData = actionItemBlockedProcessService.listBlockedProcesses(  )
-
+        List<ConfigurationData> configData = actionItemBlockedProcessService.listBlockedProcessesByType()
         assertNotNull( configData )
+
+        println configData
 
     }
 
     @Test
-    void testListBlockedProcessByName() {
+    void testListBlockedProcessByNameAndType() {
 
-        List<ConfigurationData> configData = actionItemBlockedProcessService.listBlockedProcesses(  )
-        List<ConfigurationData> configDataByName = actionItemBlockedProcessService.listBlockedProcessesByName( configData.name[0] )
+        List<ConfigurationData> configData = actionItemBlockedProcessService.listBlockedProcessesByType()
 
-        assertEquals( configData.name[0], configDataByName.name[0] )
-        assertEquals( configData.value[0], configDataByName.value[0] )
-        assertEquals( configData.type[0], configDataByName.type[0] )
+        def configDataByName = actionItemBlockedProcessService.listBlockedProcessesByNameAndType( configData.name[0].toString() )
+
+        assertTrue( configData.value[0].contains( configDataByName.url ) )
 
     }
 
@@ -58,11 +58,11 @@ class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTes
     @Test
     void testParseBlockedProcessJSON() {
 
-        List<ConfigurationData> configData = actionItemBlockedProcessService.listBlockedProcesses(  )
-        def processProps = actionItemBlockedProcessService.listBlockedProcessProps( configData.name[0].toString() )
+        List<ConfigurationData> configData = actionItemBlockedProcessService.listBlockedProcessesByType(  )
+        def processProps = actionItemBlockedProcessService.listBlockedProcessesByNameAndType( configData.name[0].toString() )
 
         assertNotNull( processProps.url )
-        assertNotNull( processProps.i18n )
+        assertNotNull( processProps.processNamei18n )
 
     }
 
@@ -70,7 +70,7 @@ class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTes
     @Test
     void testListBlockedProcessByActionItemList() {
 
-        List<ActionItemBlockedProcess> actionItemBlockedProcessList = ActionItemBlockedProcess.fetchActionItemBlockedProcessList(  )
+        List<ActionItemBlockedProcess> actionItemBlockedProcessList = ActionItemBlockedProcess.fetchActionItemBlockedProcessList( )
         List<ActionItemBlockedProcess> actionItemBlockedProcessServiceList = actionItemBlockedProcessService.listBlockedActionItems()
 
         assertEquals( actionItemBlockedProcessList.size(), actionItemBlockedProcessServiceList.size() )
@@ -89,8 +89,6 @@ class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTes
 
         List<ActionItemBlockedProcess> actionItemBlockedProcessByActionIdService = actionItemBlockedProcessService.listBlockedProcessByActionItemId( blockActionItemId )
 
-        println actionItemBlockedProcessByActionId
-
         assertEquals( actionItemBlockedProcessByActionId.blockConfigName, actionItemBlockedProcessByActionIdService.blockConfigName )
 
     }
@@ -105,8 +103,7 @@ class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTes
 
         List<ActionItemBlockedProcess> actionItemBlockedProcessById = ActionItemBlockedProcess.fetchActionItemBlockProcessById( blockId )
 
-        List<ActionItemBlockedProcess> actionItemBlockedProcessByIdService = actionItemBlockedProcessService.listBlockedProcessById(
-                blockId )
+        List<ActionItemBlockedProcess> actionItemBlockedProcessByIdService = actionItemBlockedProcessService.listBlockedProcessById( blockId )
         assertEquals( actionItemBlockedProcessById.blockConfigName, actionItemBlockedProcessByIdService.blockConfigName )
 
     }

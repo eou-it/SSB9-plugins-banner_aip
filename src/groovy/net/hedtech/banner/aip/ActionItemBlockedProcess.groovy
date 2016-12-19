@@ -56,7 +56,7 @@ class ActionItemBlockedProcess implements Serializable {
     /**
      * Type of the action item block
      */
-    @Column(name = "GCRABLK_CONFIG_TYPE", columnDefinition="varchar2(30) default 'array'")
+    @Column(name = "GCRABLK_CONFIG_TYPE", columnDefinition="default 'json/aipBlock'")
     String blockConfigType
 
     /**
