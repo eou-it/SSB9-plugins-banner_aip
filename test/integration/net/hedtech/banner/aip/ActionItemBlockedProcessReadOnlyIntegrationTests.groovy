@@ -9,11 +9,9 @@ import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import grails.converters.JSON
 
 
-
-class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTestCase {
+class ActionItemBlockedProcessReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemBlockedProcessService
 
@@ -58,8 +56,11 @@ class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTes
         List<ConfigurationData> configData = actionItemBlockedProcessService.listBlockedProcesses(  )
         def processProps = actionItemBlockedProcessService.listBlockedProcessProps( configData.name[0].toString() )
 
-        assertNotNull( processProps.url )
-        assertNotNull( processProps.i18n )
+       // def blockedProcessJSON = configDataByName.value[0]
+
+        //assertEquals( configData.value[0], blockedProcessJSON )
+
+        println processProps
 
     }
 
