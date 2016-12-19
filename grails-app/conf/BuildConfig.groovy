@@ -16,6 +16,7 @@ grails.war.resources = { stagingDir ->
 
 grails.plugin.location.'banner-general-person'="../banner_general_person.git"
 grails.plugin.location.'banner-general-common'="../banner_general_common.git"
+grails.plugin.location.'banner-general-utility'="../banner_general_utility.git"
 
 //fixme: this will change when extz team moves to banner utility plugin
 grails.plugin.location.'banner-ui-ss'="../banner_ui_ss.git"
