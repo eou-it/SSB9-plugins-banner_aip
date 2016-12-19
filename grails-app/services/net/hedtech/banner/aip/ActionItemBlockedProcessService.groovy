@@ -7,11 +7,11 @@ package net.hedtech.banner.aip
 import grails.converters.JSON
 import org.apache.log4j.Logger
 import net.hedtech.banner.configuration.ConfigurationData
+import net.hedtech.banner.aip.ActionItemBlockedProcess
+
 
 
 class ActionItemBlockedProcessService {
-
-    def static final types = [name:'string', value:'json']
 
     def listBlockedProcesses() {
         return ConfigurationData.fetchConfigurationData()
@@ -34,6 +34,18 @@ class ActionItemBlockedProcessService {
 
         return processMap
 
+    }
+
+    def listBlockedActionItems() {
+        return ActionItemBlockedProcess.fetchActionItemBlockedProcessList()
+    }
+
+    def listBlockedProcessById(Long myId) {
+        return ActionItemBlockedProcess.fetchActionItemBlockProcessById( myId )
+    }
+
+    def listBlockedProcessByActionItemId(Long myId) {
+        return ActionItemBlockedProcess.fetchActionItemBlockProcessByActionId( myId )
     }
 
 }

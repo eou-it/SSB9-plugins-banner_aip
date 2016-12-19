@@ -5,17 +5,20 @@
 package net.hedtech.banner.aip
 
 import net.hedtech.banner.configuration.ConfigurationData
+import net.hedtech.banner.aip.ActionItemBlockedProcess
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import grails.converters.JSON
 
+import javax.swing.Action
 
 
 class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemBlockedProcessService
+
 
     @Before
     public void setUp() {
@@ -60,6 +63,51 @@ class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTes
 
         assertNotNull( processProps.url )
         assertNotNull( processProps.i18n )
+
+    }
+
+
+    @Test
+    void testListBlockedProcessByActionItemList() {
+
+        List<ActionItemBlockedProcess> actionItemBlockedProcessList = ActionItemBlockedProcess.fetchActionItemBlockedProcessList(  )
+        List<ActionItemBlockedProcess> actionItemBlockedProcessServiceList = actionItemBlockedProcessService.listBlockedActionItems()
+
+        assertEquals( actionItemBlockedProcessList.size(), actionItemBlockedProcessServiceList.size() )
+
+    }
+
+
+    @Test
+    void testListBlockedProcessByActionItemId() {
+
+        List<ActionItemBlockedProcess> actionItemBlockedProcess   = actionItemBlockedProcessService.listBlockedActionItems()
+
+        def blockActionItemId = actionItemBlockedProcess[0].blockActionItemId
+
+        List<ActionItemBlockedProcess> actionItemBlockedProcessByActionId = ActionItemBlockedProcess.fetchActionItemBlockProcessByActionId( blockActionItemId )
+
+        List<ActionItemBlockedProcess> actionItemBlockedProcessByActionIdService = actionItemBlockedProcessService.listBlockedProcessByActionItemId( blockActionItemId )
+
+        println actionItemBlockedProcessByActionId
+
+        assertEquals( actionItemBlockedProcessByActionId.blockConfigName, actionItemBlockedProcessByActionIdService.blockConfigName )
+
+    }
+
+
+    @Test
+    void testListBlockedProcessById() {
+
+        List<ActionItemBlockedProcess> actionItemBlockedProcess = actionItemBlockedProcessService.listBlockedActionItems()
+
+        def blockId = actionItemBlockedProcess[0].blockId
+
+        List<ActionItemBlockedProcess> actionItemBlockedProcessById = ActionItemBlockedProcess.fetchActionItemBlockProcessByActionId( blockId )
+
+        List<ActionItemBlockedProcess> actionItemBlockedProcessByIdService = actionItemBlockedProcessService.listBlockedProcessByActionItemId(
+                blockId )
+        assertEquals( actionItemBlockedProcessById.blockConfigName, actionItemBlockedProcessByIdService.blockConfigName )
 
     }
 
