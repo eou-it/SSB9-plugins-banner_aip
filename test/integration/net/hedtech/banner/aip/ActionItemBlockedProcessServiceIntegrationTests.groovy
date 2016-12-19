@@ -103,9 +103,9 @@ class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTes
 
         def blockId = actionItemBlockedProcess[0].blockId
 
-        List<ActionItemBlockedProcess> actionItemBlockedProcessById = ActionItemBlockedProcess.fetchActionItemBlockProcessByActionId( blockId )
+        List<ActionItemBlockedProcess> actionItemBlockedProcessById = ActionItemBlockedProcess.fetchActionItemBlockProcessById( blockId )
 
-        List<ActionItemBlockedProcess> actionItemBlockedProcessByIdService = actionItemBlockedProcessService.listBlockedProcessByActionItemId(
+        List<ActionItemBlockedProcess> actionItemBlockedProcessByIdService = actionItemBlockedProcessService.listBlockedProcessById(
                 blockId )
         assertEquals( actionItemBlockedProcessById.blockConfigName, actionItemBlockedProcessByIdService.blockConfigName )
 
