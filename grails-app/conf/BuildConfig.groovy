@@ -14,9 +14,12 @@ grails.war.resources = { stagingDir ->
     delete(file: "${stagingDir}/WEB-INF/lib/ojdbc6.jar")
 }
 
-//grails.plugin.location.'banner-student-common'="../banner_student_common.git"
 grails.plugin.location.'banner-general-person'="../banner_general_person.git"
 grails.plugin.location.'banner-general-common'="../banner_general_common.git"
+grails.plugin.location.'banner-general-utility'="../banner_general_utility.git"
+
+//fixme: this will change when extz team moves to banner utility plugin
+grails.plugin.location.'banner-ui-ss'="../banner_ui_ss.git"
 
 grails.project.dependency.resolver = "maven" // or maven
 
