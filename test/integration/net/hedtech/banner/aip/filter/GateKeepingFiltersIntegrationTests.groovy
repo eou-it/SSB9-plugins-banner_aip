@@ -29,7 +29,6 @@ import org.springframework.mock.web.MockHttpServletResponse
  */
 class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
 
-    public static final String BLOCKREGISTERFORCOURSES = '/ssb/term/termSelection?mode=registration'
     public static final String BLOCKPLANAHEAD = '/what is this'
     public static final String UNBLOCKEDURI = '/somethingrandom'
 
@@ -96,7 +95,7 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
         MockHttpServletRequest request = new MockHttpServletRequest()
 
         request.characterEncoding = 'UTF-8'
-        request.setRequestURI( BLOCKREGISTERFORCOURSES )
+        request.setRequestURI( GateKeepingFilters.BLOCKREGISTERFORCOURSES )
         request.addHeader( 'X-Requested-With', "XMLHttpRequest" )
 
         def result = doRequest( request )
@@ -108,17 +107,16 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testFilterRedirectsRegForStu() {
-        def person = PersonUtility.getPerson( "CSRSTU018" ) // user had blocking
+        def person = PersonUtility.getPerson( "CSRSTU012" ) // user has blocking register for courses items
         assertNotNull person
         loginSSB( person.bannerId, '111111' )
-
         MockHttpServletRequest request = new MockHttpServletRequest()
 
         request.characterEncoding = 'UTF-8'
-        request.setRequestURI( BLOCKREGISTERFORCOURSES )
+        request.setRequestURI( GateKeepingFilters.BLOCKREGISTERFORCOURSES )
 
         // mock persona? might need for registration student selected
-        request.session.setAttribute( 'selectedRole', new PersonaRule('STUDENT') )
+        request.session.setAttribute( 'selectedRole', new PersonaRule( 'STUDENT' ) )
 
         def result = doRequest( request )
         assert !result
@@ -132,13 +130,12 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
         def person = PersonUtility.getPerson( "CSRSTU018" ) // user had blocking
         assertNotNull person
         loginSSB( person.bannerId, '111111' )
-
         MockHttpServletRequest request = new MockHttpServletRequest()
 
         request.characterEncoding = 'UTF-8'
-        request.setRequestURI( BLOCKREGISTERFORCOURSES )
+        request.setRequestURI( GateKeepingFilters.BLOCKREGISTERFORCOURSES )
 
-        request.session.setAttribute( 'selectedRole', new PersonaRule('FACULTY') )
+        request.session.setAttribute( 'selectedRole', new PersonaRule( 'FACULTY' ) )
 
         def result = doRequest( request )
         assert result
@@ -161,7 +158,7 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
         def result = doRequest( request )
         assert result
 
-        assertNull(  response.redirectedUrl )
+        assertNull( response.redirectedUrl )
     }
 
 
@@ -177,7 +174,6 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
 
         filterInterceptor.preHandle( grailsWebRequest.request, grailsWebRequest.response, null )
     }
-
 }
 
 
