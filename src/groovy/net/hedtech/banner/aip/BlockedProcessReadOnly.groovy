@@ -28,8 +28,11 @@ class BlockedProcessReadOnly {
      */
 
     @Id
-    @Column(name = "BLOCK_ACTION_ITEM_ID")
+    @Column(name = "BLOCK_SURROGATE_ID")
     Long id
+
+    @Column(name = "BLOCK_ACTION_ITEM_ID")
+    Long blockActionItemId
 
     @Column(name = "BLOCK_USER_ID", length = 30)
     String blockLastModifiedBy
@@ -60,6 +63,7 @@ class BlockedProcessReadOnly {
     public String toString() {
         return "BlockedProcessReadOnly{" +
                 "id=" + id +
+                ", blockActionItemId='" + blockActionItemId + '\'' +
                 ", blockLastModifiedBy='" + blockLastModifiedBy + '\'' +
                 ", blockLastModified=" + blockLastModified +
                 ", blockConfigName='" + blockConfigName + '\'' +
@@ -77,6 +81,7 @@ class BlockedProcessReadOnly {
 
         BlockedProcessReadOnly that = (BlockedProcessReadOnly) o
 
+        if (blockActionItemId != that.blockActionItemId) return false
         if (blockConfigName != that.blockConfigName) return false
         if (blockConfigType != that.blockConfigType) return false
         if (blockLastModified != that.blockLastModified) return false
@@ -93,6 +98,7 @@ class BlockedProcessReadOnly {
     int hashCode() {
         int result
         result = id.hashCode()
+        result = 31 * result + blockActionItemId.hashCode()
         result = 31 * result + blockLastModifiedBy.hashCode()
         result = 31 * result + blockLastModified.hashCode()
         result = 31 * result + blockConfigName.hashCode()

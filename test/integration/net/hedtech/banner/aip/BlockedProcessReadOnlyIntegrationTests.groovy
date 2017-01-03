@@ -54,6 +54,7 @@ class BlockedProcessReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
         def blockedProcessRONew = new BlockedProcessReadOnly()
         blockedProcessRONew.id = firstItem.id
+        blockedProcessRONew.blockActionItemId = firstItem.blockActionItemId
         blockedProcessRONew.blockConfigName = firstItem.blockConfigName
         blockedProcessRONew.blockConfigType = firstItem.blockConfigType
         blockedProcessRONew.blockLastModified = firstItem.blockLastModified
@@ -76,6 +77,7 @@ class BlockedProcessReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         def blockedProcessRONew = new BlockedProcessReadOnly()
 
         blockedProcessRONew.id = blockedProcessRO.id
+        blockedProcessRONew.blockActionItemId = blockedProcessRO.blockActionItemId
         blockedProcessRONew.blockConfigName = blockedProcessRO.blockConfigName
         blockedProcessRONew.blockConfigType = blockedProcessRO.blockConfigType
         blockedProcessRONew.blockLastModified = blockedProcessRO.blockLastModified
