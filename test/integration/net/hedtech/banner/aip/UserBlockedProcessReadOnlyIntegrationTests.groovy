@@ -133,7 +133,7 @@ class UserBlockedProcessReadOnlyIntegrationTests extends BaseIntegrationTestCase
     }
 
 
-    def fetchBlockingActionItemsForMyTestUser( String myUser ) {
+    private fetchBlockingActionItemsForMyTestUser( String myUser ) {
         def sql
         Integer myUserPidm = PersonUtility.getPerson( myUser ).pidm
         def idToReturn
