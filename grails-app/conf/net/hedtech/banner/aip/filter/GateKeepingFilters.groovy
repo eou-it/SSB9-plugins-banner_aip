@@ -11,12 +11,10 @@
 
 package net.hedtech.banner.aip.filter
 
-import net.hedtech.banner.apisupport.ApiUtils
 import net.hedtech.banner.security.BannerUser
 import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.web.servlet.GrailsUrlPathHelper
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.web.util.WebUtils
 
 import javax.servlet.http.HttpSession
 
@@ -41,11 +39,10 @@ class GateKeepingFilters {
                 // FIXME: get urls from tables. Check and cache
                 // only want to look at type 'document'? not stylesheet, script, gif, font, ? ?
                 // at this point he getRequestURI returns the forwared dispatcher URL */aip/myplace.dispatch
-
                 String path = getServletPath( request )
                 println path
-                if (!ApiUtils.isApiRequest() && !request.xhr) {
-                //if (AIPUtils.isBlockingUrl()) { // checks path against list from DB
+                //if (!ApiUtils.isApiRequest() && !request.xhr) {
+                if (isBlockingUrl(path)) { // checks path against list from DB
                     println "take a look at: " + request.getRequestURI(  )
                     HttpSession session = request.getSession()
                     if (springSecurityService.isLoggedIn() && path != null) {
@@ -109,5 +106,15 @@ class GateKeepingFilters {
             }
         }
         return path
+    }
+
+    // look a ThemeUtil for expiring cache pattern
+    private boolean isBlockingUrl( String path ) {
+        // compare to cached list, if exists (expiring?)
+        // if not
+        // call BlockedProcessReadOnlyService.getBlockedProcessUrlsAndActionItemIds()
+        // create list
+        // cache list
+        return true
     }
 }
