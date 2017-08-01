@@ -4,7 +4,6 @@
 
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.configuration.ConfigurationData
 import net.hedtech.banner.aip.ActionItemBlockedProcess
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
@@ -32,7 +31,7 @@ class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTes
         super.tearDown()
     }
 
-
+/*
     @Test
     void testListBlockedProcessesByType() {
 
@@ -53,8 +52,9 @@ class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTes
         assertTrue( configData.value[0].contains( configDataByName.url ) )
 
     }
+    */
 
-
+/*
     @Test
     void testParseBlockedProcessJSON() {
 
@@ -92,6 +92,7 @@ class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTes
         assertEquals( actionItemBlockedProcessByActionId.blockConfigName, actionItemBlockedProcessByActionIdService.blockConfigName )
 
     }
+    */
 
 
     @Test
