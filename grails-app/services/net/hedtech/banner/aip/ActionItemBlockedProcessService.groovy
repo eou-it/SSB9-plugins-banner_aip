@@ -5,7 +5,6 @@
 package net.hedtech.banner.aip
 
 import grails.converters.JSON
-import net.hedtech.banner.configuration.ConfigurationData
 import net.hedtech.banner.service.ServiceBase
 
 
@@ -15,12 +14,38 @@ class ActionItemBlockedProcessService extends ServiceBase {
     private static BLOCKING_CONFIG_NAME = 'json/aipBlock'
 
     def listBlockedProcessesByType() {
-        return ConfigurationData.fetchConfigurationDataByType( BLOCKING_CONFIG_NAME )
+
+        def ConfigurationData
+
+        ConfigurationData.id = '1'
+        ConfigurationData.name = 'registerForClasses'
+        ConfigurationData.type = 'json/aipBlock'
+        ConfigurationData.value = '{"aipBlock": {"processNamei18n":"aip.blocked.process.name.register.for.classes","urls":["/ssb/term/termSelection?mode=registration" ] }}'
+        ConfigurationData.version='1'
+        ConfigurationData.lastModifiedBy = 'CSRADM001'
+        ConfigurationData.dataOrigin = 'GRAILS'
+        ConfigurationData.lastModified= '01-JAN-2017'
+
+
+        return ConfigurationData
     }
 
     def listBlockedProcessesByNameAndType(  String myConfigName ) {
-        def configData =  ConfigurationData.fetchConfigurationDataByNameAndType( BLOCKING_CONFIG_NAME, myConfigName )
+        //def configData =  ConfigurationData.fetchConfigurationDataByNameAndType( BLOCKING_CONFIG_NAME, myConfigName )
 
+        def ConfigurationData
+
+        ConfigurationData.id = '1'
+        ConfigurationData.name = 'registerForClasses'
+        ConfigurationData.type = 'json/aipBlock'
+        ConfigurationData.value = '{"aipBlock": {"processNamei18n":"aip.blocked.process.name.register.for.classes","urls":["/ssb/term/termSelection?mode=registration" ] }}'
+        ConfigurationData.version='1'
+        ConfigurationData.lastModifiedBy = 'CSRADM001'
+        ConfigurationData.dataOrigin = 'GRAILS'
+        ConfigurationData.lastModified= '01-JAN-2017'
+
+
+        def configData = ConfigurationData
         def configDataJson = JSON.parse( configData.value.toString() ) as ConfigObject
         def configProps = configDataJson.toProperties()
 
