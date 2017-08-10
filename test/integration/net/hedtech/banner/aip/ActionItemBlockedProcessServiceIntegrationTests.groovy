@@ -31,69 +31,6 @@ class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTes
         super.tearDown()
     }
 
-/*
-    @Test
-    void testListBlockedProcessesByType() {
-
-        List<ConfigurationData> configData = actionItemBlockedProcessService.listBlockedProcessesByType()
-        assertNotNull( configData )
-
-        println configData
-
-    }
-
-    @Test
-    void testListBlockedProcessByNameAndType() {
-
-        List<ConfigurationData> configData = actionItemBlockedProcessService.listBlockedProcessesByType()
-
-        def configDataByName = actionItemBlockedProcessService.listBlockedProcessesByNameAndType( configData.name[0].toString() )
-
-        assertTrue( configData.value[0].contains( configDataByName.url ) )
-
-    }
-    */
-
-/*
-    @Test
-    void testParseBlockedProcessJSON() {
-
-        List<ConfigurationData> configData = actionItemBlockedProcessService.listBlockedProcessesByType(  )
-        def processProps = actionItemBlockedProcessService.listBlockedProcessesByNameAndType( configData.name[0].toString() )
-
-        assertNotNull( processProps.url )
-        assertNotNull( processProps.processNamei18n )
-
-    }
-
-
-    @Test
-    void testListBlockedProcessByActionItemList() {
-
-        List<ActionItemBlockedProcess> actionItemBlockedProcessList = ActionItemBlockedProcess.fetchActionItemBlockedProcessList( )
-        List<ActionItemBlockedProcess> actionItemBlockedProcessServiceList = actionItemBlockedProcessService.listBlockedActionItems()
-
-        assertEquals( actionItemBlockedProcessList.size(), actionItemBlockedProcessServiceList.size() )
-
-    }
-
-
-    @Test
-    void testListBlockedProcessByActionItemId() {
-
-        List<ActionItemBlockedProcess> actionItemBlockedProcess   = actionItemBlockedProcessService.listBlockedActionItems()
-
-        def blockActionItemId = actionItemBlockedProcess[0].blockActionItemId
-
-        List<ActionItemBlockedProcess> actionItemBlockedProcessByActionId = ActionItemBlockedProcess.fetchActionItemBlockProcessByActionId( blockActionItemId )
-
-        List<ActionItemBlockedProcess> actionItemBlockedProcessByActionIdService = actionItemBlockedProcessService.listBlockedProcessByActionItemId( blockActionItemId )
-
-        assertEquals( actionItemBlockedProcessByActionId.blockConfigName, actionItemBlockedProcessByActionIdService.blockConfigName )
-
-    }
-    */
-
 
     @Test
     void testListBlockedProcessById() {

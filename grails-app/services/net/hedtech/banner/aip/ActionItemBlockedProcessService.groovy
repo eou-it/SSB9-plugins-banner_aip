@@ -31,7 +31,6 @@ class ActionItemBlockedProcessService extends ServiceBase {
     }
 
     def listBlockedProcessesByNameAndType(  String myConfigName ) {
-        //def configData =  ConfigurationData.fetchConfigurationDataByNameAndType( BLOCKING_CONFIG_NAME, myConfigName )
 
         def ConfigurationData
 
