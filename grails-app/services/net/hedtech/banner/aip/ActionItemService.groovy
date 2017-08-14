@@ -51,7 +51,7 @@ class ActionItemService extends ServiceBase {
             }
         }
 
-        if (!CommunicationFolder.fetchById( ai.folderId )) {
+        if (!CommunicationFolder.get( ai.folderId )) {
             throw new ApplicationException( ActionItem, FOLDER_VALIDATION_ERROR, 'actionItem.folder.validation.error' )
         }
 
