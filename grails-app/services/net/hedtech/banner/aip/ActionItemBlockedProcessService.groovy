@@ -15,7 +15,7 @@ class ActionItemBlockedProcessService extends ServiceBase {
 
     def listBlockedProcessesByType() {
 
-        def ConfigurationData
+        def ConfigurationData = [:]
 
         ConfigurationData.id = '1'
         ConfigurationData.name = 'registerForClasses'
@@ -27,12 +27,12 @@ class ActionItemBlockedProcessService extends ServiceBase {
         ConfigurationData.lastModified= '01-JAN-2017'
 
 
-        return ConfigurationData
+        return [ConfigurationData]
     }
 
     def listBlockedProcessesByNameAndType(  String myConfigName ) {
 
-        def ConfigurationData
+        def ConfigurationData = [:]
 
         ConfigurationData.id = '1'
         ConfigurationData.name = 'registerForClasses'
