@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 grails.project.class.dir = "target/classes"
@@ -13,7 +13,7 @@ grails.project.test.reports.dir = "target/test-reports"
 grails.war.resources = { stagingDir ->
     delete(file: "${stagingDir}/WEB-INF/lib/ojdbc6.jar")
 }
-
+grails.plugin.location.'i18n_core'            ="../i18n_core.git"
 grails.plugin.location.'banner-general-person'="../banner_general_person.git"
 grails.plugin.location.'banner-general-common'="../banner_general_common.git"
 grails.plugin.location.'banner-general-utility'="../banner_general_utility.git"
