@@ -1,26 +1,21 @@
-/** *****************************************************************************
- © 2016 SunGard Higher Education.  All Rights Reserved.
-
- CONFIDENTIAL BUSINESS INFORMATION
-
- THIS PROGRAM IS PROPRIETARY INFORMATION OF SUNGARD HIGHER EDUCATION
- AND IS NOT TO BE COPIED, REPRODUCED, LENT, OR DISPOSED OF,
- NOR USED FOR ANY PURPOSE OTHER THAN THAT WHICH IT IS SPECIFICALLY PROVIDED
- WITHOUT THE WRITTEN PERMISSION OF THE SAID COMPANY
- ****************************************************************************** */
+/*********************************************************************************
+ Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
+ **********************************************************************************/
 package net.hedtech.banner.aip
+
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 import javax.persistence.*
 
 /**
  * BlockedProcessReadOnly.
- *
- * Date: 12/21/2016
- * Time: 12:54 PM
  */
 
 @Entity
 @Table(name = "GVQ_GCRABLK_CONFIG")
+@ToString(includeNames = true, ignoreNulls = true)
+@EqualsAndHashCode(includeFields = true)
 class BlockedProcessReadOnly {
 
     /**
@@ -57,55 +52,4 @@ class BlockedProcessReadOnly {
     @Column(name = "CONFIG_ACTIVITY_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     Date configLastModified
-
-
-    @Override
-    public String toString() {
-        return "BlockedProcessReadOnly{" +
-                "id=" + id +
-                ", blockActionItemId='" + blockActionItemId + '\'' +
-                ", blockLastModifiedBy='" + blockLastModifiedBy + '\'' +
-                ", blockLastModified=" + blockLastModified +
-                ", blockConfigName='" + blockConfigName + '\'' +
-                ", blockConfigType='" + blockConfigType + '\'' +
-                ", value='" + value + '\'' +
-                ", configLastModifiedBy='" + configLastModifiedBy + '\'' +
-                ", configLastModified=" + configLastModified +
-                '}';
-    }
-
-
-    boolean equals( o ) {
-        if (this.is( o )) return true
-        if (!(o instanceof BlockedProcessReadOnly)) return false
-
-        BlockedProcessReadOnly that = (BlockedProcessReadOnly) o
-
-        if (blockActionItemId != that.blockActionItemId) return false
-        if (blockConfigName != that.blockConfigName) return false
-        if (blockConfigType != that.blockConfigType) return false
-        if (blockLastModified != that.blockLastModified) return false
-        if (blockLastModifiedBy != that.blockLastModifiedBy) return false
-        if (configLastModified != that.configLastModified) return false
-        if (configLastModifiedBy != that.configLastModifiedBy) return false
-        if (id != that.id) return false
-        if (value != that.value) return false
-
-        return true
-    }
-
-
-    int hashCode() {
-        int result
-        result = id.hashCode()
-        result = 31 * result + blockActionItemId.hashCode()
-        result = 31 * result + blockLastModifiedBy.hashCode()
-        result = 31 * result + blockLastModified.hashCode()
-        result = 31 * result + blockConfigName.hashCode()
-        result = 31 * result + blockConfigType.hashCode()
-        result = 31 * result + (value != null ? value.hashCode() : 0)
-        result = 31 * result + configLastModifiedBy.hashCode()
-        result = 31 * result + configLastModified.hashCode()
-        return result
-    }
 }

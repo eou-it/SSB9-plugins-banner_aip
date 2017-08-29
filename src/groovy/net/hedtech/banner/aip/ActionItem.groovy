@@ -1,8 +1,10 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 import org.hibernate.FlushMode
 
 import javax.persistence.*
@@ -26,7 +28,8 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "GCBACTM")
-
+@ToString(includeNames = true, ignoreNulls = true)
+@EqualsAndHashCode(includeFields = true)
 class ActionItem implements Serializable {
 
     /**
@@ -102,96 +105,50 @@ class ActionItem implements Serializable {
     @Column(name = "GCBACTM_DATA_ORIGIN")
     String dataOrigin
 
-
-    @Override
-    public String toString() {
-        return "ActionItem{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", status='" + status + '\'' +
-                ", folderId=" + folderId +
-                ", userId='" + userId + '\'' +
-                ", activityDate=" + activityDate +
-                ", description='" + description + '\'' +
-                ", creatorId='" + creatorId + '\'' +
-                ", createDate=" + createDate +
-                ", version=" + version +
-                ", dataOrigin='" + dataOrigin + '\'' +
-                '}';
-    }
-
-
-    boolean equals( o ) {
-        if (this.is( o )) return true
-        if (!(o instanceof ActionItem)) return false
-
-        ActionItem that = (ActionItem) o
-
-        if (status != that.status) return false
-        if (activityDate != that.activityDate) return false
-        if (createDate != that.createDate) return false
-        if (creatorId != that.creatorId) return false
-        if (dataOrigin != that.dataOrigin) return false
-        if (description != that.description) return false
-        if (title != that.title) return false
-        if (userId != that.userId) return false
-        if (version != that.version) return false
-        if (id != that.id) return false
-
-        return true
-    }
-
-
-    int hashCode() {
-        int result;
-        result = (id != null ? id.hashCode() : 0);
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (status != null ? status.hashCode() : 0);
-        result = 31 * result + (userId != null ? userId.hashCode() : 0);
-        result = 31 * result + (activityDate != null ? activityDate.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (creatorId != null ? creatorId.hashCode() : 0);
-        result = 31 * result + (createDate != null ? createDate.hashCode() : 0);
-        result = 31 * result + (version != null ? version.hashCode() : 0);
-        result = 31 * result + (dataOrigin != null ? dataOrigin.hashCode() : 0);
-        return result;
-    }
-
     static constraints = {
-        folderId(blank: false, nullable: false, maxSize: 19)
+        folderId( blank: false, nullable: false, maxSize: 19 )
         //title(blank: false, nullable: false, maxSize: 2048, unique: 'folderId') // This works but logs an error. Using existsSameTitleInFolder
-        title(blank: false, nullable: false, maxSize: 2048)
-        status(blank: false, nullable: false, maxSize: 30)
-        userId(blank: false, nullable: false, maxSize: 30)
-        activityDate(blank: false, nullable: false, maxSize: 30)
-        description(nullable: true) //summary length only for now
-        creatorId(nullable: true, maxSize: 30)
-        createDate(nullable: true, maxSize: 30)
-        dataOrigin(nullable: true, maxSize: 19)
+        title( blank: false, nullable: false, maxSize: 2048 )
+        status( blank: false, nullable: false, maxSize: 30 )
+        userId( blank: false, nullable: false, maxSize: 30 )
+        activityDate( blank: false, nullable: false, maxSize: 30 )
+        description( nullable: true ) //summary length only for now
+        creatorId( nullable: true, maxSize: 30 )
+        createDate( nullable: true, maxSize: 30 )
+        dataOrigin( nullable: true, maxSize: 19 )
     }
 
 
-    public static def fetchActionItems( ) {
-        ActionItem.withSession { session ->
-            List actionItem = session.getNamedQuery('ActionItem.fetchActionItems').list()
+    public static def fetchActionItems() {
+        ActionItem.withSession {session ->
+            List actionItem = session.getNamedQuery( 'ActionItem.fetchActionItems' ).list()
             return actionItem
         }
     }
 
-
+    /**
+     *
+     * @param myId
+     * @return
+     */
     // ReadOnly View?
-    public static def fetchActionItemById( Long myId) {
-        ActionItem.withSession { session ->
-            ActionItem actionItem = session.getNamedQuery( 'ActionItem.fetchActionItemById' ).setLong('myId', myId)?.list()[0]
+    public static def fetchActionItemById( Long myId ) {
+        ActionItem.withSession {session ->
+            ActionItem actionItem = session.getNamedQuery( 'ActionItem.fetchActionItemById' ).setLong( 'myId', myId )?.list()[0]
             return actionItem
         }
     }
 
+    /**
+     * Checks if specified tile already present in specified folder
+     * @param folderId
+     * @param title
+     * @return
+     */
     // Check constraint requirement that a title in a folder must be unique
     public static Boolean existsSameTitleInFolder( Long folderId, String title ) {
         def query
-        ActionItem.withSession { session ->
+        ActionItem.withSession {session ->
             session.setFlushMode( FlushMode.MANUAL );
             try {
                 query = session.getNamedQuery( 'ActionItem.existsSameTitleInFolder' )

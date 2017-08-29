@@ -1,8 +1,10 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 import net.hedtech.banner.general.CommunicationCommonUtility
 import org.hibernate.criterion.Order
 
@@ -24,15 +26,16 @@ import javax.persistence.*
                 query = """FROM ActionItemReadOnly a
            WHERE a.folderId = :myFolder
            """),
-        @NamedQuery(name="ActionItemReadOnly.fetchActionItemROCount",
-            query = """SELECT COUNT(a.actionItemId) FROM ActionItemReadOnly a
+        @NamedQuery(name = "ActionItemReadOnly.fetchActionItemROCount",
+                query = """SELECT COUNT(a.actionItemId) FROM ActionItemReadOnly a
             """
         )
 
 ])
 @Entity
 @Table(name = "GVQ_GCBACTM")
-
+@ToString(includeNames = true, ignoreNulls = true)
+@EqualsAndHashCode(includeFields = true)
 class ActionItemReadOnly implements Serializable {
 
     /**
@@ -70,7 +73,6 @@ class ActionItemReadOnly implements Serializable {
 
     @Column(name = "ACTION_ITEM_FOLDER_DESCRIPTION")
     String folderDesc
-
 
     /**
      * PIDM of the user action item belongs to
@@ -179,120 +181,48 @@ class ActionItemReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_CONTENT", columnDefinition = "TEXT")
     String actionItemContent
 
-
-    @Override
-    public String toString() {
-        return "ActionItemReadOnly{" +
-                "actionItemId=" + actionItemId +
-                ", actionItemName='" + actionItemName + '\'' +
-                ", folderId=" + folderId +
-                ", folderName='" + folderName + '\'' +
-                ", folderDesc='" + folderDesc + '\'' +
-                ", actionItemDesc='" + actionItemDesc + '\'' +
-                ", actionItemStatus='" + actionItemStatus + '\'' +
-                ", actionItemActivityDate=" + actionItemActivityDate +
-                ", actionItemUserId='" + actionItemUserId + '\'' +
-                ", actionItemContentUserId='" + actionItemContentUserId + '\'' +
-                ", actionItemCreatorId='" + actionItemCreatorId + '\'' +
-                ", actionItemCreateDate=" + actionItemCreateDate +
-                ", actionItemCompositeDate=" + actionItemCompositeDate +
-                ", actionItemLastUserId=" + actionItemLastUserId +
-                ", actionItemVersion=" + actionItemVersion +
-                ", actionItemTemplateId=" + actionItemTemplateId +
-                ", actionItemTemplateName='" + actionItemTemplateName + '\'' +
-                ", actionItemContentId='" + actionItemContentId + '\'' +
-                ", actionItemContentDate='" + actionItemContentDate + '\'' +
-                ", actionItemContent='" + actionItemContent + '\'' +
-                ", actionItemPageName='" + actionItemPageName + '\'' +
-                '}';
-    }
-
-
-    boolean equals( o ) {
-        if (this.is( o )) return true
-        if (getClass() != o.class) return false
-
-        ActionItemReadOnly that = (ActionItemReadOnly) o
-
-        if (actionItemActivityDate != that.actionItemActivityDate) return false
-        if (actionItemContentId != that.actionItemContentId) return false
-        if (actionItemContentDate != that.actionItemContentDate) return false
-        if (actionItemContent != that.actionItemContent) return false
-        if (actionItemCreateDate != that.actionItemCreateDate) return false
-        if (actionItemCompositeDate != that.actionItemCompositeDate) return false
-        if (actionItemLastUserId != that.actionItemLastUserId) return false
-        if (actionItemCreatorId != that.actionItemCreatorId) return false
-        if (actionItemDesc != that.actionItemDesc) return false
-        if (actionItemId != that.actionItemId) return false
-        if (actionItemName != that.actionItemName) return false
-        if (actionItemStatus != that.actionItemStatus) return false
-        if (actionItemTemplateId != that.actionItemTemplateId) return false
-        if (actionItemTemplateName != that.actionItemTemplateName) return false
-        if (actionItemUserId != that.actionItemUserId) return false
-        if (actionItemContentUserId != that.actionItemContentUserId) return false
-        if (actionItemVersion != that.actionItemVersion) return false
-        if (folderDesc != that.folderDesc) return false
-        if (folderId != that.folderId) return false
-        if (folderName != that.folderName) return false
-        if (actionItemPageName != that.actionItemPageName) return false;
-
-        return true
-    }
-
-
-    int hashCode() {
-        int result
-        result = (actionItemId != null ? actionItemId.hashCode() : 0)
-        result = 31 * result + (actionItemName != null ? actionItemName.hashCode() : 0)
-        result = 31 * result + (folderId != null ? folderId.hashCode() : 0)
-        result = 31 * result + (folderName != null ? folderName.hashCode() : 0)
-        result = 31 * result + (folderDesc != null ? folderDesc.hashCode() : 0)
-        result = 31 * result + (actionItemDesc != null ? actionItemDesc.hashCode() : 0)
-        result = 31 * result + (actionItemStatus != null ? actionItemStatus.hashCode() : 0)
-        result = 31 * result + (actionItemActivityDate != null ? actionItemActivityDate.hashCode() : 0)
-        result = 31 * result + (actionItemUserId != null ? actionItemUserId.hashCode() : 0)
-        result = 31 * result + (actionItemContentUserId != null ? actionItemContentUserId.hashCode() : 0)
-        result = 31 * result + (actionItemCreatorId != null ? actionItemCreatorId.hashCode() : 0)
-        result = 31 * result + (actionItemCreateDate != null ? actionItemCreateDate.hashCode() : 0)
-        result = 31 * result + (actionItemCompositeDate != null ? actionItemCompositeDate.hashCode() : 0)
-        result = 31 * result + (actionItemLastUserId != null ? actionItemLastUserId.hashCode() : 0)
-        result = 31 * result + (actionItemVersion != null ? actionItemVersion.hashCode() : 0)
-        result = 31 * result + (actionItemTemplateId != null ? actionItemTemplateId.hashCode() : 0)
-        result = 31 * result + (actionItemTemplateName != null ? actionItemTemplateName.hashCode() : 0)
-        result = 31 * result + (actionItemContentId != null ? actionItemContentId.hashCode() : 0)
-        result = 31 * result + (actionItemContentDate != null ? actionItemContentDate.hashCode() : 0)
-        result = 31 * result + (actionItemContent != null ? actionItemContent.hashCode() : 0)
-        result = 31 * result + (actionItemPageName != null ? actionItemPageName.hashCode() : 0)
-        return result
-    }
-
-
+    /**
+     *
+     * @param myId
+     * @return
+     */
     public static def fetchActionItemROById( Long myId ) {
-        ActionItemReadOnly.withSession { session ->
+        ActionItemReadOnly.withSession {session ->
             ActionItemReadOnly actionItemReadOnly = session.getNamedQuery( 'ActionItemReadOnly.fetchActionItemROById' ).setLong( 'myId',
-                    myId ).list()[0]
+                                                                                                                                 myId ).list()[0]
             return actionItemReadOnly
         }
     }
 
-
+    /**
+     *
+     * @return
+     */
     public static def fetchActionItemRO() {
-        ActionItemReadOnly.withSession { session ->
+        ActionItemReadOnly.withSession {session ->
             List actionItemReadOnly = session.getNamedQuery( 'ActionItemReadOnly.fetchActionItemRO' ).list()
             return actionItemReadOnly
         }
     }
 
-
+    /**
+     *
+     * @param folderId
+     * @return
+     */
     public static def fetchActionItemROByFolder( Long folderId ) {
-        ActionItemReadOnly.withSession { session ->
+        ActionItemReadOnly.withSession {session ->
             List actionItemReadOnly = session.getNamedQuery( 'ActionItemReadOnly.fetchActionItemROByFolder' ).setLong( 'myFolder', folderId ).list()
             return actionItemReadOnly
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public static def fetchActionItemROCount() {
-        ActionItemReadOnly.withSession { session ->
+        ActionItemReadOnly.withSession {session ->
             List actionItemReadOnlyCount = session.getNamedQuery( 'ActionItemReadOnly.fetchActionItemROCount' ).list()
             return actionItemReadOnlyCount
         }
@@ -300,13 +230,19 @@ class ActionItemReadOnly implements Serializable {
 
     // TODO: make filter (filterData and ilike) optional
     // TODO: filter seems to need tests.
-    public static fetchWithPagingAndSortParams(filterData, pagingAndSortParams) {
+    /**
+     *
+     * @param filterData
+     * @param pagingAndSortParams
+     * @return
+     */
+    public static fetchWithPagingAndSortParams( filterData, pagingAndSortParams ) {
         def queryCriteria = ActionItemReadOnly.createCriteria()
 
         def results = queryCriteria.list( max: pagingAndSortParams.max, offset: pagingAndSortParams.offset ) {
             ilike( "actionItemName", CommunicationCommonUtility.getScrubbedInput( filterData?.params?.name ) )
             order( (pagingAndSortParams.sortAscending ? Order.asc( pagingAndSortParams?.sortColumn ) : Order.desc( pagingAndSortParams?.sortColumn )).ignoreCase() )
-            if (! pagingAndSortParams?.sortColumn.equals( "actionItemName" )) {
+            if (!pagingAndSortParams?.sortColumn.equals( "actionItemName" )) {
                 order( Order.asc( 'actionItemName' ).ignoreCase() )
             }
         }

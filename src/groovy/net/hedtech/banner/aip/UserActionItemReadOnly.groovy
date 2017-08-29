@@ -3,6 +3,8 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 import org.hibernate.annotations.Type
 
 import javax.persistence.*
@@ -13,7 +15,7 @@ import javax.persistence.*
            WHERE a.pidm = :myPidm
            """),
         @NamedQuery(name = "UserActionItemReadOnly.fetchBlockingUserActionItemROByPidm",
-                        query = """FROM UserActionItemReadOnly a
+                query = """FROM UserActionItemReadOnly a
                    WHERE a.pidm = :myPidm
                    AND a.isBlocking is true
                    """)
@@ -21,7 +23,8 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "GVQ_GCRAACT")
-
+@ToString(includeNames = true, ignoreNulls = true)
+@EqualsAndHashCode(includeFields = true)
 class UserActionItemReadOnly implements Serializable {
 
     /**
@@ -64,7 +67,6 @@ class UserActionItemReadOnly implements Serializable {
     /*need to figure out what to limit length to for display*/
     String description
 
-
     /**
      * UserID that created the action item
      */
@@ -83,7 +85,6 @@ class UserActionItemReadOnly implements Serializable {
     @Version
     @Column(name = "ACTION_ITEM_TMPL_VERSION", length = 19)
     Long versionTmpl
-
 
     /**
      * PIDM of the user action item belongs to
@@ -107,7 +108,6 @@ class UserActionItemReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_COMPLETED_DATE")
     Date completedDate
 
-
     /**
      * Last activity date for the action item
      */
@@ -119,7 +119,6 @@ class UserActionItemReadOnly implements Serializable {
      */
     @Column(name = "ACTION_ITEM_USER_ID", length = 30)
     String userId
-
 
     /**
      * UserID that created the action item
@@ -139,83 +138,6 @@ class UserActionItemReadOnly implements Serializable {
     @Version
     @Column(name = "ACTION_ITEM_VERSION", length = 19)
     Long version
-
-
-
-    public String toString() {
-        """UserActionItemReadOnly[
-                id:$id,
-                title:$title,
-                activeTmpl:$activeTmpl,
-                activityDateTmpl:$activityDateTmpl,
-                userIdTmpl:$userIdTmpl,
-                description:$description,
-                creatorId:$creatorIdTmpl,
-                createDateTmpl:$createDateTmpl,
-                versionTmpl:$versionTmpl,
-                pidm:$pidm,
-                status:$status,
-                isBlocking:$isBlocking,
-                completedDate:$completedDate,
-                activityDate:$activityDate,
-                userId:$userId,
-                creatorId:$creatorId
-                createDate:$createDate,
-                version:$version]"""
-    }
-
-
-    boolean equals( o ) {
-        if (this.is( o )) return true
-        if (!(o instanceof UserActionItemReadOnly)) return false
-
-        UserActionItemReadOnly that = (UserActionItemReadOnly) o
-
-        if (activeTmpl != that.activeTmpl) return false
-        if (activityDate != that.activityDate) return false
-        if (activityDateTmpl != that.activityDateTmpl) return false
-        if (completedDate != that.completedDate) return false
-        if (createDate != that.createDate) return false
-        if (createDateTmpl != that.createDateTmpl) return false
-        if (creatorId != that.creatorId) return false
-        if (creatorIdTmpl != that.creatorIdTmpl) return false
-        if (description != that.description) return false
-        if (id != that.id) return false
-        if (pidm != that.pidm) return false
-        if (status != that.status) return false
-        if (isBlocking != that.isBlocking) return false
-        if (title != that.title) return false
-        if (userId != that.userId) return false
-        if (userIdTmpl != that.userIdTmpl) return false
-        if (version != that.version) return false
-        if (versionTmpl != that.versionTmpl) return false
-
-        return true
-    }
-
-
-    int hashCode() {
-        int result
-        result = (id != null ? id.hashCode() : 0)
-        result = 31 * result + (title != null ? title.hashCode() : 0)
-        result = 31 * result + (activeTmpl != null ? activeTmpl.hashCode() : 0)
-        result = 31 * result + (activityDateTmpl != null ? activityDateTmpl.hashCode() : 0)
-        result = 31 * result + (userIdTmpl != null ? userIdTmpl.hashCode() : 0)
-        result = 31 * result + (description != null ? description.hashCode() : 0)
-        result = 31 * result + (creatorIdTmpl != null ? creatorIdTmpl.hashCode() : 0)
-        result = 31 * result + (createDateTmpl != null ? createDateTmpl.hashCode() : 0)
-        result = 31 * result + (versionTmpl != null ? versionTmpl.hashCode() : 0)
-        result = 31 * result + (pidm != null ? pidm.hashCode() : 0)
-        result = 31 * result + (status != null ? status.hashCode() : 0)
-        result = 31 * result + (isBlocking != null ? isBlocking.hashCode() : 0)
-        result = 31 * result + (completedDate != null ? completedDate.hashCode() : 0)
-        result = 31 * result + (activityDate != null ? activityDate.hashCode() : 0)
-        result = 31 * result + (userId != null ? userId.hashCode() : 0)
-        result = 31 * result + (creatorId != null ? creatorId.hashCode() : 0)
-        result = 31 * result + (createDate != null ? createDate.hashCode() : 0)
-        result = 31 * result + (version != null ? version.hashCode() : 0)
-        return result
-    }
 
     static constraints = {
         id( nullable: false, maxSize: 19 )
@@ -238,9 +160,13 @@ class UserActionItemReadOnly implements Serializable {
         versionTmpl( nullable: false, maxSize: 19 )
     }
 
-
+    /**
+     *
+     * @param pidm
+     * @return
+     */
     public static def fetchUserActionItemsROByPidm( Long pidm ) {
-        UserActionItemReadOnly.withSession { session ->
+        UserActionItemReadOnly.withSession {session ->
             List<UserActionItemReadOnly> userActionItemsReadOnly = session.getNamedQuery( 'UserActionItemReadOnly.fetchUserActionItemROByPidm' )
                     .setLong(
                     'myPidm', pidm )
@@ -249,16 +175,19 @@ class UserActionItemReadOnly implements Serializable {
         }
     }
 
-
+    /**
+     *
+     * @param pidm
+     * @return
+     */
     public static def fetchBlockingUserActionItemsROByPidm( Long pidm ) {
-        UserActionItemReadOnly.withSession { session ->
+        UserActionItemReadOnly.withSession {session ->
             List<UserActionItemReadOnly> userActionItemsReadOnly = session.getNamedQuery( 'UserActionItemReadOnly' +
-                    '.fetchBlockingUserActionItemROByPidm' )
+                                                                                                  '.fetchBlockingUserActionItemROByPidm' )
                     .setLong(
                     'myPidm', pidm )
                     .list()
             return userActionItemsReadOnly
         }
     }
-
 }
