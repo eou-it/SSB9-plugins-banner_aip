@@ -29,7 +29,7 @@ class BannerCommManagementResourceAccessService {
                     uniqueResult()
             clob ? clob.asciiStream.text : ''
         } catch (HibernateException he) {
-            log.error( 'Error while querying BCM location' )
+            log.error( 'Error while querying BCM location' + he )
         }
     }
 }
