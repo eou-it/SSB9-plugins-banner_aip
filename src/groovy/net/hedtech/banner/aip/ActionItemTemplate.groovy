@@ -1,4 +1,10 @@
+/*********************************************************************************
+ Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
+ **********************************************************************************/
 package net.hedtech.banner.aip
+
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 import javax.persistence.*
 
@@ -16,7 +22,8 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "GCBPBTR")
-
+@ToString(includeNames = true, ignoreNulls = true)
+@EqualsAndHashCode(includeFields = true)
 class ActionItemTemplate implements Serializable{
 
     /**
@@ -91,58 +98,6 @@ class ActionItemTemplate implements Serializable{
     @Column(name = "GCBPBTR_VPDI_CODE")
     String vpdiCode
 
-    @Override
-    public String toString() {
-        return "ActionItemTemplate{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", pageId='" + pageId + '\'' +
-                ", sourceInd='" + sourceInd + '\'' +
-                ", userId='" + userId + '\'' +
-                ", systemRequired='" + systemRequired + '\'' +
-                ", activeInd'" + activeInd + '\'' +
-                ", activityDate='" + activityDate + '\'' +
-                ", version='" + version + '\'' +
-                ", dataOrigin='" + dataOrigin + '\'' +
-                ", vpdiCode='" + vpdiCode + '\'' +
-                '}'
-    }
-
-    boolean equals(o) {
-        if(this.is(o)) return true
-        if(!(o instanceof ActionItemTemplate)) return false
-
-        ActionItemTemplate that = (ActionItemTemplate) o
-
-        if (id != that.id) return false
-        if (title != that.title) return false
-        if (sourceInd != that.sourceInd) return false
-        if (userId != that.userId) return false
-        if (systemRequired != that.systemRequired) return false
-        if (activeInd != that.activeInd) return false
-        if (activityDate != that.activityDate) return false
-        if (version != that.version) return false
-        if (dataOrigin != that.dataOrigin) return false
-        if (vpdiCode != that.vpdiCode) return false
-
-        return true
-    }
-
-    int hashCode() {
-        int result = 0
-        result = 31 * result + (id != null ? id.hashCode() : 0)
-        result = 31 * result + (title != null ? title.hashCode() : 0)
-        result = 31 * result + (sourceInd != null ? sourceInd.hashCode() : 0)
-        result = 31 * result + (userId != null ? userId.hashCode() : 0)
-        result = 31 * result + (systemRequired != null ? systemRequired.hashCode() : 0)
-        result = 31 * result + (activeInd != null ? activeInd.hashCode() : 0)
-        result = 31 * result + (activityDate != null ? activityDate.hashCode() : 0)
-        result = 31 * result + (version != null ? version.hashCode() : 0)
-        result = 31 * result + (dataOrigin != null ? dataOrigin.hashCode() : 0)
-        result = 31 * result + (vpdiCode != null ? vpdiCode.hashCode() : 0)
-        return result
-    }
-
     static constraints = {
         title(blank: false, nullable: false)
         sourceInd(blank: false, nullable: false)
@@ -153,12 +108,22 @@ class ActionItemTemplate implements Serializable{
         dataOrigin(nullable: false)
     }
 
+    /**
+     *
+     * @return
+     */
     public static def fetchActionItemTemplates() {
         ActionItemTemplate.withSession {session ->
             List actionItemTemplates = session.getNamedQuery('ActionItemTemplate.fetchActionItemTemplates').list()
             return actionItemTemplates
         }
     }
+
+    /**
+     *
+     * @param myId
+     * @return
+     */
     public static def fetchActionItemTemplateById( Long myId ) {
         ActionItemTemplate.withSession {session ->
             List actionItemTemplates = session.getNamedQuery('ActionItemTemplate.fetchActionItemTemplateById').setLong('myId', myId)?.list()

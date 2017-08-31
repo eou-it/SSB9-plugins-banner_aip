@@ -1,7 +1,10 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
+
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 import javax.persistence.*
 
@@ -25,7 +28,8 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "GCRAISR")
-
+@ToString(includeNames = true, ignoreNulls = true)
+@EqualsAndHashCode(includeFields = true)
 class ActionItemStatusRule implements Serializable {
 
     /**
@@ -86,54 +90,6 @@ class ActionItemStatusRule implements Serializable {
     @Column(name="GCRAISR_DATA_ORIGIN")
     String dataOrigin
 
-    @Override
-    public String toString() {
-        return "ActionItemStatusRule{" +
-                "id=" + id +
-                ", actionItemId=" + actionItemId +
-                ", seqOrder=" + seqOrder +
-                ", actionItemStatusId=" + actionItemStatusId +
-                ", labelText='" + labelText + "\'" +
-                ", userId='" + userId + "\'" +
-                ", activityDate=" + activityDate +
-                ", dataOrigin='" + dataOrigin + "\'" +
-                ", version=" + version +
-                "}"
-    }
-
-    boolean equals(o) {
-        if (this.is(o)) return true
-        if (!(o instanceof ActionItemStatusRule)) return false
-
-        ActionItemStatusRule that = (ActionItemStatusRule) o
-
-        if (actionItemId != that.actionItemId) return false
-        if (seqOrder !=  that.seqOrder) return false
-        if (actionItemStatusId != that.actionItemStatusId) return false
-        if (labelText != that.labelText) return false
-        if (version != that.version) return false
-        if (id != that.id) return false
-        if (userId != that.userId) return false
-        if (activityDate != that.activityDate) return false
-        if (dataOrigin != that.dataOrigin) return false
-
-        return true
-    }
-
-    int hashCode() {
-        int result = 0
-        result = 31 * result + (id !=null ? id.hashCode() : 0)
-        result = 31 * result + (actionItemId !=null ? actionItemId.hashCode() : 0)
-        result = 31 * result + (seqOrder != null ? seqOrder.hashCode() : 0)
-        result = 31 * result + (actionItemStatusId != null ? actionItemStatusId.hashCode() : 0)
-        result = 31 * result + (labelText != null ? labelText.hashCode() : 0)
-        result = 31 * result + (version != null ? version.hashCode() : 0)
-        result = 31 * result + (userId != null ? userId.hashCode() : 0)
-        result = 31 * result + (activityDate != null ? activityDate.hashCode() : 0)
-        result = 31 * result + (dataOrigin != null ? dataOrigin.hashCode() : 0)
-        return result
-    }
-
     static constraints = {
         actionItemId(blank: false, nullable: false, maxSize: 19)
         seqOrder(blank: false, nullable: false, maxSize: 5)
@@ -145,6 +101,10 @@ class ActionItemStatusRule implements Serializable {
         version(nullable: true, maxSize: 30)
     }
 
+    /**
+     *
+     * @return
+     */
     public static def fetchActionItemStatusRules() {
         ActionItemStatusRule.withSession { session ->
             List actionItemStatusRules = session.getNamedQuery("ActionItemStatusRule.fetchActionItemStatusRules").list()
@@ -152,12 +112,23 @@ class ActionItemStatusRule implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     public static fetchActionItemStatusRuleById( Long id ) {
         ActionItemStatusRule.withSession { session ->
             ActionItemStatusRule actionItemStatusRule = session.getNamedQuery( "ActionItemStatusRule.fetchActionItemStatusRuleById" ).setLong('myId', id)?.list()[0]
             return actionItemStatusRule
         }
     }
+
+    /**
+     *
+     * @param id
+     * @return
+     */
     public static fetchActionItemStatusRulesByActionItemId (long id) {
         ActionItemStatusRule.withSession { session ->
             List<ActionItemStatusRule> actionItemStatusRules = session.getNamedQuery("ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId").setLong("myId", id).list()

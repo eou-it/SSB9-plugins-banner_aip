@@ -3,6 +3,8 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 import net.hedtech.banner.general.CommunicationCommonUtility
 import org.hibernate.criterion.Order
 
@@ -19,7 +21,7 @@ import javax.persistence.*
            FROM GroupFolderReadOnly a
            WHERE a.id = :myId
           """),
-        @NamedQuery(name="GroupFolderReadOnly.fetchGroupFolderROCount",
+        @NamedQuery(name = "GroupFolderReadOnly.fetchGroupFolderROCount",
                 query = """SELECT COUNT(a.groupId) FROM GroupFolderReadOnly a
             """
         )
@@ -27,6 +29,8 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "GVQ_GCBAGRP")
+@ToString(includeNames = true, ignoreNulls = true)
+@EqualsAndHashCode(includeFields = true)
 
 class GroupFolderReadOnly implements Serializable {
 
@@ -80,7 +84,6 @@ class GroupFolderReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_GROUP_VERSION")
     Long groupVersion
 
-
     /**
      * Folder ID
      */
@@ -101,79 +104,49 @@ class GroupFolderReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_FOLDER_DESCRIPTION")
     String folderDesc
 
-
-    public String toString() {
-        return "GroupFolderReadOnly{" +
-                "groupId=" + groupId +
-                ", groupTitle='" + groupTitle + '\'' +
-                ", groupDesc='" + groupDesc + '\'' +
-                ", groupStatus='" + groupStatus + '\'' +
-                ", groupActivityDate=" + groupActivityDate +
-                ", groupUserId='" + groupUserId + '\'' +
-                ", groupVersion=" + groupVersion +
-                ", folderId='" + folderId + '\'' +
-                ", folderName='" + folderName + '\'' +
-                ", folderDesc='" + folderDesc + '\'' +
-                '}';
-    }
-
-    boolean equals(o) {
-        if (this.is(o)) return true
-        if (getClass() != o.class) return false
-
-        GroupFolderReadOnly that = (GroupFolderReadOnly) o
-
-        if (folderDesc != that.folderDesc) return false
-        if (folderName != that.folderName) return false
-        if (folderId != that.folderId) return false
-        if (groupActivityDate != that.groupActivityDate) return false
-        if (groupDesc != that.groupDesc) return false
-        if (groupId != that.groupId) return false
-        if (groupStatus != that.groupStatus) return false
-        if (groupTitle != that.groupTitle) return false
-        if (groupUserId != that.groupUserId) return false
-        if (groupVersion != that.groupVersion) return false
-
-        return true
-    }
-
-    int hashCode() {
-        int result
-        result = (groupId != null ? groupId.hashCode() : 0)
-        result = 31 * result + (groupTitle != null ? groupTitle.hashCode() : 0)
-        result = 31 * result + (groupDesc != null ? groupDesc.hashCode() : 0)
-        result = 31 * result + (groupStatus != null ? groupStatus.hashCode() : 0)
-        result = 31 * result + (groupActivityDate != null ? groupActivityDate.hashCode() : 0)
-        result = 31 * result + (groupUserId != null ? groupUserId.hashCode() : 0)
-        result = 31 * result + (groupVersion != null ? groupVersion.hashCode() : 0)
-        result = 31 * result + (folderId != null ? folderId.hashCode() : 0)
-        result = 31 * result + (folderName != null ? folderName.hashCode() : 0)
-        result = 31 * result + (folderDesc != null ? folderDesc.hashCode() : 0)
-        return result
-    }
-
-    public static def fetchGroupFolders( ) {
-        GroupFolderReadOnly.withSession { session ->
-            List groupFolderList = session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolders' ).list().sort{it.groupTitle}
+    /**
+     *
+     * @return
+     */
+    public static def fetchGroupFolders() {
+        GroupFolderReadOnly.withSession {session ->
+            List groupFolderList = session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolders' ).list().sort {
+                it.groupTitle
+            }
             return groupFolderList
         }
     }
 
-    public static def fetchGroupFoldersById(Long id) {
-        GroupFolderReadOnly.withSession { session ->
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public static def fetchGroupFoldersById( Long id ) {
+        GroupFolderReadOnly.withSession {session ->
             List groupFolderListById = session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFoldersById' ).setLong( 'myId', id ).list()
             return groupFolderListById
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public static def fetchGroupFolderROCount() {
-        GroupFolderReadOnly.withSession { session ->
+        GroupFolderReadOnly.withSession {session ->
             List groupFolderReadOnlyCount = session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolderROCount' ).list()
             return groupFolderReadOnlyCount
         }
     }
 
-    public static fetchWithPagingAndSortParams(filterData, pagingAndSortParams) {
+    /**
+     *
+     * @param filterData
+     * @param pagingAndSortParams
+     * @return
+     */
+    public static fetchWithPagingAndSortParams( filterData, pagingAndSortParams ) {
         def searchStatus = filterData?.params?.status
         def queryCriteria = GroupFolderReadOnly.createCriteria()
         def results = queryCriteria.list( max: pagingAndSortParams.max, offset: pagingAndSortParams.offset ) {

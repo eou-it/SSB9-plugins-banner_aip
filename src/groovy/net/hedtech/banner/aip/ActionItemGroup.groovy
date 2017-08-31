@@ -1,8 +1,10 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 import org.hibernate.FlushMode
 
 import javax.persistence.*
@@ -26,7 +28,8 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "GCBAGRP")
-
+@ToString(includeNames = true, ignoreNulls = true)
+@EqualsAndHashCode(includeFields = true)
 class ActionItemGroup implements Serializable {
 
     /**
@@ -90,82 +93,49 @@ class ActionItemGroup implements Serializable {
     @Column(name = "GCBAGRP_DATA_ORIGIN", length = 30)
     String dataOrigin
 
-
-    public String toString() {
-        """ActionItemGroup[
-                id:$id,
-                title:$title,
-                folderId:$folderId,
-                description:$description,
-                status:$status,
-                userId:$userId,
-                activityDate:$activityDate,
-                version:$version,
-                dataOrigin:$dataOrigin]"""
-    }
-
-
-    boolean equals( o ) {
-        if (this.is( o )) return true
-        if (!(o instanceof ActionItemGroup)) return false
-
-        ActionItemGroup that = (ActionItemGroup) o
-
-        if (activityDate != that.activityDate) return false
-        if (dataOrigin != that.dataOrigin) return false
-        if (description != that.description) return false
-        if (folderId != that.folderId) return false
-        if (id != that.id) return false
-        if (status != that.status) return false
-        if (title != that.title) return false
-        if (userId != that.userId) return false
-        if (version != that.version) return false
-
-        return true
-    }
-
-
-    int hashCode() {
-        int result;
-        result = (id != null ? id.hashCode() : 0);
-        result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (userId != null ? userId.hashCode() : 0);
-        result = 31 * result + (activityDate != null ? activityDate.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (version != null ? version.hashCode() : 0);
-        result = 31 * result + (dataOrigin != null ? dataOrigin.hashCode() : 0);
-        return result;
-    }
-
     static constraints = {
-        title(nullable: false, maxSize: 2048)
-        description(nullable: true) //summary length only for now
-        folderId(nullable: false, maxSize: 30)
-        status(nullable: false, maxSize: 30)
-        userId(nullable: false, maxSize: 30)
-        activityDate(nullable: false, maxSize: 30)
-        dataOrigin(nullable: true, maxSize: 19)
+        title( nullable: false, maxSize: 2048 )
+        description( nullable: true ) //summary length only for now
+        folderId( nullable: false, maxSize: 30 )
+        status( nullable: false, maxSize: 30 )
+        userId( nullable: false, maxSize: 30 )
+        activityDate( nullable: false, maxSize: 30 )
+        dataOrigin( nullable: true, maxSize: 19 )
     }
 
-
+    /**
+     *
+     * @return
+     */
     public static def fetchActionItemGroups() {
-        ActionItemGroup.withSession { session ->
-            List<ActionItemGroup> actionItemGroup = session.getNamedQuery('ActionItemGroup.fetchActionItemGroups').list()
+        ActionItemGroup.withSession {session ->
+            List<ActionItemGroup> actionItemGroup = session.getNamedQuery( 'ActionItemGroup.fetchActionItemGroups' ).list()
             return actionItemGroup
         }
     }
 
-    public static def fetchActionItemGroupById(Long id) {
-        ActionItemGroup.withSession { session ->
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public static def fetchActionItemGroupById( Long id ) {
+        ActionItemGroup.withSession {session ->
             ActionItemGroup actionItemGroupById = session.getNamedQuery( 'ActionItemGroup.fetchActionItemGroupById' ).setLong( 'myId', id ).list()[0]
             return actionItemGroupById
         }
     }
+
+    /**
+     *
+     * @param folderId
+     * @param title
+     * @return
+     */
     // Check constraint requirement that a title in a folder must be unique
     public static Boolean existsSameTitleInFolder( Long folderId, String title ) {
         def query
-        ActionItem.withSession { session ->
+        ActionItem.withSession {session ->
             session.setFlushMode( FlushMode.MANUAL );
             try {
                 query = session.getNamedQuery( 'ActionItemGroup.existsSameTitleInFolder' )

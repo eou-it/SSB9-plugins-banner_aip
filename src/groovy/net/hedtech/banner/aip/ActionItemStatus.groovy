@@ -1,8 +1,10 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 import net.hedtech.banner.general.CommunicationCommonUtility
 import org.hibernate.criterion.Order
 
@@ -19,7 +21,7 @@ import javax.persistence.*
            FROM ActionItemStatus a
            WHERE a.id = :myId
           """),
-        @NamedQuery(name="ActionItemStatus.fetchActionItemStatusCount",
+        @NamedQuery(name = "ActionItemStatus.fetchActionItemStatusCount",
                 query = """SELECT COUNT(a.id) FROM ActionItemStatus a
             """
         )
@@ -27,7 +29,8 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "GCVASTS")
-
+@ToString(includeNames = true, ignoreNulls = true)
+@EqualsAndHashCode(includeFields = true)
 class ActionItemStatus implements Serializable {
 
     /**
@@ -59,17 +62,15 @@ class ActionItemStatus implements Serializable {
     @Column(name = "GCVASTS_SYSTEM_REQUIRED")
     String actionItemStatusSystemRequired
 
-
     /***
      * Indicator for active record
      */
 
     @Column(name = "GCVASTS_ACTIVE_IND")
-    String  actionItemStatusActive
+    String actionItemStatusActive
 
     @Column(name = "GCVASTS_DEFAULT_IND")
-    String  actionItemStatusDefault
-
+    String actionItemStatusDefault
 
     /**
      * User action item status was last updated by
@@ -97,108 +98,67 @@ class ActionItemStatus implements Serializable {
     String actionItemStatusDataOrigin
 
     static constraints = {
-        actionItemStatus(blank: false, nullable: false, maxSize: 30, unique:true)
-        actionItemStatusActive(blank: false, nullable: false, maxSize: 1)
-        actionItemStatusActivityDate(blank: false, nullable: false, maxSize: 30)
-        actionItemStatusBlockedProcess(blank: false, nullable: false, maxSize: 1)
-        actionItemStatusDefault(blank: true, nullable: true, maxSize: 1)
-        actionItemStatusSystemRequired(blank: false, nullable: false, maxSize: 1) //summary length only for now
-        actionItemStatusUserId(blank: false, nullable: false, maxSize: 30)
-        actionItemStatusVersion(nullable: true, maxSize: 30)
-        actionItemStatusDataOrigin(nullable: true, maxSize: 30)
+        actionItemStatus( blank: false, nullable: false, maxSize: 30, unique: true )
+        actionItemStatusActive( blank: false, nullable: false, maxSize: 1 )
+        actionItemStatusActivityDate( blank: false, nullable: false, maxSize: 30 )
+        actionItemStatusBlockedProcess( blank: false, nullable: false, maxSize: 1 )
+        actionItemStatusDefault( blank: true, nullable: true, maxSize: 1 )
+        actionItemStatusSystemRequired( blank: false, nullable: false, maxSize: 1 ) //summary length only for now
+        actionItemStatusUserId( blank: false, nullable: false, maxSize: 30 )
+        actionItemStatusVersion( nullable: true, maxSize: 30 )
+        actionItemStatusDataOrigin( nullable: true, maxSize: 30 )
     }
 
-
-    @Override
-    public String toString() {
-        return "ActionItemStatus{" +
-                "actionItemStatusId=" + actionItemStatusId +
-                ", actionItemStatus='" + actionItemStatus + '\'' +
-                ", actionItemStatusBlockedProcess='" + actionItemStatusBlockedProcess + '\'' +
-                ", actionItemStatusSystemRequired='" + actionItemStatusSystemRequired + '\'' +
-                ", actionItemStatusActive='" + actionItemStatusActive + '\'' +
-                ", actionItemStatusDefault='" + actionItemStatusDefault + '\'' +
-                ", actionItemStatusUserId='" + actionItemStatusUserId + '\'' +
-                ", actionItemStatusActivityDate=" + actionItemStatusActivityDate +
-                ", actionItemStatusVersion=" + actionItemStatusVersion +
-                ", actionItemStatusDataOrigin='" + actionItemStatusDataOrigin + '\'' +
-                '}';
-    }
-
-
-
-    boolean equals( o ) {
-        if (this.is( o )) return true
-        if (getClass() != o.class) return false
-
-        ActionItemStatus that = (ActionItemStatus) o
-
-        if (actionItemStatus != that.actionItemStatus) return false
-        if (actionItemStatusActive != that.actionItemStatusActive) return false
-        if (actionItemStatusDefault != that.actionItemStatusDefault) return false
-        if (actionItemStatusActivityDate != that.actionItemStatusActivityDate) return false
-        if (actionItemStatusBlockedProcess != that.actionItemStatusBlockedProcess) return false
-        if (actionItemStatusDataOrigin != that.actionItemStatusDataOrigin) return false
-        if (actionItemStatusSystemRequired != that.actionItemStatusSystemRequired) return false
-        if (actionItemStatusUserId != that.actionItemStatusUserId) return false
-        if (actionItemStatusVersion != that.actionItemStatusVersion) return false
-        if (actionItemStatusId != that.actionItemStatusId) return false
-
-        return true
-    }
-
-
-    int hashCode() {
-        int result
-        result = (actionItemStatusId != null ? actionItemStatusId.hashCode() : 0)
-        result = 31 * result + (actionItemStatus != null ? actionItemStatus.hashCode() : 0)
-        result = 31 * result + (actionItemStatusBlockedProcess != null ? actionItemStatusBlockedProcess.hashCode() : 0)
-        result = 31 * result + (actionItemStatusSystemRequired != null ? actionItemStatusSystemRequired.hashCode() : 0)
-        result = 31 * result + (actionItemStatusActive != null ? actionItemStatusActive.hashCode() : 0)
-        result = 31 * result + (actionItemStatusUserId != null ? actionItemStatusUserId.hashCode() : 0)
-        result = 31 * result + (actionItemStatusActivityDate != null ? actionItemStatusActivityDate.hashCode() : 0)
-        result = 31 * result + (actionItemStatusVersion != null ? actionItemStatusVersion.hashCode() : 0)
-        result = 31 * result + (actionItemStatusDataOrigin != null ? actionItemStatusDataOrigin.hashCode() : 0)
-        return result
-    }
-
-
-    public static def fetchActionItemStatuses( ) {
-        ActionItemStatus.withSession { session ->
-            List<ActionItemStatus> actionItemStatus = session.getNamedQuery('ActionItemStatus.fetchActionItemStatuses').list()
+    /**
+     *
+     * @return
+     */
+    public static def fetchActionItemStatuses() {
+        ActionItemStatus.withSession {session ->
+            List<ActionItemStatus> actionItemStatus = session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatuses' ).list()
             return actionItemStatus
         }
     }
 
-    public static def fetchActionItemStatusById( Long myId) {
-        ActionItemStatus.withSession { session ->
-            ActionItemStatus actionItemStatus = session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatusById' ).setLong('myId', myId)?.list()[0]
+    /**
+     *
+     * @param myId
+     * @return
+     */
+    public static def fetchActionItemStatusById( Long myId ) {
+        ActionItemStatus.withSession {session ->
+            ActionItemStatus actionItemStatus = session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatusById' ).setLong( 'myId', myId )?.list()[0]
             return actionItemStatus
         }
     }
 
-
+    /**
+     *
+     * @return
+     */
     public static def fetchActionItemStatusCount() {
-        ActionItemStatus.withSession { session ->
+        ActionItemStatus.withSession {session ->
             List actionItemStatuses = session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatusCount' ).list()
             return actionItemStatuses
         }
     }
 
-
-    public static fetchWithPagingAndSortParams(filterData, pagingAndSortParams) {
+    /**
+     *
+     * @param filterData
+     * @param pagingAndSortParams
+     * @return
+     */
+    public static fetchWithPagingAndSortParams( filterData, pagingAndSortParams ) {
         def queryCriteria = ActionItemStatus.createCriteria()
-        def results = queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
-            ilike("actionItemStatus", CommunicationCommonUtility.getScrubbedInput(filterData?.params?.name))
-            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
-            if (! pagingAndSortParams?.sortColumn.equals( "actionItemStatus" )) {
+        def results = queryCriteria.list( max: pagingAndSortParams.max, offset: pagingAndSortParams.offset ) {
+            ilike( "actionItemStatus", CommunicationCommonUtility.getScrubbedInput( filterData?.params?.name ) )
+            order( (pagingAndSortParams.sortAscending ? Order.asc( pagingAndSortParams?.sortColumn ) : Order.desc( pagingAndSortParams?.sortColumn )).ignoreCase() )
+            if (!pagingAndSortParams?.sortColumn.equals( "actionItemStatus" )) {
                 order( Order.asc( 'actionItemStatus' ).ignoreCase() )
             }
         }
 
         return results
     }
-
-
-
 }

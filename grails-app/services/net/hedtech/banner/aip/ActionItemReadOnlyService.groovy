@@ -1,13 +1,14 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
 import net.hedtech.banner.service.ServiceBase
+import net.hedtech.banner.i18n.MessageHelper
 
 class ActionItemReadOnlyService extends ServiceBase {
 
-    def getActionItemROById( Long aiId) {
+    def getActionItemROById( Long aiId ) {
         return ActionItemReadOnly.fetchActionItemROById( aiId )
     }
 
@@ -26,7 +27,11 @@ class ActionItemReadOnlyService extends ServiceBase {
         return ActionItemReadOnly.fetchActionItemROByFolder( folderId )
     }
 
-
+    /**
+     * Lists action Iteam
+     * @param params
+     * @return
+     */
     def listActionItemsPageSort( Map params ) {
 
         def results = ActionItemReadOnly.fetchWithPagingAndSortParams(
@@ -37,7 +42,31 @@ class ActionItemReadOnlyService extends ServiceBase {
 
 
         def resultMap = [
-                result: results,
+                result: results?.collect {actionItem ->
+                    [
+                            id                     : actionItem?.actionItemId,
+                            actionItemId           : actionItem?.actionItemId,
+                            actionItemName         : actionItem?.actionItemName,
+                            folderId               : actionItem?.folderId,
+                            folderName             : actionItem?.folderName,
+                            folderDesc             : actionItem?.folderDesc,
+                            actionItemStatus       : actionItem ? MessageHelper.message( "aip.status.${actionItem.actionItemStatus}" ) : null,
+                            actionItemActivityDate : actionItem?.actionItemActivityDate,
+                            actionItemUserId       : actionItem?.actionItemUserId,
+                            actionItemContentUserId: actionItem?.actionItemContentUserId,
+                            actionItemCreatorId    : actionItem?.actionItemCreatorId,
+                            actionItemCreateDate   : actionItem?.actionItemCreateDate,
+                            actionItemCompositeDate: actionItem?.actionItemCompositeDate,
+                            actionItemLastUserId   : actionItem?.actionItemLastUserId,
+                            actionItemVersion      : actionItem?.actionItemVersion,
+                            actionItemTemplateId   : actionItem?.actionItemTemplateId,
+                            actionItemTemplateName : actionItem?.actionItemTemplateName,
+                            actionItemPageName     : actionItem?.actionItemPageName,
+                            actionItemContentId    : actionItem?.actionItemContentId,
+                            actionItemContentDate  : actionItem?.actionItemContentDate,
+                            actionItemContent      : actionItem?.actionItemContent
+                    ]
+                },
                 length: resultCount[0]
         ]
 
