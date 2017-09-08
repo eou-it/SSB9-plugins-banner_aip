@@ -28,7 +28,7 @@ class ActionItemReadOnlyService extends ServiceBase {
     }
 
     /**
-     * Lists action Iteam
+     * Lists action Items
      * @param params
      * @return
      */
@@ -39,8 +39,6 @@ class ActionItemReadOnlyService extends ServiceBase {
                 [sortColumn: params?.sortColumn, sortAscending: params?.sortAscending, max: params?.max, offset: params?.offset] )
 
         def resultCount = listActionItemROCount()
-
-
         def resultMap = [
                 result: results?.collect {actionItem ->
                     [
@@ -67,7 +65,15 @@ class ActionItemReadOnlyService extends ServiceBase {
                             actionItemContent      : actionItem?.actionItemContent
                     ]
                 },
-                length: resultCount[0]
+                length: resultCount[0],
+                header: [
+                        [name: "actionItemId", title: "id", options: [visible: false, isSortable: true]],
+                        [name: "actionItemName", title: MessageHelper.message( "aip.common.title" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
+                        [name: "actionItemStatus", title: MessageHelper.message( "aip.common.status" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
+                        [name: "folderName", title: MessageHelper.message( "aip.common.folder" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
+                        [name: "actionItemActivityDate", title: MessageHelper.message( "aip.common.activity.date" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
+                        [name: "actionItemLastUserId", title: MessageHelper.message( "aip.common.last.updated.by" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0]
+                ]
         ]
 
         return resultMap
