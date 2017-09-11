@@ -51,9 +51,11 @@ class ActionItemStatusCompositeService {
      */
     def removeStatus( def id ) {
         def success = false, message
-        ActionItemStatus status = actionItemStatusService.get( id )
-        println 'ID' + status
-        if (!status) {
+        ActionItemStatus status
+        try {
+            status = actionItemStatusService.get( id )
+        }
+        catch (ApplicationException e) {
             LOGGER.error( "Action Item Status is not present in System for id $id" )
             throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'action.item.status.not.in.system', [] ) )
         }
