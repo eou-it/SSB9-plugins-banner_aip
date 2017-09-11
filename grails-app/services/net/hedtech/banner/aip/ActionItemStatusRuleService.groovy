@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -21,18 +21,36 @@ class ActionItemStatusRuleService extends ServiceBase {
 
 
     def listActionItemStatusRules() {
-        return ActionItemStatusRule.fetchActionItemStatusRules()
+        ActionItemStatusRule.fetchActionItemStatusRules()
     }
 
 
     def getActionItemStatusRuleById( Long actionItemStatusRuleId ) {
-        return ActionItemStatusRule.fetchActionItemStatusRuleById( actionItemStatusRuleId )
+        ActionItemStatusRule.fetchActionItemStatusRuleById( actionItemStatusRuleId )
     }
 
 
     def getActionItemStatusRuleByActionItemId( Long actionItemId ) {
-        return ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId( actionItemId )
+        ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId( actionItemId )
 
+    }
+
+    /**
+     *
+     * @param actionItemStatusId
+     * @return
+     */
+    def checkIfPresent( long actionItemStatusId ) {
+        ActionItemStatusRule.checkIfPresent( actionItemStatusId )
+    }
+
+    /**
+     *
+     * @param actionItemStatusId
+     * @return
+     */
+    def checkIfPresentAndAssociatedToActionItemContent( long actionItemStatusId ) {
+        ActionItemStatusRule.checkIfPresentAndAssociatedToActionItemContent( actionItemStatusId )
     }
 
 

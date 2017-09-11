@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 class ActionItemStatusCompositeService {
     private static final def LOGGER = Logger.getLogger( this.class )
     def actionItemStatusService
+    def actionItemStatusRuleService
 
     /**
      * Lists Action Item status
@@ -64,6 +65,16 @@ class ActionItemStatusCompositeService {
             throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'action.item.status.cannot.be.deleted', [] ) )
         }
         if (status.actionItemStatusSystemRequired == AIPConstants.NO_IND) {
+            def statusRulePresent = actionItemStatusRuleService.checkIfPresent( id )
+            def statusRulePresentAndAssociatedToContent = actionItemStatusRuleService.checkIfPresentAndAssociatedToActionItemContent( id )
+            if (statusRulePresent && !statusRulePresentAndAssociatedToContent) {
+                LOGGER.error( "The Status Rule is associated to Action Item Content and cannot be deleted" )
+                throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'action.item.status.associated.to.status.rule', [] ) )
+            }
+            if (statusRulePresent && statusRulePresentAndAssociatedToContent) {
+                LOGGER.error( "The Status Rule is associated to Action Item Content and an assigned Action Item, hence cannot be deleted." )
+                throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'action.item.status.associated.to.status.rule.and.content', [] ) )
+            }
             actionItemStatusService.delete( status )
             success = true
         }

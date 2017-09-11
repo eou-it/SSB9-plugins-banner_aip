@@ -23,7 +23,20 @@ import javax.persistence.*
                 query = """
             FROM ActionItemStatusRule a
             WHERE a.actionItemId = :myId
-            """)
+            """),
+        @NamedQuery(name = "ActionItemStatusRule.checkIfPresent",
+                query = """
+                        select count (*) FROM ActionItemStatusRule a
+                        WHERE a.actionItemStatusId = :actionItemStatusId
+                        """),
+        @NamedQuery(name = "ActionItemStatusRule.checkIfPresentAndAssociatedToActionItemContent",
+                query = """
+                                                select count (*) FROM ActionItemStatusRule a
+                                                WHERE a.actionItemStatusId = :actionItemStatusId
+                                                AND EXISTS (select b.actionItemId from UserActionItem b where b.actionItemId = a.actionItemId )
+                                                """)
+
+
 ])
 
 @Entity
@@ -81,33 +94,33 @@ class ActionItemStatusRule implements Serializable {
     /***
      * Last activity date for the action item status rule
      */
-    @Column(name="GCRAISR_ACTIVITY_DATE")
+    @Column(name = "GCRAISR_ACTIVITY_DATE")
     Date activityDate
 
     /***
      * Data Origin column for GCRAISR
      */
-    @Column(name="GCRAISR_DATA_ORIGIN")
+    @Column(name = "GCRAISR_DATA_ORIGIN")
     String dataOrigin
 
     static constraints = {
-        actionItemId(blank: false, nullable: false, maxSize: 19)
-        seqOrder(blank: false, nullable: false, maxSize: 5)
-        labelText(blank: false, nullable: false, maxSize: 150)
-        actionItemStatusId(blank: true, nullable: true, maxSize: 19)
-        userId(blank: false, nullable: false, maxSize: 30)
-        activityDate(blank: false, nullable: false, maxSize: 30)
-        dataOrigin(nullable: true, maxSize: 30)
-        version(nullable: true, maxSize: 30)
+        actionItemId( blank: false, nullable: false, maxSize: 19 )
+        seqOrder( blank: false, nullable: false, maxSize: 5 )
+        labelText( blank: false, nullable: false, maxSize: 150 )
+        actionItemStatusId( blank: true, nullable: true, maxSize: 19 )
+        userId( blank: false, nullable: false, maxSize: 30 )
+        activityDate( blank: false, nullable: false, maxSize: 30 )
+        dataOrigin( nullable: true, maxSize: 30 )
+        version( nullable: true, maxSize: 30 )
     }
 
     /**
      *
      * @return
      */
-    public static def fetchActionItemStatusRules() {
-        ActionItemStatusRule.withSession { session ->
-            List actionItemStatusRules = session.getNamedQuery("ActionItemStatusRule.fetchActionItemStatusRules").list()
+    static def fetchActionItemStatusRules() {
+        ActionItemStatusRule.withSession {session ->
+            List actionItemStatusRules = session.getNamedQuery( "ActionItemStatusRule.fetchActionItemStatusRules" ).list()
             return actionItemStatusRules
         }
     }
@@ -117,9 +130,9 @@ class ActionItemStatusRule implements Serializable {
      * @param id
      * @return
      */
-    public static fetchActionItemStatusRuleById( Long id ) {
-        ActionItemStatusRule.withSession { session ->
-            ActionItemStatusRule actionItemStatusRule = session.getNamedQuery( "ActionItemStatusRule.fetchActionItemStatusRuleById" ).setLong('myId', id)?.list()[0]
+    static fetchActionItemStatusRuleById( Long id ) {
+        ActionItemStatusRule.withSession {session ->
+            ActionItemStatusRule actionItemStatusRule = session.getNamedQuery( "ActionItemStatusRule.fetchActionItemStatusRuleById" ).setLong( 'myId', id )?.list()[0]
             return actionItemStatusRule
         }
     }
@@ -129,10 +142,24 @@ class ActionItemStatusRule implements Serializable {
      * @param id
      * @return
      */
-    public static fetchActionItemStatusRulesByActionItemId (long id) {
-        ActionItemStatusRule.withSession { session ->
-            List<ActionItemStatusRule> actionItemStatusRules = session.getNamedQuery("ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId").setLong("myId", id).list()
+    static fetchActionItemStatusRulesByActionItemId( long id ) {
+        ActionItemStatusRule.withSession {session ->
+            List<ActionItemStatusRule> actionItemStatusRules = session.getNamedQuery( "ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId" ).setLong( "myId", id ).list()
             return actionItemStatusRules
+        }
+    }
+
+
+    static checkIfPresent( long actionItemStatusId ) {
+        ActionItemStatusRule.withSession {session ->
+            session.getNamedQuery( "ActionItemStatusRule.checkIfPresent" ).setLong( "actionItemStatusId", actionItemStatusId ).uniqueResult() > 0
+        }
+    }
+
+
+    static checkIfPresentAndAssociatedToActionItemContent( long actionItemStatusId ) {
+        ActionItemStatusRule.withSession {session ->
+            session.getNamedQuery( "ActionItemStatusRule.checkIfPresentAndAssociatedToActionItemContent" ).setLong( "actionItemStatusId", actionItemStatusId ).uniqueResult() > 0
         }
     }
 }
