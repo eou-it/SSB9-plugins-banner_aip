@@ -41,7 +41,7 @@ class ActionItemStatus implements Serializable {
     @Column(name = "GCVASTS_SURROGATE_ID")
     @SequenceGenerator(name = "GCVASTS_SEQ_GEN", allocationSize = 1, sequenceName = "GCVASTS_SURROGATE_ID_SEQUENCE")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GCVASTS_SEQ_GEN")
-    Long actionItemStatusId
+    Long id
 
     /**
      * Name of the action item status

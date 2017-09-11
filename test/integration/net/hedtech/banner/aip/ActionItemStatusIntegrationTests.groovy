@@ -127,9 +127,9 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
                 actionItemStatusVersion: actionItemStatusList.actionItemStatusVersion,
                 actionItemStatusActive: actionItemStatusList.actionItemStatusActive ,
                 actionItemStatusDefault: actionItemStatusList.actionItemStatusDefault)
-        long actionItemStatusListId = actionItemStatusList.actionItemStatusId
+        long actionItemStatusListId = actionItemStatusList.id
         long actionItemStatusListVersion = actionItemStatusList.actionItemStatusVersion
-        actionItemStatusNewList.actionItemStatusId = actionItemStatusListId
+        actionItemStatusNewList.id = actionItemStatusListId
         actionItemStatusNewList.actionItemStatusVersion = actionItemStatusListVersion
 
         def result = actionItemStatusList.equals( actionItemStatusList )

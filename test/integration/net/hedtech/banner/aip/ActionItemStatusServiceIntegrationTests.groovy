@@ -4,7 +4,6 @@
 
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.ActionItemStatus
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
@@ -30,7 +29,7 @@ class ActionItemStatusServiceIntegrationTests extends BaseIntegrationTestCase {
     void testListActionItemStatusById() {
         ActionItemStatus aiStatus = actionItemStatusService.listActionItemStatuses(  )[1]
         assertNotNull( aiStatus )
-        ActionItemStatus actionItemStatus = actionItemStatusService.listActionItemStatusById( aiStatus.actionItemStatusId )
+        ActionItemStatus actionItemStatus = actionItemStatusService.listActionItemStatusById( aiStatus.id )
         assertEquals( aiStatus.actionItemStatus, actionItemStatus.actionItemStatus )
         assertEquals( aiStatus.actionItemStatusBlockedProcess, actionItemStatus.actionItemStatusBlockedProcess )
         assertEquals( aiStatus.actionItemStatusSystemRequired, actionItemStatus.actionItemStatusSystemRequired )
@@ -42,9 +41,9 @@ class ActionItemStatusServiceIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testListActionItemStatusServiceById() {
         List<ActionItemStatus> actionItemStatusList = actionItemStatusService.listActionItemStatuses()
-        def actionItemStatusId = actionItemStatusList[0].actionItemStatusId
+        def id = actionItemStatusList[0].id
         def actionItemStatus = actionItemStatusList[0].actionItemStatus
-        List<ActionItemStatus> actionItemStatusById = actionItemStatusService.listActionItemStatusById( actionItemStatusId )
+        List<ActionItemStatus> actionItemStatusById = actionItemStatusService.listActionItemStatusById( id )
         assertFalse actionItemStatusById.isEmpty(  )
         assertEquals(actionItemStatusById[0].actionItemStatus, actionItemStatus)
         assertEquals( 1, actionItemStatusById.size() )

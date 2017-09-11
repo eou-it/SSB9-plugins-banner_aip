@@ -35,7 +35,7 @@ class ActionItemStatusCompositeService {
                 result: results,
                 length: resultCount[0],
                 header: [
-                        [name: "actionItemStatusId", title: "id", options: [visible: false, isSortable: true]],
+                        [name: "id", title: "id", options: [visible: false, isSortable: true]],
                         [name: "actionItemStatus", title: MessageHelper.message( "aip.common.status" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
                         [name: "actionItemBlockedProcess", title: MessageHelper.message( "aip.common.block.process" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
                         [name: "actionItemSystemRequired", title: MessageHelper.message( "aip.common.system.required" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
@@ -51,7 +51,7 @@ class ActionItemStatusCompositeService {
      */
     def removeStatus( def id ) {
         def success = false, message
-        ActionItemStatus status = actionItemStatusService.listActionItemStatusById( id )
+        ActionItemStatus status = actionItemStatusService.get( id )
         println 'ID' + status
         if (!status) {
             LOGGER.error( "Action Item Status is not present in System for id $id" )
@@ -62,8 +62,9 @@ class ActionItemStatusCompositeService {
             throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'action.item.status.cannot.be.deleted', [] ) )
         }
         if (status.actionItemStatusSystemRequired == AIPConstants.NO_IND) {
+            actionItemStatusService.delete( status )
+            success = true
         }
-        success = true
         [
                 success: success,
                 message: message
@@ -102,7 +103,6 @@ class ActionItemStatusCompositeService {
         }
         [
                 success: success,
-                message: message,
                 status : newStatus
         ]
     }
