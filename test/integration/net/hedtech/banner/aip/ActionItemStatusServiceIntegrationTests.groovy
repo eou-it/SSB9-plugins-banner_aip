@@ -13,7 +13,7 @@ import org.junit.Test
 
 class ActionItemStatusServiceIntegrationTests extends BaseIntegrationTestCase {
 
-    def actionItemStatusService
+    def actionItemStatusCompositeService
 
     @Before
     public void setUp() {
@@ -60,7 +60,7 @@ class ActionItemStatusServiceIntegrationTests extends BaseIntegrationTestCase {
 
         Map params3 = [filterName:"%",sortColumn:"actionItemStatus", sortAscending:true, max:20, offset:20]
 
-        def actionItemStatusList1 = actionItemStatusService.listActionItemsPageSort(params1)
+        def actionItemStatusList1 = actionItemStatusCompositeService.listActionItemsPageSort(params1)
        // def actionItemStatusList2 = actionItemStatusService.listActionItemsPageSort(params2)
        // def actionItemStatusList3 = actionItemStatusService.listActionItemsPageSort(params3)
 
