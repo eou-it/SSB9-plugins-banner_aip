@@ -51,10 +51,16 @@ class ActionItemGroup implements Serializable {
     Long version
 
     /**
-     * Name of the action item
+     * Title of the action item
      */
     @Column(name = "GCBAGRP_TITLE", length = 60)
     String title
+
+    /**
+     * Name of the action item
+     */
+    @Column(name = "GCBAGRP_NAME", length = 60)
+    String name
 
     /***
      * Related ID of the action item
@@ -95,6 +101,7 @@ class ActionItemGroup implements Serializable {
 
     static constraints = {
         title( nullable: false, maxSize: 2048 )
+        name(nullabe: false, maxSize: 2048)
         description( nullable: true ) //summary length only for now
         folderId( nullable: false, maxSize: 30 )
         status( nullable: false, maxSize: 30 )
