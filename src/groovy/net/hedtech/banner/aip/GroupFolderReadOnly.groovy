@@ -50,6 +50,13 @@ class GroupFolderReadOnly implements Serializable {
     String groupTitle
 
     /**
+     * action item group name
+     */
+
+    @Column(name = "ACTION_ITEM_GROUP_NAME")
+    String groupName
+
+    /**
      * Indicator that the action item is active
      */
 

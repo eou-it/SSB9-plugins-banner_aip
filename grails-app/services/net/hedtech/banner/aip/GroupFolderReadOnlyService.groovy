@@ -48,6 +48,7 @@ class GroupFolderReadOnlyService extends ServiceBase {
         results = results.collect {
             [groupId          : it.groupId,
              groupTitle       : it.groupTitle,
+             groupName        : it.groupName,
              groupDesc        : it.groupDesc,
              groupVersion     : it.groupVersion,
              groupStatus      : MessageHelper.message("aip.status.$it.groupStatus"),
