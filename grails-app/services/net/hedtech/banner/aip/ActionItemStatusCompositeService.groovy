@@ -77,6 +77,7 @@ class ActionItemStatusCompositeService {
             }
             actionItemStatusService.delete( status )
             success = true
+            message = MessageHelper.message( 'action.status.delete.success', [status.actionItemStatus].toArray() )
         }
         [
                 success: success,
