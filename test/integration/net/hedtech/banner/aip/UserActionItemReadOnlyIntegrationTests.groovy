@@ -101,6 +101,7 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
         userActionItemRONewList.id = userActionItemListRO.id
         userActionItemRONewList.title = userActionItemListRO.title
+        userActionItemRONewList.name = userActionItemListRO.name
         userActionItemRONewList.activeTmpl = userActionItemListRO.activeTmpl
         userActionItemRONewList.activityDateTmpl = userActionItemListRO.activityDateTmpl
         userActionItemRONewList.userIdTmpl = userActionItemListRO.userIdTmpl

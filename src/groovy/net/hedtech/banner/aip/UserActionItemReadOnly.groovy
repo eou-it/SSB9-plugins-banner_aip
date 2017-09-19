@@ -36,10 +36,16 @@ class UserActionItemReadOnly implements Serializable {
     Long id
 
     /**
+     * Title of the action item
+     */
+    @Column(name = "ACTION_ITEM_TITLE")
+    String title
+
+    /**
      * Name of the action item
      */
     @Column(name = "ACTION_ITEM_NAME")
-    String title
+    String name
 
     /**
      * Indicator that the action item is active
@@ -142,6 +148,7 @@ class UserActionItemReadOnly implements Serializable {
     static constraints = {
         id( nullable: false, maxSize: 19 )
         title( nullable: false, maxSize: 2048 )
+        name( nullable: false, maxSize: 2048 )
         description( nullable: true )
         activeTmpl( nullable: false, maxSize: 1 )
         completedDate( nullable: true, maxSize: 30 )
