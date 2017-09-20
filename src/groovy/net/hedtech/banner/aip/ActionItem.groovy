@@ -43,10 +43,16 @@ class ActionItem implements Serializable {
     Long id
 
     /**
+     * Title of the action item
+     */
+    @Column(name = "GCBACTM_TITLE")
+    String title
+
+    /**
      * Name of the action item
      */
     @Column(name = "GCBACTM_NAME")
-    String title
+    String name
 
     /**
      * Status (Pending, Complete, other...)

@@ -54,6 +54,13 @@ class ActionItemReadOnly implements Serializable {
     String actionItemName
 
     /**
+     * Title of the action item
+     */
+
+    @Column(name = "ACTION_ITEM_TITLE")
+    String actionItemTitle
+
+    /**
      * ID of the action item folder
      */
 

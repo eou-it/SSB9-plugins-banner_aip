@@ -19,10 +19,12 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         super.setUp()
     }
 
+
     @After
     public void tearDown() {
         super.tearDown()
     }
+
 
     @Test
     void testFetchUserActionItemROByFolder() {
@@ -36,6 +38,7 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
         assert 0 < actionItems.size()
     }
+
 
     @Test
     void testFetchUserActionItemROByFolderNoResults() {
@@ -65,10 +68,10 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
         assertEquals( 20, results.size() )
         def asFound = []
-        results.each { it ->
+        results.each {it ->
             asFound.add( it.actionItemName )
         }
-        (0..4).each { it ->
+        (0..4).each {it ->
             assertEquals( asFound[it], asFound.sort( false )[it] )
         }
     }
@@ -82,10 +85,10 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
         assertEquals( 20, results.size() )
         def asFound = []
-        results.each { it ->
+        results.each {it ->
             asFound.add( it.actionItemName )
         }
-        (0..4).each { it ->
+        (0..4).each {it ->
             assertEquals( asFound[it], asFound.sort( false ).reverse( false )[it] )
         }
     }
@@ -103,7 +106,7 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         def activeAsFound = []
         def pendingAsFound = []
         def inactiveAsFound = []
-        results.each { it ->
+        results.each {it ->
             if (it.actionItemStatus == 'Active') {
                 assertFalse foundPending
                 assertFalse foundInactive
@@ -123,7 +126,7 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
                 pendingAsFound.add( it.actionItemName )
             }
         }
-        (0..4).each { it ->
+        (0..4).each {it ->
             assertEquals( activeAsFound[it], activeAsFound.sort( false )[it] )
             assertEquals( pendingAsFound[it], pendingAsFound.sort( false )[it] )
             assertEquals( inactiveAsFound[it], inactiveAsFound.sort( false )[it] )
@@ -143,7 +146,7 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         def activeAsFound = []
         def pendingAsFound = []
         def inactiveAsFound = []
-        results.each { it ->
+        results.each {it ->
             if (it.actionItemStatus == 'Pending') {
                 assertFalse foundActive
                 assertFalse foundInactive
@@ -164,7 +167,7 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
             }
 
         }
-        (0..4).each { it ->
+        (0..4).each {it ->
             assertEquals( pendingAsFound[it], pendingAsFound.sort( false )[it] )
             assertEquals( inactiveAsFound[it], inactiveAsFound.sort( false )[it] )
             assertEquals( activeAsFound[it], activeAsFound.sort( false )[it] )
@@ -187,6 +190,7 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         assertNotNull result
     }
 
+
     @Test
     void testActionItemROEquals() {
         List<ActionItemReadOnly> actionItemReadOnlyList = ActionItemReadOnly.fetchActionItemRO()
@@ -199,6 +203,7 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
         actionItemRONewList.actionItemId = actionItemListRO.actionItemId
         actionItemRONewList.actionItemName = actionItemListRO.actionItemName
+        actionItemRONewList.actionItemTitle = actionItemListRO.actionItemTitle
         actionItemRONewList.folderId = actionItemListRO.folderId
         actionItemRONewList.folderName = actionItemListRO.folderName
         actionItemRONewList.folderDesc = actionItemListRO.folderDesc
@@ -236,7 +241,7 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     void testActionItemROCompositeDateGCBACTMGreater() {
         def someRandomItemName = 'Policy Handbook'
         setBackActionItemActivityDate( 1, someRandomItemName )
-        List <ActionItem> ais = ActionItem.findAllByTitle (someRandomItemName)
+        List<ActionItem> ais = ActionItem.findAllByTitle( someRandomItemName )
         ais.each {
             setBackActionItemDetailActivityDate( 4, it.id )
         }
