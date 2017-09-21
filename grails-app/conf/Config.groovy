@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 
@@ -19,17 +19,17 @@ import net.hedtech.banner.configuration.ApplicationConfigurationUtils as ConfigF
 // Map [ environment variable or -D command line argument name : file path ]
 grails.config.locations = [] // leave this initialized to an empty list, and add your locations
 // in the APPLICATION CONFIGURATION section below.
-def locationAdder = ConfigFinder.&addLocation.curry(grails.config.locations)
+def locationAdder = ConfigFinder.&addLocation.curry( grails.config.locations )
 
-[BANNER_APP_CONFIG        : "banner_configuration.groovy",
- WEB_APP_EXTENSIBILITY_CONFIG:      "WebAppExtensibilityConfig.class"
-].each { envName, defaultFileName -> locationAdder(envName, defaultFileName) }
+[BANNER_APP_CONFIG           : "banner_configuration.groovy",
+ WEB_APP_EXTENSIBILITY_CONFIG: "WebAppExtensibilityConfig.class"
+].each {envName, defaultFileName -> locationAdder( envName, defaultFileName )}
 
 //[bannerGrailsAppConfig: "${userHome}/.grails/banner_configuration.groovy",
 //        customRepresentationConfig: "grails-app/conf/CustomRepresentationConfig.groovy",
 //].each { envName, defaultFileName -> locationAdder(envName, defaultFileName) }
 
-grails.databinding.useSpringBinder=true
+grails.databinding.useSpringBinder = true
 // You must create a small configuration file named 'banner_on_grails-local-config.groovy' (as referenced
 // in the above map defining externalized configuration files) that contains your own specific
 // configuration (e.g., URIs, usernames, etc.).  Following is an example of this file:
@@ -39,25 +39,25 @@ grails.project.groupId = "net.hedtech" // used when deploying to a maven repo
 
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.use.accept.header = false
-grails.mime.types = [html: ['text/html', 'application/xhtml+xml'],
-        xml: ['text/xml', 'application/xml', 'application/vnd.sungardhe.student.v0.01+xml'],
-        text: 'text/plain',
-        js: 'text/javascript',
-        rss: 'application/rss+xml',
-        atom: 'application/atom+xml',
-        css: 'text/css',
-        csv: 'text/csv',
-        all: '*/*',
-        json: ['application/json', 'text/json'],
-        form: 'application/x-www-form-urlencoded',
-        multipartForm: 'multipart/form-data'
+grails.mime.types = [html         : ['text/html', 'application/xhtml+xml'],
+                     xml          : ['text/xml', 'application/xml', 'application/vnd.sungardhe.student.v0.01+xml'],
+                     text         : 'text/plain',
+                     js           : 'text/javascript',
+                     rss          : 'application/rss+xml',
+                     atom         : 'application/atom+xml',
+                     css          : 'text/css',
+                     csv          : 'text/csv',
+                     all          : '*/*',
+                     json         : ['application/json', 'text/json'],
+                     form         : 'application/x-www-form-urlencoded',
+                     multipartForm: 'multipart/form-data'
 ]
 
 // The default codec used to encode data with ${}
 grails.views.default.codec = "html" // none, html, base64  **** Charlie note: Setting this to html will ensure html is escaped, to prevent XSS attack ****
 grails.views.gsp.encoding = "UTF-8"
 grails.converters.encoding = "UTF-8"
-grails.databinding.useSpringBinder=true
+grails.databinding.useSpringBinder = true
 grails.converters.domain.include.version = true
 grails.converters.json.date = "javascript"
 grails.converters.json.pretty.print = true
@@ -68,6 +68,19 @@ grails.enable.native2ascii = false
 // enable GSP preprocessing: replace head -> g:captureHead, title -> g:captureTitle, meta -> g:captureMeta, body -> g:captureBody
 grails.views.gsp.sitemesh.preprocess = true
 
+environments {
+    test {
+        ssbEnabled = true
+        ssbOracleUsersProxied = true
+    }
+}
+
+banner {
+    sso {
+        authenticationProvider = 'default'
+        authenticationAssertionAttribute = 'udcId'
+    }
+}
 // ******************************************************************************
 //
 //                       +++ DATA ORIGIN CONFIGURATION +++
