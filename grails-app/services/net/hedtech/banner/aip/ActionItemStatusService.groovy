@@ -5,18 +5,32 @@ package net.hedtech.banner.aip
 
 import net.hedtech.banner.service.ServiceBase
 
+/**
+ * Service class for Action Item Status
+ */
 class ActionItemStatusService extends ServiceBase {
-
+    /**
+     *
+     * @param statusId
+     * @return
+     */
     def listActionItemStatusById( Long statusId ) {
-        return ActionItemStatus.fetchActionItemStatusById( statusId )
+        ActionItemStatus.fetchActionItemStatusById( statusId )
     }
 
-    //simple return of all action items
+    /**
+     *
+     * @return
+     */
     def listActionItemStatuses() {
-        return ActionItemStatus.fetchActionItemStatuses()
+        ActionItemStatus.fetchActionItemStatuses()
     }
 
+    /**
+     *
+     * @return
+     */
     def listActionItemStatusCount() {
-        return ActionItemStatus.fetchActionItemStatusCount()
+        ActionItemStatus.fetchActionItemStatusCount()
     }
 }

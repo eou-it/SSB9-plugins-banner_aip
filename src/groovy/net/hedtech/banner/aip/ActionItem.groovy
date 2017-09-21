@@ -21,7 +21,7 @@ import javax.persistence.*
            WHERE a.id = :myId
           """),
         @NamedQuery(name = "ActionItem.existsSameTitleInFolder",
-                query = """ FROM ActionItem a
+                query = """ select count(a.id) FROM ActionItem a
                     WHERE upper(a.title) = upper(:title)
                     AND   a.folderId = :folderId""")
 ])
@@ -113,8 +113,8 @@ class ActionItem implements Serializable {
 
     static constraints = {
         folderId( blank: false, nullable: false, maxSize: 19 )
-        //title(blank: false, nullable: false, maxSize: 2048, unique: 'folderId') // This works but logs an error. Using existsSameTitleInFolder
         title( blank: false, nullable: false, maxSize: 2048 )
+        name( blank: false, nullable: false, maxSize: 60 )
         status( blank: false, nullable: false, maxSize: 30 )
         userId( blank: false, nullable: false, maxSize: 30 )
         activityDate( blank: false, nullable: false, maxSize: 30 )
@@ -125,10 +125,9 @@ class ActionItem implements Serializable {
     }
 
 
-    public static def fetchActionItems() {
+    static def fetchActionItems() {
         ActionItem.withSession {session ->
-            List actionItem = session.getNamedQuery( 'ActionItem.fetchActionItems' ).list()
-            return actionItem
+            session.getNamedQuery( 'ActionItem.fetchActionItems' ).list()
         }
     }
 
@@ -138,10 +137,9 @@ class ActionItem implements Serializable {
      * @return
      */
     // ReadOnly View?
-    public static def fetchActionItemById( Long myId ) {
+    static def fetchActionItemById( Long myId ) {
         ActionItem.withSession {session ->
-            ActionItem actionItem = session.getNamedQuery( 'ActionItem.fetchActionItemById' ).setLong( 'myId', myId )?.list()[0]
-            return actionItem
+            session.getNamedQuery( 'ActionItem.fetchActionItemById' ).setLong( 'myId', myId )?.list()[0]
         }
     }
 
@@ -152,19 +150,19 @@ class ActionItem implements Serializable {
      * @return
      */
     // Check constraint requirement that a title in a folder must be unique
-    public static Boolean existsSameTitleInFolder( Long folderId, String title ) {
-        def query
+    static Boolean existsSameTitleInFolder( Long folderId, String title ) {
+        def count
         ActionItem.withSession {session ->
             session.setFlushMode( FlushMode.MANUAL );
             try {
-                query = session.getNamedQuery( 'ActionItem.existsSameTitleInFolder' )
+                count = session.getNamedQuery( 'ActionItem.existsSameTitleInFolder' )
                         .setString( 'title', title )
                         .setLong( 'folderId', folderId )
-                        .list()[0]
+                        .uniqueResult()
             } finally {
                 session.setFlushMode( FlushMode.AUTO )
             }
         }
-        return (query != null)
+        count > 0
     }
 }

@@ -127,8 +127,7 @@ class ActionItemStatus implements Serializable {
      */
     public static def fetchActionItemStatusById( Long myId ) {
         ActionItemStatus.withSession {session ->
-            ActionItemStatus actionItemStatus = session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatusById' ).setLong( 'myId', myId )?.list()[0]
-            return actionItemStatus
+            session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatusById' ).setLong( 'myId', myId )?.list()[0]
         }
     }
 
@@ -138,8 +137,7 @@ class ActionItemStatus implements Serializable {
      */
     public static def fetchActionItemStatusCount() {
         ActionItemStatus.withSession {session ->
-            List actionItemStatuses = session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatusCount' ).list()
-            return actionItemStatuses
+            session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatusCount' ).uniqueResult()
         }
     }
 

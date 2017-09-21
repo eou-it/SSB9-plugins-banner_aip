@@ -15,6 +15,7 @@ class ActionItemStatusCompositeService {
     private static final def LOGGER = Logger.getLogger( this.class )
     def actionItemStatusService
     def actionItemStatusRuleService
+    def springSecurityService
 
     /**
      * Lists Action Item status
@@ -34,7 +35,7 @@ class ActionItemStatusCompositeService {
         }
         [
                 result: results,
-                length: resultCount[0],
+                length: resultCount,
                 header: [
                         [name: "id", title: "id", options: [visible: false, isSortable: true]],
                         [name: "actionItemStatus", title: MessageHelper.message( "aip.common.status" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
@@ -90,8 +91,8 @@ class ActionItemStatusCompositeService {
      * @return
      */
     def statusSave( def title ) {
-        def user = SecurityContextHolder?.context?.authentication?.principal
-        if (!user.pidm) {
+        def user  = springSecurityService.getAuthentication()?.user
+        if (!user) {
             throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'user.id.not.valid', [] ) )
         }
         def aipUser = PersonUtility.getPerson( user.pidm )
