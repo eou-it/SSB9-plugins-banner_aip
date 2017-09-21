@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -72,6 +72,7 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
 
         actionItemGroupNewList.id = actionItemGroup.id
         actionItemGroupNewList.title = actionItemGroup.title
+        actionItemGroupNewList.name = actionItemGroup.name
         actionItemGroupNewList.folderId = actionItemGroup.folderId
         actionItemGroupNewList.description = actionItemGroup.description
         actionItemGroupNewList.status = actionItemGroup.status
@@ -133,6 +134,7 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         def actionItemGroupNewList = new ActionItemGroup()
 
         actionItemGroupNewList.title = actionItemGroup.title
+        actionItemGroupNewList.name = actionItemGroup.name
         actionItemGroupNewList.folderId = otherFolderId
         actionItemGroupNewList.description = actionItemGroup.description
         actionItemGroupNewList.status = actionItemGroup.status
