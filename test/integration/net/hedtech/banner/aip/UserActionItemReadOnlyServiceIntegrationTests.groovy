@@ -44,7 +44,7 @@ class UserActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
 
     @Test
     void testFetchBlockingUserActionItemsROByPidm() {
-        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
+        def actionItemPidm = PersonUtility.getPerson( "CSRSTU001" ).pidm
         List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listBlockingActionItemsByPidm( actionItemPidm )
         userActionItems.each { item ->
             assertTrue item.isBlocking

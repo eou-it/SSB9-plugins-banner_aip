@@ -178,29 +178,30 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         List<GroupFolderReadOnly> groupFolderList = GroupFolderReadOnly.fetchGroupFolders()
         def groupFolder = groupFolderList[0]
         def groupFolderId = groupFolder.groupId
-        List<GroupFolderReadOnly> groupFolderById = GroupFolderReadOnly.fetchGroupFoldersById( groupFolderId )
-        def groupFolderByIdList = groupFolderById[0]
-        def groupFolderNewList = new GroupFolderReadOnly()
+        List<GroupFolderReadOnly> groupFolderByIdList = GroupFolderReadOnly.fetchGroupFoldersById( groupFolderId )
+        def groupFolderById = groupFolderByIdList[0]
+        def groupFolderNew = new GroupFolderReadOnly()
 
-        groupFolderNewList.groupId = groupFolderByIdList.groupId
-        groupFolderNewList.groupTitle = groupFolderByIdList.groupTitle
-        groupFolderNewList.groupDesc = groupFolderByIdList.groupDesc
-        groupFolderNewList.groupStatus = groupFolderByIdList.groupStatus
-        groupFolderNewList.groupUserId = groupFolderByIdList.groupUserId
-        groupFolderNewList.groupActivityDate = groupFolderByIdList.groupActivityDate
-        groupFolderNewList.groupVersion = groupFolderByIdList.groupVersion
-        groupFolderNewList.folderDesc = groupFolderByIdList.folderDesc
-        groupFolderNewList.folderName = groupFolderByIdList.folderName
-        groupFolderNewList.folderId = groupFolderByIdList.folderId
+        groupFolderNew.groupId = groupFolderById.groupId
+        groupFolderNew.groupTitle = groupFolderById.groupTitle
+        groupFolderNew.groupName = groupFolderById.groupName
+        groupFolderNew.groupDesc = groupFolderById.groupDesc
+        groupFolderNew.groupStatus = groupFolderById.groupStatus
+        groupFolderNew.groupUserId = groupFolderById.groupUserId
+        groupFolderNew.groupActivityDate = groupFolderById.groupActivityDate
+        groupFolderNew.groupVersion = groupFolderById.groupVersion
+        groupFolderNew.folderDesc = groupFolderById.folderDesc
+        groupFolderNew.folderName = groupFolderById.folderName
+        groupFolderNew.folderId = groupFolderById.folderId
 
-        def result = groupFolderNewList.equals( groupFolderByIdList )
+        def result = groupFolderNew.equals( groupFolderById )
         assertTrue result
 
         result = groupFolderById.equals( null )
         assertFalse result
 
         def groupFolderListNull = new GroupFolderReadOnly( null )
-        result = groupFolderByIdList.equals( groupFolderListNull )
+        result = groupFolderById.equals( groupFolderListNull )
         assertFalse result
 
     }
