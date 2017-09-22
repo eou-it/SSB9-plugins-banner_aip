@@ -137,40 +137,28 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testActionItemSortSecondaryDesc() {
         def results = ActionItemReadOnly.fetchWithPagingAndSortParams(
-                [params: [name: "%"]],
-                [sortColumn: "actionItemStatus", sortAscending: false, max: 50, offset: 0] )
+                [params: [name: "Draft"]],
+                [sortColumn: "actionItemStatus", sortAscending: false, max: 10, offset: 0] )
 
-        def foundActive = false
-        def foundPending = false
-        def foundInactive = false
-        def activeAsFound = []
-        def pendingAsFound = []
-        def inactiveAsFound = []
         results.each {it ->
-            if (it.actionItemStatus == 'Pending') {
-                assertFalse foundActive
-                assertFalse foundInactive
-                foundPending = true
-                pendingAsFound.add( it.actionItemName )
-            }
-            if (it.actionItemStatus == 'Inactive') {
-                assertFalse foundActive
-                assertTrue foundPending
-                foundInactive = true
-                inactiveAsFound.add( it.actionItemName )
-            }
-            if (it.actionItemStatus == 'Active') {
-                assertTrue foundPending
-                assertTrue foundInactive
-                foundActive = true
-                activeAsFound.add( it.actionItemName )
-            }
+            assertTrue 'Draft' == it.actionItemStatus
 
         }
-        (0..4).each {it ->
-            assertEquals( pendingAsFound[it], pendingAsFound.sort( false )[it] )
-            assertEquals( inactiveAsFound[it], inactiveAsFound.sort( false )[it] )
-            assertEquals( activeAsFound[it], activeAsFound.sort( false )[it] )
+        results = ActionItemReadOnly.fetchWithPagingAndSortParams(
+                [params: [name: "Action"]],
+                [sortColumn: "actionItemStatus", sortAscending: false, max: 10, offset: 0] )
+
+        results.each {it ->
+            assertTrue 'Action' == it.actionItemStatus
+
+        }
+        results = ActionItemReadOnly.fetchWithPagingAndSortParams(
+                [params: [name: "Inaction"]],
+                [sortColumn: "actionItemStatus", sortAscending: false, max: 10, offset: 0] )
+
+        results.each {it ->
+            assertTrue 'Inaction' == it.actionItemStatus
+
         }
     }
 

@@ -52,7 +52,7 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
         def foundNotBlocked = false
         def blockedAsFound = []
         def notBlockedAsFound = []
-        results.each { it ->
+        results.each {it ->
             if (it.actionItemStatusBlockedProcess == 'N') {
                 assertFalse foundBlocked
                 foundNotBlocked = true
@@ -76,24 +76,16 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
                 [params: [name: "%"]],
                 [sortColumn: "actionItemStatusBlockedProcess", sortAscending: false, max: 50, offset: 0] )
 
-        def foundBlocked = false
-        def foundNotBlocked = false
-        def blockedAsFound = []
+        boolean foundNotBlocked = false
         def notBlockedAsFound = []
-        results.each { it ->
-            if (it.actionItemStatusBlockedProcess == 'Y') {
-                assertFalse foundNotBlocked
-                foundBlocked = true
-                blockedAsFound.add( it.actionItemStatus )
-            }
+        results.each {it ->
+
             if (it.actionItemStatusBlockedProcess == 'N') {
-                assertTrue foundBlocked
                 foundNotBlocked = true
                 notBlockedAsFound.add( it.actionItemStatus )
             }
         }
-        assertEquals( blockedAsFound[0], blockedAsFound.sort( false )[0] )
-        assertEquals( blockedAsFound[1], blockedAsFound.sort( false )[1] )
+        assert foundNotBlocked == true
         assertEquals( notBlockedAsFound[0], notBlockedAsFound.sort( false )[0] )
     }
 
@@ -125,8 +117,8 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
                 actionItemStatusDataOrigin: actionItemStatusList.actionItemStatusDataOrigin,
                 actionItemStatusUserId: actionItemStatusList.actionItemStatusUserId,
                 actionItemStatusVersion: actionItemStatusList.actionItemStatusVersion,
-                actionItemStatusActive: actionItemStatusList.actionItemStatusActive ,
-                actionItemStatusDefault: actionItemStatusList.actionItemStatusDefault)
+                actionItemStatusActive: actionItemStatusList.actionItemStatusActive,
+                actionItemStatusDefault: actionItemStatusList.actionItemStatusDefault )
         long actionItemStatusListId = actionItemStatusList.id
         long actionItemStatusListVersion = actionItemStatusList.actionItemStatusVersion
         actionItemStatusNewList.id = actionItemStatusListId
@@ -137,7 +129,6 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
 
         result = actionItemStatusList.equals( actionItemStatusNewList )
         assertTrue result
-
 
         /* TODO: this test doesn't pass because of null object error.
         result = actionItemStatusList.equals( null )
@@ -150,6 +141,7 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
         assertFalse result
 
     }
+
 
     @Test
     void testNullStatusError() {

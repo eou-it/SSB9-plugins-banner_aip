@@ -45,6 +45,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ActionItem ai = new ActionItem()
         ai.folderId = folderId
         ai.status = 'Pending'
+        ai.name = 'Test Action Item. unique 98d7efh'
         ai.title = 'Test Action Item. unique 98d7efh'
         ai.userId = 'something'
         ai.description = 'this is some action item'
@@ -65,6 +66,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ActionItem ai = new ActionItem()
         ai.folderId = folderId
         ai.status = 'Pending'
+        ai.name = 'Test Action Item'
         ai.title = 'Test Action Item'
         ai.userId = 'something'
         ai.description = 'this is some action item'
@@ -108,6 +110,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ActionItem ai = new ActionItem()
         ai.folderId = existingAI.folderId
         ai.status = null
+        ai.name = ' a title ds8f4h3'
         ai.title = ' a title ds8f4h3'
         ai.userId = 'something'
         ai.description = 'this is some action item'
@@ -150,6 +153,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ActionItem ai = new ActionItem()
         ai.folderId = existingAI.folderId
         ai.status = 'Ginormous Status 123456789012345678901234567890'
+        ai.name = ' a title ds8f4h3'
         ai.title = ' a title ds8f4h3'
         ai.userId = 'something'
         ai.description = 'this is some action item'
@@ -171,6 +175,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ActionItem ai = new ActionItem()
         ai.folderId = existingAI.folderId
         ai.status = 'Pending'
+        ai.name = existingAI.title
         ai.title = existingAI.title
         ai.userId = 'something'
         ai.description = 'this is some action item'

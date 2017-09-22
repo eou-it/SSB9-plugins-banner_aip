@@ -6,9 +6,13 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase{
+import javax.persistence.Column
+import javax.persistence.Version
+
+class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemTemplateService
+
 
     @Before
     public void setUp() {
@@ -22,19 +26,22 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase{
         super.tearDown()
     }
 
+
     @Test
     void testFetchActionItemTemplatesString() {
         List<ActionItemTemplate> actionItemTemplates = ActionItemTemplate.fetchActionItemTemplates()
         def actionItemTemplate = actionItemTemplates[0]
-        assertNotNull(actionItemTemplate.toString())
+        assertNotNull( actionItemTemplate.toString() )
         assertFalse actionItemTemplates.isEmpty()
     }
+
 
     @Test
     void testFetchActionItemTemplates() {
         List<ActionItemTemplate> actionItemTemplates = ActionItemTemplate.fetchActionItemTemplates()
         assertFalse actionItemTemplates.isEmpty()
     }
+
 
     @Test
     void testActionItemTemplatesHashCode() {
@@ -47,12 +54,14 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase{
         assertNotNull actionItemTemplateListObj
     }
 
+
     @Test
     void testActionItemTemplateEquals() {
         List<ActionItemTemplate> actionItemTemplates = ActionItemTemplate.fetchActionItemTemplates()
         def actionItemTemplate = actionItemTemplates[0]
         def actionItemTemplateNew = new ActionItemTemplate(
                 title: actionItemTemplate.title,
+                pageId: actionItemTemplate.pageId,
                 sourceInd: actionItemTemplate.sourceInd,
                 userId: actionItemTemplate.userId,
                 systemRequired: actionItemTemplate.systemRequired,
@@ -66,19 +75,20 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase{
         actionItemTemplateNew.id = actionItemTemplateId
         actionItemTemplateNew.version = actionItemTemplateVersion
 
-        def result = actionItemTemplate.equals(actionItemTemplate)
+        def result = actionItemTemplate.equals( actionItemTemplate )
         assertTrue result
 
-        result = actionItemTemplate.equals(actionItemTemplateNew)
+        result = actionItemTemplate.equals( actionItemTemplateNew )
         assertTrue result
 
-        result = actionItemTemplate.equals(null)
+        result = actionItemTemplate.equals( null )
         assertFalse result
 
-        def actionItemTemplateNull = new ActionItemTemplate(null)
-        result = actionItemTemplate.equals(actionItemTemplateNull)
+        def actionItemTemplateNull = new ActionItemTemplate( null )
+        result = actionItemTemplate.equals( actionItemTemplateNull )
         assertFalse result
     }
+
 
     @Test
     void testNullTitleError() {
@@ -96,8 +106,9 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase{
         actionItemTemplateNew.vpdiCode = actionItemTemplate.vpdiCode
 
         assertFalse actionItemTemplateNew.validate()
-        assertTrue (actionItemTemplateNew.errors.allErrors.codes[0].contains('actionItemTemplate.title.nullable.error'))
+        assertTrue( actionItemTemplateNew.errors.allErrors.codes[0].contains( 'actionItemTemplate.title.nullable.error' ) )
     }
+
 
     @Test
     void testNullSourceIndError() {
@@ -115,8 +126,9 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase{
         actionItemTemplateNew.vpdiCode = actionItemTemplate.vpdiCode
 
         assertFalse actionItemTemplateNew.validate()
-        assertTrue (actionItemTemplateNew.errors.allErrors.codes[0].contains('actionItemTemplate.sourceInd.nullable.error'))
+        assertTrue( actionItemTemplateNew.errors.allErrors.codes[0].contains( 'actionItemTemplate.sourceInd.nullable.error' ) )
     }
+
 
     @Test
     void testNullSystemReqError() {
@@ -134,8 +146,9 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase{
         actionItemTemplateNew.vpdiCode = actionItemTemplate.vpdiCode
 
         assertFalse actionItemTemplateNew.validate()
-        assertTrue (actionItemTemplateNew.errors.allErrors.codes[0].contains('actionItemTemplate.systemRequired.nullable.error'))
+        assertTrue( actionItemTemplateNew.errors.allErrors.codes[0].contains( 'actionItemTemplate.systemRequired.nullable.error' ) )
     }
+
 
     @Test
     void testNullActiveIndError() {
@@ -153,6 +166,6 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase{
         actionItemTemplateNew.vpdiCode = actionItemTemplate.vpdiCode
 
         assertFalse actionItemTemplateNew.validate()
-        assertTrue (actionItemTemplateNew.errors.allErrors.codes[0].contains('actionItemTemplate.activeInd.nullable.error'))
+        assertTrue( actionItemTemplateNew.errors.allErrors.codes[0].contains( 'actionItemTemplate.activeInd.nullable.error' ) )
     }
 }

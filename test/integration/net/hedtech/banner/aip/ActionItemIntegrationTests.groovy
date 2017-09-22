@@ -62,32 +62,34 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
     void testActionItemsEquals() {
 
         List<ActionItem> actionItems = ActionItem.fetchActionItems()
-        def actionItemsList = actionItems[0]
-        def actionItemNewList = new ActionItem(
-                status: actionItemsList.status,
-                activityDate: actionItemsList.activityDate,
-                createDate: actionItemsList.createDate,
-                creatorId: actionItemsList.creatorId,
-                dataOrigin: actionItemsList.dataOrigin,
-                description: actionItemsList.description,
-                title: actionItemsList.title,
-                userId: actionItemsList.userId )
-        long actionItemListId = actionItemsList.id
-        long actionItemListVersion = actionItemsList.version
-        actionItemNewList.id = actionItemListId
-        actionItemNewList.version = actionItemListVersion
+        def actionItem = actionItems[0]
+        def actionItemNew = new ActionItem(
+                status: actionItem.status,
+                activityDate: actionItem.activityDate,
+                createDate: actionItem.createDate,
+                creatorId: actionItem.creatorId,
+                dataOrigin: actionItem.dataOrigin,
+                folderId: actionItem.folderId,
+                description: actionItem.description,
+                name: actionItem.name,
+                title: actionItem.title,
+                userId: actionItem.userId )
+        long actionItemListId = actionItem.id
+        long actionItemListVersion = actionItem.version
+        actionItemNew.id = actionItemListId
+        actionItemNew.version = actionItemListVersion
 
-        def result = actionItemsList.equals( actionItemsList )
+        def result = actionItem.equals( actionItem )
         assertTrue result
 
-        result = actionItemsList.equals( actionItemNewList )
+        result = actionItem.equals( actionItemNew )
         assertTrue result
 
-        result = actionItemsList.equals( null )
+        result = actionItem.equals( null )
         assertFalse result
 
         def actionItemsListNull = new ActionItem( null )
-        result = actionItemsList.equals( actionItemsListNull )
+        result = actionItem.equals( actionItemsListNull )
         assertFalse result
 
     }
@@ -131,7 +133,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         //
         assertFalse actionNew.validate()
         // TODO: verify something
-        assertTrue (actionNew.errors.allErrors.codes[0].contains( 'actionItem.title.nullable.error' ) )
+        assertTrue( actionNew.errors.allErrors.codes[0].contains( 'actionItem.title.nullable.error' ) )
     }
 
 
@@ -141,6 +143,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         def actionItem = actionItems[7]
         def actionNew = new ActionItem()
 
+        actionNew.name = 'a title f984h'
         actionNew.title = 'a title f984h'
         actionNew.folderId = actionItem.folderId
         actionNew.status = null
@@ -197,6 +200,6 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         //
         assertFalse actionNew.validate()
         // TODO: verify something
-        assertTrue (actionNew.errors.allErrors.codes[0].contains('actionItem.title.blank.error'))
+        assertTrue( actionNew.errors.allErrors.codes[0].contains( 'actionItem.title.blank.error' ) )
     }
 }
