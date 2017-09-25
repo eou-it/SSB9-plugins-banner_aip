@@ -49,7 +49,7 @@ class ActionItemReadOnlyService extends ServiceBase {
                             folderId               : actionItem.folderId,
                             folderName             : actionItem.folderName,
                             folderDesc             : actionItem.folderDesc,
-                            actionItemStatus       : actionItem.actionItemStatus ? MessageHelper.message( "aip.status.${actionItem.actionItemStatus}" ) : null,
+                            actionItemStatus       : actionItem.actionItemStatus ? MessageHelper.message( "aip.status.${actionItem.actionItemStatus.trim()}" ) : null,
                             actionItemActivityDate : actionItem.actionItemActivityDate,
                             actionItemUserId       : actionItem.actionItemUserId,
                             actionItemContentUserId: actionItem.actionItemContentUserId,

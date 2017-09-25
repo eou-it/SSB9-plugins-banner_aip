@@ -64,7 +64,7 @@ class ActionItemService extends ServiceBase {
         }
 
         if (ActionItem.existsSameTitleInFolder( ai.folderId, ai.title )) {
-            throw new ApplicationException( ActionItem, UNIQUE_TITLE_ERROR, 'actionItem.nmae.unique.error' )
+            throw new ApplicationException( ActionItem, UNIQUE_TITLE_ERROR, 'actionItem.name.unique.error' )
         }
     }
 
