@@ -99,10 +99,7 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
     void testRemoveStatusActionItemStatusSystemRequired() {
         Map params1 = [filterName: "Completed", sortColumn: "actionItemStatus", sortAscending: true, max: 1, offset: 0]
         def actionItemStatus = actionItemStatusCompositeService.listActionItemsPageSort( params1 ).result[0]
-        try {
-            actionItemStatusCompositeService.removeStatus( actionItemStatus.id )
-        } catch (ApplicationException e) {
-            assertApplicationException( e, 'action.item.status.cannot.be.deleted' )
-        }
+        def res= actionItemStatusCompositeService.removeStatus( actionItemStatus.id )
+        assert res.message=='The record is system required and cannot be deleted.'
     }
 }

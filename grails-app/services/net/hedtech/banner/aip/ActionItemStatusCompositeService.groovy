@@ -27,11 +27,23 @@ class ActionItemStatusCompositeService {
                 [params: [name: params?.filterName]],
                 [sortColumn: params?.sortColumn, sortAscending: params?.sortAscending, max: params?.max, offset: params?.offset] )
         def resultCount = actionItemStatusService.listActionItemStatusCount()
-        results?.each {
+        results = results?.collect {ActionItemStatus it ->
+            def deleteMessage = checkIfDeleteable( it )
             def person = PersonUtility.getPerson( it.actionItemStatusUserId )
-            if (person) {
-                it.putAt( 'actionItemStatusUserId', PersonUtility.getPerson( person.pidm as int )?.fullName )
-            }
+            [
+                    id                            : it.id,
+                    version                       : it.actionItemStatusVersion,
+                    actionItemStatus              : it.actionItemStatus,
+                    actionItemStatusActive        : it.actionItemStatusActive,
+                    actionItemStatusActivityDate  : it.actionItemStatusActivityDate,
+                    actionItemStatusBlockedProcess: it.actionItemStatusBlockedProcess,
+                    actionItemStatusDataOrigin    : it.actionItemStatusDataOrigin,
+                    actionItemStatusDefault       : it.actionItemStatusDefault,
+                    actionItemStatusSystemRequired: it.actionItemStatusSystemRequired,
+                    actionItemStatusUserId        :
+                            person ? PersonUtility.getPerson( person.pidm as int )?.fullName : it.actionItemStatusUserId,
+                    deletable                     : deleteMessage.canBeDeleted,
+                    deleteRestrictionReason       : deleteMessage.message]
         }
         [
                 result: results,
@@ -61,24 +73,13 @@ class ActionItemStatusCompositeService {
             LOGGER.error( "Action Item Status is not present in System for id $id" )
             throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'action.item.status.not.in.system', [] ) )
         }
-        if (status.actionItemStatusSystemRequired == AIPConstants.YES_IND) {
-            LOGGER.error( "Action Item Status $id cannot be deleted as actionItemStatusSystemRequired is yes" )
-            throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'action.item.status.cannot.be.deleted', [] ) )
-        }
-        if (status.actionItemStatusSystemRequired == AIPConstants.NO_IND) {
-            def statusRulePresent = actionItemStatusRuleService.checkIfPresent( id )
-            def statusRulePresentAndAssociatedToContent = actionItemStatusRuleService.checkIfPresentAndAssociatedToActionItemContent( id )
-            if (statusRulePresent && !statusRulePresentAndAssociatedToContent) {
-                LOGGER.error( "The Status Rule is associated to Action Item Content and cannot be deleted" )
-                throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'action.item.status.associated.to.status.rule', [] ) )
-            }
-            if (statusRulePresent && statusRulePresentAndAssociatedToContent) {
-                LOGGER.error( "The Status Rule is associated to Action Item Content and an assigned Action Item, hence cannot be deleted." )
-                throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'action.item.status.associated.to.status.rule.and.content', [] ) )
-            }
+        def deleteMessage = checkIfDeleteable( status )
+        if (deleteMessage.canBeDeleted == AIPConstants.YES_IND) {
             actionItemStatusService.delete( status )
             success = true
             message = MessageHelper.message( 'action.status.delete.success', [status.actionItemStatus].toArray() )
+        } else {
+            message = deleteMessage.message
         }
         [
                 success: success,
@@ -87,11 +88,39 @@ class ActionItemStatusCompositeService {
     }
 
     /**
+     * Remove Action Item Status
+     * @return
+     */
+    private def checkIfDeleteable( ActionItemStatus status ) {
+        def canBeDeleted = AIPConstants.YES_IND, message
+        if (status.actionItemStatusSystemRequired == AIPConstants.YES_IND) {
+            canBeDeleted = AIPConstants.NO_IND
+            message = MessageHelper.message( 'action.item.status.cannot.be.deleted' )
+        }
+        if (status.actionItemStatusSystemRequired == AIPConstants.NO_IND) {
+            def statusRulePresent = actionItemStatusRuleService.checkIfPresent( status.id )
+            def statusRulePresentAndAssociatedToContent = actionItemStatusRuleService.checkIfPresentAndAssociatedToActionItemContent( status.id )
+            if (statusRulePresent && !statusRulePresentAndAssociatedToContent) {
+                canBeDeleted = AIPConstants.NO_IND
+                message = MessageHelper.message( 'action.item.status.associated.to.status.rule' )
+            }
+            if (statusRulePresent && statusRulePresentAndAssociatedToContent) {
+                canBeDeleted = AIPConstants.NO_IND
+                message = MessageHelper.message( 'action.item.status.associated.to.status.rule.and.content' )
+            }
+        }
+        [
+                canBeDeleted: canBeDeleted,
+                message     : message
+        ]
+    }
+
+    /**
      * Saved Action Item Status
      * @return
      */
     def statusSave( def title ) {
-        def user  = springSecurityService.getAuthentication()?.user
+        def user = springSecurityService.getAuthentication()?.user
         if (!user) {
             throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'user.id.not.valid', [] ) )
         }
