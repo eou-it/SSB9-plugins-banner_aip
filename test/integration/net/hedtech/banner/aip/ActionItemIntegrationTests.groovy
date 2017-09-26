@@ -102,6 +102,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         def actionNew = new ActionItem()
 
         actionNew.title = actionItem.title
+        actionNew.name = actionItem.name
         actionNew.folderId = actionItem.folderId
         actionNew.status = actionItem.status
         actionNew.userId = actionItem.userId
@@ -111,7 +112,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         actionNew.createDate = actionItem.createDate
         actionNew.dataOrigin = actionItem.dataOrigin
         //
-        assertTrue ActionItem.existsSameTitleInFolder( actionItem.folderId, actionItem.title )
+        assertTrue ActionItem.existsSameNameInFolder( actionItem.folderId, actionItem.name )
     }
 
 

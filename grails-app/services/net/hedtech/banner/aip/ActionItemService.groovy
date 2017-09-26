@@ -12,7 +12,7 @@ import net.hedtech.banner.service.ServiceBase
  */
 class ActionItemService extends ServiceBase {
 
-    static final String UNIQUE_TITLE_ERROR = '@@r1:UniqueTitleInFolderError@@'
+    static final String UNIQUE_NAME_FOLDER_ERROR = '@@r1:UniqueTitleInFolderError@@'
     static final String NO_TITLE_ERROR = '@@r1:TitleCanNotBeNullError@@'
     static final String NO_NAME_ERROR = '@@r1:NameCanNotBeNullError@@'
     static final String FOLDER_VALIDATION_ERROR = '@@r1:FolderDoesNotExist@@'
@@ -62,9 +62,10 @@ class ActionItemService extends ServiceBase {
         if (!CommunicationFolder.get( ai.folderId )) {
             throw new ApplicationException( ActionItem, FOLDER_VALIDATION_ERROR, 'actionItem.folder.validation.error' )
         }
-
-        if (ActionItem.existsSameTitleInFolder( ai.folderId, ai.title )) {
-            throw new ApplicationException( ActionItem, UNIQUE_TITLE_ERROR, 'actionItem.name.unique.error' )
+         println "2============"
+        if (ActionItem.existsSameNameInFolder( ai.folderId, ai.name )) {
+            println "2============"
+            throw new ApplicationException( ActionItem, UNIQUE_NAME_FOLDER_ERROR, 'actionItem.name.unique.error' )
         }
     }
 

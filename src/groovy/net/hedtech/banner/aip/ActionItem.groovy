@@ -20,9 +20,9 @@ import javax.persistence.*
            FROM ActionItem a
            WHERE a.id = :myId
           """),
-        @NamedQuery(name = "ActionItem.existsSameTitleInFolder",
+        @NamedQuery(name = "ActionItem.existsSameNameInFolder",
                 query = """ select count(a.id) FROM ActionItem a
-                    WHERE upper(a.title) = upper(:title)
+                    WHERE upper(a.name) = upper(:name)
                     AND   a.folderId = :folderId""")
 ])
 
@@ -144,19 +144,19 @@ class ActionItem implements Serializable {
     }
 
     /**
-     * Checks if specified tile already present in specified folder
+     * Checks if specified name already present in specified folder
      * @param folderId
-     * @param title
+     * @param name
      * @return
      */
-    // Check constraint requirement that a title in a folder must be unique
-    static Boolean existsSameTitleInFolder( Long folderId, String title ) {
+    // Check constraint requirement that a Name in a folder must be unique
+    static Boolean existsSameNameInFolder( Long folderId, String name ) {
         def count
         ActionItem.withSession {session ->
             session.setFlushMode( FlushMode.MANUAL );
             try {
-                count = session.getNamedQuery( 'ActionItem.existsSameTitleInFolder' )
-                        .setString( 'title', title )
+                count = session.getNamedQuery( 'ActionItem.existsSameNameInFolder' )
+                        .setString( 'name', name )
                         .setLong( 'folderId', folderId )
                         .uniqueResult()
             } finally {
