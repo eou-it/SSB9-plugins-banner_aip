@@ -54,19 +54,15 @@ class ActionItemService extends ServiceBase {
                 throw new ApplicationException( ActionItem, NO_STATUS_ERROR, 'actionItem.status.nullable.error' )
             } else if (errorCodes.contains( 'maxSize.exceeded' )) {
                 throw new ApplicationException( ActionItem, MAX_SIZE_ERROR, 'actionItem.max.size.error' )
-            } else {
-                throw new ApplicationException( ActionItem, OTHER_VALIDATION_ERROR, 'actionItem.operation.not.permitted' )
             }
+            throw new ApplicationException( ActionItem, OTHER_VALIDATION_ERROR, 'actionItem.operation.not.permitted' )
         }
 
         if (!CommunicationFolder.get( ai.folderId )) {
             throw new ApplicationException( ActionItem, FOLDER_VALIDATION_ERROR, 'actionItem.folder.validation.error' )
         }
-         println "2============"
         if (ActionItem.existsSameNameInFolder( ai.folderId, ai.name )) {
-            println "2============"
             throw new ApplicationException( ActionItem, UNIQUE_NAME_FOLDER_ERROR, 'actionItem.name.unique.error' )
         }
     }
-
 }

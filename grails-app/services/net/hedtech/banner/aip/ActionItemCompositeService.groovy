@@ -1,27 +1,19 @@
-/** *****************************************************************************
- © 2016 SunGard Higher Education.  All Rights Reserved.
-
- CONFIDENTIAL BUSINESS INFORMATION
-
- THIS PROGRAM IS PROPRIETARY INFORMATION OF SUNGARD HIGHER EDUCATION
- AND IS NOT TO BE COPIED, REPRODUCED, LENT, OR DISPOSED OF,
- NOR USED FOR ANY PURPOSE OTHER THAN THAT WHICH IT IS SPECIFICALLY PROVIDED
- WITHOUT THE WRITTEN PERMISSION OF THE SAID COMPANY
- ****************************************************************************** */
+/*********************************************************************************
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
+ **********************************************************************************/
 package net.hedtech.banner.aip
 
 import grails.transaction.Transactional
 import net.hedtech.banner.exceptions.ApplicationException
-import net.hedtech.banner.service.ServiceBase
+import net.hedtech.banner.i18n.MessageHelper
 import org.springframework.transaction.annotation.Propagation
 
+import java.text.MessageFormat
+
 /**
- * ActionItemCompositeService.
- *
- * Date: 11/21/2016
- * Time: 12:54 PM
+ * Class for ActionItemCompositeService.
  */
-class ActionItemCompositeService extends ServiceBase {
+class ActionItemCompositeService {
     static transactional = true
 
     def actionItemDetailService
@@ -29,6 +21,46 @@ class ActionItemCompositeService extends ServiceBase {
     def actionItemReadOnlyService
 
     def actionItemStatusRuleService
+
+    def actionItemService
+
+    def springSecurityService
+
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
+    def addActionItem( map ) {
+        def user = springSecurityService.getAuthentication()?.user
+        println user
+        ActionItem savedActionItem
+        def success = false
+        def message
+        def aipUser = AipControllerUtils.getPersonForAip( [studentId: map.studentId], user.pidm )
+        ActionItem ai = new ActionItem(
+                folderId: map.folderId ?: null,
+                status: map.status ?: null,
+                title: map.title ?: null,
+                name: map.name ?: null,
+                creatorId: user.username ?: null,
+                userId: aipUser.bannerId ?: null,
+                description: map.description ?: null,
+                activityDate: new Date()
+        )
+        try {
+            savedActionItem = actionItemService.create( ai )
+            success = true
+        } catch (ApplicationException e) {
+            if (ActionItemService.FOLDER_VALIDATION_ERROR.equals( e.getMessage() )) {
+                message = MessageHelper.message( e.getDefaultMessage(), MessageFormat.format( "{0,number,#}", ai.folderId ) )
+            } else {
+                message = MessageHelper.message( e.getDefaultMessage() )
+            }
+        }
+        [
+                success      : success,
+                message      : message,
+                newActionItem: savedActionItem
+        ]
+    }
 
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
@@ -48,7 +80,7 @@ class ActionItemCompositeService extends ServiceBase {
 
         //update&create
         List<ActionItemStatusRule> ruleList = []
-        inputRules.each { rule ->
+        inputRules.each {rule ->
             def statusRule
             if (rule.statusRuleId) {
                 statusRule = ActionItemStatusRule.get( rule.statusRuleId )
@@ -77,7 +109,7 @@ class ActionItemCompositeService extends ServiceBase {
         List<ActionItemStatusRule> updatedActionItemStatusRules
         def weGood = true
         try {
-            ruleList.each { rule -> actionItemStatusRuleService.preUpdate( rule ) }
+            ruleList.each {rule -> actionItemStatusRuleService.preUpdate( rule )}
         } catch (ApplicationException ae) {
             weGood = false
             throw new ApplicationException( "rollback", ae.message, ae.defaultMessage )
@@ -88,7 +120,8 @@ class ActionItemCompositeService extends ServiceBase {
                 //todo: add new method to service for action item detail to retreive an action item by detail id and action item id
                 actionItemRO = actionItemReadOnlyService.getActionItemROById( newAid.actionItemId )
                 actionItemStatusRuleService.delete( deleteRules ) //list of ids to be deleted
-                actionItemStatusRuleService.createOrUpdate( ruleList, false ) //list of domain objects to be updated or created
+                actionItemStatusRuleService.createOrUpdate( ruleList, false )
+                //list of domain objects to be updated or created
                 updatedActionItemStatusRules = actionItemStatusRuleService.getActionItemStatusRuleByActionItemId( actionItemId )
 
             } catch (ApplicationException e) {
