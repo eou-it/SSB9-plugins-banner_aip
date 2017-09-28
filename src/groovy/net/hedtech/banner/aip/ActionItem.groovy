@@ -57,7 +57,7 @@ class ActionItem implements Serializable {
     /**
      * Status (Pending, Complete, other...)
      */
-    @Column(name = "GCBACTM_STATUS")
+    @Column(name = "GCBACTM_STATUS_CODE")
     String status
 
     /***
