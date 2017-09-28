@@ -4,6 +4,7 @@
 package net.hedtech.banner.aip
 
 import grails.transaction.Transactional
+import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.i18n.MessageHelper
 import org.springframework.transaction.annotation.Propagation
@@ -37,7 +38,8 @@ class ActionItemCompositeService {
         def aipUser = AipControllerUtils.getPersonForAip( [studentId: map.studentId], user.pidm )
         ActionItem ai = new ActionItem(
                 folderId: map.folderId ?: null,
-                status: map.status ?: null,
+                status: map.status ? AIPConstants.STATUS_MAP.get( map.status ): null,
+                postedStatus: 'N',
                 title: map.title ?: null,
                 name: map.name ?: null,
                 creatorId: user.username ?: null,
