@@ -70,7 +70,7 @@ class ActionItem implements Serializable {
      * Related folder ID of the action item
      */
 
-    @Column(name = "GCBACTM_GCRAFLDR_ID")
+    @Column(name = "GCBACTM_GCRFLDR_ID")
     Long folderId
 
     /**
