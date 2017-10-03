@@ -39,7 +39,7 @@ class ActionItemCompositeService {
         ActionItem ai = new ActionItem(
                 folderId: map.folderId ?: null,
                 status: map.status ? AIPConstants.STATUS_MAP.get( map.status ): null,
-                postedStatus: 'N',
+                postedIndicator:'N',
                 title: map.title ?: null,
                 name: map.name ?: null,
                 creatorId: user.username ?: null,

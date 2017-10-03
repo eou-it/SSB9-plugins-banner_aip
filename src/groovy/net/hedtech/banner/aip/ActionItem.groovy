@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -61,10 +61,10 @@ class ActionItem implements Serializable {
     String status
 
     /**
-     * Status (Draft, Active, Inactive)
+     * Posting Indicator ( yes or no)
      */
     @Column(name = "GCBACTM_POSTED_IND")
-    String postedStatus
+    String postedIndicator
 
     /***
      * Related folder ID of the action item
@@ -122,7 +122,7 @@ class ActionItem implements Serializable {
         title( blank: false, nullable: false, maxSize: 2048 )
         name( blank: false, nullable: false, maxSize: 60 )
         status( blank: false, nullable: false, maxSize: 1 )
-        postedStatus( nullable: false, maxSize: 1 )
+        postedIndicator( nullable: false, maxSize: 1 )
         userId( blank: false, nullable: false, maxSize: 30 )
         activityDate( blank: false, nullable: false, maxSize: 30 )
         description( nullable: true ) //summary length only for now

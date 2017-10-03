@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -10,7 +10,9 @@ import org.hibernate.criterion.Order
 
 import javax.persistence.*
 
-
+/**
+ * Domain class for Action Item Group View
+ */
 @NamedQueries(value = [
         @NamedQuery(name = "GroupFolderReadOnly.fetchGroupFolders",
                 query = """
@@ -57,18 +59,25 @@ class GroupFolderReadOnly implements Serializable {
     String groupName
 
     /**
-     * Indicator that the action item is active
+     * Action Item group Instruction
      */
 
-    @Column(name = "ACTION_ITEM_GROUP_DESCRIPTION", columnDefinition = "TEXT")
+    @Column(name = "ACTION_ITEM_GROUP_INSTRUCTION", columnDefinition = "TEXT")
     String groupDesc
 
     /**
      * status of the action item group
      */
 
-    @Column(name = "ACTION_ITEM_GROUP_STATUS")
+    @Column(name = "ACTION_ITEM_GROUP_STATUS_CODE")
     String groupStatus
+
+    /**
+     * Posted Indicator of the action item group
+     */
+
+    @Column(name = "ACTION_ITEM_POSTED_IND")
+    String postedInd
 
     /*
     **
