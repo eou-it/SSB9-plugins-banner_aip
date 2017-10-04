@@ -29,8 +29,6 @@ class GateKeepingFilters {
 
     def springSecurityService
 
-    def userBlockedProcessReadOnlyService
-
     def dependsOn = [net.hedtech.banner.security.AccessControlFilters.class]
 
     def filters = {
@@ -57,7 +55,7 @@ class GateKeepingFilters {
                             if ('STUDENT'.equals( session.getAttribute( 'selectedRole' )?.persona?.code )) {
                                 def isBlocked = false
                                 try {
-                                    isBlocked = userBlockedProcessReadOnlyService.getBlockedProcessesByPidmAndActionItemId( userPidm, 11 )
+                                    //isBlocked = userBlockedProcessReadOnlyService.getBlockedProcessesByPidmAndActionItemId( userPidm, 11 )
                                     println "isBlocked: " + isBlocked + " for: " + userPidm
                                     println isBlocked ? true : false
                                 } catch (Throwable t) {

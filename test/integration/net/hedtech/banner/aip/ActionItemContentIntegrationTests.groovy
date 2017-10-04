@@ -4,15 +4,13 @@
 
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.ActionItem
-import net.hedtech.banner.aip.ActionItemDetail
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
 
-class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
+class ActionItemContentIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
     public void setUp() {
@@ -31,7 +29,7 @@ class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
     void testFetchActionItemDetailById() {
         List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
         def actionItemId = actionItemsList[0].id
-        ActionItemDetail actionItemDetailList = ActionItemDetail.fetchActionItemDetailById( actionItemId )
+        ActionItemContent actionItemDetailList = ActionItemContent.fetchActionItemContentById( actionItemId )
         assertEquals( actionItemId, actionItemDetailList.actionItemId )
     }
 
@@ -40,7 +38,7 @@ class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
     void testFetchActionItemDetailString() {
         List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
         def actionItemId = actionItemsList[0].id
-        ActionItemDetail actionItemDetailList = ActionItemDetail.fetchActionItemDetailById( actionItemId )
+        ActionItemContent actionItemDetailList = ActionItemContent.fetchActionItemContentById( actionItemId )
         assertNotNull( actionItemDetailList.toString() )
     }
 
@@ -49,12 +47,12 @@ class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
     void testActionItemDetailHashCode() {
         List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
         def actionItemId = actionItemsList[0].id
-        ActionItemDetail actionItemDetailList = ActionItemDetail.fetchActionItemDetailById( actionItemId )
+        ActionItemContent actionItemDetailList = ActionItemContent.fetchActionItemContentById( actionItemId )
 
         def result = actionItemDetailList.hashCode()
         assertNotNull result
 
-        def actionItemDetailObj = new ActionItemDetail()
+        def actionItemDetailObj = new ActionItemContent()
         result = actionItemDetailObj.hashCode()
         assertNotNull result
     }
@@ -66,27 +64,27 @@ class ActionItemDetailIntegrationTests extends BaseIntegrationTestCase {
         List<ActionItem> actionItems = ActionItem.fetchActionItems()
         def actionItemsList = actionItems[0]
         def actionItemId = actionItemsList.id
-        ActionItemDetail actionItemDetail = ActionItemDetail.fetchActionItemDetailById( actionItemId )
-        def actionItemNewDetail = new ActionItemDetail()
+        ActionItemContent actionItemContent = ActionItemContent.fetchActionItemContentById( actionItemId )
+        def actionItemNewDetail = new ActionItemContent()
 
-        actionItemNewDetail.id = actionItemDetail.id
-        actionItemNewDetail.actionItemId = actionItemDetail.actionItemId
-        actionItemNewDetail.text = actionItemDetail.text
-        actionItemNewDetail.actionItemTemplateId = actionItemDetail.actionItemTemplateId
-        actionItemNewDetail.lastModifiedby = actionItemDetail.lastModifiedby
-        actionItemNewDetail.lastModified = actionItemDetail.lastModified
-        actionItemNewDetail.version = actionItemDetail.version
-        actionItemNewDetail.dataOrigin = actionItemDetail.dataOrigin
-        actionItemNewDetail.actionItemTemplateId = actionItemDetail.actionItemTemplateId
+        actionItemNewDetail.id = actionItemContent.id
+        actionItemNewDetail.actionItemId = actionItemContent.actionItemId
+        actionItemNewDetail.text = actionItemContent.text
+        actionItemNewDetail.actionItemTemplateId = actionItemContent.actionItemTemplateId
+        actionItemNewDetail.lastModifiedby = actionItemContent.lastModifiedby
+        actionItemNewDetail.lastModified = actionItemContent.lastModified
+        actionItemNewDetail.version = actionItemContent.version
+        actionItemNewDetail.dataOrigin = actionItemContent.dataOrigin
+        actionItemNewDetail.actionItemTemplateId = actionItemContent.actionItemTemplateId
 
-        def result = actionItemNewDetail.equals( actionItemDetail )
+        def result = actionItemNewDetail.equals( actionItemContent )
         assertTrue result
 
-        result = actionItemDetail.equals( null )
+        result = actionItemContent.equals( null )
         assertFalse result
 
-        def actionItemsListNull = new ActionItemDetail( null )
-        result = actionItemDetail.equals( actionItemsListNull )
+        def actionItemsListNull = new ActionItemContent( null )
+        result = actionItemContent.equals( actionItemsListNull )
         assertFalse result
 
     }

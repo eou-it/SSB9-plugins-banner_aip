@@ -36,6 +36,9 @@ import javax.persistence.*
 @Table(name = "GVQ_GCBACTM")
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
+/**
+ * Domain class for Action Item Read only View
+ */
 class ActionItemReadOnly implements Serializable {
 
     /**
@@ -162,15 +165,13 @@ class ActionItemReadOnly implements Serializable {
     /**
      * ID of the action item template
      */
-
-
-    @Column(name = "ACTION_ITEM_TEMPLATE_ID")
+    @Column(name = "ACTION_ITEM_PB_TEMPLATE_ID")
     Long actionItemTemplateId
 
     /**
-     * Name of the action item template
+     * Name of the action item Page builder template
      */
-    @Column(name = "ACTION_ITEM_TEMPLATE_NAME")
+    @Column(name = "ACTION_ITEM_PB_TEMPLATE_NAME")
     String actionItemTemplateName
 
 

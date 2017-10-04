@@ -17,7 +17,7 @@ import java.text.MessageFormat
 class ActionItemCompositeService {
     static transactional = true
 
-    def actionItemDetailService
+    def actionItemContentService
 
     def actionItemReadOnlyService
 
@@ -68,12 +68,12 @@ class ActionItemCompositeService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     def updateDetailsAndStatusRules( aipUser, inputRules, templateId, actionItemId, actionItemDetailText ) {
         def answer = [:]
-        ActionItemDetail aid = actionItemDetailService.listActionItemDetailById( actionItemId )
-        aid.actionItemId = actionItemId
-        aid.actionItemTemplateId = templateId
-        aid.lastModifiedby = aipUser.bannerId
-        aid.lastModified = new Date()
-        aid.text = actionItemDetailText
+        ActionItemContent aic = actionItemContentService.listActionItemContentById( actionItemId )
+        aic.actionItemId = actionItemId
+        aic.actionItemTemplateId = templateId
+        aic.lastModifiedby = aipUser.bannerId
+        aic.lastModified = new Date()
+        aic.text = actionItemDetailText
 
         List<Long> tempRuleIdList = inputRules.statusRuleId.toList()
         List<ActionItemStatusRule> actionItemStatusRules = actionItemStatusRuleService.getActionItemStatusRuleByActionItemId( actionItemId )
@@ -106,7 +106,7 @@ class ActionItemCompositeService {
         }
         //delete
 
-        ActionItemDetail newAid
+        ActionItemContent newAic
         ActionItemReadOnly actionItemRO
         List<ActionItemStatusRule> updatedActionItemStatusRules
         def weGood = true
@@ -118,9 +118,9 @@ class ActionItemCompositeService {
         }
         if (weGood) {
             try {
-                newAid = actionItemDetailService.createOrUpdate( aid, false )
+                newAic = actionItemContentService.createOrUpdate( aic, false )
                 //todo: add new method to service for action item detail to retreive an action item by detail id and action item id
-                actionItemRO = actionItemReadOnlyService.getActionItemROById( newAid.actionItemId )
+                actionItemRO = actionItemReadOnlyService.getActionItemROById( newAic.actionItemId )
                 actionItemStatusRuleService.delete( deleteRules ) //list of ids to be deleted
                 actionItemStatusRuleService.createOrUpdate( ruleList, false )
                 //list of domain objects to be updated or created
