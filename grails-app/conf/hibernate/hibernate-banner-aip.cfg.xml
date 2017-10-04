@@ -30,9 +30,6 @@ Copyright 2016 Ellucian Company L.P. and its affiliates.
         <mapping class="net.hedtech.banner.aip.UserBlockedProcessReadOnly"/>
         <mapping class="net.hedtech.banner.aip.BlockedProcessReadOnly"/>
         <mapping class="net.hedtech.banner.aip.ActionItemBlockedProcess"/>
-        <mapping class="net.hedtech.banner.general.ConfigurationData"/>
-        <mapping class="net.hedtech.banner.general.configuration.ConfigApplication"/>
-        <mapping class="net.hedtech.banner.general.configuration.ConfigProperties"/>
         <mapping class="net.hedtech.banner.general.communication.folder.CommunicationFolder"/>
     </session-factory>
 </hibernate-configuration>
