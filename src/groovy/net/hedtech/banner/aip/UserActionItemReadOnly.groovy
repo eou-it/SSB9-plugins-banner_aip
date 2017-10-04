@@ -111,7 +111,7 @@ class UserActionItemReadOnly implements Serializable {
     /**
      * Last activity date for the action item
      */
-    @Column(name = "ACTION_ITEM_COMPLETED_DATE")
+    @Column(name = "ACTION_ITEM_USER_RESPONSE_DATE")
     Date completedDate
 
     /**
