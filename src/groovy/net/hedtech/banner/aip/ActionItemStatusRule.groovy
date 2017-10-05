@@ -57,7 +57,7 @@ class ActionItemStatusRule implements Serializable {
     /***
      * Related ID of the action item status rule - Action Item
      */
-    @Column(name = "GCRAISR_ACTION_ITEM_ID")
+    @Column(name = "GCRAISR_GCBACTM_ID")
     Long actionItemId
 
     /***
@@ -69,8 +69,14 @@ class ActionItemStatusRule implements Serializable {
     /***
      * Related ID of the action item status rule - Action Item Status ID
      */
-    @Column(name = "GCRAISR_ACTION_ITEM_STATUS_ID")
+    @Column(name = "GCRAISR_GCVASTS_ID")
     Long actionItemStatusId
+
+    /***
+     * Resubmit Indicator
+     */
+    @Column(name = "GCRAISR_RESUBMIT_IND")
+    String resubmitInd
 
     /***
      * Label for the Action Item Status Rule
@@ -108,6 +114,7 @@ class ActionItemStatusRule implements Serializable {
         seqOrder( blank: false, nullable: false, maxSize: 5 )
         labelText( blank: false, nullable: false, maxSize: 150 )
         actionItemStatusId( blank: true, nullable: true, maxSize: 19 )
+        resubmitInd( blank: true, nullable: true, maxSize: 1 )
         userId( blank: false, nullable: false, maxSize: 30 )
         activityDate( blank: false, nullable: false, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 30 )

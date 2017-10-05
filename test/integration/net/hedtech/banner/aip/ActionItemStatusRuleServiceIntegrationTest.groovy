@@ -39,6 +39,7 @@ class ActionItemStatusRuleServiceIntegrationTest extends BaseIntegrationTestCase
         assertEquals(aisr.labelText, actionItemStatusRule.labelText)
         assertEquals(aisr.seqOrder, actionItemStatusRule.seqOrder)
         assertEquals(aisr.actionItemStatusId, actionItemStatusRule.actionItemStatusId)
+        assertEquals(aisr.resubmitInd, actionItemStatusRule.resubmitInd)
         assertEquals(aisr.actionItemId, actionItemStatusRule.actionItemId)
     }
 

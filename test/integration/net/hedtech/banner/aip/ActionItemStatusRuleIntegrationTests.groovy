@@ -81,6 +81,7 @@ class ActionItemStatusRuleIntegrationTests extends BaseIntegrationTestCase {
                 actionItemId: actionItemStatusRule.actionItemId,
                 seqOrder: actionItemStatusRule.seqOrder,
                 actionItemStatusId: actionItemStatusRule.actionItemStatusId,
+                resubmitInd: actionItemStatusRule.resubmitInd,
                 labelText: actionItemStatusRule.labelText,
                 activityDate: actionItemStatusRule.activityDate,
                 userId: actionItemStatusRule.userId,
@@ -111,6 +112,7 @@ class ActionItemStatusRuleIntegrationTests extends BaseIntegrationTestCase {
         def newActionItemStatusRule = new ActionItemStatusRule()
 
         newActionItemStatusRule.actionItemStatusId = actionItemStatusRule.actionItemStatusId
+        newActionItemStatusRule.resubmitInd = actionItemStatusRule.resubmitInd
         newActionItemStatusRule.seqOrder = actionItemStatusRule.seqOrder
         newActionItemStatusRule.version = actionItemStatusRule.version
         newActionItemStatusRule.labelText = actionItemStatusRule.labelText
@@ -128,6 +130,7 @@ class ActionItemStatusRuleIntegrationTests extends BaseIntegrationTestCase {
 
         newActionItemStatusRule.actionItemId = actionItemStatusRule.actionItemId
         newActionItemStatusRule.actionItemStatusId = actionItemStatusRule.actionItemStatusId
+        newActionItemStatusRule.resubmitInd = actionItemStatusRule.resubmitInd
         newActionItemStatusRule.version = actionItemStatusRule.version
         newActionItemStatusRule.labelText = actionItemStatusRule.labelText
 
@@ -145,6 +148,7 @@ class ActionItemStatusRuleIntegrationTests extends BaseIntegrationTestCase {
         newActionItemStatusRule.actionItemId = actionItemStatusRule.actionItemId
         newActionItemStatusRule.seqOrder = actionItemStatusRule.seqOrder
         newActionItemStatusRule.actionItemStatusId = actionItemStatusRule.actionItemStatusId
+        newActionItemStatusRule.resubmitInd = actionItemStatusRule.resubmitInd
         newActionItemStatusRule.version = actionItemStatusRule.version
 
         assertFalse newActionItemStatusRule.validate()

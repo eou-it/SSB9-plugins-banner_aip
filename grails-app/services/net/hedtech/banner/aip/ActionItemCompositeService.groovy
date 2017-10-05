@@ -98,6 +98,7 @@ class ActionItemCompositeService {
                         labelText: !rule.statusRuleLabelText ? null : rule.statusRuleLabelText,
                         actionItemId: actionItemId,
                         actionItemStatusId: rule.statusId,
+                        resubmitInd:rule.resubmitInd,
                         userId: aipUser.bannerId,
                         activityDate: new Date()
                 )
