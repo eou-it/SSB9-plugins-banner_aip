@@ -22,9 +22,9 @@ import javax.persistence.*
            FROM ActionItemGroup a
            WHERE a.id = :myId
           """),
-        @NamedQuery(name = "ActionItemGroup.existsSameTitleInFolder",
+        @NamedQuery(name = "ActionItemGroup.existsSameNameInFolder",
                 query = """ FROM ActionItemGroup a
-                    WHERE upper(a.title) = upper(:title)
+                    WHERE upper(a.name) = upper(:name)
                     AND   a.folderId = :folderId""")
 ])
 
@@ -149,13 +149,13 @@ class ActionItemGroup implements Serializable {
      * @return
      */
     // Check constraint requirement that a title in a folder must be unique
-    public static Boolean existsSameTitleInFolder( Long folderId, String title ) {
+    public static Boolean existsSameNameInFolder( Long folderId, String name ) {
         def query
         ActionItem.withSession {session ->
             session.setFlushMode( FlushMode.MANUAL );
             try {
-                query = session.getNamedQuery( 'ActionItemGroup.existsSameTitleInFolder' )
-                        .setString( 'title', title )
+                query = session.getNamedQuery( 'ActionItemGroup.existsSameNameInFolder' )
+                        .setString( 'name', name )
                         .setLong( 'folderId', folderId )
                         .list()[0]
             } finally {
