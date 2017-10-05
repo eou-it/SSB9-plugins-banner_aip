@@ -126,13 +126,13 @@ class UserActionItemReadOnly implements Serializable {
     /**
      * Display Start Date
      */
-    @Column(name = "ACTION_ITEM_ACTIVITY_DATE")
+    @Column(name = "ACTION_ITEM_DISPLAY_START_DATE")
     Date displayStartDate
 
     /**
      * Display End Date
      */
-    @Column(name = "ACTION_ITEM_ACTIVITY_DATE")
+    @Column(name = "ACTION_ITEM_DISPLAY_END_DATE")
     Date displayEndDate
 
     /**
