@@ -91,7 +91,10 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         userActionItemNewList.actionItemId = userActionItem.actionItemId
         userActionItemNewList.pidm = userActionItem.pidm
         userActionItemNewList.status = userActionItem.status
-        userActionItemNewList.completedDate = userActionItem.completedDate
+        userActionItemNewList.userResponseDate = userActionItem.userResponseDate
+        userActionItemNewList.displayStartDate = userActionItem.displayStartDate
+        userActionItemNewList.displayEndDate = userActionItem.displayEndDate
+        userActionItemNewList.groupId = userActionItem.groupId
         userActionItemNewList.userId = userActionItem.userId
         userActionItemNewList.activityDate = userActionItem.activityDate
         userActionItemNewList.creatorId = userActionItem.creatorId

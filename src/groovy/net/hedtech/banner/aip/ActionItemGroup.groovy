@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -9,7 +9,9 @@ import org.hibernate.FlushMode
 
 import javax.persistence.*
 
-
+/**
+ * Domain class for Action Item Group table
+ */
 @NamedQueries(value = [
         @NamedQuery(name = "ActionItemGroup.fetchActionItemGroups",
                 query = """
@@ -47,44 +49,50 @@ class ActionItemGroup implements Serializable {
      */
 
     @Version
-    @Column(name = "GCBAGRP_VERSION", length = 19, nullable = false)
+    @Column(name = "GCBAGRP_VERSION")
     Long version
 
     /**
      * Title of the action item
      */
-    @Column(name = "GCBAGRP_TITLE", length = 60)
+    @Column(name = "GCBAGRP_TITLE")
     String title
 
     /**
      * Name of the action item
      */
-    @Column(name = "GCBAGRP_NAME", length = 60)
+    @Column(name = "GCBAGRP_NAME")
     String name
 
     /***
-     * Related ID of the action item
+     * Related Folder ID of the action item folder
      */
-    @Column(name = "GCBAGRP_FOLDER_ID", length = 19)
+    @Column(name = "GCBAGRP_GCRFLDR_ID")
     Long folderId
 
     /**
      * Description for action item
      */
-    @Column(name = "GCBAGRP_DESCRIPTION", columnDefinition = "TEXT")
+    @Column(name = "GCBAGRP_INSTRUCTION", columnDefinition = "TEXT")
     /*need to figure out what to limit length to for display*/
     String description
 
     /**
-     * Pending, Active, InActive ...
+     * Status Draft, Active, InActive ...
      */
-    @Column(name = "GCBAGRP_STATUS", length = 30)
+    @Column(name = "GCBAGRP_STATUS_CODE")
     String status
+
+    /**
+     * Posting Indicator
+     */
+    @Column(name = "GCBAGRP_POSTED_IND")
+    String postingInd
 
     /**
      * User action item pertains to
      */
-    @Column(name = "GCBAGRP_USER_ID", length = 30)
+    @Column(name = "GCBAGRP_USER_ID")
     String userId
 
     /**
@@ -96,15 +104,16 @@ class ActionItemGroup implements Serializable {
     /**
      * Data Origin column for SORNOTE
      */
-    @Column(name = "GCBAGRP_DATA_ORIGIN", length = 30)
+    @Column(name = "GCBAGRP_DATA_ORIGIN")
     String dataOrigin
 
     static constraints = {
         title( nullable: false, maxSize: 2048 )
-        name(nullabe: false, maxSize: 2048)
-        description( nullable: true ) //summary length only for now
+        name( nullabe: false, maxSize: 60 )
+        description( nullable: true )
+        postingInd(nullabe: true)
         folderId( nullable: false, maxSize: 30 )
-        status( nullable: false, maxSize: 30 )
+        status( nullable: false, maxSize: 1 )
         userId( nullable: false, maxSize: 30 )
         activityDate( nullable: false, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 19 )

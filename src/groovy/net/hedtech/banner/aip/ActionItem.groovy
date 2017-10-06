@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -55,22 +55,28 @@ class ActionItem implements Serializable {
     String name
 
     /**
-     * Status (Pending, Complete, other...)
+     * Status (Draft, Active, Inactive)
      */
-    @Column(name = "GCBACTM_STATUS")
+    @Column(name = "GCBACTM_STATUS_CODE")
     String status
 
+    /**
+     * Posting Indicator ( yes or no)
+     */
+    @Column(name = "GCBACTM_POSTED_IND")
+    String postedIndicator
+
     /***
-     * Related ID of the action item
+     * Related folder ID of the action item
      */
 
-    @Column(name = "GCBACTM_FOLDER_ID")
+    @Column(name = "GCBACTM_GCRFLDR_ID")
     Long folderId
 
     /**
      * User action item pertains to
      */
-    @Column(name = "GCBACTM_USER_ID", length = 30)
+    @Column(name = "GCBACTM_USER_ID")
     String userId
 
     /**
@@ -89,20 +95,20 @@ class ActionItem implements Serializable {
     /**
      * UserID that created the action item
      */
-    @Column(name = "GCBACTM_CREATOR_ID", length = 30)
+    @Column(name = "GCBACTM_CREATOR_ID")
     String creatorId
 
     /**
      * Date the action item was created
      */
-    @Column(name = "GCBACTM_CREATE_DATE", length = 30)
+    @Column(name = "GCBACTM_CREATE_DATE")
     Date createDate
 
     /**
      * Version of the action item
      */
     @Version
-    @Column(name = "GCBACTM_VERSION", length = 19)
+    @Column(name = "GCBACTM_VERSION")
     Long version
 
     /**
@@ -115,12 +121,13 @@ class ActionItem implements Serializable {
         folderId( blank: false, nullable: false, maxSize: 19 )
         title( blank: false, nullable: false, maxSize: 2048 )
         name( blank: false, nullable: false, maxSize: 60 )
-        status( blank: false, nullable: false, maxSize: 30 )
+        status( blank: false, nullable: false, maxSize: 1 )
+        postedIndicator( nullable: false, maxSize: 1 )
         userId( blank: false, nullable: false, maxSize: 30 )
         activityDate( blank: false, nullable: false, maxSize: 30 )
         description( nullable: true ) //summary length only for now
         creatorId( nullable: true, maxSize: 30 )
-        createDate( nullable: true, maxSize: 30 )
+        createDate( nullable: true )
         dataOrigin( nullable: true, maxSize: 19 )
     }
 

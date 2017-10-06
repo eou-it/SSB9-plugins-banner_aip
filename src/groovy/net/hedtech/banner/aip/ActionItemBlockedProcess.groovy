@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -31,6 +31,9 @@ import javax.persistence.*
 @Table(name = "GCRABLK")
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
+/**
+ * Domain class for Action Item Block: Defines the process that can be blocked by an action item.
+ */
 class ActionItemBlockedProcess implements Serializable {
 
     /**
@@ -46,7 +49,7 @@ class ActionItemBlockedProcess implements Serializable {
     /**
      * ID of the action item being blocked
      */
-    @Column(name = "GCRABLK_ACTION_ITEM_ID")
+    @Column(name = "GCRABLK_GCBACTM_ID")
     Long blockActionItemId
 
     /**
@@ -64,7 +67,7 @@ class ActionItemBlockedProcess implements Serializable {
     /**
      * User action item pertains to
      */
-    @Column(name = "GCRABLK_USER_ID", length = 30)
+    @Column(name = "GCRABLK_USER_ID")
     String blockUserId
 
     /**
@@ -77,7 +80,7 @@ class ActionItemBlockedProcess implements Serializable {
      * Version of the action item: required for app
      */
     @Version
-    @Column(name = "GCRABLK_VERSION", length = 19)
+    @Column(name = "GCRABLK_VERSION")
     Long version
 
     /**
@@ -91,8 +94,8 @@ class ActionItemBlockedProcess implements Serializable {
         blockConfigName( blank: false, nullable: false, maxSize: 50 )
         blockConfigType( blank: false, nullable: false, maxSize: 30 )
         blockUserId( blank: false, nullable: false, maxSize: 30 )
-        blockActivityDate( blank: false, nullable: false, maxSize: 30 )
-        version( nullable: true, maxSize: 19 )
+        blockActivityDate( blank: false, nullable: false )
+        version( nullable: true )
         dataOrigin( nullable: true, maxSize: 30 )
     }
 
@@ -100,10 +103,9 @@ class ActionItemBlockedProcess implements Serializable {
      *
      * @return
      */
-    public static def fetchActionItemBlockedProcessList() {
+    static def fetchActionItemBlockedProcessList() {
         ActionItemBlockedProcess.withSession {session ->
-            List<ActionItemBlockedProcess> actionItemBlockedProcessList = session.getNamedQuery( 'ActionItemBlockedProcess.fetchActionItemBlockedProcessList' ).list()
-            return actionItemBlockedProcessList
+            session.getNamedQuery( 'ActionItemBlockedProcess.fetchActionItemBlockedProcessList' ).list()
         }
     }
 
@@ -112,10 +114,9 @@ class ActionItemBlockedProcess implements Serializable {
      * @param myId
      * @return
      */
-    public static def fetchActionItemBlockProcessById( Long myId ) {
+    static def fetchActionItemBlockProcessById( Long myId ) {
         ActionItemBlockedProcess.withSession {session ->
-            List<ActionItemBlockedProcess> actionItemBlockedProcess = session.getNamedQuery( 'ActionItemBlockedProcess.fetchActionItemBlockProcessById' ).setLong( 'myId', myId ).list()
-            return actionItemBlockedProcess
+            session.getNamedQuery( 'ActionItemBlockedProcess.fetchActionItemBlockProcessById' ).setLong( 'myId', myId ).list()
         }
     }
 
@@ -124,12 +125,9 @@ class ActionItemBlockedProcess implements Serializable {
      * @param myId
      * @return
      */
-    public static def fetchActionItemBlockProcessByActionId( Long myId ) {
+    static def fetchActionItemBlockProcessByActionId( Long myId ) {
         ActionItemBlockedProcess.withSession {session ->
-            List<ActionItemBlockedProcess> actionItemBlockedProcess = session.getNamedQuery( 'ActionItemBlockedProcess.fetchActionItemBlockProcessByActionId' ).setLong( 'myId', myId ).list()
-            return actionItemBlockedProcess
+            session.getNamedQuery( 'ActionItemBlockedProcess.fetchActionItemBlockProcessByActionId' ).setLong( 'myId', myId ).list()
         }
     }
-
-
 }

@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -25,6 +25,9 @@ import javax.persistence.*
 @Table(name = "GVQ_GCRAACT")
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
+/**
+ * Class for Assigned Action Item view
+ */
 class UserActionItemReadOnly implements Serializable {
 
     /**
@@ -111,7 +114,7 @@ class UserActionItemReadOnly implements Serializable {
     /**
      * Last activity date for the action item
      */
-    @Column(name = "ACTION_ITEM_COMPLETED_DATE")
+    @Column(name = "ACTION_ITEM_USER_RESPONSE_DATE")
     Date completedDate
 
     /**
@@ -119,6 +122,18 @@ class UserActionItemReadOnly implements Serializable {
      */
     @Column(name = "ACTION_ITEM_ACTIVITY_DATE")
     Date activityDate
+
+    /**
+     * Display Start Date
+     */
+    @Column(name = "ACTION_ITEM_DISPLAY_START_DATE")
+    Date displayStartDate
+
+    /**
+     * Display End Date
+     */
+    @Column(name = "ACTION_ITEM_DISPLAY_END_DATE")
+    Date displayEndDate
 
     /**
      * User action item pertains to
@@ -148,22 +163,24 @@ class UserActionItemReadOnly implements Serializable {
     static constraints = {
         id( nullable: false, maxSize: 19 )
         title( nullable: false, maxSize: 2048 )
-        name( nullable: false, maxSize: 2048 )
+        name( nullable: false, maxSize: 60 )
         description( nullable: true )
         activeTmpl( nullable: false, maxSize: 1 )
         completedDate( nullable: true, maxSize: 30 )
         userId( nullable: false, maxSize: 30 )
         activityDate( nullable: false, maxSize: 30 )
+        displayStartDate( nullable: false )
+        displayEndDate( nullable: false )
         creatorId( nullable: true, maxSize: 30 )
-        createDate( nullable: true, maxSize: 30 )
-        version( nullable: false, maxSize: 19 )
+        createDate( nullable: true )
+        version( nullable: false )
         pidm( nullable: false, maxSize: 9 )
         status( nullable: false, maxSize: 30 )
         isBlocking( nullable: false, maxSize: 1 )
         userIdTmpl( nullable: false, maxSize: 30 )
-        activityDateTmpl( nullable: false, maxSize: 30 )
+        activityDateTmpl( nullable: false )
         creatorIdTmpl( nullable: true, maxSize: 30 )
-        createDateTmpl( nullable: true, maxSize: 30 )
+        createDateTmpl( nullable: true )
         versionTmpl( nullable: false, maxSize: 19 )
     }
 
