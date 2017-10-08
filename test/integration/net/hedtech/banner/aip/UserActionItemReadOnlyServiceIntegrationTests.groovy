@@ -49,8 +49,6 @@ class UserActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
         userActionItems.each { item ->
             assertTrue item.isBlocking
         }
-        assertTrue( userActionItems.size() >= 5 )
-        assertTrue( userActionItems.size() < 10 )
     }
 
 

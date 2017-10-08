@@ -12,7 +12,7 @@ import net.hedtech.banner.service.ServiceBase
  */
 class ActionItemService extends ServiceBase {
 
-    static final String UNIQUE_NAME_FOLDER_ERROR = '@@r1:UniqueTitleInFolderError@@'
+    static final String UNIQUE_NAME_FOLDER_ERROR = '@@r1:UniqueNameInFolderError@@'
     static final String NO_TITLE_ERROR = '@@r1:TitleCanNotBeNullError@@'
     static final String NO_NAME_ERROR = '@@r1:NameCanNotBeNullError@@'
     static final String FOLDER_VALIDATION_ERROR = '@@r1:FolderDoesNotExist@@'

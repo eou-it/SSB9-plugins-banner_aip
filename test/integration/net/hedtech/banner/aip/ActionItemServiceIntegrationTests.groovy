@@ -44,11 +44,12 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         def folderId = communicationFolderService.list()[0].id
         ActionItem ai = new ActionItem()
         ai.folderId = folderId
-        ai.status = 'Pending'
+        ai.status = 'D'
         ai.name = 'Test Action Item. unique 98d7efh'
         ai.title = 'Test Action Item. unique 98d7efh'
         ai.userId = 'something'
         ai.description = 'this is some action item'
+        ai.postedIndicator = 'N'
         ai.activityDate = new java.util.Date( System.currentTimeMillis() )
         ActionItem createdItem = actionItemService.create( ai )
         assertEquals( 'Test Action Item. unique 98d7efh', createdItem.title )
@@ -65,10 +66,11 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         def folderId = 919278
         ActionItem ai = new ActionItem()
         ai.folderId = folderId
-        ai.status = 'Pending'
+        ai.status = 'P'
         ai.name = 'Test Action Item'
         ai.title = 'Test Action Item'
         ai.userId = 'something'
+        ai.postedIndicator = 'N'
         ai.description = 'this is some action item'
         ai.activityDate = new java.util.Date( System.currentTimeMillis() )
         // fails due to no folder matching id
@@ -77,7 +79,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
             Assert.fail "Expected to fail because folder does not exist."
         } catch (ApplicationException e) {
             assertTrue( e.getMessage().toString().contains( "@@r1:FolderDoesNotExist@@" ) )
-            assertTrue( e.getDefaultMessage(  ).toString().contains( 'actionItem.folder.validation.error' ) )
+            assertTrue( e.getDefaultMessage().toString().contains( 'actionItem.folder.validation.error' ) )
 
         }
     }
@@ -99,7 +101,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
             Assert.fail "Expected to fail because folder does not exist."
         } catch (ApplicationException e) {
             assertTrue( e.getMessage().toString().contains( "@@r1:TitleCanNotBeNullError@@" ) )
-            assertTrue( e.getDefaultMessage(  ).toString().contains( 'actionItem.title.nullable.error' ) )
+            assertTrue( e.getDefaultMessage().toString().contains( 'actionItem.title.nullable.error' ) )
         }
     }
 
@@ -121,7 +123,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
             Assert.fail "Expected to fail because folder does not exist."
         } catch (ApplicationException e) {
             assertTrue( e.getMessage().toString().contains( "@@r1:StatusCanNotBeNullError@@" ) )
-            assertTrue( e.getDefaultMessage(  ).toString().contains( 'actionItem.status.nullable.error' ) )
+            assertTrue( e.getDefaultMessage().toString().contains( 'actionItem.status.nullable.error' ) )
         }
     }
 
@@ -142,7 +144,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
             Assert.fail "Expected to fail because folder does not exist."
         } catch (ApplicationException e) {
             assertTrue( e.getMessage().toString().contains( ActionItemService.NO_FOLDER_ERROR ) )
-            assertTrue( e.getDefaultMessage(  ).toString().contains( 'actionItem.folderId.nullable.error' ) )
+            assertTrue( e.getDefaultMessage().toString().contains( 'actionItem.folderId.nullable.error' ) )
         }
     }
 
@@ -164,7 +166,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
             Assert.fail "Expected to fail because folder does not exist."
         } catch (ApplicationException e) {
             assertTrue( e.getMessage().toString().contains( ActionItemService.MAX_SIZE_ERROR ) )
-            assertTrue( e.getDefaultMessage(  ).toString().contains( 'max.size' ) )
+            assertTrue( e.getDefaultMessage().toString().contains( 'max.size' ) )
         }
     }
 
@@ -174,18 +176,19 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ActionItem existingAI = actionItemService.list()[7]
         ActionItem ai = new ActionItem()
         ai.folderId = existingAI.folderId
-        ai.status = 'Pending'
+        ai.status = 'P'
         ai.name = existingAI.title
         ai.title = existingAI.title
         ai.userId = 'something'
+        ai.postedIndicator = 'N'
         ai.description = 'this is some action item'
         ai.activityDate = new java.util.Date( System.currentTimeMillis() )
         try {
             actionItemService.create( ai )
             Assert.fail "Expected duplicate title in folder to fail because of name unique constraint."
         } catch (ApplicationException e) {
-            assertTrue( e.getMessage().toString().contains( "@@r1:UniqueTitleInFolderError@@" ) )
-            assertTrue( e.getDefaultMessage(  ).toString().contains( 'actionItem.title.unique.error' ) )
+            assertTrue( e.getMessage().toString().contains( "@@r1:UniqueNameInFolderError@@" ) )
+            assertTrue( e.getDefaultMessage().toString().contains( 'actionItem.name.unique.error' ) )
         }
     }
 }

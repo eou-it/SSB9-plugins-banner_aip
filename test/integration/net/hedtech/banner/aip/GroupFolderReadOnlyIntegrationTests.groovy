@@ -193,6 +193,8 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         groupFolderNew.folderDesc = groupFolderById.folderDesc
         groupFolderNew.folderName = groupFolderById.folderName
         groupFolderNew.folderId = groupFolderById.folderId
+        groupFolderNew.postedInd = groupFolderById.postedInd
+
 
         def result = groupFolderNew.equals( groupFolderById )
         assertTrue result

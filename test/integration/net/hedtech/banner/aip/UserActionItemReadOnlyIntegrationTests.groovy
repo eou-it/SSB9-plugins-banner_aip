@@ -118,6 +118,8 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         userActionItemRONewList.creatorId = userActionItemListRO.creatorId
         userActionItemRONewList.createDate = userActionItemListRO.createDate
         userActionItemRONewList.version = userActionItemListRO.version
+        userActionItemRONewList.displayStartDate= userActionItemListRO.displayStartDate
+        userActionItemRONewList.displayEndDate= userActionItemListRO.displayEndDate
 
         def result = userActionItemRONewList.equals( userActionItemListRO )
         assertTrue result
