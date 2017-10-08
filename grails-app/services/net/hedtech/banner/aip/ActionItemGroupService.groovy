@@ -12,7 +12,7 @@ class ActionItemGroupService extends ServiceBase {
 
     boolean transactional = true
 
-    static final String UNIQUE_TITLE_ERROR = '@@r1:UniqueTitleInFolderError@@'
+    static final String UNIQUE_NAME_ERROR = '@@r1:UniqueNameInFolderError@@'
 
     static final String NO_TITLE_ERROR = '@@r1:TitleCanNotBeNullError@@'
 
@@ -59,8 +59,8 @@ class ActionItemGroupService extends ServiceBase {
             throw new ApplicationException( ActionItemGroup, FOLDER_VALIDATION_ERROR, 'actionItemGroup.folder.validation.error' )
         }
 
-        if (ActionItemGroup.existsSameTitleInFolder( aig.folderId, aig.title )) {
-            throw new ApplicationException( ActionItemGroup, UNIQUE_TITLE_ERROR, 'actionItemGroup.title.unique.error' )
+        if (ActionItemGroup.existsSameNameInFolder( aig.folderId, aig.name)) {
+            throw new ApplicationException( ActionItemGroup, UNIQUE_NAME_ERROR, 'actionItemGroup.name.unique.error' )
         }
     }
 }
