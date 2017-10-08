@@ -75,6 +75,7 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         actionItemGroupNewList.name = actionItemGroup.name
         actionItemGroupNewList.folderId = actionItemGroup.folderId
         actionItemGroupNewList.description = actionItemGroup.description
+        actionItemGroupNewList.postingInd = actionItemGroup.postingInd
         actionItemGroupNewList.status = actionItemGroup.status
         actionItemGroupNewList.userId = actionItemGroup.userId
         actionItemGroupNewList.activityDate = actionItemGroup.activityDate
@@ -102,6 +103,7 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         actionItemGroupNewList.title = actionItemGroup.title
         actionItemGroupNewList.folderId = actionItemGroup.folderId
         actionItemGroupNewList.description = actionItemGroup.description
+        actionItemGroupNewList.postingInd = actionItemGroup.postingInd
         actionItemGroupNewList.status = actionItemGroup.status
         actionItemGroupNewList.userId = actionItemGroup.userId
         actionItemGroupNewList.activityDate = actionItemGroup.activityDate
@@ -137,6 +139,7 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         actionItemGroupNewList.name = actionItemGroup.name
         actionItemGroupNewList.folderId = otherFolderId
         actionItemGroupNewList.description = actionItemGroup.description
+        actionItemGroupNewList.postingInd = actionItemGroup.postingInd
         actionItemGroupNewList.status = actionItemGroup.status
         actionItemGroupNewList.userId = actionItemGroup.userId
         actionItemGroupNewList.activityDate = actionItemGroup.activityDate
@@ -159,6 +162,7 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         actionItemGroupNewList.title = "a unique title oifvh43"
         actionItemGroupNewList.folderId = actionItemGroup.folderId
         actionItemGroupNewList.description = actionItemGroup.description
+        actionItemGroupNewList.postingInd = actionItemGroup.postingInd
         actionItemGroupNewList.status = "pendingstatusoverthe30characterlimit"
         actionItemGroupNewList.userId = actionItemGroup.userId
         actionItemGroupNewList.activityDate = actionItemGroup.activityDate

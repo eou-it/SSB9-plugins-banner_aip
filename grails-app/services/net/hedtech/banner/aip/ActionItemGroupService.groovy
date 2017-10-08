@@ -41,7 +41,6 @@ class ActionItemGroupService extends ServiceBase {
 
         if (!aig.validate()) {
             def errorCodes = aig.errors.allErrors.codes[0]
-
             if (errorCodes.contains( 'actionItemGroup.title.nullable' )) {
                 throw new ApplicationException( ActionItem, NO_TITLE_ERROR, 'actionItemGroup.title.nullable.error' )
             } else if (errorCodes.contains( 'actionItemGroup.folderId.nullable' )) {

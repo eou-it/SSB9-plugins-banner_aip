@@ -3,18 +3,17 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
 import org.springframework.transaction.annotation.Transactional
 
 
 
-class ActionItemDetailService extends ServiceBase {
+class ActionItemContentService extends ServiceBase {
 
     boolean transactional = true
 
     @Transactional(readOnly = true)
-    def listActionItemDetailById(Long actionItemId) {
-        return ActionItemDetail.fetchActionItemDetailById( actionItemId )
+    def listActionItemContentById( Long actionItemId) {
+        return ActionItemContent.fetchActionItemContentById( actionItemId )
     }
 }

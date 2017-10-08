@@ -71,6 +71,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
                 dataOrigin: actionItem.dataOrigin,
                 folderId: actionItem.folderId,
                 description: actionItem.description,
+                postedIndicator: actionItem.postedIndicator,
                 name: actionItem.name,
                 title: actionItem.title,
                 userId: actionItem.userId )

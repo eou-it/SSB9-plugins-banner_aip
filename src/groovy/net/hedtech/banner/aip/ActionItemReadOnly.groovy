@@ -36,6 +36,9 @@ import javax.persistence.*
 @Table(name = "GVQ_GCBACTM")
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
+/**
+ * Domain class for Action Item Read only View
+ */
 class ActionItemReadOnly implements Serializable {
 
     /**
@@ -92,8 +95,15 @@ class ActionItemReadOnly implements Serializable {
      * Status of action item
      */
 
-    @Column(name = "ACTION_ITEM_STATUS", length = 30)
+    @Column(name = "ACTION_ITEM_STATUS")
     String actionItemStatus
+
+    /**
+     * Status of action item
+     */
+
+    @Column(name = "ACTION_ITEM_POSTED_STATUS")
+    String actionItemPostedStatus
 
     /**
      * Last activity date for the action item
@@ -106,21 +116,21 @@ class ActionItemReadOnly implements Serializable {
      * * User who last updated the Action Item
      */
 
-    @Column(name = "ACTION_ITEM_USER_ID", length = 30)
+    @Column(name = "ACTION_ITEM_USER_ID")
     String actionItemUserId
 
     /**
      * User who last updated the content
      */
 
-    @Column(name = "ACTION_ITEM_CONTENT_USER_ID", length = 30)
+    @Column(name = "ACTION_ITEM_CONTENT_USER_ID")
     String actionItemContentUserId
 
     /**
      * UserID that created the action item
      */
 
-    @Column(name = "ACTION_ITEM_CREATOR_ID", length = 30)
+    @Column(name = "ACTION_ITEM_CREATOR_ID")
     String actionItemCreatorId
 
     /**
@@ -149,29 +159,27 @@ class ActionItemReadOnly implements Serializable {
      */
 
     @Version
-    @Column(name = "ACTION_ITEM_VERSION", length = 19)
+    @Column(name = "ACTION_ITEM_VERSION")
     Long actionItemVersion
 
     /**
      * ID of the action item template
      */
-
-
-    @Column(name = "ACTION_ITEM_TEMPLATE_ID", length = 19)
+    @Column(name = "ACTION_ITEM_PB_TEMPLATE_ID")
     Long actionItemTemplateId
 
     /**
-     * Name of the action item template
+     * Name of the action item Page builder template
      */
-    @Column(name = "ACTION_ITEM_TEMPLATE_NAME", length = 2048)
+    @Column(name = "ACTION_ITEM_PB_TEMPLATE_NAME")
     String actionItemTemplateName
 
 
-    @Column(name = "ACTION_ITEM_PAGE_NAME", length = 60)
+    @Column(name = "ACTION_ITEM_PAGE_NAME")
     String actionItemPageName
 
 
-    @Column(name = "ACTION_ITEM_CONTENT_ID", length = 19)
+    @Column(name = "ACTION_ITEM_CONTENT_ID")
     Long actionItemContentId
 
     /**

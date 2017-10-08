@@ -13,7 +13,7 @@ import org.junit.Test
 class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemReadOnlyService
-    def actionItemDetailService
+    def actionItemContentService
 
     @Before
     public void setUp() {
@@ -80,12 +80,12 @@ class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase 
     void testCompositeDate() {
         List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
         def actionItemId = actionItemsList[0].id
-        ActionItemDetail myActionItemDetail = ActionItemDetail.fetchActionItemDetailById( actionItemId )
+        ActionItemContent myActionItemDetail = ActionItemContent.fetchActionItemContentById( actionItemId )
         assertEquals( actionItemId, myActionItemDetail.actionItemId )
 
         // update takes care of updating date
         myActionItemDetail.lastModified = new java.util.Date()
-        actionItemDetailService.update(myActionItemDetail)
+        actionItemContentService.update( myActionItemDetail)
 
         ActionItemReadOnly updatedAIRO = actionItemReadOnlyService.getActionItemROById( actionItemId )
         assertEquals( myActionItemDetail.lastModified, updatedAIRO.actionItemCompositeDate )

@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -10,9 +10,9 @@ import javax.persistence.*
 
 
 @NamedQueries(value = [
-        @NamedQuery(name = "ActionItemDetail.fetchActionItemDetailById",
+        @NamedQuery(name = "ActionItemContent.fetchActionItemContentById",
                 query = """
-           FROM ActionItemDetail a
+           FROM ActionItemContent a
            WHERE a.actionItemId = :myId
           """)
 ])
@@ -22,7 +22,10 @@ import javax.persistence.*
 @Table(name = "GCRACNT")
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
-class ActionItemDetail implements Serializable {
+/**
+ * Domain class for Action Item Content
+ */
+class ActionItemContent implements Serializable {
 
     /**
      * Surrogate ID for GCRACNT
@@ -37,7 +40,7 @@ class ActionItemDetail implements Serializable {
     /***
      * Related ID of the action item
      */
-    @Column(name = "GCRACNT_ACTION_ITEM_ID", length = 19)
+    @Column(name = "GCRACNT_GCBACTM_ID")
     Long actionItemId
 
     /**
@@ -48,15 +51,15 @@ class ActionItemDetail implements Serializable {
     String text
 
     /***
-     * Related ID of the action item template
+     * Related ID of the action item page builder template
      */
-    @Column(name = "GCRACNT_TEMPLATE_REFERENCE_ID", length = 19)
+    @Column(name = "GCRACNT_GCBPBTR_ID")
     Long actionItemTemplateId
 
     /**
      * User action item pertains to
      */
-    @Column(name = "GCRACNT_USER_ID", length = 30)
+    @Column(name = "GCRACNT_USER_ID")
     String lastModifiedby
 
     /**
@@ -70,22 +73,22 @@ class ActionItemDetail implements Serializable {
      * Version of the action item
      */
     @Version
-    @Column(name = "GCRACNT_VERSION", length = 19)
+    @Column(name = "GCRACNT_VERSION")
     Long version
 
     /**
-     * Data Origin column for SORNOTE
+     * Data Origin column for GCRACNT
      */
-    @Column(name = "GCRACNT_DATA_ORIGIN", length = 30)
+    @Column(name = "GCRACNT_DATA_ORIGIN")
     String dataOrigin
 
     static constraints = {
-//        id(nullable: false, maxSize: 19)
+        id( nullable: false, maxSize: 19 )
         actionItemId( nullable: false, maxSize: 19 )
-        text( nullable: true ) //summary length only for now
+        text( nullable: true )
         actionItemTemplateId( nullable: true )
         lastModifiedby( nullable: false, maxSize: 30 )
-        lastModified( nullable: false, maxSize: 30 )
+        lastModified( nullable: false )
         version( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 19 )
     }
@@ -95,10 +98,10 @@ class ActionItemDetail implements Serializable {
      * @param id
      * @return
      */
-    public static def fetchActionItemDetailById( Long id ) {
-        ActionItemDetail.withSession {session ->
-            List actionItemDetail = session.getNamedQuery( 'ActionItemDetail.fetchActionItemDetailById' ).setLong( 'myId', id ).list()
-            return actionItemDetail[0] ? actionItemDetail[0] : []
+    public static def fetchActionItemContentById( Long id ) {
+        ActionItemContent.withSession {session ->
+            List actionItemContent = session.getNamedQuery( 'ActionItemContent.fetchActionItemContentById' ).setLong( 'myId', id ).list()
+            return actionItemContent[0] ? actionItemContent[0] : []
         }
     }
 }

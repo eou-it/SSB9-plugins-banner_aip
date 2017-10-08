@@ -31,6 +31,9 @@ import javax.persistence.*
 @Table(name = "GCVASTS")
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
+/**
+ * Domain class for Action Status Validation
+ */
 class ActionItemStatus implements Serializable {
 
     /**
@@ -46,7 +49,7 @@ class ActionItemStatus implements Serializable {
     /**
      * Name of the action item status
      */
-    @Column(name = "GCVASTS_ACTION_ITEM_STATUS")
+    @Column(name = "GCVASTS_STATUS_RULE_NAME")
     String actionItemStatus
 
     /**
@@ -100,12 +103,12 @@ class ActionItemStatus implements Serializable {
     static constraints = {
         actionItemStatus( blank: false, nullable: false, maxSize: 30, unique: true )
         actionItemStatusActive( blank: false, nullable: false, maxSize: 1 )
-        actionItemStatusActivityDate( blank: false, nullable: false, maxSize: 30 )
+        actionItemStatusActivityDate( blank: false, nullable: false )
         actionItemStatusBlockedProcess( blank: false, nullable: false, maxSize: 1 )
         actionItemStatusDefault( blank: true, nullable: true, maxSize: 1 )
-        actionItemStatusSystemRequired( blank: false, nullable: false, maxSize: 1 ) //summary length only for now
+        actionItemStatusSystemRequired( blank: false, nullable: false, maxSize: 1 )
         actionItemStatusUserId( blank: false, nullable: false, maxSize: 30 )
-        actionItemStatusVersion( nullable: true, maxSize: 30 )
+        actionItemStatusVersion( nullable: true )
         actionItemStatusDataOrigin( nullable: true, maxSize: 30 )
     }
 

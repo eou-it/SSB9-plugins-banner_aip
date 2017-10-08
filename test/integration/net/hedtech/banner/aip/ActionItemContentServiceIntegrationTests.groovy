@@ -4,17 +4,15 @@
 
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.ActionItem
-import net.hedtech.banner.aip.ActionItemDetail
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
 
-class ActionItemDetailServiceIntegrationTests extends BaseIntegrationTestCase {
+class ActionItemContentServiceIntegrationTests extends BaseIntegrationTestCase {
 
-    def actionItemDetailService
+    def actionItemContentService
 
     def actionItemService
 
@@ -36,7 +34,7 @@ class ActionItemDetailServiceIntegrationTests extends BaseIntegrationTestCase {
     void testFetchActionItemDetailByIdService() {
         List<ActionItem> actionItemsList = actionItemService.listActionItems()
         def actionItemId = actionItemsList[0].id
-        ActionItemDetail actionItemDetailId = actionItemDetailService.listActionItemDetailById( actionItemId )
+        ActionItemContent actionItemDetailId = actionItemContentService.listActionItemContentById( actionItemId )
         assertEquals( actionItemId, actionItemDetailId.actionItemId )
     }
 
