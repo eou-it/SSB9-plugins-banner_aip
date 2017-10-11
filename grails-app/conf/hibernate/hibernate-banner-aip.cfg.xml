@@ -28,6 +28,9 @@ Copyright 2016 Ellucian Company L.P. and its affiliates.
         <mapping class="net.hedtech.banner.aip.ActionItemStatusRule"/>
         <mapping class="net.hedtech.banner.aip.ActionItemStatusRuleReadOnly"/>
         <mapping class="net.hedtech.banner.aip.ActionItemBlockedProcess"/>
+        <mapping class="net.hedtech.banner.aip.ActionItemPost"/>
+        <mapping class="net.hedtech.banner.aip.ActionItemPostDetail"/>
+        <mapping class="net.hedtech.banner.aip.ActionItemPostingDetailsReadOnly"/>
         <mapping class="net.hedtech.banner.general.communication.folder.CommunicationFolder"/>
     </session-factory>
 </hibernate-configuration>
