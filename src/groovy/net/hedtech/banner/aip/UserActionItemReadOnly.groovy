@@ -38,6 +38,9 @@ class UserActionItemReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_ID")
     Long id
 
+    @Column(name = "ACTION_ITEM_SEQ_NUMBER")
+    Long actionItemSequenceNumber
+
     /**
      * Title of the action item
      */
@@ -67,7 +70,6 @@ class UserActionItemReadOnly implements Serializable {
      */
     @Column(name = "ACTION_ITEM_GROUP_TITLE")
     String actionItemGroupTitle
-
     /**
      * Indicator that the action item is active
      */
