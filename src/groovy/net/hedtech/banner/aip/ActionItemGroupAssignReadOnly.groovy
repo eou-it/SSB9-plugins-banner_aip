@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -71,75 +71,74 @@ class ActionItemGroupAssignReadOnly implements Serializable {
     /***
      * Indicator for Action Item post
      */
-    @Column (name = "ACTION_ITEM_POSTED_IND")
+    @Column(name = "ACTION_ITEM_POSTED_IND")
     String actionItemGroupAssignActionItemPostInd
 
     /***
      * Description of Action Item
      */
-    @Column (name = "ACTION_ITEM_DESCRIPTION")
+    @Column(name = "ACTION_ITEM_DESCRIPTION")
     String actionItemGroupAssigneActionItemDesc
 
     /***
      * User ID who laste updated the ActionItem
      */
-    @Column (name = "ACTION_ITEM_CREATOR_ID")
+    @Column(name = "ACTION_ITEM_CREATOR_ID")
     Long actionITemGroupAssignActionItemCreatorId
 
     /***
      * Last date of Action Item Update
      */
-    @Column (name = "ACTION_ITEM_CREATE_DATE")
+    @Column(name = "ACTION_ITEM_CREATE_DATE")
     String actionItemGroupAssignActionItemCreateDate
 
     /***
      * Group Folder ID
      */
-    @Column (name = "ACTION_ITEM_GROUP_GCRFLDR_ID")
+    @Column(name = "ACTION_ITEM_GROUP_GCRFLDR_ID")
     Long actionItemGroupAssignGroupFolderId
 
     /***
      * Group ID
      */
-    @Column (name = "ACTION_ITEM_GROUP_ID")
+    @Column(name = "ACTION_ITEM_GROUP_ID")
     Long actionItemGroupAssignGroupId
 
     /***
      * Group Name
      */
-    @Column (name = "ACTION_ITEM_GROUP_NAME", length = 60)
+    @Column(name = "ACTION_ITEM_GROUP_NAME")
     String actionItemGroupAssignGroupName
 
     /***
      * Group Title
      */
-    @Column (name = "ACTION_ITEM_GROUP_TITLE", length = 60)
+    @Column(name = "ACTION_ITEM_GROUP_TITLE")
     String actionItemGroupAssignGroupTitle
 
     /***
      * Status code of Group
      */
-    @Column (name = "ACTION_ITEM_GROUP_STATUS_CODE")
+    @Column(name = "ACTION_ITEM_GROUP_STATUS_CODE")
     String actionItemGroupAssignGroupStatusCode
 
     /***
      * Post indicator for the group
      */
-    @Column (name = "ACTION_ITEM_GROUP_POSTED_IND")
+    @Column(name = "ACTION_ITEM_GROUP_POSTED_IND")
     String actionItemGroupAssignGroupPostInd
 
 
-    static fetchActionItemGroupAssignROByGroupId(Long myId) {
+    static fetchActionItemGroupAssignROByGroupId( Long myId ) {
         ActionItemGroupAssignReadOnly.withSession {session ->
-            List actionItemGroupAssingROs =session.getNamedQuery ('ActionItemGroupAssignReadOnly.fetchById').setLong('myId', myId).list()
-            return actionItemGroupAssingROs
+            session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchById' ).setLong( 'myId', myId ).list()
         }
     }
 
+
     static def fetchActionItemGroupAssignRO() {
         ActionItemGroupAssignReadOnly.withSession {session ->
-            List actionItemGroupAssinnROs = session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchActionItemGroupAssign' ).list()
-            return actionItemGroupAssinnROs
+            session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchActionItemGroupAssign' ).list()
         }
     }
 

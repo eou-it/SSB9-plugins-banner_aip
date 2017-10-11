@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -73,23 +73,23 @@ class ActionItemGroupAssign implements Serializable {
     Long seqNo
 
     /***
-     * Date of recored created or last updated
+     * Date of record created or last updated
      */
 
     @Column(name = "GCRAGRA_ACTIVITY_DATE")
     Long activityDate
 
     /**
-     * User ID of the poerson who inserted or last updated
+     * User ID of the person who inserted or last updated
      */
-    @Column(name = "GCRAGRA_USER_ID", length = 30)
+    @Column(name = "GCRAGRA_USER_ID")
     String userId
 
     /**
      * Version
      */
     @Version
-    @Column(name = "GCRAGRA_VERSION", length = 19)
+    @Column(name = "GCRAGRA_VERSION")
     Long version
 
     /**
@@ -103,7 +103,7 @@ class ActionItemGroupAssign implements Serializable {
         actionItemId( blank: false, nullable: false, maxSize: 19)
         seqNo(blank: false, nullable: false, maxSize: 19)
         userId( blank: false, nullable: false, maxSize: 30 )
-        activityDate( blank: false, nullable: false, maxSize: 30 )
+        activityDate( blank: false, nullable: false )
         dataOrigin( nullable: true, maxSize: 19 )
     }
 
