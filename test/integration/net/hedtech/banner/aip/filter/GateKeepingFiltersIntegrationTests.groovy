@@ -1,3 +1,6 @@
+/*********************************************************************************
+ Copyright 2016 Ellucian Company L.P. and its affiliates.
+ **********************************************************************************/
 package net.hedtech.banner.aip.filter
 
 import grails.util.GrailsWebUtil
@@ -10,17 +13,6 @@ import org.junit.Test
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 
-/** *****************************************************************************
- © 2016 SunGard Higher Education.  All Rights Reserved.
-
- CONFIDENTIAL BUSINESS INFORMATION
-
- THIS PROGRAM IS PROPRIETARY INFORMATION OF SUNGARD HIGHER EDUCATION
- AND IS NOT TO BE COPIED, REPRODUCED, LENT, OR DISPOSED OF,
- NOR USED FOR ANY PURPOSE OTHER THAN THAT WHICH IT IS SPECIFICALLY PROVIDED
- WITHOUT THE WRITTEN PERMISSION OF THE SAID COMPANY
- ****************************************************************************** */
-
 /**
  * GateKeepingFiltersIntegrationTests.
  *
@@ -29,7 +21,6 @@ import org.springframework.mock.web.MockHttpServletResponse
  */
 class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
 
-    public static final String BLOCKPLANAHEAD = '/what is this'
     public static final String UNBLOCKEDURI = '/somethingrandom'
 
     def filterInterceptor
@@ -37,6 +28,7 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
     def grailsApplication
 
     def grailsWebRequest
+
 
     @Before
     public void setUp() {
@@ -82,66 +74,8 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
                                                         'ROLE_SELFSERVICE-FACULTY_BAN_DEFAULT_M'],
             'aip'                                    : ['SELFSERVICE'],
             'aipgroup'                               : ['SELFSERVICE'],
-            'aipadmin'                  : ['SELFSERVICE']
+            'aipadmin'                               : ['SELFSERVICE']
     ]
-
-
-    @Test
-    void testFilterAPI() { // do not evaluate apis
-        def person = PersonUtility.getPerson( "CSRSTU018" ) // user has blocking
-        assertNotNull person
-        loginSSB( person.bannerId, '111111' )
-
-        MockHttpServletRequest request = new MockHttpServletRequest()
-
-        request.characterEncoding = 'UTF-8'
-        request.setRequestURI( GateKeepingFilters.BLOCKREGISTERFORCOURSES )
-        request.addHeader( 'X-Requested-With', "XMLHttpRequest" )
-
-        def result = doRequest( request )
-        assert result
-
-        assertNull(  response.redirectedUrl )
-    }
-
-
-    @Test
-    void testFilterRedirectsRegForStu() {
-        def person = PersonUtility.getPerson( "CSRSTU012" ) // user has blocking register for courses items
-        assertNotNull person
-        loginSSB( person.bannerId, '111111' )
-        MockHttpServletRequest request = new MockHttpServletRequest()
-
-        request.characterEncoding = 'UTF-8'
-        request.setRequestURI( GateKeepingFilters.BLOCKREGISTERFORCOURSES )
-
-        // mock persona? might need for registration student selected
-        request.session.setAttribute( 'selectedRole', new PersonaRule( 'STUDENT' ) )
-
-        def result = doRequest( request )
-        assert !result
-
-        assertTrue response.redirectedUrl.endsWith( 'aip/informedList' )
-    }
-
-
-    @Test
-    void testFilterNoRedirectsRegForNotStu() {
-        def person = PersonUtility.getPerson( "CSRSTU018" ) // user had blocking
-        assertNotNull person
-        loginSSB( person.bannerId, '111111' )
-        MockHttpServletRequest request = new MockHttpServletRequest()
-
-        request.characterEncoding = 'UTF-8'
-        request.setRequestURI( GateKeepingFilters.BLOCKREGISTERFORCOURSES )
-
-        request.session.setAttribute( 'selectedRole', new PersonaRule( 'FACULTY' ) )
-
-        def result = doRequest( request )
-        assert result
-
-        assertNull( response.redirectedUrl )
-    }
 
 
     @Test
@@ -173,21 +107,5 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
                 Holders.getGrailsApplication().mainContext, mockRequest, new MockHttpServletResponse() )
 
         filterInterceptor.preHandle( grailsWebRequest.request, grailsWebRequest.response, null )
-    }
-}
-
-
-class PersonaRule {
-    final Persona persona
-    PersonaRule(final String role){
-        persona = new Persona(role)
-    }
-}
-
-
-class Persona {
-    final String code
-    Persona (final String role) {
-        code = role
     }
 }
