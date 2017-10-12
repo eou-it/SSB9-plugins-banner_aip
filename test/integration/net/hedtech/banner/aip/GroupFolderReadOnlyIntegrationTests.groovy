@@ -34,6 +34,16 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
+    void fetchGroupLookup() {
+        List groupFolderList = GroupFolderReadOnly.fetchGroupLookup()
+        groupFolderList= groupFolderList.collectEntries() {
+            [it[0], [groupId:it[2], groupName:it[3], groupTitle:it[4]]]
+        }
+        assertFalse groupFolderList.isEmpty()
+    }
+
+
+    @Test
     void testFetchGroupFolderById() {
         List<GroupFolderReadOnly> groupFolderList = GroupFolderReadOnly.fetchGroupFolders()
         def groupFolderId = groupFolderList[0].groupId
@@ -104,7 +114,7 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         def activeAsFound = []
         def inactiveAsFound = []
         def pendingAsFound = []
-        results.each { it ->
+        results.each {it ->
             if (it.groupStatus == 'active') {
                 assertFalse foundInactive
                 assertFalse foundPending
@@ -124,7 +134,7 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
                 pendingAsFound.add( it.groupTitle )
             }
         }
-        (0..9).each() { it ->
+        (0..9).each() {it ->
             assertEquals( activeAsFound[it], activeAsFound.sort( false )[it] )
         }
         assertEquals( inactiveAsFound[0], inactiveAsFound.sort( false )[0] )
@@ -143,7 +153,7 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         def activeAsFound = []
         def inactiveAsFound = []
         def pendingAsFound = []
-        results.each { it ->
+        results.each {it ->
             if (it.groupStatus == 'pending') {
                 assertFalse foundInactive
                 assertFalse foundPending
@@ -164,7 +174,7 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
             }
 
         }
-        (0..9).each() { it ->
+        (0..9).each() {it ->
             assertEquals( activeAsFound[it], activeAsFound.sort( false )[it] )
         }
         assertEquals( inactiveAsFound[0], inactiveAsFound.sort( false )[0] )

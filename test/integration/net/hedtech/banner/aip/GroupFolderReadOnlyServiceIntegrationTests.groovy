@@ -13,6 +13,7 @@ class GroupFolderReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase
 
     def groupFolderReadOnlyService
 
+
     @Before
     public void setUp() {
         formContext = ['GUAGMNU']
@@ -25,11 +26,13 @@ class GroupFolderReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase
         super.tearDown()
     }
 
+
     @Test
-    void testFetchGroupFolderService( ) {
+    void testFetchGroupFolderService() {
         List<GroupFolderReadOnlyService> groupFolderList = groupFolderReadOnlyService.listActionItemGroups()
-        assertFalse groupFolderList.isEmpty(  )
+        assertFalse groupFolderList.isEmpty()
     }
+
 
     @Test
     void testFetchGroupFolderByIdService() {
@@ -37,20 +40,37 @@ class GroupFolderReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase
         def groupFolderId = groupFolderList[0].groupId
         def groupFolderTitle = groupFolderList[0].groupTitle
         List<GroupFolderReadOnly> groupFolderListById = groupFolderReadOnlyService.getActionItemGroupById( groupFolderId )
-        assertFalse groupFolderListById.isEmpty(  )
-        assertEquals(groupFolderListById[0].groupTitle, groupFolderTitle)
+        assertFalse groupFolderListById.isEmpty()
+        assertEquals( groupFolderListById[0].groupTitle, groupFolderTitle )
         assertEquals( 1, groupFolderListById.size() )
     }
 
 
     @Test
-    void testFetchGroupFolderROPageSortService() {
-        Map params1 = [filterName:"%",sortColumn:"groupTitle", sortAscending:true, max:10, offset:0]
-        Map params2 = [filterName:"%",sortColumn:"groupTitle", sortAscending:true, max:10, offset:10]
-       // Map params3 = [filterName:"%",sortColumn:"groupTitle", sortAscending:true, max:10, offset:20]
+    void fetchGroupLookup() {
+        def groupFolderList = groupFolderReadOnlyService.fetchGroupLookup( '' )
+        assertFalse groupFolderList.isEmpty()
+        groupFolderList = groupFolderReadOnlyService.fetchGroupLookup( null )
+        assertFalse groupFolderList.isEmpty()
 
-        def groupFolderROList1 = groupFolderReadOnlyService.listGroupFolderPageSort(params1)
-        def groupFolderROList2 = groupFolderReadOnlyService.listGroupFolderPageSort(params2)
+        groupFolderList = groupFolderReadOnlyService.fetchGroupLookup( 'AIPstudent' )
+        assertFalse groupFolderList.isEmpty()
+
+        groupFolderList = groupFolderReadOnlyService.fetchGroupLookup( 'student' )
+        assertFalse groupFolderList.isEmpty()
+        groupFolderList = groupFolderReadOnlyService.fetchGroupLookup( 'STUDENT' )
+        assertFalse groupFolderList.isEmpty()
+    }
+
+
+    @Test
+    void testFetchGroupFolderROPageSortService() {
+        Map params1 = [filterName: "%", sortColumn: "groupTitle", sortAscending: true, max: 10, offset: 0]
+        Map params2 = [filterName: "%", sortColumn: "groupTitle", sortAscending: true, max: 10, offset: 10]
+        // Map params3 = [filterName:"%",sortColumn:"groupTitle", sortAscending:true, max:10, offset:20]
+
+        def groupFolderROList1 = groupFolderReadOnlyService.listGroupFolderPageSort( params1 )
+        def groupFolderROList2 = groupFolderReadOnlyService.listGroupFolderPageSort( params2 )
         //def groupFolderROList3 = groupFolderReadOnlyService.listGroupFolderPageSort(params3)
 
         def totalCount = groupFolderROList1.result.size() + groupFolderROList2.result.size()

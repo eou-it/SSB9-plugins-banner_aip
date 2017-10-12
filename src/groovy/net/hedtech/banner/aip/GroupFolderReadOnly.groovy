@@ -18,6 +18,11 @@ import javax.persistence.*
                 query = """
            FROM GroupFolderReadOnly a
           """),
+        @NamedQuery(name = "GroupFolderReadOnly.fetchGroupLookup",
+                query = """
+                   select folderId, folderName, groupId, groupName, groupTitle FROM GroupFolderReadOnly a
+                    where UPPER(a.folderName) like :searchParam  or UPPER(a.groupName) like :searchParam or UPPER(a.groupTitle) like :searchParam order by a.folderName
+                  """),
         @NamedQuery(name = "GroupFolderReadOnly.fetchGroupFoldersById",
                 query = """
            FROM GroupFolderReadOnly a
@@ -121,15 +126,25 @@ class GroupFolderReadOnly implements Serializable {
     String folderDesc
 
     /**
+     * @param searchParam
+     * @return
+     */
+    static def fetchGroupLookup( searchParam ) {
+        GroupFolderReadOnly.withSession {session ->
+            session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupLookup' ).setString( 'searchParam', searchParam ).list()
+        }
+    }
+
+    /**
      *
      * @return
      */
-    public static def fetchGroupFolders() {
+    static def fetchGroupFolders() {
         GroupFolderReadOnly.withSession {session ->
             List groupFolderList = session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolders' ).list().sort {
                 it.groupTitle
             }
-            return groupFolderList
+            groupFolderList
         }
     }
 
@@ -138,10 +153,9 @@ class GroupFolderReadOnly implements Serializable {
      * @param id
      * @return
      */
-    public static def fetchGroupFoldersById( Long id ) {
+    static def fetchGroupFoldersById( Long id ) {
         GroupFolderReadOnly.withSession {session ->
-            List groupFolderListById = session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFoldersById' ).setLong( 'myId', id ).list()
-            return groupFolderListById
+            session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFoldersById' ).setLong( 'myId', id ).list()
         }
     }
 
@@ -149,10 +163,9 @@ class GroupFolderReadOnly implements Serializable {
      *
      * @return
      */
-    public static def fetchGroupFolderROCount() {
+    static def fetchGroupFolderROCount() {
         GroupFolderReadOnly.withSession {session ->
-            List groupFolderReadOnlyCount = session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolderROCount' ).list()
-            return groupFolderReadOnlyCount
+            session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolderROCount' ).list()
         }
     }
 
@@ -162,7 +175,7 @@ class GroupFolderReadOnly implements Serializable {
      * @param pagingAndSortParams
      * @return
      */
-    public static fetchWithPagingAndSortParams( filterData, pagingAndSortParams ) {
+    static fetchWithPagingAndSortParams( filterData, pagingAndSortParams ) {
         def searchStatus = filterData?.params?.status
         def queryCriteria = GroupFolderReadOnly.createCriteria()
         def results = queryCriteria.list( max: pagingAndSortParams.max, offset: pagingAndSortParams.offset ) {
@@ -172,6 +185,6 @@ class GroupFolderReadOnly implements Serializable {
                 order( Order.asc( 'groupTitle' ).ignoreCase() )
             }
         }
-        return results
+        results
     }
 }
