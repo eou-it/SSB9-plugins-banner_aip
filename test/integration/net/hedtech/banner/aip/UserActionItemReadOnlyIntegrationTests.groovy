@@ -1,28 +1,26 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.UserActionItemReadOnly
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-
 class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
-    public void setUp() {
+    void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
     }
 
 
     @After
-    public void tearDown() {
+    void tearDown() {
         super.tearDown()
     }
 
@@ -42,27 +40,6 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         assertEquals( 0, userActionItems.size() )
         //println userActionItems
     }
-
-/*
-    @Test
-    void testFetchUserActionItemByROPidmHashCode() {
-        def actionItemPidm = PersonUtility.getPerson( "STUADV425" ).pidm
-        List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemsROByPidm( actionItemPidm )
-        // select the first id of an action from that id list
-        def hashCode = userActionItems.hashCode()
-        assertNotNull hashCode
-    }
-
-
-    @Test
-    void testFetchUserActionItemByROPidmEquals() {
-        def actionItemPidm = PersonUtility.getPerson( "STUADV425" ).pidm
-        List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemsROByPidm( actionItemPidm )
-        def equalsRtn = userActionItems.equals( userActionItems )
-        assertTrue equalsRtn
-    }
-
-*/
 
 
     @Test
@@ -118,8 +95,11 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         userActionItemRONewList.creatorId = userActionItemListRO.creatorId
         userActionItemRONewList.createDate = userActionItemListRO.createDate
         userActionItemRONewList.version = userActionItemListRO.version
-        userActionItemRONewList.displayStartDate= userActionItemListRO.displayStartDate
-        userActionItemRONewList.displayEndDate= userActionItemListRO.displayEndDate
+        userActionItemRONewList.actionItemGroupID = userActionItemListRO.actionItemGroupID
+        userActionItemRONewList.actionItemGroupName = userActionItemListRO.actionItemGroupName
+        userActionItemRONewList.actionItemGroupTitle = userActionItemListRO.actionItemGroupTitle
+        userActionItemRONewList.displayStartDate = userActionItemListRO.displayStartDate
+        userActionItemRONewList.displayEndDate = userActionItemListRO.displayEndDate
 
         def result = userActionItemRONewList.equals( userActionItemListRO )
         assertTrue result
