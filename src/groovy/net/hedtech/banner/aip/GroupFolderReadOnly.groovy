@@ -20,8 +20,16 @@ import javax.persistence.*
           """),
         @NamedQuery(name = "GroupFolderReadOnly.fetchGroupLookup",
                 query = """
-                   select folderId, folderName, groupId, groupName, groupTitle FROM GroupFolderReadOnly a
-                    where UPPER(a.folderName) like :searchParam  or UPPER(a.groupName) like :searchParam or UPPER(a.groupTitle) like :searchParam order by a.folderName
+                   select folderId, 
+                          folderName, 
+                          groupId, 
+                          groupName, 
+                          groupTitle 
+                    FROM GroupFolderReadOnly a
+                    where UPPER(a.folderName) like :searchParam  or 
+                          UPPER(a.groupName) like :searchParam or 
+                          UPPER(a.groupTitle) like :searchParam 
+                     order by a.folderName, a.groupName
                   """),
         @NamedQuery(name = "GroupFolderReadOnly.fetchGroupFoldersById",
                 query = """

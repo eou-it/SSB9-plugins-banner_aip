@@ -9,8 +9,22 @@ class ActionItemGroupAssignReadOnlyService {
         ActionItemGroupAssignReadOnly.fetchActionItemGroupAssignROByGroupId( groupId )
     }
 
-    //simple return of all assigned items within all groups
+
     def listAllActionItemGroupAssignedRO() {
         ActionItemGroupAssignReadOnly.fetchActionItemGroupAssignRO()
+    }
+
+    /**
+     *
+     * @param groupId
+     * @return
+     */
+    def fetchActiveActionItemByGroupId( groupId ) {
+        ActionItemGroupAssignReadOnly.fetchActiveActionItemByGroupId( groupId ).collect {
+            [actionItemId        : it[0],
+             actionItemName      : it[1],
+             actionItemTitle     : it[2],
+             actionItemFolderName: it[3]]
+        }
     }
 }

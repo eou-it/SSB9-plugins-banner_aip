@@ -19,10 +19,14 @@ import javax.persistence.*
             FROM ActionItemGroupAssignReadOnly a 
             WHERE a.actionItemGroupId = :myId 
         """),
-        @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchByGroupId",
-                query = """
-                    FROM ActionItemGroupAssignReadOnly a 
-                    WHERE a.actionItemGroupId = :groupId 
+        @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchActiveActionItemByGroupId",
+                query = """ select actionItemId,
+                                   actionItemName,  
+                                   actionItemTitle,
+                                   actionItemFolderName 
+                            FROM ActionItemGroupAssignReadOnly a 
+                            WHERE a.actionItemGroupId = :groupId 
+                            AND a.actionItemStatus = 'A' order by a.sequenceNumber
                 """)
 ])
 
@@ -172,12 +176,12 @@ class ActionItemGroupAssignReadOnly implements Serializable {
     }
 
     /**
-     *
+     * @param groupId
      * @return
      */
-    static def fetchByGroupId( groupId ) {
+    static def fetchActiveActionItemByGroupId( Long groupId ) {
         ActionItemGroupAssignReadOnly.withSession {session ->
-            session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchByGroupId' ).setLong( groupId ?: -1l ).list()
+            session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchActiveActionItemByGroupId' ).setLong( 'groupId', groupId ?: -1L ).list()
         }
     }
 
