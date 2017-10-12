@@ -30,13 +30,13 @@ class GroupFolderReadOnlyService extends ServiceBase {
         Map map = [:]
         if (data) {
             Map folder = data.collectEntries() {
-                [it.folderId, [it.folderName]]
+                [it.folderId, it.folderName]
             }
             println folder.keySet()
 
             folder.keySet().each {key ->
                 map.put( folder.get( key ), data.findAll() {
-                    (it.folderId = key)
+                    (it.folderId == key)
                 }.collect() {
                     [groupId   : it.groupId,
                      groupName : it.groupName,
