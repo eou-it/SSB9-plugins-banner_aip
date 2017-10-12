@@ -5,11 +5,9 @@ package net.hedtech.banner.aip
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-import org.hibernate.FlushMode
+import org.hibernate.annotations.Type
 
 import javax.persistence.*
-import java.rmi.activation.ActivationGroup_Stub
-
 
 @NamedQueries(value = [
         @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchActionItemGroupAssign",
@@ -19,8 +17,13 @@ import java.rmi.activation.ActivationGroup_Stub
         @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchById",
                 query = """
             FROM ActionItemGroupAssignReadOnly a 
-            WHERE a.actionItemGroupAssignGroupId = :myId 
-        """)
+            WHERE a.actionItemGroupId = :myId 
+        """),
+        @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchByGroupId",
+                query = """
+                    FROM ActionItemGroupAssignReadOnly a 
+                    WHERE a.actionItemGroupId = :groupId 
+                """)
 ])
 
 @Entity
@@ -32,113 +35,149 @@ class ActionItemGroupAssignReadOnly implements Serializable {
     /**
      * ID for Action Item Group Assign
      */
-
     @Id
     @Column(name = "GCRAGRA_SURROGATE_ID")
-    Long actionItemGroupAssignId
+    Long id
 
     /**
-     * Sequence Number of Assigned Action Item in group
+     * SEQUENCE NUMBER: Sequence Number of the Action Item within the Group association.
      */
     @Column(name = "GCRAGRA_SEQ_NO")
-    Long actionItemGroupAssignSeqNo
+    Long sequenceNumber
 
     /**
-     * ID of group folder ID of ActionItem
+     * ACTION ITEM ID: ID of Action Item
+     */
+    @Column(name = "ACTION_ITEM_ID")
+    Long actionItemId
+
+    /**
+     * ACTION ITEM FOLDER ID: Foreign key reference to the folder under which this action item is organized.
      */
     @Column(name = "ACTION_ITEM_GCRFLDR_ID")
-    Long actionItemGroupAssignActionItemFolderId
+    Long actionItemFolderId
 
     /**
-     * Name of Action Item
+     * ACTION ITEM FOLDER NAME: Name of the folder under which this action item is organized.
      */
-    @Column(name = "ACTION_ITEM_NAME", length = 60)
-    String actionItemGroupAssignActionItemName
+    @Column(name = "ACTION_ITEM_FOLDER_NAME")
+    String actionItemFolderName
 
-    /***
-     * Title of Action Item
+    /**
+     * ACTION ITEM NAME: Name of the Action Item for Action Item management control.
      */
+    @Column(name = "ACTION_ITEM_NAME")
+    String actionItemName
 
-    @Column(name = "ACTION_ITEM_TITLE", length = 2048)
-    String actionItemGroupAssignActionItemTitle
+    /**
+     * ACTION ITEM TITLE: Title of the Action Item. This displays for the user assigned the Action Item.
+     */
+    @Column(name = "ACTION_ITEM_TITLE")
+    String actionItemTitle
 
-    /***
-     * Status code of Action Item
+    /**
+     * ACTION ITEM STATUS: Status of the Action Item. Valid values are (D)raft, (A)ctive and (I)nactive.
      */
     @Column(name = "ACTION_ITEM_STATUS_CODE")
-    String actonItemGroupAssignActionItemStatusCode
+    String actionItemStatus
 
-    /***
-     * Indicator for Action Item post
+    /**
+     * ACTION ITEM POSTING INDICATOR: Posting status of Action Item. Valid values are (Y)es and (N)o. Default is (N)o.
      */
+    @Type(type = "yes_no")
     @Column(name = "ACTION_ITEM_POSTED_IND")
-    String actionItemGroupAssignActionItemPostInd
+    Boolean actionItemPostingIndicator
 
-    /***
-     * Description of Action Item
+    /**
+     * Action Item DESCRIPTION: Description of the Action Item.
      */
     @Column(name = "ACTION_ITEM_DESCRIPTION")
-    String actionItemGroupAssigneActionItemDesc
+    String actionItemDescription
 
-    /***
-     * User ID who laste updated the ActionItem
+    /**
+     * CREATOR: The Oracle user name that first created this template record.
      */
     @Column(name = "ACTION_ITEM_CREATOR_ID")
-    Long actionITemGroupAssignActionItemCreatorId
+    String creator
 
-    /***
-     * Last date of Action Item Update
+    /**
+     * CREATE DATE: The date when this template record was created.
      */
+    @Temporal(TemporalType.DATE)
     @Column(name = "ACTION_ITEM_CREATE_DATE")
-    String actionItemGroupAssignActionItemCreateDate
+    Date createDate
 
-    /***
-     * Group Folder ID
-     */
-    @Column(name = "ACTION_ITEM_GROUP_GCRFLDR_ID")
-    Long actionItemGroupAssignGroupFolderId
-
-    /***
-     * Group ID
+    /**
+     * ACTION ITEM GROUP ID: ID of related action item group id.
      */
     @Column(name = "ACTION_ITEM_GROUP_ID")
-    Long actionItemGroupAssignGroupId
+    Long actionItemGroupId
 
-    /***
-     * Group Name
+    /**
+     * PROCESS GROUP FOLDER ID: folder id selected for the Action Item Process Group.
+     */
+    @Column(name = "ACTION_ITEM_GROUP_GCRFLDR_ID")
+    Long processGroupFolderId
+
+    /**
+     * ACTION ITEM GROUP FOLDER NAME: Name of the folder under which this action item grooup is organized.
+     */
+    @Column(name = "ACTION_ITEM_GROUP_FOLDER_NAME")
+    String actionItemGroupFolderName
+
+    /**
+     * GROUP NAME: Name for the action Item Group for Group management control.
      */
     @Column(name = "ACTION_ITEM_GROUP_NAME")
-    String actionItemGroupAssignGroupName
+    String groupName
 
-    /***
-     * Group Title
+    /**
+     * GROUP TITLE: Title for the action Item Group. The title displays for the user assigned the Group.
      */
     @Column(name = "ACTION_ITEM_GROUP_TITLE")
-    String actionItemGroupAssignGroupTitle
+    String groupTitle
 
-    /***
-     * Status code of Group
+    /**
+     * GROUP STATUS: Status of the Group. Possible values (D)raft, (A)ctive and (I)nActive.
      */
     @Column(name = "ACTION_ITEM_GROUP_STATUS_CODE")
-    String actionItemGroupAssignGroupStatusCode
+    String groupStatus
 
-    /***
-     * Post indicator for the group
+    /**
+     * GROUP POSTED INDICATOR: Posting Status of Group. Possible values (N)o and (Y)es.
      */
+    @Type(type = "yes_no")
     @Column(name = "ACTION_ITEM_GROUP_POSTED_IND")
-    String actionItemGroupAssignGroupPostInd
+    Boolean groupPostedIndicator
 
-
+    /**
+     *
+     * @param myId
+     * @return
+     */
     static fetchActionItemGroupAssignROByGroupId( Long myId ) {
         ActionItemGroupAssignReadOnly.withSession {session ->
             session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchById' ).setLong( 'myId', myId ).list()
         }
     }
 
-
+    /**
+     *
+     * @return
+     */
     static def fetchActionItemGroupAssignRO() {
         ActionItemGroupAssignReadOnly.withSession {session ->
             session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchActionItemGroupAssign' ).list()
+        }
+    }
+
+    /**
+     *
+     * @return
+     */
+    static def fetchByGroupId( groupId ) {
+        ActionItemGroupAssignReadOnly.withSession {session ->
+            session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchByGroupId' ).setLong( groupId ?: -1l ).list()
         }
     }
 
