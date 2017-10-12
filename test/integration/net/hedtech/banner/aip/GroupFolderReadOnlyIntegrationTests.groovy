@@ -35,10 +35,7 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void fetchGroupLookup() {
-        List groupFolderList = GroupFolderReadOnly.fetchGroupLookup()
-        groupFolderList= groupFolderList.collectEntries() {
-            [it[0], [groupId:it[2], groupName:it[3], groupTitle:it[4]]]
-        }
+        def groupFolderList = GroupFolderReadOnly.fetchGroupLookup('%')
         assertFalse groupFolderList.isEmpty()
     }
 
