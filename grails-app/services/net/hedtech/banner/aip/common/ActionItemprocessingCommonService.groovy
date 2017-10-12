@@ -5,6 +5,7 @@
 package net.hedtech.banner.aip.common
 
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
+import net.hedtech.banner.general.communication.population.CommunicationPopulationListView
 
 class ActionItemProcessingCommonService {
 
@@ -14,5 +15,13 @@ class ActionItemProcessingCommonService {
      */
     def fetchCommunicationFolders() {
         CommunicationFolder.list( sort: "name", order: "asc" )
+    }
+
+    /**
+     * Gets Population List For Send
+     * @return
+     */
+    def fetchPopulationListForSend( searchParam, paginationParam ) {
+        CommunicationPopulationListView.findAllForSendByPagination( [params: [name: searchParam]], paginationParam )
     }
 }
