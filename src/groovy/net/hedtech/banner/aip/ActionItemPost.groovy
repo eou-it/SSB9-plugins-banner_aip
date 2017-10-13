@@ -19,7 +19,7 @@ import javax.persistence.*
 class ActionItemPost implements Serializable {
 
     /**
-     * SURROGATE ID: Generated unique numeric identifier for this entity.
+* SURROGATE ID: Generated unique numeric identifier for this entity.
      */
     @Id
     @Column(name = "GCBAPST_SURROGATE_ID")

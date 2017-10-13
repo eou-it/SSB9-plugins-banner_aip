@@ -37,14 +37,14 @@ class ActionItemCompositeService {
         def message
         def aipUser = AipControllerUtils.getPersonForAip( [studentId: map.studentId], user.pidm )
         ActionItem ai = new ActionItem(
-                folderId: map.folderId ?: null,
+                folderId: map.folderId,
                 status: map.status ? AIPConstants.STATUS_MAP.get( map.status ): null,
                 postedIndicator:'N',
-                title: map.title ?: null,
-                name: map.name ?: null,
-                creatorId: user.username ?: null,
-                userId: aipUser.bannerId ?: null,
-                description: map.description ?: null,
+                title: map.title,
+                name: map.name,
+                creatorId: user.username,
+                userId: aipUser.bannerId,
+                description: map.description,
                 activityDate: new Date()
         )
         try {
