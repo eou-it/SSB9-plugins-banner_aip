@@ -26,17 +26,7 @@ class ActionItemGroupAssignReadOnlyIntegrationTests extends BaseIntegrationTestC
     @Test
     void fetchGroupLookup() {
         def paginationParams = [max: 10, offset: 0]
-        def groupFolderList = ActionItemGroupAssignReadOnly.fetchGroupLookup( '', paginationParams )
-        assertFalse groupFolderList.isEmpty()
-        groupFolderList = ActionItemGroupAssignReadOnly.fetchGroupLookup( null, paginationParams )
-        assertFalse groupFolderList.isEmpty()
-
-        groupFolderList = ActionItemGroupAssignReadOnly.fetchGroupLookup( 'AIPstudent', paginationParams )
-        assertFalse groupFolderList.isEmpty()
-
-        groupFolderList = ActionItemGroupAssignReadOnly.fetchGroupLookup( 'student', paginationParams )
-        assertFalse groupFolderList.isEmpty()
-        groupFolderList = ActionItemGroupAssignReadOnly.fetchGroupLookup( 'STUDENT', paginationParams )
+        def groupFolderList = ActionItemGroupAssignReadOnly.fetchGroupLookup( '%', paginationParams )
         assertFalse groupFolderList.isEmpty()
     }
 }
