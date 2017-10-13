@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -15,14 +15,14 @@ class GroupFolderReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase
 
 
     @Before
-    public void setUp() {
+    void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
     }
 
 
     @After
-    public void tearDown() {
+    void tearDown() {
         super.tearDown()
     }
 
@@ -43,23 +43,6 @@ class GroupFolderReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase
         assertFalse groupFolderListById.isEmpty()
         assertEquals( groupFolderListById[0].groupTitle, groupFolderTitle )
         assertEquals( 1, groupFolderListById.size() )
-    }
-
-
-    @Test
-    void fetchGroupLookup() {
-        def groupFolderList = groupFolderReadOnlyService.fetchGroupLookup( '' )
-        assertFalse groupFolderList.isEmpty()
-        groupFolderList = groupFolderReadOnlyService.fetchGroupLookup( null )
-        assertFalse groupFolderList.isEmpty()
-
-        groupFolderList = groupFolderReadOnlyService.fetchGroupLookup( 'AIPstudent' )
-        assertFalse groupFolderList.isEmpty()
-
-        groupFolderList = groupFolderReadOnlyService.fetchGroupLookup( 'student' )
-        assertFalse groupFolderList.isEmpty()
-        groupFolderList = groupFolderReadOnlyService.fetchGroupLookup( 'STUDENT' )
-        assertFalse groupFolderList.isEmpty()
     }
 
 
