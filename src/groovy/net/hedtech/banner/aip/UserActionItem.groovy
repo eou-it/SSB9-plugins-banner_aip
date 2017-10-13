@@ -131,7 +131,7 @@ class UserActionItem implements Serializable {
         userResponseDate( nullable: true )
         displayStartDate( nullable: false )
         displayEndDate( nullable: false )
-        groupId( nullable: true )
+        groupId( nullable: false )
         activityDate( nullable: false )
         creatorId( nullable: true, maxSize: 30 )
         createDate( nullable: true )
