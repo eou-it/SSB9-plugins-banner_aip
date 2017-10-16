@@ -17,7 +17,7 @@ import javax.persistence.*
         @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchById",
                 query = """
             FROM ActionItemGroupAssignReadOnly a 
-            WHERE a.actionItemGroupId = :myId 
+            WHERE a.processGroupFolderId = :myId 
         """),
         @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchByGroupId",
                 query = """
@@ -57,11 +57,11 @@ class ActionItemGroupAssignReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_GCRFLDR_ID")
     Long actionItemFolderId
 
-    /**
-     * ACTION ITEM FOLDER NAME: Name of the folder under which this action item is organized.
-     */
-    @Column(name = "ACTION_ITEM_FOLDER_NAME")
-    String actionItemFolderName
+//    /**
+//     * ACTION ITEM FOLDER NAME: Name of the folder under which this action item is organized.
+//     */
+//    @Column(name = "ACTION_ITEM_FOLDER_NAME")
+//    String actionItemFolderName
 
     /**
      * ACTION ITEM NAME: Name of the Action Item for Action Item management control.
@@ -119,11 +119,11 @@ class ActionItemGroupAssignReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_GROUP_GCRFLDR_ID")
     Long processGroupFolderId
 
-    /**
-     * ACTION ITEM GROUP FOLDER NAME: Name of the folder under which this action item grooup is organized.
-     */
-    @Column(name = "ACTION_ITEM_GROUP_FOLDER_NAME")
-    String actionItemGroupFolderName
+//    /**
+//     * ACTION ITEM GROUP FOLDER NAME: Name of the folder under which this action item grooup is organized.
+//     */
+//    @Column(name = "ACTION_ITEM_GROUP_FOLDER_NAME")
+//    String actionItemGroupFolderName
 
     /**
      * GROUP NAME: Name for the action Item Group for Group management control.
@@ -150,6 +150,15 @@ class ActionItemGroupAssignReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_GROUP_POSTED_IND")
     Boolean groupPostedIndicator
 
+
+    public String toString() {
+        """ActionItemGroupAssignRO[id=$id, sequenceNumber=$sequenceNumber, actionItemId=$actionItemId, 
+                "actionItemFolderId=$actionItemFolderId, actionItemName=$actionItemName, actionItemTitle=$actionItemTitle,
+                "actionItemStatus=$actionItemStatus, ctionItemPostingIndicator=$actionItemPostingIndicator,
+                "actionItemDescription=$actionItemDescription, creator=$creator, createDate=$createDate,
+                "actionItemGroupId=$actionItemGroupId, processGroupFolderId=$processGroupFolderId, groupName=$groupName,
+                "groupTitle=$groupTitle, groupStatus=$groupStatus, groupPostedIndicator=$groupPostedIndicator]"""
+    }
     /**
      *
      * @param myId
@@ -157,7 +166,8 @@ class ActionItemGroupAssignReadOnly implements Serializable {
      */
     static fetchActionItemGroupAssignROByGroupId( Long myId ) {
         ActionItemGroupAssignReadOnly.withSession {session ->
-            session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchById' ).setLong( 'myId', myId ).list()
+            List groupAssigned = session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchById' ).setLong( 'myId', myId ).list()
+            return groupAssigned
         }
     }
 
@@ -167,7 +177,8 @@ class ActionItemGroupAssignReadOnly implements Serializable {
      */
     static def fetchActionItemGroupAssignRO() {
         ActionItemGroupAssignReadOnly.withSession {session ->
-            session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchActionItemGroupAssign' ).list()
+            List groupAssignedAll = session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchActionItemGroupAssign' ).list()
+            return groupAssignedAll
         }
     }
 
@@ -177,7 +188,8 @@ class ActionItemGroupAssignReadOnly implements Serializable {
      */
     static def fetchByGroupId( groupId ) {
         ActionItemGroupAssignReadOnly.withSession {session ->
-            session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchByGroupId' ).setLong( groupId ?: -1l ).list()
+            List groupActionItemAssign = session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchByGroupId' ).setLong( "groupId", groupId ).list()
+            return groupActionItemAssign
         }
     }
 
