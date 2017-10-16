@@ -1,10 +1,11 @@
 /*******************************************************************************
  Copyright 2017 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
-package net.hedtech.banner.aip
+package net.hedtech.banner.aip.post.grouppost
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import net.hedtech.banner.aip.post.ActionItemErrorCode
 import org.hibernate.annotations.Type
 
 import javax.persistence.*
@@ -16,6 +17,20 @@ import javax.persistence.*
 @Table(name = "GCBAPST")
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
+@NamedQueries(value = [
+        @NamedQuery(name = "ActionItemPost.findRunning",
+                query = """ FROM ActionItemPost gs
+                    WHERE gs.postingCurrentState = :new_ or
+                          gs.postingCurrentState = :processing_ or
+                          gs.postingCurrentState = :scheduled_ or
+                          gs.postingCurrentState = :queued_ or
+                          gs.postingCurrentState = :calculating_"""
+        ),
+        @NamedQuery(name = "ActionItemPost.fetchCompleted",
+                query = """ FROM ActionItemPost gs
+                WHERE gs.postingCurrentState = :complete_ """
+        )
+])
 class ActionItemPost implements Serializable {
 
     /**
@@ -55,8 +70,10 @@ class ActionItemPost implements Serializable {
     /**
      * POSTING DELETE INDICATOR: Indicator to denote whether the process was deleted.
      */
+
     @Column(name = "GCBAPST_DELETED")
-    String postingDeleteIndicator
+    @Type(type = "yes_no")
+    boolean postingDeleteIndicator = false;
 
     /**
      * POSTING SCHEDULE TYPE: Posting Schedule type of Action Item Posting.
@@ -109,13 +126,21 @@ class ActionItemPost implements Serializable {
      * POSTING CURRENT STATE: The current state of Action Item post.
      */
     @Column(name = "GCBAPST_CURRENT_STATE")
-    String postingCurrentState
+    ActionItemPostExecutionState postingCurrentState = ActionItemPostExecutionState.New;
+
+    @Column(name = "GCBAPST_STARTED_DATE", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
+    Date postingStartedDate;
+
+    @Column(name = "GCBAPST_STOP_DATE", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
+    Date postingStopDate;
 
     /**
      * POSTING JOB ID: The job ID of the scheduled job.
      */
     @Column(name = "GCBAPST_JOB_ID")
-    Long postingJobId
+    String postingJobId
 
     /**
      * POPULATION CALCULATION ID: The id of the specific population calculation resolved to feed the Action Item post.
@@ -123,11 +148,16 @@ class ActionItemPost implements Serializable {
     @Column(name = "GCBAPST_POPCALC_ID")
     Long populationCalculationId
 
+    @Column(name = "GCBAPST_POPVERSION_ID")
+    Long populationVersionId
+
     /**
      * POSTING ERROR CODE: The Error code of Action Item post.
      */
+
     @Column(name = "GCBAPST_ERROR_CODE")
-    String postingErrorCode
+    @Enumerated(EnumType.STRING)
+    ActionItemErrorCode postingErrorCode
 
     /**
      * POSTING ERROR TEXT: The Error text of Action Item post.
@@ -188,8 +218,11 @@ class ActionItemPost implements Serializable {
         postingScheduleDateTime( nullable: false )
         populationRegenerateIndicator( nullable: false, maxSize: 1 )
         postingCurrentState( nullable: true, maxSize: 255 )
+        postingStartedDate(nullable: true)
+        postingStopDate(nullable: true)
         postingJobId( nullable: true, maxSize: 19 )
         populationCalculationId( nullable: true, maxSize: 19 )
+        populationVersionId( nullable: true, maxSize: 19 )
         postingErrorCode( nullable: true, maxSize: 256 )
         postingErrorText( nullable: true )
         postingGroupId( nullable: true, maxSize: 256 )
@@ -199,4 +232,102 @@ class ActionItemPost implements Serializable {
         dataOrigin( nullable: true, maxSize: 30 )
         vpdiCode( nullable: true, maxSize: 6 )
     }
+
+    public void markScheduled( String jobId, String groupId ) {
+            assert jobId != null
+            assert groupId != null
+            assignPostExecutionState( ActionItemPostExecutionState.Scheduled, jobId, groupId )
+        }
+
+
+        public void markQueued( String jobId, String groupId ) {
+            assert jobId != null
+            assert groupId != null
+            assignPostExecutionState( ActionItemPostExecutionState.Queued, jobId, groupId )
+        }
+
+
+        public void markStopped( Date stopDate = new Date() ) {
+            assignPostExecutionState( ActionItemPostExecutionState.Stopped )
+            this.postingStopDate = stopDate
+        }
+
+
+        public void markComplete( Date stopDate = new Date() ) {
+            assignPostExecutionState( ActionItemPostExecutionState.Complete )
+            this.postingStopDate = stopDate
+        }
+
+
+        public void markProcessing() {
+            assignPostExecutionState( ActionItemPostExecutionState.Processing )
+            if (this.postingStartedDate == null) {
+                this.postingStartedDate = new Date()
+            }
+        }
+
+
+        public void markError( ActionItemErrorCode errorCode, String errorText ) {
+            assignPostExecutionState( ActionItemPostExecutionState.Error )
+            this.postingErrorCode = errorCode
+            this.postingErrorText = errorText
+            this.postingStopDate = postingStopDate
+        }
+
+
+        private void assignPostExecutionState( ActionItemPostExecutionState executionState, String jobId = null, String groupId = null ) {
+            this.postingCurrentState = executionState
+            this.postingJobId = jobId
+            this.postingGroupId = groupId
+        }
+
+        public static List findRunning( Integer max = Integer.MAX_VALUE ) {
+            def query
+            ActionItemPost.withSession { session ->
+                query = session.getNamedQuery('ActionItemPost.findRunning')
+                        .setParameter('new_', ActionItemPostExecutionState.New)
+                        .setParameter('processing_', ActionItemPostExecutionState.Processing)
+                        .setParameter('scheduled_', ActionItemPostExecutionState.Scheduled)
+                        .setParameter('queued_', ActionItemPostExecutionState.Queued)
+                        .setParameter('calculating_', ActionItemPostExecutionState.Calculating)
+                        .setFirstResult( 0 )
+                        .setMaxResults( max )
+                        .list()
+            }
+            return query
+        }
+
+        public static List fetchCompleted() {
+            def results
+            ActionItemPostWork.withSession { session ->
+                results = session.getNamedQuery('ActionItemPost.fetchCompleted')
+                        .setParameter('complete_', ActionItemPostExecutionState.Complete)
+                        .list()
+            }
+            return results
+        }
+
+        public static int findCountByPopulationCalculationId( Long populationCalculationId) {
+            return ActionItemPost.createCriteria().list {
+                projections {
+                    count()
+                }
+                eq( 'populationCalculationId', populationCalculationId )
+            }[0]
+        }
+
+    /*
+        public static findByNameWithPagingAndSortParams(filterData, pagingAndSortParams) {
+
+            def descdir = pagingAndSortParams?.sortDirection?.toLowerCase() == 'desc'
+
+            def queryCriteria = ActionItemPost.createCriteria()
+            def results = queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
+                ilike("name", ActionItemCommonUtility.getScrubbedInput(filterData?.params?.groupSendName))
+                ilike("createdBy", filterData?.params?.createdBy)
+                order((descdir ? Order.desc(pagingAndSortParams?.sortColumn) : Order.asc(pagingAndSortParams?.sortColumn)).ignoreCase())
+            }
+            return results
+        }
+    */
 }

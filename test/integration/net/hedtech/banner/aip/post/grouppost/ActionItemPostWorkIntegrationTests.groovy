@@ -1,14 +1,14 @@
 /*******************************************************************************
  Copyright 2017 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
-package net.hedtech.banner.aip
+package net.hedtech.banner.aip.post.grouppost
 
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class ActionItemPostDetailIntegrationTests extends BaseIntegrationTestCase {
+class ActionItemPostWorkIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
     void setUp() {
