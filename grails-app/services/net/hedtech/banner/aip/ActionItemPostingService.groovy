@@ -23,7 +23,7 @@ class ActionItemPostingService extends ServiceBase {
         if (!dataMap.actionItemGroup) {
             throw new ApplicationException( ActionItemPostingService, new BusinessLogicValidationException( 'preCreate.validation.no.group', [] ) )
         }
-        if (!dataMap.actionItem) {
+        if (!dataMap.actionItems) {
             throw new ApplicationException( ActionItemPostingService, new BusinessLogicValidationException( 'preCreate.validation.no.action.item', [] ) )
         }
 

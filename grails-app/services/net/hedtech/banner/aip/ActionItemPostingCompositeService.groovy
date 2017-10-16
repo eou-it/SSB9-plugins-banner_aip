@@ -18,13 +18,15 @@ class ActionItemPostingCompositeService {
     static transactional = true
     def springSecurityService
     def actionItemPostingService
+    def actionItemPostDetailService
+    def actionItemService
+    def actionItemGroupService
     private static final def LOGGER = Logger.getLogger( this.class )
 
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     def addActionItemPosting( map ) {
         def user = springSecurityService.getAuthentication()?.user
-        println user
         ActionItemPost savedActionItemPost
         def success = false
         actionItemPostingService.preCreateValidation( map )
@@ -37,12 +39,35 @@ class ActionItemPostingCompositeService {
                 postingScheduleDateTime: map.scheduleStartDate,
                 postingCreationDateTime: new Date(),
                 populationRegenerateIndicator: AIPConstants.NO_IND,
-                postingCreatorId: user.userName,
-                postingCurrentState: map.postedNow ? PostingStateEnum.QUEUED : (map.scheduled ? PostingStateEnum.SCHEDULED : ''),
+                postingCreatorId: user.username,
+                postingCurrentState: map.postNow ? PostingStateEnum.QUEUED : (map.scheduled ? PostingStateEnum.SCHEDULED : ''),
                 lastModified: new Date(),
-                lastModifiedBy: user.userName )
+                lastModifiedBy: user.oracleUserName )
         try {
             savedActionItemPost = actionItemPostingService.create( aip )// Save base posting table
+            map.actionItems.each {it ->
+                ActionItemPostDetail actionItemPostDetail = new ActionItemPostDetail(
+                        lastModifiedBy: user.userName,
+                        lastModified: new Date(),
+                        actionItemPostId: savedActionItemPost.id,
+                        actionItemId: it
+                )
+                actionItemPostDetailService.create( actionItemPostDetail ) // Save details
+                if (map.postNow) {
+                    ActionItem actionItem = actionItemService.get( it )
+                    actionItem.activityDate = new Date()
+                    actionItem.userId = user.username
+                    actionItem.postedIndicator = AIPConstants.YES_IND
+                    actionItemService.update( actionItem )
+                }
+            }
+            if (map.postNow) {
+                ActionItemGroup actionItemGroup = actionItemGroupService.get( it )
+                actionItemGroup.activityDate = new Date()
+                actionItemGroup.userId = user.username
+                actionItemGroup.postingInd = AIPConstants.YES_IND
+                actionItemGroupService.update( actionItemGroup )
+            }
             success = true
         } catch (ApplicationException e) {
             LOGGER.error( 'Error while save action item posting' )
