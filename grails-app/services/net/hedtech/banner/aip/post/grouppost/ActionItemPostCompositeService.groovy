@@ -92,7 +92,6 @@ class ActionItemPostCompositeService {
         }
         // we don't use this. remove?
         groupSend.postingParameterValues = null
-        groupSend.postingScheduleType = request.scheduleType
         groupSend.postingDisplayStartDate = request.displayStartDate
         groupSend.postingDisplayEndDate = request.displayEndDate
         println "AIGSCS: " + groupSend.toString(  )
