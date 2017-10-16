@@ -4,6 +4,8 @@
 package net.hedtech.banner.aip
 
 import grails.transaction.Transactional
+import net.hedtech.banner.aip.common.AIPConstants
+import net.hedtech.banner.aip.common.PostingStateEnum
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import org.apache.log4j.Logger
@@ -27,36 +29,18 @@ class ActionItemPostingCompositeService {
         def success = false
         actionItemPostingService.preCreateValidation( map )
         ActionItemPost aip = new ActionItemPost(
-                /**
-                 * GCBAPST_SURROGATE_ID
-                 GCBAPST_POPLIST_ID
-                 GCBAPST_GCBAGRP_ID
-                 GCBAPST_NAME
-                 GCBAPST_DELETED
-                 GCBAPST_SCHEDULE_TYPE
-                 GCBAPST_DISPLAY_START_DATE
-                 GCBAPST_DISPLAY_END_DATE
-                 GCBAPST_SCHEDULED_DATETIME
-                 GCBAPST_CREATOR_ID
-                 GCBAPST_CREATION_DATETIME
-                 GCBAPST_RECALC_ON_POST
-                 GCBAPST_CURRENT_STATE
-                 GCBAPST_JOB_ID
-                 GCBAPST_POPCALC_ID
-                 GCBAPST_ERROR_CODE
-                 GCBAPST_ERROR_TEXT
-                 GCBAPST_GROUP_ID
-                 GCBAPST_PARAMETER_VALUES
-                 GCBAPST_ACTIVITY_DATE
-                 GCBAPST_USER_ID
-                 GCBAPST_VERSION
-                 GCBAPST_DATA_ORIGIN
-                 GCBAPST_VPDI_CODE
-                 */
                 populationListId: map.populationListId,
-                postingActionItemGroupId: map.postingActionItemGroupId,
-                postingName: map.postingName
-        )
+                postingActionItemGroupId: map.actionItemGroup,
+                postingName: map.postingJobName,
+                postingDisplayStartDate: map.displayStartDate,
+                postingDisplayEndDate: map.displayEndDate,
+                postingScheduleDateTime: map.scheduleStartDate,
+                postingCreationDateTime: new Date(),
+                populationRegenerateIndicator: AIPConstants.NO_IND,
+                postingCreatorId: user.userName,
+                postingCurrentState: map.postedNow ? PostingStateEnum.QUEUED : (map.scheduled ? PostingStateEnum.SCHEDULED : ''),
+                lastModified: new Date(),
+                lastModifiedBy: user.userName )
         try {
             savedActionItemPost = actionItemPostingService.create( aip )
             success = true

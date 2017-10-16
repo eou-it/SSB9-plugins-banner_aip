@@ -5,7 +5,6 @@ package net.hedtech.banner.aip
 
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
-import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.service.ServiceBase
 
 /**
@@ -28,7 +27,7 @@ class ActionItemPostingService extends ServiceBase {
             throw new ApplicationException( ActionItemPostingService, new BusinessLogicValidationException( 'preCreate.validation.no.action.item', [] ) )
         }
 
-        if (!dataMap.populationName) {
+        if (!dataMap.populationListId) {
             throw new ApplicationException( ActionItemPostingService, new BusinessLogicValidationException( 'preCreate.validation.no.population.name', [] ) )
         }
 
@@ -45,14 +44,6 @@ class ActionItemPostingService extends ServiceBase {
         if (dataMap.schedule) {
             if (!dataMap.scheduleStartDate) {
                 throw new ApplicationException( ActionItemPostingService, new BusinessLogicValidationException( 'preCreate.validation.no.schedule.start.date', [] ) )
-            }
-        }
-        if (dataMap.recurring) {
-            if (dataMap.recurringFrequency) {
-                throw new ApplicationException( ActionItemPostingService, new BusinessLogicValidationException( 'preCreate.validation.no.recurring.frequency', [] ) )
-            }
-            if (!dataMap.recurringEndDate) {
-                throw new ApplicationException( ActionItemPostingService, new BusinessLogicValidationException( 'preCreate.validation.no.recurring.end.date', [] ) )
             }
         }
     }

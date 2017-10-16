@@ -120,7 +120,7 @@ class ActionItemPostingDetailsReadOnly implements Serializable {
      * POSTING JOB ID: The job ID of the scheduled job.
      */
     @Column(name = "GCBAPST_JOB_ID")
-    Long postingJobId
+    String postingJobId
 
     /**
      * POPULATION CALCULATION ID: The id of the specific population calculation resolved to feed the Action Item post.
