@@ -124,12 +124,12 @@ class GroupFolderReadOnly implements Serializable {
      *
      * @return
      */
-    public static def fetchGroupFolders() {
+    static def fetchGroupFolders() {
         GroupFolderReadOnly.withSession {session ->
             List groupFolderList = session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolders' ).list().sort {
                 it.groupTitle
             }
-            return groupFolderList
+            groupFolderList
         }
     }
 
@@ -138,10 +138,9 @@ class GroupFolderReadOnly implements Serializable {
      * @param id
      * @return
      */
-    public static def fetchGroupFoldersById( Long id ) {
+    static def fetchGroupFoldersById( Long id ) {
         GroupFolderReadOnly.withSession {session ->
-            List groupFolderListById = session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFoldersById' ).setLong( 'myId', id ).list()
-            return groupFolderListById
+            session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFoldersById' ).setLong( 'myId', id ).list()
         }
     }
 
@@ -149,10 +148,9 @@ class GroupFolderReadOnly implements Serializable {
      *
      * @return
      */
-    public static def fetchGroupFolderROCount() {
+    static def fetchGroupFolderROCount() {
         GroupFolderReadOnly.withSession {session ->
-            List groupFolderReadOnlyCount = session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolderROCount' ).list()
-            return groupFolderReadOnlyCount
+            session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolderROCount' ).list()
         }
     }
 
@@ -162,7 +160,7 @@ class GroupFolderReadOnly implements Serializable {
      * @param pagingAndSortParams
      * @return
      */
-    public static fetchWithPagingAndSortParams( filterData, pagingAndSortParams ) {
+    static fetchWithPagingAndSortParams( filterData, pagingAndSortParams ) {
         def searchStatus = filterData?.params?.status
         def queryCriteria = GroupFolderReadOnly.createCriteria()
         def results = queryCriteria.list( max: pagingAndSortParams.max, offset: pagingAndSortParams.offset ) {
@@ -172,6 +170,6 @@ class GroupFolderReadOnly implements Serializable {
                 order( Order.asc( 'groupTitle' ).ignoreCase() )
             }
         }
-        return results
+        results
     }
 }

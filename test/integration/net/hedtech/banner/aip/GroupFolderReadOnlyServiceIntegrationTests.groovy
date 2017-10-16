@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -13,23 +13,26 @@ class GroupFolderReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase
 
     def groupFolderReadOnlyService
 
+
     @Before
-    public void setUp() {
+    void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
     }
 
 
     @After
-    public void tearDown() {
+    void tearDown() {
         super.tearDown()
     }
 
+
     @Test
-    void testFetchGroupFolderService( ) {
+    void testFetchGroupFolderService() {
         List<GroupFolderReadOnlyService> groupFolderList = groupFolderReadOnlyService.listActionItemGroups()
-        assertFalse groupFolderList.isEmpty(  )
+        assertFalse groupFolderList.isEmpty()
     }
+
 
     @Test
     void testFetchGroupFolderByIdService() {
@@ -37,20 +40,20 @@ class GroupFolderReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase
         def groupFolderId = groupFolderList[0].groupId
         def groupFolderTitle = groupFolderList[0].groupTitle
         List<GroupFolderReadOnly> groupFolderListById = groupFolderReadOnlyService.getActionItemGroupById( groupFolderId )
-        assertFalse groupFolderListById.isEmpty(  )
-        assertEquals(groupFolderListById[0].groupTitle, groupFolderTitle)
+        assertFalse groupFolderListById.isEmpty()
+        assertEquals( groupFolderListById[0].groupTitle, groupFolderTitle )
         assertEquals( 1, groupFolderListById.size() )
     }
 
 
     @Test
     void testFetchGroupFolderROPageSortService() {
-        Map params1 = [filterName:"%",sortColumn:"groupTitle", sortAscending:true, max:10, offset:0]
-        Map params2 = [filterName:"%",sortColumn:"groupTitle", sortAscending:true, max:10, offset:10]
-       // Map params3 = [filterName:"%",sortColumn:"groupTitle", sortAscending:true, max:10, offset:20]
+        Map params1 = [filterName: "%", sortColumn: "groupTitle", sortAscending: true, max: 10, offset: 0]
+        Map params2 = [filterName: "%", sortColumn: "groupTitle", sortAscending: true, max: 10, offset: 10]
+        // Map params3 = [filterName:"%",sortColumn:"groupTitle", sortAscending:true, max:10, offset:20]
 
-        def groupFolderROList1 = groupFolderReadOnlyService.listGroupFolderPageSort(params1)
-        def groupFolderROList2 = groupFolderReadOnlyService.listGroupFolderPageSort(params2)
+        def groupFolderROList1 = groupFolderReadOnlyService.listGroupFolderPageSort( params1 )
+        def groupFolderROList2 = groupFolderReadOnlyService.listGroupFolderPageSort( params2 )
         //def groupFolderROList3 = groupFolderReadOnlyService.listGroupFolderPageSort(params3)
 
         def totalCount = groupFolderROList1.result.size() + groupFolderROList2.result.size()

@@ -16,8 +16,9 @@ class GroupFolderReadOnlyService extends ServiceBase {
      * @return
      */
     def listActionItemGroups() {
-        return GroupFolderReadOnly.fetchGroupFolders()
+        GroupFolderReadOnly.fetchGroupFolders()
     }
+
 
     /**
      * Gets Action Item Group by Id
@@ -25,7 +26,7 @@ class GroupFolderReadOnlyService extends ServiceBase {
      * @return
      */
     def getActionItemGroupById( Long actionItemGroupId ) {
-        return GroupFolderReadOnly.fetchGroupFoldersById( actionItemGroupId )
+        GroupFolderReadOnly.fetchGroupFoldersById( actionItemGroupId )
     }
 
     /**Lists Group Folder count
@@ -33,7 +34,7 @@ class GroupFolderReadOnlyService extends ServiceBase {
      * @return
      */
     def listGroupFolderROCount() {
-        return GroupFolderReadOnly.fetchGroupFolderROCount()
+        GroupFolderReadOnly.fetchGroupFolderROCount()
     }
 
     /**
@@ -66,6 +67,6 @@ class GroupFolderReadOnlyService extends ServiceBase {
                 length: resultCount[0]
         ]
 
-        return resultMap
+        resultMap
     }
 }

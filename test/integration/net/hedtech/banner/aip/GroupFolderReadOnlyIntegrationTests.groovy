@@ -33,6 +33,9 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     }
 
 
+
+
+
     @Test
     void testFetchGroupFolderById() {
         List<GroupFolderReadOnly> groupFolderList = GroupFolderReadOnly.fetchGroupFolders()
@@ -104,7 +107,7 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         def activeAsFound = []
         def inactiveAsFound = []
         def pendingAsFound = []
-        results.each { it ->
+        results.each {it ->
             if (it.groupStatus == 'active') {
                 assertFalse foundInactive
                 assertFalse foundPending
@@ -124,7 +127,7 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
                 pendingAsFound.add( it.groupTitle )
             }
         }
-        (0..9).each() { it ->
+        (0..9).each() {it ->
             assertEquals( activeAsFound[it], activeAsFound.sort( false )[it] )
         }
         assertEquals( inactiveAsFound[0], inactiveAsFound.sort( false )[0] )
@@ -143,7 +146,7 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         def activeAsFound = []
         def inactiveAsFound = []
         def pendingAsFound = []
-        results.each { it ->
+        results.each {it ->
             if (it.groupStatus == 'pending') {
                 assertFalse foundInactive
                 assertFalse foundPending
@@ -164,7 +167,7 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
             }
 
         }
-        (0..9).each() { it ->
+        (0..9).each() {it ->
             assertEquals( activeAsFound[it], activeAsFound.sort( false )[it] )
         }
         assertEquals( inactiveAsFound[0], inactiveAsFound.sort( false )[0] )

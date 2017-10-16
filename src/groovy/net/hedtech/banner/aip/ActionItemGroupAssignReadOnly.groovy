@@ -19,10 +19,27 @@ import javax.persistence.*
             FROM ActionItemGroupAssignReadOnly a 
             WHERE a.processGroupFolderId = :myId 
         """),
-        @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchByGroupId",
+        @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchGroupLookup",
                 query = """
-                    FROM ActionItemGroupAssignReadOnly a 
-                    WHERE a.actionItemGroupId = :groupId 
+                           select distinct actionGroupFolderId, 
+                                  actionItemGroupFolderName, 
+                                  actionItemGroupId, 
+                                  groupName, 
+                                  groupTitle 
+                            FROM ActionItemGroupAssignReadOnly a
+                            where (UPPER(a.actionItemGroupFolderName) like :searchParam  or 
+                                  UPPER(a.groupName) like :searchParam or 
+                                  UPPER(a.groupTitle) like :searchParam) AND a.groupStatus = 'A' 
+                             order by a.actionItemGroupFolderName, a.groupName
+                  """),
+        @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchActiveActionItemByGroupId",
+                query = """ select actionItemId,
+                                   actionItemName,  
+                                   actionItemTitle,
+                                   actionItemFolderName 
+                            FROM ActionItemGroupAssignReadOnly a 
+                            WHERE a.actionItemGroupId = :groupId 
+                            AND a.actionItemStatus = 'A' order by a.sequenceNumber
                 """)
 ])
 
@@ -117,7 +134,7 @@ class ActionItemGroupAssignReadOnly implements Serializable {
      * PROCESS GROUP FOLDER ID: folder id selected for the Action Item Process Group.
      */
     @Column(name = "ACTION_ITEM_GROUP_GCRFLDR_ID")
-    Long processGroupFolderId
+    Long actionGroupFolderId
 
 //    /**
 //     * ACTION ITEM GROUP FOLDER NAME: Name of the folder under which this action item grooup is organized.
@@ -183,14 +200,30 @@ class ActionItemGroupAssignReadOnly implements Serializable {
     }
 
     /**
-     *
+     * @param groupId
      * @return
      */
-    static def fetchByGroupId( groupId ) {
+    static def fetchActiveActionItemByGroupId( Long groupId, paginationParams ) {
         ActionItemGroupAssignReadOnly.withSession {session ->
-            List groupActionItemAssign = session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchByGroupId' ).setLong( "groupId", groupId ).list()
-            return groupActionItemAssign
+            session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchActiveActionItemByGroupId' )
+                    .setLong( 'groupId', groupId ?: -1L )
+                    .setMaxResults( paginationParams.max )
+                    .setFirstResult( paginationParams.offset )
+                    .list()
         }
     }
 
+    /**
+     * @param searchParam
+     * @return
+     */
+    static def fetchGroupLookup( searchParam, paginationParams ) {
+        GroupFolderReadOnly.withSession {session ->
+            session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchGroupLookup' )
+                    .setString( 'searchParam', searchParam )
+                    .setMaxResults( paginationParams.max )
+                    .setFirstResult( paginationParams.offset )
+                    .list()
+        }
+    }
 }

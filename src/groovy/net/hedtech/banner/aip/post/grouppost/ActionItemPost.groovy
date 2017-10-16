@@ -76,12 +76,6 @@ class ActionItemPost implements Serializable {
     boolean postingDeleteIndicator = false;
 
     /**
-     * POSTING SCHEDULE TYPE: Posting Schedule type of Action Item Posting.
-     */
-    @Column(name = "GCBAPST_SCHEDULE_TYPE")
-    String postingScheduleType
-
-    /**
      * POSTING DISPLAY START DATE: Display Start Date of Action Item Posting.
      */
     @Temporal(TemporalType.DATE)
@@ -100,7 +94,7 @@ class ActionItemPost implements Serializable {
      */
     @Temporal(TemporalType.DATE)
     @Column(name = "GCBAPST_SCHEDULED_DATETIME")
-    Date postingScheduleDeleteTime
+    Date postingScheduleDateTime
 
     /**
      * POSTING CREATOR ID: The ID of user who created the Action item posting.
@@ -113,7 +107,7 @@ class ActionItemPost implements Serializable {
      */
     @Temporal(TemporalType.DATE)
     @Column(name = "GCBAPST_CREATION_DATETIME")
-    Date postingScheduleDateTime
+    Date postingCreationDateTime
 
     /**
      * POPULATION REGENERATE INDICATOR: Indicates if the chosen population needs to be recalculated before posting. Values are (Y)es and (N)o
@@ -210,10 +204,9 @@ class ActionItemPost implements Serializable {
         postingActionItemGroupId( nullable: false, maxSize: 19 )
         postingName( nullable: false, maxSize: 2048 )
         postingDeleteIndicator( nullable: false, maxSize: 1 )
-        postingScheduleType( nullable: false, maxSize: 30 )
         postingDisplayStartDate( nullable: false )
         postingDisplayEndDate( nullable: false )
-        postingScheduleDeleteTime( nullable: false )
+        postingScheduleDateTime( nullable: false )
         postingCreatorId( nullable: false, maxSize: 30 )
         postingScheduleDateTime( nullable: false )
         populationRegenerateIndicator( nullable: false, maxSize: 1 )
