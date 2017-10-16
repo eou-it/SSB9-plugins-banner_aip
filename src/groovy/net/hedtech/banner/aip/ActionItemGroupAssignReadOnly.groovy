@@ -17,7 +17,7 @@ import javax.persistence.*
         @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchById",
                 query = """
             FROM ActionItemGroupAssignReadOnly a 
-            WHERE a.processGroupFolderId = :myId 
+            WHERE a.actionGroupFolderId = :myId 
         """),
         @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchGroupLookup",
                 query = """
@@ -74,11 +74,11 @@ class ActionItemGroupAssignReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_GCRFLDR_ID")
     Long actionItemFolderId
 
-//    /**
-//     * ACTION ITEM FOLDER NAME: Name of the folder under which this action item is organized.
-//     */
-//    @Column(name = "ACTION_ITEM_FOLDER_NAME")
-//    String actionItemFolderName
+    /**
+     * ACTION ITEM FOLDER NAME: Name of the folder under which this action item is organized.
+     */
+    @Column(name = "ACTION_ITEM_FOLDER_NAME")
+    String actionItemFolderName
 
     /**
      * ACTION ITEM NAME: Name of the Action Item for Action Item management control.
@@ -136,11 +136,11 @@ class ActionItemGroupAssignReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_GROUP_GCRFLDR_ID")
     Long actionGroupFolderId
 
-//    /**
-//     * ACTION ITEM GROUP FOLDER NAME: Name of the folder under which this action item grooup is organized.
-//     */
-//    @Column(name = "ACTION_ITEM_GROUP_FOLDER_NAME")
-//    String actionItemGroupFolderName
+    /**
+     * ACTION ITEM GROUP FOLDER NAME: Name of the folder under which this action item grooup is organized.
+     */
+    @Column(name = "ACTION_ITEM_GROUP_FOLDER_NAME")
+    String actionItemGroupFolderName
 
     /**
      * GROUP NAME: Name for the action Item Group for Group management control.
@@ -173,7 +173,7 @@ class ActionItemGroupAssignReadOnly implements Serializable {
                 "actionItemFolderId=$actionItemFolderId, actionItemName=$actionItemName, actionItemTitle=$actionItemTitle,
                 "actionItemStatus=$actionItemStatus, ctionItemPostingIndicator=$actionItemPostingIndicator,
                 "actionItemDescription=$actionItemDescription, creator=$creator, createDate=$createDate,
-                "actionItemGroupId=$actionItemGroupId, processGroupFolderId=$processGroupFolderId, groupName=$groupName,
+                "actionItemGroupId=$actionItemGroupId, actionGroupFolderId=$actionGroupFolderId, groupName=$groupName,
                 "groupTitle=$groupTitle, groupStatus=$groupStatus, groupPostedIndicator=$groupPostedIndicator]"""
     }
     /**
