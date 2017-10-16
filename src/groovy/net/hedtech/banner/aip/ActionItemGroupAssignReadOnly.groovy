@@ -21,7 +21,7 @@ import javax.persistence.*
         """),
         @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchGroupLookup",
                 query = """
-                           select actionGroupFolderId, 
+                           select distinct actionGroupFolderId, 
                                   actionItemGroupFolderName, 
                                   actionItemGroupId, 
                                   groupName, 
