@@ -77,6 +77,8 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
      */
     @Transactional(readOnly=true, rollbackFor = Throwable.class )
     public List<ActionItemPostWork> getPendingJobs( int max ) throws ApplicationException {
+        // FIXME
+        println "CRR: Get pending actionItem jobs: PostWorkTaskManager"
         log.debug( "Getting pending jobs" )
         List<ActionItemPostWork> result = ActionItemPostWork.fetchByReadyExecutionState( max )
         log.debug( "Found " + result.size() + " jobs." )

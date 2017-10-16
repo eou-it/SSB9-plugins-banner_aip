@@ -18,11 +18,8 @@ class ActionItemJobProcessorService {
     public void performActionItemJob( Long jobId ) {
         log.debug( "performed actionItem job with job id = ${jobId}." )
 
-        ActionItemJob job = actionItemJobService.get( jobId )
-        /*
-        List<ActionItemRecipientData> recipientDataList = ActionItemRecipientData.fetchByReferenceId( job.referenceId )
-        ActionItemRecipientData recipientData = recipientDataList.size() ? recipientDataList[0] : null
-        */
+        // put together our insert of action items for pidm to insert
+
         actionItemPerformPostService.postActionItems(  )
     }
 

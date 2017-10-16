@@ -7,9 +7,10 @@ import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTask
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskManager
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskMonitorRecord
+// TODO: move to more logical shared location package
 import net.hedtech.banner.general.communication.groupsend.automation.StringHelper
 
-// TODO: move to more logical shared location package
+
 import org.apache.commons.lang.NotImplementedException
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -33,8 +34,8 @@ class ActionItemPostTaskManagerService implements AsynchronousTaskManager {
     private Exception simulatedFailureException;
 
 
-    public Class<ActionItemPostWork> getJobType() {
-        return ActionItemPostWork.class;
+    public Class<ActionItemPost> getJobType() {
+        return ActionItemPost.class;
     }
 
     public AsynchronousTask create( AsynchronousTask job) throws ApplicationException {
@@ -74,7 +75,9 @@ class ActionItemPostTaskManagerService implements AsynchronousTaskManager {
      * @return
      */
     @Transactional(readOnly=true, rollbackFor = Throwable.class )
-    public List<ActionItemPostWork> getPendingJobs( int max ) throws ApplicationException {
+    public List<ActionItemPost> getPendingJobs( int max ) throws ApplicationException {
+        // FIXME: I might have created an entire unused class here (currently a little confused)
+        println "CRR: Get pending actionItem jobs: PostTaskManager"
         log.debug( "Getting pending group sends" )
         List<ActionItemPost> result = ActionItemPost.findRunning( max )
         log.debug( "Found " + result.size() + " jobs." )

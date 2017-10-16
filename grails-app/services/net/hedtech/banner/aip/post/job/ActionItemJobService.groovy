@@ -34,7 +34,7 @@ class ActionItemJobService extends ServiceBase {
         log.debug( "Attempting to acquire actionItem job id = ${jobId}.")
         Sql sql = new Sql(sessionFactory.getCurrentSession().connection())
         try {
-            int rows = sql.executeUpdate("update GCBCJOB set GCBCJOB_STATUS = ? where GCBCJOB_SURROGATE_ID = ? and GCBCJOB_STATUS = ? ",
+            int rows = sql.executeUpdate("update GCBAJOB set GCBAJOB_STATUS = ? where GCBAJOB_SURROGATE_ID = ? and GCBAJOB_STATUS = ? ",
                 [ActionItemJobStatus.DISPATCHED.toString(), jobId, ActionItemJobStatus.PENDING.toString() ] )
             if (rows == 1) {
                 log.debug( "ActionItem job withid = ${jobId} acquired" )
@@ -61,7 +61,7 @@ class ActionItemJobService extends ServiceBase {
         log.debug( "Attempting to mark actionItem job id = ${jobId} as completed.")
         Sql sql = new Sql(sessionFactory.getCurrentSession().connection())
         try {
-            int rows = sql.executeUpdate("update GCBCJOB set GCBCJOB_STATUS = ? where GCBCJOB_SURROGATE_ID = ?",
+            int rows = sql.executeUpdate("update GCBAJOB set GCBAJOB_STATUS = ? where GCBAJOB_SURROGATE_ID = ?",
                 [ActionItemJobStatus.COMPLETED.toString(), jobId ] )
             if (rows == 0) {
                 log.debug( "No actionItem job with id = ${jobId} to update.")
