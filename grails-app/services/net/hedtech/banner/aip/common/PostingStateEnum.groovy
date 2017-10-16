@@ -6,7 +6,7 @@ package net.hedtech.banner.aip.common
  * Enum filed for AIP posting states
  */
 public enum PostingStateEnum {
-    QUEUED( 'QUEUE' ),
+    QUEUED( 'QUEUED' ),
     SCHEDULED( 'SCHEDULED' )
     String statusName
 

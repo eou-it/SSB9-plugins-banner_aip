@@ -8,6 +8,5 @@ package net.hedtech.banner.aip.common
 class AIPConstants {
     public static final String YES_IND = 'Y'
     public static final String NO_IND = 'N'
-    public static final String POST_QUEUED = ''
-    private static final Map STATUS_MAP = ['Draft': 'D', 'Active': 'A', 'Inactive': 'I']
+    public static final Map STATUS_MAP = ['Draft': 'D', 'Active': 'A', 'Inactive': 'I']
 }
