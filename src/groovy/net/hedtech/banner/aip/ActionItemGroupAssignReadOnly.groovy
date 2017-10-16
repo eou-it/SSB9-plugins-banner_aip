@@ -17,12 +17,16 @@ import javax.persistence.*
         @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchById",
                 query = """
             FROM ActionItemGroupAssignReadOnly a 
-            WHERE a.processGroupFolderId = :myId 
+            WHERE a.actionItemGroupId = :myId 
         """),
-        @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchByGroupId",
-                query = """
-                    FROM ActionItemGroupAssignReadOnly a 
-                    WHERE a.actionItemGroupId = :groupId 
+        @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchActiveActionItemByGroupId",
+                query = """ select actionItemId,
+                                   actionItemName,  
+                                   actionItemTitle,
+                                   actionItemFolderName 
+                            FROM ActionItemGroupAssignReadOnly a 
+                            WHERE a.actionItemGroupId = :groupId 
+                            AND a.actionItemStatus = 'A' order by a.sequenceNumber
                 """)
 ])
 
@@ -57,11 +61,11 @@ class ActionItemGroupAssignReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_GCRFLDR_ID")
     Long actionItemFolderId
 
-//    /**
-//     * ACTION ITEM FOLDER NAME: Name of the folder under which this action item is organized.
-//     */
-//    @Column(name = "ACTION_ITEM_FOLDER_NAME")
-//    String actionItemFolderName
+    /**
+     * ACTION ITEM FOLDER NAME: Name of the folder under which this action item is organized.
+     */
+    @Column(name = "ACTION_ITEM_FOLDER_NAME")
+    String actionItemFolderName
 
     /**
      * ACTION ITEM NAME: Name of the Action Item for Action Item management control.
@@ -119,11 +123,11 @@ class ActionItemGroupAssignReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_GROUP_GCRFLDR_ID")
     Long processGroupFolderId
 
-//    /**
-//     * ACTION ITEM GROUP FOLDER NAME: Name of the folder under which this action item grooup is organized.
-//     */
-//    @Column(name = "ACTION_ITEM_GROUP_FOLDER_NAME")
-//    String actionItemGroupFolderName
+    /**
+     * ACTION ITEM GROUP FOLDER NAME: Name of the folder under which this action item grooup is organized.
+     */
+    @Column(name = "ACTION_ITEM_GROUP_FOLDER_NAME")
+    String actionItemGroupFolderName
 
     /**
      * GROUP NAME: Name for the action Item Group for Group management control.
@@ -166,8 +170,7 @@ class ActionItemGroupAssignReadOnly implements Serializable {
      */
     static fetchActionItemGroupAssignROByGroupId( Long myId ) {
         ActionItemGroupAssignReadOnly.withSession {session ->
-            List groupAssigned = session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchById' ).setLong( 'myId', myId ).list()
-            return groupAssigned
+            session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchById' ).setLong( 'myId', myId ).list()
         }
     }
 
@@ -177,19 +180,17 @@ class ActionItemGroupAssignReadOnly implements Serializable {
      */
     static def fetchActionItemGroupAssignRO() {
         ActionItemGroupAssignReadOnly.withSession {session ->
-            List groupAssignedAll = session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchActionItemGroupAssign' ).list()
-            return groupAssignedAll
+            session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchActionItemGroupAssign' ).list()
         }
     }
 
     /**
-     *
+     * @param groupId
      * @return
      */
-    static def fetchByGroupId( groupId ) {
+    static def fetchActiveActionItemByGroupId( Long groupId ) {
         ActionItemGroupAssignReadOnly.withSession {session ->
-            List groupActionItemAssign = session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchByGroupId' ).setLong( "groupId", groupId ).list()
-            return groupActionItemAssign
+            session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchActiveActionItemByGroupId' ).setLong( 'groupId', groupId ?: -1L ).list()
         }
     }
 
