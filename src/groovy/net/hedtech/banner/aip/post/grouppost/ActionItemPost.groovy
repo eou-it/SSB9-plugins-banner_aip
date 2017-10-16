@@ -122,6 +122,7 @@ class ActionItemPost implements Serializable {
     @Column(name = "GCBAPST_CURRENT_STATE")
     ActionItemPostExecutionState postingCurrentState = ActionItemPostExecutionState.New;
 
+    /*
     @Column(name = "GCBAPST_STARTED_DATE", nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
     Date postingStartedDate;
@@ -129,6 +130,7 @@ class ActionItemPost implements Serializable {
     @Column(name = "GCBAPST_STOP_DATE", nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
     Date postingStopDate;
+    */
 
     /**
      * POSTING JOB ID: The job ID of the scheduled job.
@@ -142,8 +144,8 @@ class ActionItemPost implements Serializable {
     @Column(name = "GCBAPST_POPCALC_ID")
     Long populationCalculationId
 
-    @Column(name = "GCBAPST_POPVERSION_ID")
-    Long populationVersionId
+    //@Column(name = "GCBAPST_POPVERSION_ID")
+    //Long populationVersionId
 
     /**
      * POSTING ERROR CODE: The Error code of Action Item post.
@@ -198,7 +200,6 @@ class ActionItemPost implements Serializable {
 
 
     static constraints = {
-        id( nullable: false, maxSize: 19 )
         version( nullable: true, maxSize: 19 )
         populationListId( nullable: false, maxSize: 19 )
         postingActionItemGroupId( nullable: false, maxSize: 19 )
@@ -211,11 +212,11 @@ class ActionItemPost implements Serializable {
         postingScheduleDateTime( nullable: false )
         populationRegenerateIndicator( nullable: false, maxSize: 1 )
         postingCurrentState( nullable: true, maxSize: 255 )
-        postingStartedDate(nullable: true)
-        postingStopDate(nullable: true)
-        postingJobId( nullable: true, maxSize: 19 )
+        //postingStartedDate(nullable: true)
+        //postingStopDate(nullable: true)
+        postingJobId( nullable: true, maxSize: 64 )
         populationCalculationId( nullable: true, maxSize: 19 )
-        populationVersionId( nullable: true, maxSize: 19 )
+        //populationVersionId( nullable: true, maxSize: 19 )
         postingErrorCode( nullable: true, maxSize: 256 )
         postingErrorText( nullable: true )
         postingGroupId( nullable: true, maxSize: 256 )
@@ -242,21 +243,23 @@ class ActionItemPost implements Serializable {
 
         public void markStopped( Date stopDate = new Date() ) {
             assignPostExecutionState( ActionItemPostExecutionState.Stopped )
-            this.postingStopDate = stopDate
+            //this.postingStopDate = stopDate
         }
 
 
         public void markComplete( Date stopDate = new Date() ) {
             assignPostExecutionState( ActionItemPostExecutionState.Complete )
-            this.postingStopDate = stopDate
+            //this.postingStopDate = stopDate
         }
 
 
         public void markProcessing() {
             assignPostExecutionState( ActionItemPostExecutionState.Processing )
+            /*
             if (this.postingStartedDate == null) {
                 this.postingStartedDate = new Date()
             }
+            */
         }
 
 

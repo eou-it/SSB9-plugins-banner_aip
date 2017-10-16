@@ -81,7 +81,7 @@ class ActionItemPostCompositeService {
             assignPopulationVersion( groupSend )
             assignPopulationCalculation( groupSend, bannerUser )
         } else if (groupSend.populationRegenerateIndicator) { // scheduled with future replica of population
-            groupSend.populationVersionId = null
+            // FIXME: put this back in once column is in db groupSend.populationVersionId = null
             groupSend.populationCalculationId = null
         } else { // sending now or scheduled with replica of current population
             assert (useCurrentReplica == true)
@@ -245,7 +245,7 @@ class ActionItemPostCompositeService {
             populationVersion = CommunicationPopulationVersion.findLatestByPopulationId( groupSend.populationListId )
         }
         assert populationVersion.id
-        groupSend.populationVersionId = populationVersion.id
+        //FIXME: this line should work when column get added to db //groupSend.populationVersionId = populationVersion.id
         return populationVersion
     }
 

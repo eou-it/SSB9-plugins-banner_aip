@@ -17,6 +17,9 @@ class ActionItemPostService extends ServiceBase {
         if (groupSend.getPostingCreatorId(  ) == null) {
             groupSend.setPostingCreatorId( SecurityContextHolder?.context?.authentication?.principal?.getOracleUserName() )
         }
+        if (groupSend.getPostingCreationDateTime() == null) {
+            groupSend.setPostingCreationDateTime( new Date() )
+        }
         if (groupSend.getLastModified() == null) {
             groupSend.setLastModified( new Date() )
         }

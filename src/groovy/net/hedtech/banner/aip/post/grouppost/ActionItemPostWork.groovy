@@ -74,7 +74,7 @@ class ActionItemPostWork implements AsynchronousTask {
      */
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "GCRAIIM_GROUP_SEND_ID", referencedColumnName = "GCBAPST_SURROGATE_ID")
+    @JoinColumn(name = "GCRAIIM_GCBAPST_ID", referencedColumnName = "GCBAPST_SURROGATE_ID")
     ActionItemPost actionItemGroupSend;
 
     /** The target of the send item */
@@ -111,9 +111,9 @@ class ActionItemPostWork implements AsynchronousTask {
      * Error Code: The error code for the error scenario that failed the Action Item Job
      */
 
-    @Column(name = "GCRAIIM_ERROR_CODE")
-    @Enumerated(EnumType.STRING)
-    ActionItemErrorCode errorCode
+    //@Column(name = "GCRAIIM_ERROR_CODE")
+    //@Enumerated(EnumType.STRING)
+    //ActionItemErrorCode errorCode
 
     static constraints = {
         lastModified( nullable: true )
@@ -122,7 +122,7 @@ class ActionItemPostWork implements AsynchronousTask {
         stopDate( nullable: true )
         errorText( nullable: true )
         mepCode( nullable: true )
-        errorCode( nullable: true )
+        //errorCode( nullable: true )
     }
 
 
