@@ -42,7 +42,7 @@ class ActionItemPostingCompositeService {
                 lastModified: new Date(),
                 lastModifiedBy: user.userName )
         try {
-            savedActionItemPost = actionItemPostingService.create( aip )
+            savedActionItemPost = actionItemPostingService.create( aip )// Save base posting table
             success = true
         } catch (ApplicationException e) {
             LOGGER.error( 'Error while save action item posting' )

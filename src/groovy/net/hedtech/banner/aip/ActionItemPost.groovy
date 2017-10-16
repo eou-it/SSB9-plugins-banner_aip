@@ -174,7 +174,6 @@ class ActionItemPost implements Serializable {
         postingActionItemGroupId( nullable: false, maxSize: 19 )
         postingName( nullable: false, maxSize: 2048 )
         postingDeleteIndicator( nullable: false, maxSize: 1 )
-        postingScheduleType( nullable: false, maxSize: 30 )
         postingDisplayStartDate( nullable: false )
         postingDisplayEndDate( nullable: false )
         postingScheduleDateTime( nullable: false )
