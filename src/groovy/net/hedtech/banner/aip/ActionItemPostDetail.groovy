@@ -9,13 +9,12 @@ import groovy.transform.ToString
 import javax.persistence.*
 
 /**
- * Action Item Post Detail: Defines the paramters of an action item to be posted.
+ * Action Item Post Detail: Defines the parameters of an action item to be posted.
  */
 @Entity
 @Table(name = "GCRAPST")
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
-//TODO : Please verify class name.
 class ActionItemPostDetail implements Serializable {
 
     /**
