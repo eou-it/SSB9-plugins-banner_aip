@@ -75,6 +75,38 @@ environments {
     }
 }
 
+aip {
+    weblogicDeployment = false
+
+    aipPostMonitor {
+        enabled = true
+        monitorIntervalInSeconds = 10
+    }
+
+    aipPostWorkProcessingEngine {
+        enabled = true
+        maxThreads = 1
+        maxQueueSize = 5000
+        continuousPolling = true
+        pollingInterval = 2000
+        deleteSuccessfullyCompleted = false
+    }
+
+    aipJobProcessingEngine {
+        enabled = true
+        maxThreads = 2
+        maxQueueSize = 5000
+        continuousPolling = true
+        pollingInterval = 2000
+        deleteSuccessfullyCompleted = false
+    }
+
+    scheduler {
+        enabled = true
+        idleWaitTime = 30000
+    }
+}
+
 banner {
     sso {
         authenticationProvider = 'default'

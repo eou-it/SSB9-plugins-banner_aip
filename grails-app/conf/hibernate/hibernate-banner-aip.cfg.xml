@@ -30,9 +30,11 @@ Copyright 2017 Ellucian Company L.P. and its affiliates.
         <mapping class="net.hedtech.banner.aip.ActionItemBlockedProcess"/>
         <mapping class="net.hedtech.banner.aip.ActionItemGroupAssign"/>
         <mapping class="net.hedtech.banner.aip.ActionItemGroupAssignReadOnly"/>
-        <mapping class="net.hedtech.banner.aip.ActionItemPost"/>
-                <mapping class="net.hedtech.banner.aip.ActionItemPostDetail"/>
-                <mapping class="net.hedtech.banner.aip.ActionItemPostingDetailsReadOnly"/>
+        <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPost"/>
+        <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPostDetail"/>
+        <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPostingDetailsReadOnly"/>
+        <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPostWork"/>
+        <mapping class="net.hedtech.banner.aip.post.job.ActionItemJob"/>
         <mapping class="net.hedtech.banner.general.communication.folder.CommunicationFolder"/>
     </session-factory>
 </hibernate-configuration>

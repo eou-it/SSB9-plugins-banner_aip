@@ -18,19 +18,6 @@ import javax.persistence.*
                 query = """
            FROM GroupFolderReadOnly a
           """),
-        @NamedQuery(name = "GroupFolderReadOnly.fetchGroupLookup",
-                query = """
-                   select folderId, 
-                          folderName, 
-                          groupId, 
-                          groupName, 
-                          groupTitle 
-                    FROM GroupFolderReadOnly a
-                    where UPPER(a.folderName) like :searchParam  or 
-                          UPPER(a.groupName) like :searchParam or 
-                          UPPER(a.groupTitle) like :searchParam 
-                     order by a.folderName, a.groupName
-                  """),
         @NamedQuery(name = "GroupFolderReadOnly.fetchGroupFoldersById",
                 query = """
            FROM GroupFolderReadOnly a
@@ -132,16 +119,6 @@ class GroupFolderReadOnly implements Serializable {
      */
     @Column(name = "ACTION_ITEM_FOLDER_DESCRIPTION")
     String folderDesc
-
-    /**
-     * @param searchParam
-     * @return
-     */
-    static def fetchGroupLookup( searchParam ) {
-        GroupFolderReadOnly.withSession {session ->
-            session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupLookup' ).setString( 'searchParam', searchParam ).list()
-        }
-    }
 
     /**
      *

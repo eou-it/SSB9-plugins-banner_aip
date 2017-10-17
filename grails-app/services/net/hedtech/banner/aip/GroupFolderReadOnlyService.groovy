@@ -19,33 +19,6 @@ class GroupFolderReadOnlyService extends ServiceBase {
         GroupFolderReadOnly.fetchGroupFolders()
     }
 
-    /**
-     * Return of all groups. It has folder information
-     * @return
-     */
-    def fetchGroupLookup( searchParam ) {
-        def data = GroupFolderReadOnly.fetchGroupLookup( '%' + (searchParam ? searchParam.toUpperCase() : '') + '%' ).collect() {
-            [folderId: it[0], folderName: it[1], groupId: it[2], groupName: it[3], groupTitle: it[4]]
-        }
-        Map map = [:]
-        if (data) {
-            Map folder = data.collectEntries() {
-                [it.folderId, it.folderName]
-            }
-            println folder.keySet()
-
-            folder.keySet().each {key ->
-                map.put( folder.get( key ), data.findAll() {
-                    (it.folderId == key)
-                }.collect() {
-                    [groupId   : it.groupId,
-                     groupName : it.groupName,
-                     groupTitle: it.groupTitle]
-                } )
-            }
-        }
-        map
-    }
 
     /**
      * Gets Action Item Group by Id

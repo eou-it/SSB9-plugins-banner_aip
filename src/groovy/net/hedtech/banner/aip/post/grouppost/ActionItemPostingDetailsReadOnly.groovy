@@ -1,38 +1,43 @@
 /*******************************************************************************
  Copyright 2017 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
-package net.hedtech.banner.aip
+package net.hedtech.banner.aip.post.grouppost
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.hibernate.annotations.Type
-
 import javax.persistence.*
 
+
 /**
- * Action Item Post: Defines the parameters for an action item post.
+ * Read only view for summary of action item posting jobs.
  */
 @Entity
-@Table(name = "GCBAPST")
+@Table(name = "GVQ_GCRAPST")
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
-class ActionItemPost implements Serializable {
+class ActionItemPostingDetailsReadOnly implements Serializable {
 
     /**
      * SURROGATE ID: Generated unique numeric identifier for this entity.
      */
     @Id
-    @Column(name = "GCBAPST_SURROGATE_ID")
-    @SequenceGenerator(name = "GCBAPST_SEQ_GEN", allocationSize = 1, sequenceName = "GCBAPST_SURROGATE_ID_SEQUENCE")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GCBAPST_SEQ_GEN")
+    @Column(name = "GCRAPST_SURROGATE_ID")
+    @SequenceGenerator(name = "GCRAPST_SEQ_GEN", allocationSize = 1, sequenceName = "GCRAPST_SURROGATE_ID_SEQUENCE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GCRAPST_SEQ_GEN")
     Long id
 
     /**
-     * VERSION: Optimistic lock token.
+     * ACTION ITEM POST ID: Action Item post ID.
      */
-    @Version
-    @Column(name = "GCBAPST_VERSION")
-    Long version
+    @Column(name = "GCRAPST_GCBAPST_ID")
+    Long actionItemPostId
+
+    /**
+     * ACTION ITEM ID: Action Item ID of the action item to post.
+     */
+    @Column(name = "GCRAPST_GCBACTM_ID")
+    Long actionItemId
 
     /**
      * POPULATION LIST ID: Population List identification number.
@@ -115,7 +120,7 @@ class ActionItemPost implements Serializable {
      * POSTING JOB ID: The job ID of the scheduled job.
      */
     @Column(name = "GCBAPST_JOB_ID")
-    Long postingJobId
+    String postingJobId
 
     /**
      * POPULATION CALCULATION ID: The id of the specific population calculation resolved to feed the Action Item post.
@@ -148,55 +153,77 @@ class ActionItemPost implements Serializable {
     String postingParameterValues
 
     /**
-     * ACTIVITY DATE: Date that record was created or last updated.
+     * ACTION ITEM FOLDER ID: Foreign key reference to the folder under which this action item is organized.
+     */
+    @Column(name = "ACTION_ITEM_GCRFLDR_ID")
+    Long actionItemFolderId
+
+    /**
+     * ACTION ITEM NAME: Name of the Action Item for Action Item management control.
+     */
+    @Column(name = "ACTION_ITEM_NAME")
+    String actionItemName
+
+    /**
+     * ACTION ITEM TITLE: Title of the Action Item. This displays for the user assigned the Action Item.
+     */
+    @Column(name = "ACTION_ITEM_TITLE")
+    String actionItemTitle
+
+    /**
+     * ACTION ITEM STATUS: Status of the Action Item. Valid values are (D)raft, (A)ctive and (I)nactive.
+     */
+    @Column(name = "ACTION_ITEM_STATUS_CODE")
+    String actionItemStatus
+
+    /**
+     * ACTION ITEM POSTING INDICATOR: Posting status of Action Item. Valid values are (Y)es and (N)o. Default is (N)o.
+     */
+    @Type(type = "yes_no")
+    @Column(name = "ACTION_ITEM_POSTED_IND")
+    Boolean actionItemPostingIndicator
+
+    /**
+     * CREATOR: The Oracle user name that first created this record.
+     */
+    @Column(name = "ACTION_ITEM_CREATOR_ID")
+    String creator
+
+    /**
+     * CREATE DATE: The date when this Action Item record was created.
      */
     @Temporal(TemporalType.DATE)
-    @Column(name = "GCBAPST_ACTIVITY_DATE")
-    Date lastModified
+    @Column(name = "ACTION_ITEM_CREATE_DATE")
+    Date createDate
 
     /**
-     * USER ID: The user ID of the person who inserted or last updated this record.
+     * GROUP FOLDER ID: folder id selected for the Action Item Group.
      */
-    @Column(name = "GCBAPST_USER_ID")
-    String lastModifiedBy
+    @Column(name = "ACTION_GROUP_GCRFLDR_ID")
+    Long groupFolderId
 
     /**
-     * DATA ORIGIN: Source system that created or updated the data.
+     * GROUP NAME: Name for the action Item Group for Group management control.
      */
-    @Column(name = "GCBAPST_DATA_ORIGIN")
-    String dataOrigin
+    @Column(name = "ACTION_GROUP_NAME")
+    String groupName
 
     /**
-     * VPDI CODE: Multi-entity processing code.
+     * GROUP TITLE: Title for the action Item Group. The title displays for the user assigned the Group.
      */
-    @Column(name = "GCBAPST_VPDI_CODE")
-    String vpdiCode
+    @Column(name = "ACTION_GROUP_TITLE")
+    String groupTitle
 
+    /**
+     * GROUP STATUS: Status of the Group. Possible values (D)raft, (A)ctive and (I)nActive.
+     */
+    @Column(name = "ACTION_GROUP_STATUS_CODE")
+    String groupStatus
 
-    static constraints = {
-        id( nullable: false, maxSize: 19 )
-        version( nullable: true, maxSize: 19 )
-        populationListId( nullable: false, maxSize: 19 )
-        postingActionItemGroupId( nullable: false, maxSize: 19 )
-        postingName( nullable: false, maxSize: 2048 )
-        postingDeleteIndicator( nullable: false, maxSize: 1 )
-        postingScheduleType( nullable: false, maxSize: 30 )
-        postingDisplayStartDate( nullable: false )
-        postingDisplayEndDate( nullable: false )
-        postingScheduleDeleteTime( nullable: false )
-        postingCreatorId( nullable: false, maxSize: 30 )
-        postingScheduleDateTime( nullable: false )
-        populationRegenerateIndicator( nullable: false, maxSize: 1 )
-        postingCurrentState( nullable: true, maxSize: 255 )
-        postingJobId( nullable: true, maxSize: 19 )
-        populationCalculationId( nullable: true, maxSize: 19 )
-        postingErrorCode( nullable: true, maxSize: 256 )
-        postingErrorText( nullable: true )
-        postingGroupId( nullable: true, maxSize: 256 )
-        postingParameterValues( nullable: true )
-        lastModified( nullable: false )
-        lastModifiedBy( nullable: false, maxSize: 30 )
-        dataOrigin( nullable: true, maxSize: 30 )
-        vpdiCode( nullable: true, maxSize: 6 )
-    }
+    /**
+     * GROUP POSTED INDICATOR: Posting Status of Group. Possible values (N)o and (Y)es.
+     */
+    @Type(type = "yes_no")
+    @Column(name = "ACTION_GROUP_POSTED_IND")
+    Boolean groupPostedIndicator
 }

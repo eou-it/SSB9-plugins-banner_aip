@@ -3,10 +3,18 @@
  **********************************************************************************/
 package net.hedtech.banner.aip.common
 /**
- * Constant filed for AIP
+ * Enum filed for AIP posting states
  */
-class AIPConstants {
-    public static final String YES_IND = 'Y'
-    public static final String NO_IND = 'N'
-    public static final Map STATUS_MAP = ['Draft': 'D', 'Active': 'A', 'Inactive': 'I']
+public enum PostingStateEnum {
+    QUEUED( 'QUEUED' ),
+    SCHEDULED( 'SCHEDULED' )
+    String statusName
+
+    /**
+     *
+     * @param statusName
+     */
+    PostingStateEnum( statusName ) {
+        this.statusName = statusName
+    }
 }
