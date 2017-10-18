@@ -1,9 +1,11 @@
 /*********************************************************************************
  Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
-package net.hedtech.banner.aip
+package net.hedtech.banner.aip.post.grouppost
 
 import grails.transaction.Transactional
+import net.hedtech.banner.aip.ActionItem
+import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.aip.common.PostingStateEnum
 import net.hedtech.banner.exceptions.ApplicationException

@@ -87,6 +87,7 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
     public boolean acquire( AsynchronousTask task ) throws ApplicationException {
         ActionItemJob job = task as ActionItemJob
         log.info( "Acquiring actionItem job with id = ${job.id}." )
+        println "CRR: Acquire actionItem jobs: JobTaskManager"
         return actionItemJobService.acquire( job.id )
     }
 
@@ -111,7 +112,7 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
     public void process( AsynchronousTask task) throws ApplicationException {
         ActionItemJob job = task as ActionItemJob
         log.info( "Processing actionItem job id = ${job.id}." )
-
+        println "CRR: Processing actionItem jobs: JobTaskManager"
         try {
             if (simulatedFailureException != null) {
                 throw simulatedFailureException;

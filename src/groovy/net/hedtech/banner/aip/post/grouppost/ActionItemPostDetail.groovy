@@ -71,7 +71,6 @@ class ActionItemPostDetail implements Serializable {
     String vpdiCode
 
     static constraints = {
-        id( nullable: false, maxSize: 19 )
         version( nullable: true, maxSize: 19 )
         actionItemPostId( nullable: false, maxSize: 19 )
         actionItemId( nullable: false, maxSize: 19 )

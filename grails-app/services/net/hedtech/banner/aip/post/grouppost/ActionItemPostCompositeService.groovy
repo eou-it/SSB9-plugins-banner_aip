@@ -4,17 +4,11 @@
 package net.hedtech.banner.aip.post.grouppost
 
 import groovy.sql.Sql
-import net.hedtech.banner.exceptions.ApplicationException
-import net.hedtech.banner.exceptions.NotFoundException
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.aip.post.exceptions.ActionItemExceptionFactory
-import net.hedtech.banner.general.communication.population.CommunicationPopulation
-import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculation
-import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculationStatus
-import net.hedtech.banner.general.communication.population.CommunicationPopulationCompositeService
-import net.hedtech.banner.general.communication.population.CommunicationPopulationQueryAssociation
-import net.hedtech.banner.general.communication.population.CommunicationPopulationVersion
-import net.hedtech.banner.general.communication.population.CommunicationPopulationVersionQueryAssociation
+import net.hedtech.banner.exceptions.ApplicationException
+import net.hedtech.banner.exceptions.NotFoundException
+import net.hedtech.banner.general.communication.population.*
 import net.hedtech.banner.general.communication.population.selectionlist.CommunicationPopulationSelectionListService
 import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
@@ -39,6 +33,7 @@ class ActionItemPostCompositeService {
 
     private static final log = Logger.getLogger(ActionItemPostCompositeService.class)
     ActionItemPostService actionItemPostService
+    ActionItemPostDetailService actionItemPostDetailService
     CommunicationPopulationSelectionListService communicationPopulationSelectionListService
     CommunicationPopulationCompositeService communicationPopulationCompositeService
     SchedulerJobService schedulerJobService
@@ -71,11 +66,11 @@ class ActionItemPostCompositeService {
         String bannerUser = SecurityContextHolder.context.authentication.principal.getOracleUserName()
 
         CommunicationPopulation population = communicationPopulationCompositeService.fetchPopulation( groupSend.populationListId )
-        println 'try has query'
+
         boolean hasQuery = (CommunicationPopulationQueryAssociation.countByPopulation( population ) > 0)
-        println "CRR: hasQuery: " + hasQuery
+
         boolean useCurrentReplica = (!groupSend.populationRegenerateIndicator || !request.scheduledStartDate)
-        println "CRR useCurr: " + useCurrentReplica
+
         if (hasQuery && useCurrentReplica) {
             // this will need to be updated once we allow queries to be added to existing manual only populations
             assignPopulationVersion( groupSend )
@@ -90,12 +85,21 @@ class ActionItemPostCompositeService {
                 assignPopulationCalculation( groupSend, bannerUser )
             }
         }
-        // we don't use this. remove?
+        // we don't use parameterValues. remove?
         groupSend.postingParameterValues = null
         groupSend.postingDisplayStartDate = request.displayStartDate
         groupSend.postingDisplayEndDate = request.displayEndDate
-        println "AIGSCS: " + groupSend.toString(  )
         groupSend = (ActionItemPost) actionItemPostService.create( groupSend )
+
+        // Create the details records.
+        // FIXME: constraints, createdBy etc
+        request.actionItemIds.each {
+            ActionItemPostDetail groupDetail = new ActionItemPostDetail()
+            groupDetail.actionItemId = it
+            groupDetail.actionItemPostId = groupSend.id
+            actionItemPostDetailService.create( groupDetail )
+        }
+
 
         if (request.scheduledStartDate) {
             groupSend = schedulePost( groupSend, bannerUser )
@@ -363,6 +367,7 @@ class ActionItemPostCompositeService {
             .setParameter( "groupSendId", groupSend.id )
 
         SchedulerJobReceipt jobReceipt = schedulerJobService.scheduleNowServiceMethod( jobContext )
+        println jobReceipt
         groupSend.markQueued( jobReceipt.jobId, jobReceipt.groupId )
         groupSend = (ActionItemPost) actionItemPostService.update(groupSend)
         return groupSend
@@ -381,6 +386,8 @@ class ActionItemPostCompositeService {
             .setScheduledStartDate( groupSend.postingScheduleDateTime )
             .setParameter( "groupSendId", groupSend.id )
 
+        println "crr: jobContext: " + jobContext
+        println "CRR regen? " + groupSend.populationRegenerateIndicator
         if(groupSend.populationRegenerateIndicator) {
             jobContext.setJobHandle( "actionItemPostCompositeService", "calculatePopulationVersionForPostFired" )
                 .setErrorHandle( "actionItemPostCompositeService", "calculatePopulationVersionForPostFailed" )
@@ -390,7 +397,9 @@ class ActionItemPostCompositeService {
         }
 
         SchedulerJobReceipt jobReceipt = schedulerJobService.scheduleServiceMethod( jobContext )
+        println "CRR jobReceipt? " + jobReceipt
         groupSend.markScheduled( jobReceipt.jobId, jobReceipt.groupId )
+        println "CRR update ActionItemPost as Scheduled: " + groupSend
         groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
         return groupSend
     }
@@ -512,7 +521,7 @@ class ActionItemPostCompositeService {
                 current_time:new Date().toTimestamp()
             ],
             """
-            INSERT INTO gcraiim (gcraiim_group_send_id, gcraiim_pidm, gcraiim_creationdatetime
+            INSERT INTO gcraiim (gcraiim_gcbapst_id, gcraiim_pidm, gcraiim_creationdatetime
                                             ,gcraiim_current_state, gcraiim_reference_id, gcraiim_user_id, gcraiim_activity_date, 
                                             gcraiim_started_date)
                     select
@@ -525,7 +534,7 @@ class ActionItemPostCompositeService {
                         :current_time,
                         :current_time
                     from (
-                        select gcrlent_pidm, gcbgsnd_surrogate_id, gcbapst_user_id
+                        select gcrlent_pidm, gcbapst_surrogate_id, gcbapst_user_id
                             from gcrslis, gcrlent, gcbapst, gcrpopc
                             where
                             gcbapst_surrogate_id = :group_send_key
@@ -537,20 +546,22 @@ class ActionItemPostCompositeService {
                             from gcrslis, gcrlent, gcbapst, gcrpopv
                             where
                             gcbapst_surrogate_id = :group_send_key
-                            and gcrpopv_surrogate_id = gcbapst_popversion_id
+
                             and gcrslis_surrogate_id = gcrpopv_include_list_id
                             and gcrlent_slis_id = gcrslis_surrogate_id
                     )
             """ )
-
+//                            and gcrpopv_surrogate_id = gcbapst_popversion_id (line 555 when in db)
             if (log.isDebugEnabled()) log.debug( "Created " + sql.updateCount + " group send item records for group send with id = " + groupSend.id )
         } catch (SQLException ae) {
             log.debug "SqlException in INSERT INTO gcraiim ${ae}"
             log.debug ae.stackTrace
+            println ae.stackTrace
             throw ae
         } catch (Exception ae) {
             log.debug "Exception in INSERT INTO gcraiim ${ae}"
             log.debug ae.stackTrace
+            println ae.stackTrace
             throw ae
         } finally {
             sql?.close()

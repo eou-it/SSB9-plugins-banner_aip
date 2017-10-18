@@ -3,10 +3,12 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.groupsend
 
-import net.hedtech.banner.aip.post.grouppost.ActionItemPost
+import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.post.ActionItemBaseConcurrentTestCase
+import net.hedtech.banner.aip.post.grouppost.ActionItemPost
 import net.hedtech.banner.aip.post.grouppost.ActionItemPostRequest
 import net.hedtech.banner.aip.post.grouppost.ActionItemPostWork
+import net.hedtech.banner.aip.post.grouppost.ActionItemPostWorkExecutionState
 import net.hedtech.banner.aip.post.job.ActionItemJob
 import net.hedtech.banner.general.communication.population.CommunicationPopulation
 import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculation
@@ -52,8 +54,12 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         logout()
     }
 
-
     @Test
+    public void testCleanDb() {
+
+    }
+
+
     public void testPostByPopulationSendImmediately() {
         println "testPostByPopulationSendImmediately"
         ActionItemPost groupSend
@@ -79,27 +85,32 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         assertNotNull(selectionListEntryList)
         assertEquals(5, selectionListEntryList.size())
 
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+        def actionItemGroup = actionItemGroups[0]
+
         ActionItemPostRequest request = new ActionItemPostRequest(
                 name: "testPostByPopulationSendImmediately",
                 populationId: population.id,
                 referenceId: UUID.randomUUID().toString(),
-                postGroupId: 5L, // FIXME: look up id or create group to have an id
+                postGroupId: actionItemGroup.id,
                 recalculateOnPost: false,
-                scheduledStartDate: new Date(),
+                // TODO: scheduled date null if post now (db currently not null)
+                scheduledStartDate: new Date( System.currentTimeMillis() + 3000L),
                 displayStartDate: new Date(),
                 displayEndDate: new Date(),
-                scheduleType: "gibberish" // FIXME: I forgot what this is. set to gibberish for now. now/future/repeating?
+                actionItemIds: [1,1]
         )
 
         groupSend = actionItemPostCompositeService.sendAsynchronousPostItem( request )
-        assertNotNull(groupSend)
+        assertNotNull( groupSend )
 
         def checkExpectedGroupSendItemsCreated = {
+        println "CRR: check items"
             ActionItemPost each = ActionItemPost.get( it )
             return ActionItemPostWork.fetchByGroupSend( each ).size() == 5
         }
         assertTrueWithRetry( checkExpectedGroupSendItemsCreated, groupSend.id, 15, 5 )
-
+        println "CRR: we have items"
         /* TODO: implement these views
         // Confirm group send view returns the correct results
         def sendViewDetails = ActionItemGroupSendDetailView.findAll()
@@ -113,8 +124,8 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         assertEquals(5, sendItemViewDetails.size())
         */
         sleepUntilPostItemsComplete( groupSend, 60 )
-
-        int countCompleted = ActionItemPostWork.fetchByCompleteCurrentExecutionState( groupSend ).size()
+        println "CRR: completed or gave up"
+        int countCompleted = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Complete, groupSend ).size()
         assertEquals( 5, countCompleted )
 
         sleepUntilActionItemJobsComplete( 10 * 60 )

@@ -120,6 +120,7 @@ class ActionItemPost implements Serializable {
      * POSTING CURRENT STATE: The current state of Action Item post.
      */
     @Column(name = "GCBAPST_CURRENT_STATE")
+    @Enumerated(EnumType.STRING)
     ActionItemPostExecutionState postingCurrentState = ActionItemPostExecutionState.New;
 
     /*
@@ -264,10 +265,11 @@ class ActionItemPost implements Serializable {
 
 
         public void markError( ActionItemErrorCode errorCode, String errorText ) {
+            println "mark error: " + errorCode
             assignPostExecutionState( ActionItemPostExecutionState.Error )
             this.postingErrorCode = errorCode
             this.postingErrorText = errorText
-            this.postingStopDate = postingStopDate
+            //this.postingStopDate = postingStopDate
         }
 
 

@@ -4,22 +4,17 @@
 package net.hedtech.banner.aip.post
 
 import grails.util.GrailsNameUtils
+import groovy.sql.Sql
 import net.hedtech.banner.aip.ActionItemGroupService
+import net.hedtech.banner.aip.post.grouppost.*
 import net.hedtech.banner.aip.post.job.ActionItemJob
 import net.hedtech.banner.configuration.ConfigurationUtils
 import net.hedtech.banner.exceptions.ApplicationException
-import net.hedtech.banner.aip.post.grouppost.ActionItemPost
-import net.hedtech.banner.aip.post.grouppost.ActionItemPostCompositeService
-import net.hedtech.banner.aip.post.grouppost.ActionItemPostExecutionState
-import net.hedtech.banner.aip.post.grouppost.ActionItemPostWorkService
-import net.hedtech.banner.aip.post.grouppost.ActionItemPostService
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.general.communication.folder.CommunicationFolderService
 import net.hedtech.banner.general.communication.population.CommunicationPopulationCompositeService
 import net.hedtech.banner.general.communication.population.query.CommunicationPopulationQuery
 import net.hedtech.banner.general.communication.population.query.CommunicationPopulationQueryCompositeService
-import groovy.sql.Sql
-
 import net.hedtech.banner.security.FormContext
 import org.codehaus.groovy.grails.plugins.web.taglib.ValidationTagLib
 import org.junit.After
@@ -189,7 +184,10 @@ class ActionItemBaseConcurrentTestCase extends Assert {
                 sql.executeUpdate("DELETE FROM gcrfldr WHERE NOT EXISTS (SELECT a.gcbactm_gcrfldr_id FROM gcbactm a WHERE a.gcbactm_gcrfldr_id = gcrfldr_surrogate_id)")
                 sql.executeUpdate("Delete from GCRORAN")
                 sql.executeUpdate("Delete from GCBSPRP")
-                sql.executeUpdate("Delete from GCRMBAC")
+                sql.executeUpdate( "Delete from GCRMBAC" )
+                sql.executeUpdate( "Delete from GCRAIIM" )
+                sql.executeUpdate( "Delete from GCRAPST" )
+                sql.executeUpdate( "Delete from GCBAPST" )
                 tx.commit()
             }
         } finally {
@@ -476,7 +474,7 @@ class ActionItemBaseConcurrentTestCase extends Assert {
             count--;
             TimeUnit.SECONDS.sleep( interval );
 
-            int readyCount = ActionItemPostItem.fetchByReadyExecutionStateAndPost( groupSend ).size()
+            int readyCount = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Ready, groupSend ).size()
 
             if (readyCount == 0) {
                 break;

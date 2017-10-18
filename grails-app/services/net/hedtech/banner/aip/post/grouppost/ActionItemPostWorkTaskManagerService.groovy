@@ -80,7 +80,7 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
         // FIXME
         println "CRR: Get pending actionItem jobs: PostWorkTaskManager"
         log.debug( "Getting pending jobs" )
-        List<ActionItemPostWork> result = ActionItemPostWork.fetchByReadyExecutionState( max )
+        List<ActionItemPostWork> result = ActionItemPostWork.fetchByExecutionState( ActionItemPostWorkExecutionState.Ready, max )
         log.debug( "Found " + result.size() + " jobs." )
         return result;
     }

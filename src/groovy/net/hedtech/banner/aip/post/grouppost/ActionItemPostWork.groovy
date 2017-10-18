@@ -2,27 +2,33 @@ package net.hedtech.banner.aip.post.grouppost
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTask
 
 import javax.persistence.*
+
 
 @Entity
 @ToString
 @EqualsAndHashCode
 @Table(name = "GCRAIIM")
 @NamedQueries(value = [
-    @NamedQuery(name = "ActionItemPostWork.fetchByExecutionState",
-            query = """ FROM ActionItemPostWork gsi
+        @NamedQuery(name = "ActionItemPostWork.fetchByExecutionState",
+                query = """ FROM ActionItemPostWork gsi
                      WHERE gsi.currentExecutionState = :executionState
                      ORDER by gsi.creationDateTime asc"""
-    ),
-    @NamedQuery(name = "ActionItemPostWork.fetchByCompleteExecutionStateAndGroupSend",
-            query = """ FROM ActionItemPostWork gsi
+        ),
+        @NamedQuery(name = "ActionItemPostWork.fetchByGroupSend",
+                query = """ FROM ActionItemPostWork gsi
+                                 WHERE gsi.actionItemGroupSend = :groupSend                         
+                                 ORDER by gsi.creationDateTime asc"""
+        ),
+        @NamedQuery(name = "ActionItemPostWork.fetchByExecutionStateAndGroupSend",
+                query = """ FROM ActionItemPostWork gsi
                      WHERE gsi.actionItemGroupSend = :groupSend
                      and gsi.currentExecutionState = :executionState
                      ORDER by gsi.creationDateTime asc"""
-    )
+        ),
+
 ])
 
 class ActionItemPostWork implements AsynchronousTask {
@@ -126,27 +132,38 @@ class ActionItemPostWork implements AsynchronousTask {
     }
 
 
-    public static List fetchByReadyExecutionState( Integer max = Integer.MAX_VALUE ) {
-        println "attempt to get items ready to execute"
+    public static List fetchByExecutionState( ActionItemPostWorkExecutionState executionState, Integer max = Integer.MAX_VALUE ) {
         def results
         ActionItemPostWork.withSession { session ->
             results = session.getNamedQuery( 'ActionItemPostWork.fetchByExecutionState' )
-                    .setParameter( 'executionState', ActionItemPostWorkExecutionState.Ready )
+                    .setParameter( 'executionState', executionState )
                     .setFirstResult( 0 )
                     .setMaxResults( max )
                     .list()
         }
-        println "CRR: ready to execute: " + results
         return results
     }
 
 
-    public static List fetchByReadyExecutionStateAndGroupSend( ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
+    public static List fetchByGroupSend( ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
         def results
         ActionItemPostWork.withSession { session ->
-            results = session.getNamedQuery( 'ActionItemPostWork.fetchByCompleteExecutionStateAndGroupSend' )
+            results = session.getNamedQuery( 'ActionItemPostWork.fetchByGroupSend' )
                     .setParameter( 'groupSend', groupSend )
-                    .setParameter( 'executionState', ActionItemPostWorkExecutionState.Ready )
+                    .setFirstResult( 0 )
+                    .setMaxResults( max )
+                    .list()
+        }
+        return results
+    }
+
+
+    public static List fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState executionState, ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
+        def results
+        ActionItemPostWork.withSession { session ->
+            results = session.getNamedQuery( 'ActionItemPostWork.fetchByReadyExecutionStateAndGroupSend' )
+                    .setParameter( 'executionState', executionState )
+                    .setParameter( 'groupSend', groupSend )
                     .setFirstResult( 0 )
                     .setMaxResults( max )
                     .list()

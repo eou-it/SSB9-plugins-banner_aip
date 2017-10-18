@@ -1,7 +1,7 @@
 /*********************************************************************************
  Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
-package net.hedtech.banner.aip
+package net.hedtech.banner.aip.post.grouppost
 
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException

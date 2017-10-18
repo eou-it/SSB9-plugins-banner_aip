@@ -343,6 +343,8 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
 
             // This is a short-lived transactional method, and if successful the job has been marked as acquired.
             log.debug("Acquiring job " + job.getId())
+            println "CRR: Acquiring job " + job.getId()
+            println "jm: " + jobManager
             boolean acquired = jobManager.acquire(job);
             if (!acquired) return;
 
