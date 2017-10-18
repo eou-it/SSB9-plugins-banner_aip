@@ -208,13 +208,10 @@ class ActionItemPost implements Serializable {
         postingDeleteIndicator( nullable: false, maxSize: 1 )
         postingDisplayStartDate( nullable: false )
         postingDisplayEndDate( nullable: false )
-        postingScheduleDateTime( nullable: false )
+        postingScheduleDateTime( nullable: true )
         postingCreatorId( nullable: false, maxSize: 30 )
-        postingScheduleDateTime( nullable: false )
         populationRegenerateIndicator( nullable: false, maxSize: 1 )
         postingCurrentState( nullable: true, maxSize: 255 )
-        //postingStartedDate(nullable: true)
-        //postingStopDate(nullable: true)
         postingJobId( nullable: true, maxSize: 64 )
         populationCalculationId( nullable: true, maxSize: 19 )
         //populationVersionId( nullable: true, maxSize: 19 )
@@ -228,91 +225,95 @@ class ActionItemPost implements Serializable {
         vpdiCode( nullable: true, maxSize: 6 )
     }
 
+
     public void markScheduled( String jobId, String groupId ) {
-            assert jobId != null
-            assert groupId != null
-            assignPostExecutionState( ActionItemPostExecutionState.Scheduled, jobId, groupId )
+        assert jobId != null
+        assert groupId != null
+        assignPostExecutionState( ActionItemPostExecutionState.Scheduled, jobId, groupId )
+    }
+
+
+    public void markQueued( String jobId, String groupId ) {
+        assert jobId != null
+        assert groupId != null
+        assignPostExecutionState( ActionItemPostExecutionState.Queued, jobId, groupId )
+    }
+
+
+    public void markStopped( Date stopDate = new Date() ) {
+        assignPostExecutionState( ActionItemPostExecutionState.Stopped )
+        //this.postingStopDate = stopDate
+    }
+
+
+    public void markComplete( Date stopDate = new Date() ) {
+        assignPostExecutionState( ActionItemPostExecutionState.Complete )
+        //this.postingStopDate = stopDate
+    }
+
+
+    public void markProcessing() {
+        assignPostExecutionState( ActionItemPostExecutionState.Processing )
+        /*
+        if (this.postingStartedDate == null) {
+            this.postingStartedDate = new Date()
         }
+        */
+    }
 
 
-        public void markQueued( String jobId, String groupId ) {
-            assert jobId != null
-            assert groupId != null
-            assignPostExecutionState( ActionItemPostExecutionState.Queued, jobId, groupId )
+    public void markError( ActionItemErrorCode errorCode, String errorText ) {
+        println "mark error: " + errorCode
+        assignPostExecutionState( ActionItemPostExecutionState.Error )
+        this.postingErrorCode = errorCode
+        this.postingErrorText = errorText
+        //this.postingStopDate = postingStopDate
+    }
+
+
+    private void assignPostExecutionState( ActionItemPostExecutionState executionState, String jobId = null, String groupId = null ) {
+        this.postingCurrentState = executionState
+        this.postingJobId = jobId
+        this.postingGroupId = groupId
+    }
+
+
+    public static List findRunning( Integer max = Integer.MAX_VALUE ) {
+        def query
+        ActionItemPost.withSession {session ->
+            query = session.getNamedQuery( 'ActionItemPost.findRunning' )
+                    .setParameter( 'new_', ActionItemPostExecutionState.New )
+                    .setParameter( 'processing_', ActionItemPostExecutionState.Processing )
+                    .setParameter( 'scheduled_', ActionItemPostExecutionState.Scheduled )
+                    .setParameter( 'queued_', ActionItemPostExecutionState.Queued )
+                    .setParameter( 'calculating_', ActionItemPostExecutionState.Calculating )
+                    .setFirstResult( 0 )
+                    .setMaxResults( max )
+                    .list()
         }
+        return query
+    }
 
 
-        public void markStopped( Date stopDate = new Date() ) {
-            assignPostExecutionState( ActionItemPostExecutionState.Stopped )
-            //this.postingStopDate = stopDate
+    public static List fetchCompleted() {
+        def results
+        ActionItemPostWork.withSession {session ->
+            results = session.getNamedQuery( 'ActionItemPost.fetchCompleted' )
+                    .setParameter( 'complete_', ActionItemPostExecutionState.Complete )
+                    .list()
         }
+        return results
+    }
 
 
-        public void markComplete( Date stopDate = new Date() ) {
-            assignPostExecutionState( ActionItemPostExecutionState.Complete )
-            //this.postingStopDate = stopDate
-        }
-
-
-        public void markProcessing() {
-            assignPostExecutionState( ActionItemPostExecutionState.Processing )
-            /*
-            if (this.postingStartedDate == null) {
-                this.postingStartedDate = new Date()
+    public static int findCountByPopulationCalculationId( Long populationCalculationId ) {
+        return ActionItemPost.createCriteria().list {
+            projections {
+                count()
             }
-            */
-        }
-
-
-        public void markError( ActionItemErrorCode errorCode, String errorText ) {
-            println "mark error: " + errorCode
-            assignPostExecutionState( ActionItemPostExecutionState.Error )
-            this.postingErrorCode = errorCode
-            this.postingErrorText = errorText
-            //this.postingStopDate = postingStopDate
-        }
-
-
-        private void assignPostExecutionState( ActionItemPostExecutionState executionState, String jobId = null, String groupId = null ) {
-            this.postingCurrentState = executionState
-            this.postingJobId = jobId
-            this.postingGroupId = groupId
-        }
-
-        public static List findRunning( Integer max = Integer.MAX_VALUE ) {
-            def query
-            ActionItemPost.withSession { session ->
-                query = session.getNamedQuery('ActionItemPost.findRunning')
-                        .setParameter('new_', ActionItemPostExecutionState.New)
-                        .setParameter('processing_', ActionItemPostExecutionState.Processing)
-                        .setParameter('scheduled_', ActionItemPostExecutionState.Scheduled)
-                        .setParameter('queued_', ActionItemPostExecutionState.Queued)
-                        .setParameter('calculating_', ActionItemPostExecutionState.Calculating)
-                        .setFirstResult( 0 )
-                        .setMaxResults( max )
-                        .list()
-            }
-            return query
-        }
-
-        public static List fetchCompleted() {
-            def results
-            ActionItemPostWork.withSession { session ->
-                results = session.getNamedQuery('ActionItemPost.fetchCompleted')
-                        .setParameter('complete_', ActionItemPostExecutionState.Complete)
-                        .list()
-            }
-            return results
-        }
-
-        public static int findCountByPopulationCalculationId( Long populationCalculationId) {
-            return ActionItemPost.createCriteria().list {
-                projections {
-                    count()
-                }
-                eq( 'populationCalculationId', populationCalculationId )
-            }[0]
-        }
+            eq( 'populationCalculationId', populationCalculationId )
+        }[0]
+    }
 
     /*
         public static findByNameWithPagingAndSortParams(filterData, pagingAndSortParams) {
