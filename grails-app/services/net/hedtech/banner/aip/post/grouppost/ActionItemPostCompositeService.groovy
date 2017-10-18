@@ -89,15 +89,18 @@ class ActionItemPostCompositeService {
         groupSend.postingParameterValues = null
         groupSend.postingDisplayStartDate = request.displayStartDate
         groupSend.postingDisplayEndDate = request.displayEndDate
+        println "CRR: do post"
         groupSend = (ActionItemPost) actionItemPostService.create( groupSend )
-
+        println "CRR: done post"
         // Create the details records.
         // FIXME: constraints, createdBy etc
         request.actionItemIds.each {
             ActionItemPostDetail groupDetail = new ActionItemPostDetail()
             groupDetail.actionItemId = it
             groupDetail.actionItemPostId = groupSend.id
+            println "CRR: do post Detail"
             actionItemPostDetailService.create( groupDetail )
+            println "CRR: done post Detail"
         }
 
 
@@ -504,7 +507,7 @@ class ActionItemPostCompositeService {
         }
     }
 
-
+    // Taken and modifies from BCM. Use Objects instead of big insert?
     private void createPostItems( ActionItemPost groupSend ) {
         if (log.isDebugEnabled()) log.debug( "Generating group send item records for group send with id = " + groupSend?.id );
         def sql

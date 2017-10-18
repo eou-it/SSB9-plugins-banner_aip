@@ -3,7 +3,10 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.groupsend
 
+import net.hedtech.banner.aip.ActionItem
 import net.hedtech.banner.aip.ActionItemGroup
+import net.hedtech.banner.aip.ActionItemGroupAssign
+import net.hedtech.banner.aip.ActionItemGroupAssignReadOnly
 import net.hedtech.banner.aip.post.ActionItemBaseConcurrentTestCase
 import net.hedtech.banner.aip.post.grouppost.ActionItemPost
 import net.hedtech.banner.aip.post.grouppost.ActionItemPostRequest
@@ -54,12 +57,8 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         logout()
     }
 
+
     @Test
-    public void testCleanDb() {
-
-    }
-
-
     public void testPostByPopulationSendImmediately() {
         println "testPostByPopulationSendImmediately"
         ActionItemPost groupSend
@@ -88,6 +87,8 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
         def actionItemGroup = actionItemGroups[0]
 
+        List <Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect{it.actionItemId}
+        println( "CRR actionItemIds: " + actionItemIds )
         ActionItemPostRequest request = new ActionItemPostRequest(
                 name: "testPostByPopulationSendImmediately",
                 populationId: population.id,
@@ -98,7 +99,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
                 scheduledStartDate: new Date( System.currentTimeMillis() + 3000L),
                 displayStartDate: new Date(),
                 displayEndDate: new Date(),
-                actionItemIds: [1,1]
+                actionItemIds: actionItemIds
         )
 
         groupSend = actionItemPostCompositeService.sendAsynchronousPostItem( request )

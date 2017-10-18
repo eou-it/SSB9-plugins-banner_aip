@@ -77,7 +77,7 @@ class ActionItemGroupAssign implements Serializable {
      */
 
     @Column(name = "GCRAGRA_ACTIVITY_DATE")
-    Long activityDate
+    Date activityDate
 
     /**
      * User ID of the person who inserted or last updated
@@ -125,13 +125,14 @@ class ActionItemGroupAssign implements Serializable {
             session.getNamedQuery( 'ActionItemGroupAssign.fetchById' ).setLong( 'myId', myId )?.list()[0]
         }
     }
+
     static def fetchByGroupId ( Long myId) {
         ActionItemGroupAssign.withSession {session ->
             session.getNamedQuery('ActionItemGroupAssign.fetchByGroupId').setLong('myId', myId)?.list()
         }
-        ActionItemGroupAssign.getNamedQuery( 'ActionItemGroupAssign.fetchByGroupId').setLong( 'myId', myId)?.list()
     }
-    static def fetchByActionItemId( Long myId) {
+
+    static def fetchByActionItemId( Long myId ) {
         ActionItemGroupAssign.withSession {session ->
             session.getNamedQuery( 'ActionItemGroupAssign.fetchByActionId').setLong( 'myId', myId)?.list()
         }
