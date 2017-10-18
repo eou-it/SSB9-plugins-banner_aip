@@ -6,7 +6,7 @@ package net.hedtech.banner.aip
 class ActionItemGroupAssignReadOnlyService {
 
     def getAssignedActionItemsInGroup( Long groupId ) {
-        return ActionItemGroupAssignReadOnly.fetchByGroupId( groupId )
+        return ActionItemGroupAssignReadOnly.fetchActionItemGroupAssignROByGroupId( groupId )
     }
 
 

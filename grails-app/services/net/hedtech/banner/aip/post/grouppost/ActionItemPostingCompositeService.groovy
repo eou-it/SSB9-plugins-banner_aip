@@ -8,6 +8,8 @@ import net.hedtech.banner.aip.ActionItem
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.aip.common.PostingStateEnum
+import net.hedtech.banner.aip.post.grouppost.ActionItemPost
+import net.hedtech.banner.aip.post.grouppost.ActionItemPostDetail
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import org.apache.log4j.Logger
