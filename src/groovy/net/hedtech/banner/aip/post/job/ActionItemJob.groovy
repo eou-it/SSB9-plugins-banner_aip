@@ -20,14 +20,15 @@ import javax.persistence.*
 @Table(name = "GCBAJOB")
 @DatabaseModifiesState
 @NamedQueries(value = [
-    @NamedQuery( name = "ActionItemJob.fetchPending",
+    @NamedQuery( name = "ActionItemJob.fetchByStatus",
         query = """ FROM ActionItemJob job
                     WHERE job.status = :status_
                     ORDER BY job.id ASC """
     ),
-    @NamedQuery( name = "ActionItemJob.fetchByStatus",
+    @NamedQuery( name = "ActionItemJob.fetchByStatusAndReferenceId",
             query = """ FROM ActionItemJob job
         WHERE job.status = :status_
+        AND job.referenceId = :referenceId_
         ORDER BY job.id ASC """
     )
 ])
@@ -134,7 +135,7 @@ class ActionItemJob implements AsynchronousTask {
     public static List fetchCompleted() {
         def results
         ActionItemJob.withSession { session ->
-            results = session.getNamedQuery( 'ActionItemJob.fetchByStatusAndReferenceId' )
+            results = session.getNamedQuery( 'ActionItemJob.fetchByStatus' )
                 .setParameter( 'status_', ActionItemJobStatus.COMPLETED )
                 .setFirstResult( 0 )
                 .setMaxResults( Integer.MAX_VALUE )

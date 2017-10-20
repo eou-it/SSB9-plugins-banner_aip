@@ -5,6 +5,7 @@
 import grails.util.Holders
 import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
 import net.hedtech.banner.aip.post.engine.ActionItemAsynchronousTaskProcessingEngineImpl
+import net.hedtech.banner.aip.post.grouppost.ActionItemPostMonitor
 
 /**
  * Spring bean configuration using Groovy DSL, versus normal Spring XML.
@@ -14,15 +15,15 @@ beans = {
         dataSource = ref('dataSource')
     }
 
-    // Manage the execution state of the group send as a whole
-    // This object will scan the group send item records at regular intervals to determine
-    // if the group send has completed.
-    //actionItemPostMonitor(ActionItemPostMonitor) { bean ->
-    //    bean.autowire = 'byName'
-    //    bean.initMethod = 'init'
-    //    asynchronousBannerAuthenticationSpoofer = ref('asynchronousBannerAuthenticationSpoofer')
-    //    monitorIntervalInSeconds =  Holders.config.aip?.aipPostMonitor?.monitorIntervalInSeconds ?: 10
-    //}
+    // Manage the execution state of the post as a whole
+    // This object will scan the post records at regular intervals to determine
+    // if the post has completed.
+    actionItemPostMonitor(ActionItemPostMonitor) { bean ->
+        bean.autowire = 'byName'
+        bean.initMethod = 'init'
+        asynchronousBannerAuthenticationSpoofer = ref('asynchronousBannerAuthenticationSpoofer')
+        monitorIntervalInSeconds =  Holders.config.aip?.aipPostMonitor?.monitorIntervalInSeconds ?: 10
+    }
 
     actionItemPostWorkProcessingEngine (ActionItemAsynchronousTaskProcessingEngineImpl) { bean ->
         bean.autowire = 'byName'

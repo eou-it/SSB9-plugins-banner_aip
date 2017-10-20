@@ -35,7 +35,7 @@ import static org.junit.Assert.*
 class ActionItemBaseConcurrentTestCase extends Assert {
     static transactional = false // set to false so that everything "autocommits" i.e. doesn't rollback at the end of the test
 
-    //def communicationItemPostMonitor
+    def actionItemPostMonitor
     def actionItemPostWorkProcessingEngine
     def actionItemJobProcessingEngine
 
@@ -80,7 +80,7 @@ class ActionItemBaseConcurrentTestCase extends Assert {
 
     @After
     public void tearDown() {
-        deleteAll()
+        //deleteAll()
         defaultTearDown()
     }
 
@@ -188,6 +188,7 @@ class ActionItemBaseConcurrentTestCase extends Assert {
                 sql.executeUpdate( "Delete from GCRAIIM" )
                 sql.executeUpdate( "Delete from GCRAPST" )
                 sql.executeUpdate( "Delete from GCBAPST" )
+                sql.executeUpdate( "Delete from GCBAJOB" )
                 tx.commit()
             }
         } finally {
@@ -445,7 +446,7 @@ class ActionItemBaseConcurrentTestCase extends Assert {
         def result
         try {
             sql = new Sql(sessionFactory.getCurrentSession().connection())
-            result = sql.firstRow( "select count(*) as rowcount from GCBGSND where GCBGSND_SURROGATE_ID = ${groupSendId}" )
+            result = sql.firstRow( "select count(*) as rowcount from GCBAPST where GCBAPST_SURROGATE_ID = ${groupSendId}" )
         } finally {
             sql?.close() // note that the test will close the connection, since it's our current session's connection
         }
@@ -458,7 +459,7 @@ class ActionItemBaseConcurrentTestCase extends Assert {
         def result
         try {
             sql = new Sql(sessionFactory.getCurrentSession().connection())
-            result = sql.firstRow( "select count(*) as rowcount from GCRGSIM where GCRGSIM_GROUP_SEND_ID = ${groupSendId}" )
+            result = sql.firstRow( "select count(*) as rowcount from GCRAIIM where GCRAIIM_GCBAPST_ID = ${groupSendId}" )
 //            println( result.rowcount )
         } finally {
             sql?.close() // note that the test will close the connection, since it's our current session's connection
@@ -467,19 +468,21 @@ class ActionItemBaseConcurrentTestCase extends Assert {
     }
 
 
-    protected void sleepUntilPostItemsComplete( ActionItemPost groupSend, int maxSleepTime ) {
+    protected boolean sleepUntilPostItemsComplete( ActionItemPost groupSend, int maxSleepTime ) {
+        boolean answer = false
         final int interval = 2;                 // test every second
         int count = maxSleepTime / interval;    // calculate max loop count
         while (count > 0) {
+            println count
             count--;
             TimeUnit.SECONDS.sleep( interval );
-
-            int readyCount = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Ready, groupSend ).size()
-
+            int readyCount = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Ready, groupSend )?.size()
             if (readyCount == 0) {
+                answer = true
                 break;
             }
         }
+        return answer
     }
 
 
@@ -511,12 +514,12 @@ class ActionItemBaseConcurrentTestCase extends Assert {
 
             groupSend = ActionItemPost.get( groupSend.id )
 
-            if ( groupSend.currentExecutionState.equals( ActionItemPostExecutionState.Complete ) ) {
+            if ( groupSend.postingCurrentState.equals( ActionItemPostExecutionState.Complete ) ) {
                 break;
             }
         }
 
-        assertEquals( ActionItemPostExecutionState.Complete, groupSend.getCurrentExecutionState() )
+        assertEquals( ActionItemPostExecutionState.Complete, groupSend.getPostingCurrentState(  ) )
     }
 
     /**

@@ -5,6 +5,7 @@ package net.hedtech.banner.aip.post.grouppost
 
 import groovy.sql.Sql
 import net.hedtech.banner.aip.post.job.ActionItemJob
+import net.hedtech.banner.aip.post.job.ActionItemJobStatus
 import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
 import org.apache.log4j.Logger
 
@@ -25,7 +26,9 @@ class ActionItemPostWorkProcessorService {
 
     public void performPostItem( Long groupSendItemId) {
         log.debug( "Performing group send item id = " + groupSendItemId )
+        println "CRR: Performing group send item id = " + groupSendItemId
         boolean locked = lockGroupSendItem( groupSendItemId, ActionItemPostWorkExecutionState.Ready );
+        println "CRR locked " + locked
         if (!locked) {
             // Do nothing
             return;
@@ -33,23 +36,12 @@ class ActionItemPostWorkProcessorService {
 
         ActionItemPostWork groupSendItem = (ActionItemPostWork) actionItemPostWorkService.get( groupSendItemId )
         ActionItemPost groupSend = groupSendItem.actionItemGroupSend
-        // TODO: test and understand this. Do we even use it. seems params related
-        def asynchronousBannerAuthenticationSpoofer = new AsynchronousBannerAuthenticationSpoofer()
-        asynchronousBannerAuthenticationSpoofer.setMepProcessContext(sessionFactory.currentSession.connection(), groupSendItem.mepCode)
-
-        if (log.isDebugEnabled()) log.debug("Spoofed as ${groupSend.postingCreatorId} for creating recipient data.")
 
         if (!groupSend.getPostingCurrentState(  ).isTerminal()) {
-            /* we don't have multipe types
-            ActionItemRecipientData recipientData = getRecipientDataFactory().create( groupSendItem )
-            log.debug("Created recipient data with referenceId = " + groupSendItem.referenceId + ".")
-
-            log.debug("Creating ActionItem job with reference id = " + recipientData.referenceId)
-            */
-            ActionItemJob actionItemJob = new ActionItemJob( referenceId: groupSendItem.referenceId )
+            ActionItemJob actionItemJob = new ActionItemJob( referenceId: groupSendItem.referenceId, status: ActionItemJobStatus.PENDING )
             actionItemJobService.create( actionItemJob )
 
-            //log.debug("Updating group send item to mark it complete with reference id = " + recipientData.referenceId)
+            //log.debug("Updating post item to mark it complete with reference id = " + recipientData.referenceId)
             def groupSendItemParamMap = [
                 id                   : groupSendItem.id,
                 version              : groupSendItem.version,
@@ -95,7 +87,7 @@ class ActionItemPostWorkProcessorService {
         Sql sql = null
         try {
             sql = new Sql(sessionFactory.getCurrentSession().connection())
-            def rows = sql.rows("select GCRAIIM_SURROGATE_ID from GCAISIM where GCRAIIM_SURROGATE_ID = ? and GCRAIIM_CURRENT_STATE = ? for update " +
+            def rows = sql.rows("select GCRAIIM_SURROGATE_ID from GCRAIIM where GCRAIIM_SURROGATE_ID = ? and GCRAIIM_CURRENT_STATE = ? for update " +
                     "nowait",
                     [groupSendItemId, state.name()],
                     0, 2

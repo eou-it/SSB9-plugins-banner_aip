@@ -100,6 +100,7 @@ class ActionItemPostTaskManagerService implements AsynchronousTaskManager {
 
     @Transactional(propagation=Propagation.REQUIRES_NEW, rollbackFor = Throwable.class )
     public void process( AsynchronousTask task) throws ApplicationException {
+        println "CRR: Process Task: PostTaskManager"
         ActionItemPost groupSend = task as ActionItemPost
 
         if (log.isInfoEnabled()) {

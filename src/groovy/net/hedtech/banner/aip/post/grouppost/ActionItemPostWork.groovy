@@ -139,7 +139,7 @@ class ActionItemPostWork implements AsynchronousTask {
                     .setParameter( 'executionState', executionState )
                     .setFirstResult( 0 )
                     .setMaxResults( max )
-                    .list()
+                    ?.list()
         }
         return results
     }
@@ -152,7 +152,7 @@ class ActionItemPostWork implements AsynchronousTask {
                     .setParameter( 'groupSend', groupSend )
                     .setFirstResult( 0 )
                     .setMaxResults( max )
-                    .list()
+                    ?.list()
         }
         return results
     }
@@ -161,12 +161,12 @@ class ActionItemPostWork implements AsynchronousTask {
     public static List fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState executionState, ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
         def results
         ActionItemPostWork.withSession { session ->
-            results = session.getNamedQuery( 'ActionItemPostWork.fetchByReadyExecutionStateAndGroupSend' )
+            results = session.getNamedQuery( 'ActionItemPostWork.fetchByExecutionStateAndGroupSend' )
                     .setParameter( 'executionState', executionState )
                     .setParameter( 'groupSend', groupSend )
                     .setFirstResult( 0 )
                     .setMaxResults( max )
-                    .list()
+                    ?.list()
         }
         return results
     }

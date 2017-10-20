@@ -145,8 +145,8 @@ class ActionItemPost implements Serializable {
     @Column(name = "GCBAPST_POPCALC_ID")
     Long populationCalculationId
 
-    //@Column(name = "GCBAPST_POPVERSION_ID")
-    //Long populationVersionId
+    @Column(name = "GCBAPST_POPVERSION_ID")
+    Long populationVersionId
 
     /**
      * POSTING ERROR CODE: The Error code of Action Item post.
@@ -214,7 +214,7 @@ class ActionItemPost implements Serializable {
         postingCurrentState( nullable: true, maxSize: 255 )
         postingJobId( nullable: true, maxSize: 64 )
         populationCalculationId( nullable: true, maxSize: 19 )
-        //populationVersionId( nullable: true, maxSize: 19 )
+        populationVersionId( nullable: true, maxSize: 19 )
         postingErrorCode( nullable: true, maxSize: 256 )
         postingErrorText( nullable: true )
         postingGroupId( nullable: true, maxSize: 256 )

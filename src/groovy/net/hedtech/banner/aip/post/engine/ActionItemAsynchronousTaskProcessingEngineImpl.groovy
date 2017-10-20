@@ -4,6 +4,7 @@
 package net.hedtech.banner.aip.post.engine
 
 import grails.util.Holders
+
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.asynchronous.AsynchronousActionPoolThreadFactory
 import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
@@ -339,8 +340,9 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
     void handleTask(AsynchronousTask job) {
         log.debug("Asynchronous Task Processing Engine handler will process job " + job.getId());
         try {
+            println "CRR: check if null: " + asynchronousBannerAuthenticationSpoofer
+            println "CRR: set context"
             asynchronousBannerAuthenticationSpoofer.authenticateAndSetFormContextForExecute()
-
             // This is a short-lived transactional method, and if successful the job has been marked as acquired.
             log.debug("Acquiring job " + job.getId())
             println "CRR: Acquiring job " + job.getId()

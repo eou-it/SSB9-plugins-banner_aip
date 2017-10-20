@@ -41,6 +41,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         def auth = selfServiceBannerAuthenticationProvider.authenticate(new UsernamePasswordAuthenticationToken('BCMADMIN', '111111'))
         SecurityContextHolder.getContext().setAuthentication(auth)
         super.setUp()
+        actionItemPostMonitor.startMonitoring(  )
         actionItemPostWorkProcessingEngine.startRunning()
         actionItemJobProcessingEngine.startRunning()
     }
@@ -48,7 +49,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
 
     @After
     public void tearDown() {
-        //communicationGroupSendMonitor.shutdown()
+        actionItemPostMonitor.shutdown()
         actionItemPostWorkProcessingEngine.stopRunning()
         actionItemJobProcessingEngine.stopRunning()
 
@@ -96,7 +97,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
                 postGroupId: actionItemGroup.id,
                 recalculateOnPost: false,
                 // TODO: scheduled date null if post now (db currently not null)
-                scheduledStartDate: new Date( System.currentTimeMillis() + 3000L),
+                scheduledStartDate: null, // new Date( System.currentTimeMillis() + 3000L),
                 displayStartDate: new Date(),
                 displayEndDate: new Date(),
                 actionItemIds: actionItemIds
@@ -124,8 +125,9 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         def sendItemViewDetails = ActionItemGroupSendItemView.findAll()
         assertEquals(5, sendItemViewDetails.size())
         */
-        sleepUntilPostItemsComplete( groupSend, 60 )
-        println "CRR: completed or gave up"
+        boolean isComplete = sleepUntilPostItemsComplete( groupSend, 60 )
+        assertTrue( "items not completed", isComplete )
+
         int countCompleted = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Complete, groupSend ).size()
         assertEquals( 5, countCompleted )
 

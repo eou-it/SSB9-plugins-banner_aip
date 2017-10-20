@@ -76,7 +76,8 @@ class ActionItemPostCompositeService {
             assignPopulationVersion( groupSend )
             assignPopulationCalculation( groupSend, bannerUser )
         } else if (groupSend.populationRegenerateIndicator) { // scheduled with future replica of population
-            // FIXME: put this back in once column is in db groupSend.populationVersionId = null
+            // FIXME: put this back in once column is in db
+            groupSend.populationVersionId = null
             groupSend.populationCalculationId = null
         } else { // sending now or scheduled with replica of current population
             assert (useCurrentReplica == true)
@@ -98,6 +99,8 @@ class ActionItemPostCompositeService {
             ActionItemPostDetail groupDetail = new ActionItemPostDetail()
             groupDetail.actionItemId = it
             groupDetail.actionItemPostId = groupSend.id
+            groupDetail.lastModifiedBy = bannerUser
+            groupDetail.lastModified = new Date()
             println "CRR: do post Detail"
             actionItemPostDetailService.create( groupDetail )
             println "CRR: done post Detail"
@@ -216,7 +219,7 @@ class ActionItemPostCompositeService {
 
         ActionItemPost aGroupSend = (ActionItemPost) actionItemPostService.get( groupSendId )
         aGroupSend.markComplete()
-        return saveGroupSend( aGroupSend )
+        return savePost( aGroupSend )
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -252,7 +255,7 @@ class ActionItemPostCompositeService {
             populationVersion = CommunicationPopulationVersion.findLatestByPopulationId( groupSend.populationListId )
         }
         assert populationVersion.id
-        //FIXME: this line should work when column get added to db //groupSend.populationVersionId = populationVersion.id
+        groupSend.populationVersionId = populationVersion.id
         return populationVersion
     }
 
@@ -321,7 +324,7 @@ class ActionItemPostCompositeService {
                 if (shouldUpdateGroupSend) {
                     groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
                 }
-                groupSend = generateGroupSendItemsImpl(groupSend)
+                groupSend = generatePostItemsImpl(groupSend)
             } catch (Throwable t) {
                 log.error( t.getMessage() )
                 groupSend.refresh()
@@ -433,7 +436,8 @@ class ActionItemPostCompositeService {
         Sql sql = new Sql(sessionFactory.getCurrentSession().connection())
         try {
             int rows = sql.executeUpdate("DELETE FROM gcbajob a WHERE EXISTS (SELECT b.gcraiim_surrogate_id FROM gcraiim b, gcbapst c WHERE a" +
-                    ".gcbajob_reference_id = b.gcraiim_reference_id AND b.gcraiim_group_send_id = c.gcbapst_surrogate_id AND c.gcbapst_surrogate_id" +
+                    ".gcbajob_aiim_reference_id = b.gcraiim_reference_id AND b.gcraiim_gcbapst_id = c.gcbapst_surrogate_id AND c" +
+                    ".gcbapst_surrogate_id" +
                     " = ?)",
                     [ groupSendId ] )
             if (log.isDebugEnabled()) {
@@ -480,7 +484,7 @@ class ActionItemPostCompositeService {
             sql = new Sql( (Connection) sessionFactory.getCurrentSession().connection() )
             sql.executeUpdate( "update GCBAJOB set GCBAJOB_STATUS='STOPPED', GCBAJOB_ACTIVITY_DATE = SYSDATE where " +
                     "GCBAJOB_STATUS in ('PENDING', 'DISPATCHED') and GCBAJOB_REFERENCE_ID in " +
-                    "(select GCRAIIM_REFERENCE_ID from GCRAIIM where GCRAIIM_GROUP_SEND_ID = ${groupSendId} and GCRAIIM_CURRENT_STATE = 'Complete')" )
+                    "(select GCRAIIM_REFERENCE_ID from GCRAIIM where GCRAIIM_GCBAPST_ID = ${groupSendId} and GCRAIIM_CURRENT_STATE = 'Complete')" )
         } catch (SQLException e) {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService, e )
         } catch (Exception e) {
@@ -497,7 +501,7 @@ class ActionItemPostCompositeService {
             sql = new Sql( (Connection) sessionFactory.getCurrentSession().connection() )
             sql.executeUpdate( "update GCRAIIM set GCRAIIM_CURRENT_STATE='Stopped', GCRAIIM_ACTIVITY_DATE = SYSDATE, GCRAIIM_STOP_DATE = SYSDATE " +
                     "where " +
-                    "GCRAIIM_CURRENT_STATE in ('Ready') and GCRAIIM_GROUP_SEND_ID = ${groupSendId}" )
+                    "GCRAIIM_CURRENT_STATE in ('Ready') and GCRAIIM_GCBAPST_ID = ${groupSendId}" )
         } catch (SQLException e) {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService, e )
         } catch (Exception e) {
@@ -559,12 +563,10 @@ class ActionItemPostCompositeService {
         } catch (SQLException ae) {
             log.debug "SqlException in INSERT INTO gcraiim ${ae}"
             log.debug ae.stackTrace
-            println ae.stackTrace
             throw ae
         } catch (Exception ae) {
             log.debug "Exception in INSERT INTO gcraiim ${ae}"
             log.debug ae.stackTrace
-            println ae.stackTrace
             throw ae
         } finally {
             sql?.close()

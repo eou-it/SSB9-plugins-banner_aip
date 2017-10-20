@@ -24,7 +24,7 @@ class ActionItemPostWorkService extends ServiceBase {
         def count = 0
         def readyvar = 'Ready'
         try {
-            sql.eachRow("select count(*) as totalCount from GCRAIIM where GCRAIIM_GROUP_SEND_ID = ? and GCRAIIM_CURRENT_STATE = ?", [groupSendId,
+            sql.eachRow("select count(*) as totalCount from GCRAIIM where GCRAIIM_GCBAPST_ID = ? and GCRAIIM_CURRENT_STATE = ?", [groupSendId,
                                                                                                                                     readyvar]) { row ->
                 count = row.totalCount
             }
