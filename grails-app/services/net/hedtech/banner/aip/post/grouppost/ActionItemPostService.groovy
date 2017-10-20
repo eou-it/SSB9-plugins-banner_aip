@@ -4,33 +4,51 @@
 
 package net.hedtech.banner.aip.post.grouppost
 
+import net.hedtech.banner.exceptions.ApplicationException
+import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.service.ServiceBase
-import org.springframework.security.core.context.SecurityContextHolder
 
 /**
  * Manages action item group post instances.
  */
 class ActionItemPostService extends ServiceBase {
 
-    def preCreate( domainModelOrMap ) {
-        ActionItemPost groupSend = (domainModelOrMap instanceof Map ? domainModelOrMap?.domainModel : domainModelOrMap) as ActionItemPost
-        if (groupSend.getPostingCreatorId(  ) == null) {
-            groupSend.setPostingCreatorId( SecurityContextHolder?.context?.authentication?.principal?.getOracleUserName() )
+    /**
+     * Validation before creation of Posting
+     * @param dataMap
+     */
+    def preCreateValidation( dataMap ) {
+        if (!dataMap.postingJobName) {
+            throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.posting.job.name', [] ) )
         }
-        if (groupSend.getPostingCreationDateTime() == null) {
-            groupSend.setPostingCreationDateTime( new Date() )
+        if (!dataMap.actionItemGroup) {
+            throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.group', [] ) )
         }
-        if (groupSend.getLastModified() == null) {
-            groupSend.setLastModified( new Date() )
+        if (!dataMap.actionItems) {
+            throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.action.item', [] ) )
         }
-        if (groupSend.getLastModifiedBy() == null) {
-            groupSend.setLastModifiedBy( SecurityContextHolder?.context?.authentication?.principal?.getOracleUserName() )
+
+        if (!dataMap.populationListId) {
+            throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.population.name', [] ) )
         }
-        if (groupSend.getPostingScheduleDateTime(  ) == null) {
-            groupSend.setPostingScheduleDateTime( new Date() )
+
+        if (!dataMap.displayStartDate) {
+            throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.display.start.date', [] ) )
         }
-        groupSend.setPostingDeleteIndicator( false );
+
+        if (!dataMap.displayEndDate) {
+            throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.display.end.date', [] ) )
+        }
+        if (!dataMap.postNow && !dataMap.scheduled) {
+            throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.schedule', [] ) )
+        }
+        if (dataMap.scheduled) {
+            if (!dataMap.scheduleStartDate) {
+                throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.schedule.start.date', [] ) )
+            }
+        }
     }
+
 
     public List findRunning() {
         return ActionItemPost.findRunning()

@@ -14,6 +14,7 @@ grails.war.resources = { stagingDir ->
     delete(file: "${stagingDir}/WEB-INF/lib/ojdbc6.jar")
 }
 grails.plugin.location.'i18n_core'            ="../i18n_core.git"
+grails.plugin.location.'banner_ui_ss'            ="../banner_ui_ss.git"
 grails.plugin.location.'banner-general-person'="../banner_general_person.git"
 grails.plugin.location.'banner-general-common'="../banner_general_common.git"
 grails.plugin.location.'banner-general-utility'="../banner_general_utility.git"

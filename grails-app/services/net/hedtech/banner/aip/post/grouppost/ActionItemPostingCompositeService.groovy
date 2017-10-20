@@ -21,10 +21,11 @@ import org.springframework.transaction.annotation.Propagation
 class ActionItemPostingCompositeService {
     static transactional = true
     def springSecurityService
-    def actionItemPostingService
+    def actionItemPostService
     def actionItemPostDetailService
     def actionItemService
     def actionItemGroupService
+    def actionItemProcessingCommonService
     private static final def LOGGER = Logger.getLogger( this.class )
 
 
@@ -33,25 +34,26 @@ class ActionItemPostingCompositeService {
         def user = springSecurityService.getAuthentication()?.user
         ActionItemPost savedActionItemPost
         def success = false
-        actionItemPostingService.preCreateValidation( map )
+        actionItemPostService.preCreateValidation( map )
         ActionItemPost aip = new ActionItemPost(
                 populationListId: map.populationListId,
                 postingActionItemGroupId: map.actionItemGroup,
                 postingName: map.postingJobName,
-                postingDisplayStartDate: map.displayStartDate,
-                postingDisplayEndDate: map.displayEndDate,
-                postingScheduleDateTime: map.scheduleStartDate,
+                postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( map.displayStartDate ),
+                postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( map.displayEndDate ),
+                postingScheduleDateTime: map.schedule ? actionItemProcessingCommonService.convertToLocaleBasedDate( map.scheduleStartDate ) : null,
                 postingCreationDateTime: new Date(),
-                populationRegenerateIndicator: AIPConstants.NO_IND,
+                populationRegenerateIndicator: false,
+                postingDeleteIndicator: false,
                 postingCreatorId: user.username,
-                postingCurrentState: map.postNow ? PostingStateEnum.QUEUED : (map.scheduled ? PostingStateEnum.SCHEDULED : ''),
+                postingCurrentState: map.postNow ? ActionItemPostExecutionState.Queued : (map.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New),
                 lastModified: new Date(),
-                lastModifiedBy: user.oracleUserName )
+                lastModifiedBy: user.username )
         try {
-            savedActionItemPost = actionItemPostingService.create( aip )// Save base posting table
+            savedActionItemPost = actionItemPostService.create( aip )// Save base posting table
             map.actionItems.each {it ->
                 ActionItemPostDetail actionItemPostDetail = new ActionItemPostDetail(
-                        lastModifiedBy: user.userName,
+                        lastModifiedBy: user.username,
                         lastModified: new Date(),
                         actionItemPostId: savedActionItemPost.id,
                         actionItemId: it
@@ -66,7 +68,7 @@ class ActionItemPostingCompositeService {
                 }
             }
             if (map.postNow) {
-                ActionItemGroup actionItemGroup = actionItemGroupService.get( it )
+                ActionItemGroup actionItemGroup = actionItemGroupService.get( savedActionItemPost.postingActionItemGroupId )
                 actionItemGroup.activityDate = new Date()
                 actionItemGroup.userId = user.username
                 actionItemGroup.postingInd = AIPConstants.YES_IND
@@ -74,8 +76,8 @@ class ActionItemPostingCompositeService {
             }
             success = true
         } catch (ApplicationException e) {
-            LOGGER.error( 'Error while save action item posting' )
-            throw new ApplicationException( ActionItemPostingService, new BusinessLogicValidationException( 'preCreate.error.while.creating.action.item.post', [] ) )
+            LOGGER.error( 'Error while save action item posting' + e )
+            throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.error.while.creating.action.item.post', [] ) )
         }
         [
                 success      : success,
