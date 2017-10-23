@@ -110,6 +110,7 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
      */
     @Transactional(propagation=Propagation.REQUIRES_NEW, rollbackFor = Throwable.class )
     public void process( AsynchronousTask task) throws ApplicationException {
+        println "CRR: task: " + task.toString(  )
         ActionItemJob job = task as ActionItemJob
         log.info( "Processing actionItem job id = ${job.id}." )
         println "CRR: Processing actionItem jobs: JobTaskManager"

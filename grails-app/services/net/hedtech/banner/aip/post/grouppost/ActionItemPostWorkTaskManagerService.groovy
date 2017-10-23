@@ -114,9 +114,9 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
     @Transactional(propagation=Propagation.REQUIRES_NEW, rollbackFor = Throwable.class )
     public void process( AsynchronousTask task) throws ApplicationException {
         println "CRR: Process Task: PostWorkTaskManager"
+        ActionItemPostWork actionItemWorkTask = task as ActionItemPostWork
         if (log.isInfoEnabled()) {
-            ActionItemPostWork groupSendItem = task as ActionItemPostWork
-            log.info( "Processing group send item id = " + groupSendItem.getId() + ", pidm = " + groupSendItem.recipientPidm + "." )
+            log.info( "Processing group send item id = " + actionItemWorkTask.getId() + ", pidm = " + actionItemWorkTask.recipientPidm + "." )
         }
 
         try {
@@ -124,7 +124,7 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
                 throw simulatedFailureException;
             }
 
-            actionItemPostWorkProcessorService.performPostItem( task.getId() );
+            actionItemPostWorkProcessorService.performPostItem( actionItemWorkTask );
 
         } catch (Exception e) {
             if (log.isDebugEnabled()) {

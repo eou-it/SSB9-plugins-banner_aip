@@ -59,7 +59,7 @@ class UserActionItem implements Serializable {
      * Status of action item
      */
     @Column(name = "GCRAACT_GCVASTS_ID")
-    String status
+    Long status
 
     /**
      * user Response Date
@@ -123,7 +123,6 @@ class UserActionItem implements Serializable {
     String dataOrigin
 
     static constraints = {
-        id( nullable: false, maxSize: 19 )
         actionItemId( nullable: false, maxSize: 19 )
         pidm( nullable: false, maxSize: 9 )
         status( nullable: false, maxSize: 30 )
@@ -135,7 +134,6 @@ class UserActionItem implements Serializable {
         activityDate( nullable: false )
         creatorId( nullable: true, maxSize: 30 )
         createDate( nullable: true )
-        version( nullable: false )
         dataOrigin( nullable: true, maxSize: 30 )
     }
 

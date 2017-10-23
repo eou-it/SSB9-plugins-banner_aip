@@ -4,9 +4,10 @@
 package net.hedtech.banner.aip.post.grouppost
 
 import groovy.sql.Sql
+import net.hedtech.banner.aip.ActionItemStatus
+import net.hedtech.banner.aip.UserActionItem
 import net.hedtech.banner.aip.post.job.ActionItemJob
 import net.hedtech.banner.aip.post.job.ActionItemJobStatus
-import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
 import org.apache.log4j.Logger
 
 import java.sql.SQLException
@@ -19,44 +20,87 @@ class ActionItemPostWorkProcessorService {
     boolean transactional = true
     private static final log = Logger.getLogger(ActionItemPostWorkProcessorService.class)
     def actionItemPostWorkService
+    def userActionItemService
     def actionItemJobService
     def sessionFactory
 
     private static final int noWaitErrorCode = 54;
 
-    public void performPostItem( Long groupSendItemId) {
+
+    public void performPostItem( ActionItemPostWork actionItemPostWork ) {
+        def groupSendItemId = actionItemPostWork.id
         log.debug( "Performing group send item id = " + groupSendItemId )
-        println "CRR: Performing group send item id = " + groupSendItemId
         boolean locked = lockGroupSendItem( groupSendItemId, ActionItemPostWorkExecutionState.Ready );
-        println "CRR locked " + locked
         if (!locked) {
             // Do nothing
             return;
         }
 
-        ActionItemPostWork groupSendItem = (ActionItemPostWork) actionItemPostWorkService.get( groupSendItemId )
-        ActionItemPost groupSend = groupSendItem.actionItemGroupSend
+        ActionItemPost groupSend = actionItemPostWork.actionItemGroupSend
 
         if (!groupSend.getPostingCurrentState(  ).isTerminal()) {
-            ActionItemJob actionItemJob = new ActionItemJob( referenceId: groupSendItem.referenceId, status: ActionItemJobStatus.PENDING )
+            ActionItemJob actionItemJob = new ActionItemJob( referenceId: actionItemPostWork.referenceId, status: ActionItemJobStatus.PENDING )
             actionItemJobService.create( actionItemJob )
 
-            //log.debug("Updating post item to mark it complete with reference id = " + recipientData.referenceId)
-            def groupSendItemParamMap = [
-                id                   : groupSendItem.id,
-                version              : groupSendItem.version,
-                currentExecutionState: ActionItemPostWorkExecutionState.Complete,
-                stopDate             : new Date()
-            ]
-            actionItemPostWorkService.update( groupSendItemParamMap )
+            //FIXME: CRR Do all the work of posting action Item here.
+            //FIXME: factor out
+            // Assign an action item to the pidm for each in group
+            // get all the actionItem ids (ACTM_ID) from
+            // GCRAPST -> list of GCBAPST_ID -> each GCBACTM_ID
+
+            def userPidm = actionItemPostWork.recipientPidm
+            List<ActionItemPostDetail> details = ActionItemPostDetail.fetchByActionItemPostId( groupSend.id )
+            def total = details.size(  )
+            def successful = 0
+            details.each {
+                println userPidm + ":" + it.actionItemId
+                UserActionItem userActionItem = new UserActionItem()
+                userActionItem.pidm = userPidm
+                userActionItem.actionItemId = it.actionItemId
+                userActionItem.status = 1
+                userActionItem.displayStartDate = groupSend.postingDisplayStartDate
+                userActionItem.displayEndDate = groupSend.postingDisplayEndDate
+                userActionItem.groupId = groupSend.postingActionItemGroupId
+                userActionItem.userId = groupSend.postingCreatorId
+                userActionItem.activityDate = new Date()
+                userActionItem.creatorId = groupSend.postingCreatorId
+                userActionItem.createDate = new Date()
+                userActionItem.dataOrigin = groupSend.postingCreatorId
+                userActionItemService.create( userActionItem )
+
+                if (true)
+                    successful ++
+            }
+
+            // FIXME: refactor all of this redundant code
+            if (successful < total) { // FIXME: test for "not all sent"
+                def groupSendParamMap = [
+                        id                   : actionItemPostWork.id,
+                        version              : actionItemPostWork.version,
+                        currentExecutionState: ActionItemPostWorkExecutionState.Partial,
+                        stopDate             : new Date()
+                ]
+                actionItemPostWorkService.update( groupSendParamMap )
+            } else {
+                def groupSendParamMap = [
+                        id                   : actionItemPostWork.id,
+                        version              : actionItemPostWork.version,
+                        currentExecutionState: ActionItemPostWorkExecutionState.Complete,
+                        stopDate             : new Date()
+                ]
+                actionItemPostWorkService.update( groupSendParamMap )
+                // TODO: make sure this is what we want to do. Probably no need to keep around these success logs
+                // actionItemJobService.delete( actionItemJob )
+            }
+
         } else {
-            def groupSendItemParamMap = [
-                id                   : groupSendItem.id,
-                version              : groupSendItem.version,
+            def groupSendParamMap = [
+                id                   : actionItemPostWork.id,
+                version              : actionItemPostWork.version,
                 currentExecutionState: ActionItemPostWorkExecutionState.Stopped,
                 stopDate             : new Date()
             ]
-            actionItemPostWorkService.update( groupSendItemParamMap )
+            actionItemPostWorkService.update( groupSendParamMap )
         }
     }
 

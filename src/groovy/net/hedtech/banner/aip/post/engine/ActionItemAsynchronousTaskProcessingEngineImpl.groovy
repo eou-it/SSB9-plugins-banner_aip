@@ -315,6 +315,7 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
             for (AsynchronousTask job : jobs) {
                 pendingJobs.add(job.getId());
                 try {
+                    println executor
                     executor.execute(new AsynchronousTaskHandler(job) {
                         @Override
                         void run() {
@@ -340,13 +341,9 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
     void handleTask(AsynchronousTask job) {
         log.debug("Asynchronous Task Processing Engine handler will process job " + job.getId());
         try {
-            println "CRR: check if null: " + asynchronousBannerAuthenticationSpoofer
-            println "CRR: set context"
             asynchronousBannerAuthenticationSpoofer.authenticateAndSetFormContextForExecute()
             // This is a short-lived transactional method, and if successful the job has been marked as acquired.
             log.debug("Acquiring job " + job.getId())
-            println "CRR: Acquiring job " + job.getId()
-            println "jm: " + jobManager
             boolean acquired = jobManager.acquire(job);
             if (!acquired) return;
 
