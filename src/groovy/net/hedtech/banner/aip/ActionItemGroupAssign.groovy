@@ -30,6 +30,12 @@ import javax.persistence.*
             FROM ActionItemGroupAssign a
             WHERE a.actionItemId = :myId
         """),
+        @NamedQuery(name = "ActionItemGroupAssign.fetchByActionItemGroup",
+                query = """
+            FROM ActionItemGroupAssign a
+            WHERE a.actionItemId = :actionItemId
+            AND a.groupId = :groupId
+        """),
         @NamedQuery(name = "ActionItemGroupAssign.existsSameSeqNoInActionItem",
                 query = """ select a.actionItemId, a.seqNo, COUNT(*) FROM ActionItemGroupAssign a
                     WHERE a.groupId = :groupId
@@ -122,19 +128,29 @@ class ActionItemGroupAssign implements Serializable {
     // ReadOnly View?
     static def fetchById( Long myId ) {
         ActionItemGroupAssign.withSession {session ->
-            session.getNamedQuery( 'ActionItemGroupAssign.fetchById' ).setLong( 'myId', myId )?.list()[0]
+            def actionItemGroupAssign = session.getNamedQuery( 'ActionItemGroupAssign.fetchById' ).setLong( 'myId', myId )?.list()[0]
+            return actionItemGroupAssign
         }
     }
 
     static def fetchByGroupId ( Long myId) {
         ActionItemGroupAssign.withSession {session ->
-            session.getNamedQuery('ActionItemGroupAssign.fetchByGroupId').setLong('myId', myId)?.list()
+            def actionItemGroupAssign = session.getNamedQuery('ActionItemGroupAssign.fetchByGroupId').setLong('myId', myId)?.list()
+            return actionItemGroupAssign
         }
     }
 
     static def fetchByActionItemId( Long myId ) {
         ActionItemGroupAssign.withSession {session ->
-            session.getNamedQuery( 'ActionItemGroupAssign.fetchByActionId').setLong( 'myId', myId)?.list()
+            List actionItemGroupAssign = session.getNamedQuery( 'ActionItemGroupAssign.fetchByActionId').setLong( 'myId', myId)?.list()
+            return actionItemGroupAssign
+        }
+    }
+
+    static def fetchByActionItemIdAndGroupId (Long actionItemId, Long groupId) {
+        ActionItemGroupAssign.withSession {session ->
+            def actionItemGroupAssign = session.getNamedQuery( 'ActionItemGroupAssign.fetchByActionItemGroup').setLong('actionItemId', actionItemId).setLong('groupId', groupId)?.list()[0]
+            return actionItemGroupAssign
         }
     }
 
