@@ -3,13 +3,10 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.groupsend
 
-import net.hedtech.banner.aip.ActionItem
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.ActionItemGroupAssign
-import net.hedtech.banner.aip.ActionItemGroupAssignReadOnly
 import net.hedtech.banner.aip.post.ActionItemBaseConcurrentTestCase
 import net.hedtech.banner.aip.post.grouppost.ActionItemPost
-import net.hedtech.banner.aip.post.grouppost.ActionItemPostRequest
 import net.hedtech.banner.aip.post.grouppost.ActionItemPostWork
 import net.hedtech.banner.aip.post.grouppost.ActionItemPostWorkExecutionState
 import net.hedtech.banner.aip.post.job.ActionItemJob
@@ -30,25 +27,25 @@ import org.springframework.security.core.context.SecurityContextHolder
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
 
-
 class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseConcurrentTestCase {
-    def log = LogFactory.getLog(this.class)
+    def log = LogFactory.getLog( this.class )
     def selfServiceBannerAuthenticationProvider
 
+
     @Before
-    public void setUp() {
-        formContext = ['GUAGMNU','SELFSERVICE']
-        def auth = selfServiceBannerAuthenticationProvider.authenticate(new UsernamePasswordAuthenticationToken('BCMADMIN', '111111'))
-        SecurityContextHolder.getContext().setAuthentication(auth)
+    void setUp() {
+        formContext = ['GUAGMNU', 'SELFSERVICE']
+        def auth = selfServiceBannerAuthenticationProvider.authenticate( new UsernamePasswordAuthenticationToken( 'BCMADMIN', '111111' ) )
+        SecurityContextHolder.getContext().setAuthentication( auth )
         super.setUp()
-        actionItemPostMonitor.startMonitoring(  )
+        actionItemPostMonitor.startMonitoring()
         actionItemPostWorkProcessingEngine.startRunning()
         actionItemJobProcessingEngine.startRunning()
     }
 
 
     @After
-    public void tearDown() {
+    void tearDown() {
         actionItemPostMonitor.shutdown()
         actionItemPostWorkProcessingEngine.stopRunning()
         actionItemJobProcessingEngine.stopRunning()
@@ -60,11 +57,11 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
 
 
     @Test
-    public void testPostByPopulationSendImmediately() {
+    void testPostByPopulationSendImmediately() {
         println "testPostByPopulationSendImmediately"
         ActionItemPost groupSend
         //ActionItemGroup aig = actionItemGroupService
-        CommunicationPopulationQuery populationQuery = communicationPopulationQueryCompositeService.createPopulationQuery(newPopulationQuery("testPop"))
+        CommunicationPopulationQuery populationQuery = communicationPopulationQueryCompositeService.createPopulationQuery( newPopulationQuery( "testPop" ) )
         CommunicationPopulationQueryVersion queryVersion = communicationPopulationQueryCompositeService.publishPopulationQuery( populationQuery )
         populationQuery = queryVersion.query
 
@@ -82,32 +79,30 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         assertEquals( 1, queryAssociations.size() )
 
         def selectionListEntryList = CommunicationPopulationSelectionListEntry.fetchBySelectionListId( populationCalculation.selectionList.id )
-        assertNotNull(selectionListEntryList)
-        assertEquals(5, selectionListEntryList.size())
+        assertNotNull( selectionListEntryList )
+        assertEquals( 5, selectionListEntryList.size() )
 
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
         def actionItemGroup = actionItemGroups[0]
 
-        List <Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect{it.actionItemId}
+        List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
         println( "CRR actionItemIds: " + actionItemIds )
-        ActionItemPostRequest request = new ActionItemPostRequest(
-                name: "testPostByPopulationSendImmediately",
-                populationId: population.id,
-                referenceId: UUID.randomUUID().toString(),
-                postGroupId: actionItemGroup.id,
-                recalculateOnPost: false,
-                // TODO: scheduled date null if post now (db currently not null)
-                scheduledStartDate: null, // new Date( System.currentTimeMillis() + 3000L),
-                displayStartDate: new Date(),
-                displayEndDate: new Date(),
-                actionItemIds: actionItemIds
-        )
-
-        groupSend = actionItemPostCompositeService.sendAsynchronousPostItem( request )
+        def requestMap = [:]
+        requestMap.name = 'testPostByPopulationSendImmediately'
+        requestMap.populationId = population.id
+        requestMap.referenceId = UUID.randomUUID().toString()
+        requestMap.postGroupId = actionItemGroup.id
+        requestMap.postNow = true
+        requestMap.recalculateOnPost = false
+        requestMap.scheduledStartDate = null
+        requestMap.displayStartDate = new Date()
+        requestMap.displayEndDate = new Date()
+        requestMap.actionItemIds = actionItemIds
+        groupSend = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
         assertNotNull( groupSend )
 
         def checkExpectedGroupSendItemsCreated = {
-        println "CRR: check items"
+            println "CRR: check items"
             ActionItemPost each = ActionItemPost.get( it )
             return ActionItemPostWork.fetchByGroupSend( each ).size() == 5
         }
@@ -149,10 +144,9 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
 
     }
 
-
     /*
     @Test
-    public void testDeletePopulationWithGroupSend() {
+    void testDeletePopulationWithGroupSend() {
         println "testDeletePopulationWithGroupSend"
 
         CommunicationGroupSend groupSend
@@ -199,7 +193,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
     }
 
     @Test
-    public void testDeletePopulationWithGroupSendWaitingRecalculation() {
+    void testDeletePopulationWithGroupSendWaitingRecalculation() {
         println "testDeletePopulationWithGroupSendWaitingRecalculation"
 
         CommunicationGroupSend groupSend
@@ -246,7 +240,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
     }
 
     @Test
-    public void testRecalculatePopulationAfterScheduledGroupSend() {
+    void testRecalculatePopulationAfterScheduledGroupSend() {
         println "testRecalculatePopulationAfterScheduledGroupSend"
 
         CommunicationGroupSend groupSend
@@ -360,7 +354,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
     }
 
     @Test
-    public void testScheduledPopulationGroupSend() {
+    void testScheduledPopulationGroupSend() {
         println "testScheduledPopulationGroupSend"
 
         CommunicationPopulationQuery populationQuery = communicationPopulationQueryCompositeService.createPopulationQuery(newPopulationQuery("testPop"))
@@ -442,7 +436,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
     }
 
     @Test
-    public void testScheduledRecalculatePopulationGroupSend() {
+    void testScheduledRecalculatePopulationGroupSend() {
         println "testScheduledRecalculatePopulationGroupSend"
 
         CommunicationPopulationQuery populationQuery = communicationPopulationQueryCompositeService.createPopulationQuery(newPopulationQuery("testPop"))
@@ -526,7 +520,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
     }
 
 /*    @Test
-    public void testMediumPopulationAndDelete() {
+    void testMediumPopulationAndDelete() {
         println "testMediumPopulationAndDelete"
 
         // 0) Test parameters
@@ -654,7 +648,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
     }
 
     @Test
-    public void testDeleteGroupSend() {
+    void testDeleteGroupSend() {
         println "testDeleteGroupSend"
 
         testDeleteGroupSend( defaultEmailTemplate )
@@ -684,7 +678,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
     }
 
     @Test
-    public void testGroupSendWithManualIncludeSentImmediately() {
+    void testGroupSendWithManualIncludeSentImmediately() {
         println "testGroupSendWithManualIncludeSentImmediately"
 
         CommunicationPopulation population = communicationPopulationCompositeService.createPopulation( defaultFolder, "testPopulation", "testPopulation description" )
@@ -747,7 +741,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
     }
 
     @Test
-    public void testGroupSendWithBothManualIncludeAndQuerySentImmediately() {
+    void testGroupSendWithBothManualIncludeAndQuerySentImmediately() {
         println "testGroupSendWithBothManualIncludeAndQuerySentImmediately"
 
         CommunicationPopulationQuery populationQuery = communicationPopulationQueryCompositeService.createPopulationQuery(newPopulationQuery("testPop"))
@@ -818,7 +812,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
 
 
     @Test
-    public void testGroupSendWithBothManualIncludeAndQueryScheduledRecalculate() {
+    void testGroupSendWithBothManualIncludeAndQueryScheduledRecalculate() {
         println "testGroupSendWithBothManualIncludeAndQueryScheduledRecalculate"
 
         CommunicationPopulationQuery populationQuery = communicationPopulationQueryCompositeService.createPopulationQuery(newPopulationQuery("testPop"))
@@ -880,7 +874,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
     }
 
     @Test
-    public void testGroupSendWithManualIncludeAndQueryScheduledRecalculate() {
+    void testGroupSendWithManualIncludeAndQueryScheduledRecalculate() {
         println "testGroupSendWithManualIncludeAndQueryScheduledRecalculate"
 
         CommunicationPopulation population = communicationPopulationCompositeService.createPopulation( defaultFolder, "testPopulation", "testPopulation description" )
@@ -946,5 +940,4 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         assertEquals( 0, CommunicationRecipientData.findAll().size() )
     }
    */
-
 }

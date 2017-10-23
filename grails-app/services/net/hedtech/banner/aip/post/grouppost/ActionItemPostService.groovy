@@ -18,17 +18,20 @@ class ActionItemPostService extends ServiceBase {
      * @param dataMap
      */
     def preCreateValidation( dataMap ) {
-        if (!dataMap.postingJobName) {
+        if(!dataMap){
+            throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.insufficient.request', [] ) )
+        }
+        if (!dataMap.name) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.posting.job.name', [] ) )
         }
-        if (!dataMap.actionItemGroup) {
+        if (!dataMap.postGroupId) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.group', [] ) )
         }
-        if (!dataMap.actionItems) {
+        if (!dataMap.actionItemIds) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.action.item', [] ) )
         }
 
-        if (!dataMap.populationListId) {
+        if (!dataMap.populationId) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.population.name', [] ) )
         }
 
@@ -43,12 +46,11 @@ class ActionItemPostService extends ServiceBase {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.schedule', [] ) )
         }
         if (dataMap.scheduled) {
-            if (!dataMap.scheduleStartDate) {
+            if (!dataMap.scheduledStartDate) {
                 throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.schedule.start.date', [] ) )
             }
         }
     }
-
 
     public List findRunning() {
         return ActionItemPost.findRunning()

@@ -390,7 +390,7 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
             errorExecutor.execute(new ErrorHandler(job, e));
         } catch (Throwable t) {
             log.error("Async job handler caught an unexpected error and will mark the job as having an error state")
-            //log.error( "JobProcessingEngine " + this + " - A handler encountered a Throwable for job " + job.getId() + ", and will mark it as failed", t );
+            //LOGGER.error( "JobProcessingEngine " + this + " - A handler encountered a Throwable for job " + job.getId() + ", and will mark it as failed", t );
 
             // Any other exceptions will be handled by another runnable, regardless
             // of the above handling for the application exception.  This may
