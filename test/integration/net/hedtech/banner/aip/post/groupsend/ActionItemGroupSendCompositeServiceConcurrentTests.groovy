@@ -24,6 +24,8 @@ import org.junit.Test
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 
+import java.text.SimpleDateFormat
+
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
 
@@ -95,8 +97,8 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         requestMap.postNow = true
         requestMap.recalculateOnPost = false
         requestMap.scheduledStartDate = null
-        requestMap.displayStartDate = new Date()
-        requestMap.displayEndDate = new Date()
+        requestMap.displayStartDate = new SimpleDateFormat( 'MM/DD/YYYY' ).format( new Date() )
+        requestMap.displayEndDate = new SimpleDateFormat( 'MM/DD/YYYY' ).format( new Date() )
         requestMap.actionItemIds = actionItemIds
         groupSend = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
         assertNotNull( groupSend )
