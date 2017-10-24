@@ -10,7 +10,6 @@ import javax.persistence.*
 
 
 @NamedQueries(value = [
-
         @NamedQuery(name = "UserActionItem.fetchUserActionItemById",
                 query = """
            FROM UserActionItem a
@@ -20,7 +19,15 @@ import javax.persistence.*
                 query = """
            FROM UserActionItem a
            WHERE a.pidm = :myPidm
-          """)
+          """),
+        @NamedQuery(name = "UserActionItem.isExistingInDateRangeForPidmAndActionItemId",
+                query = """
+                   FROM UserActionItem a
+                   WHERE a.pidm = :myPidm
+                   AND a.actionItemId = :myActionItemId
+                   AND :myDisplayStartDate <= a.displayEndDate
+                   AND a.displayStartDate <= :myDisplayEndDate
+                  """)
 ])
 
 @Entity
@@ -83,7 +90,7 @@ class UserActionItem implements Serializable {
      * Group Id associated with action Item group table
      */
     @Column(name = "gcraact_gcbagrp_id")
-    String groupId
+    Long groupId
 
     /**
      * User action item pertains to
@@ -157,6 +164,23 @@ class UserActionItem implements Serializable {
     static def fetchUserActionItemsByPidm( Long pidm ) {
         UserActionItem.withSession {session ->
             List userActionItem = session.getNamedQuery( 'UserActionItem.fetchUserActionItemByPidm' ).setLong( 'myPidm', pidm ).list()
+            return userActionItem
+        }
+    }
+
+    /**
+     *
+     * @param UserActionItem
+     * @return boolean Does an UserActionItem for this pidm and and ActionItem with overlapping display dates already exist
+     */
+    static boolean isExistingInDateRangeForPidmAndActionItemId( UserActionItem itemToTest ) {
+        UserActionItem.withSession { session ->
+            boolean userActionItem = session.getNamedQuery(
+                    'UserActionItem.isExistingInDateRangeForPidmAndActionItemId' ).setLong( 'myPidm', itemToTest.pidm )
+                    .setLong( 'myActionItemId', itemToTest.actionItemId )
+                    .setDate( 'myDisplayStartDate', itemToTest.displayStartDate )
+                    .setDate( 'myDisplayEndDate', itemToTest.displayEndDate )
+                    ?.list()?.size() > 0
             return userActionItem
         }
     }
