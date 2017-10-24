@@ -137,11 +137,13 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         assertEquals( 1, fetchPostCount( groupSend.id ) )
         assertEquals( 5, fetchPostItemCount( groupSend.id ) )
         assertEquals( 5, ActionItemJob.findAll().size() )
+        // Not yet supported
+        /*
         actionItemPostCompositeService.deletePost( groupSend.id )
         assertEquals( 0, fetchPostCount( groupSend.id ) )
         assertEquals( 0, fetchPostItemCount( groupSend.id ) )
         assertEquals( 0, ActionItemJob.findAll().size() )
-
+        */
     }
 
     /*

@@ -15,6 +15,12 @@ import javax.persistence.*
 @Table(name = "GCRAPST")
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
+@NamedQueries(value = [
+        @NamedQuery(name = "ActionItemPostDetail.fetchByActionItemPostId",
+                query = """ FROM ActionItemPostDetail gs
+                WHERE gs.actionItemPostId = :actionItemPostId_ """
+        )
+])
 class ActionItemPostDetail implements Serializable {
 
     /**
@@ -79,4 +85,14 @@ class ActionItemPostDetail implements Serializable {
         dataOrigin( nullable: true, maxSize: 30 )
         vpdiCode( nullable: true, maxSize: 6 )
     }
+
+    public static List fetchByActionItemPostId(Long postId) {
+            def results
+            ActionItemPostWork.withSession {session ->
+                results = session.getNamedQuery( 'ActionItemPostDetail.fetchByActionItemPostId' )
+                        .setParameter( 'actionItemPostId_', postId )
+                        .list()
+            }
+            return results
+        }
 }

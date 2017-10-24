@@ -33,6 +33,7 @@ import java.sql.SQLException
 class ActionItemPostCompositeService {
 
     private static final LOGGER = Logger.getLogger( this.class )
+    def actionItemJobService
     def actionItemPostService
     def actionItemPostDetailService
     def actionItemProcessingCommonService
@@ -56,9 +57,13 @@ class ActionItemPostCompositeService {
                 populationListId: requestMap.populationId,
                 postingActionItemGroupId: requestMap.postGroupId,
                 postingName: requestMap.name,
-                postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
-                postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
-                postingScheduleDateTime: requestMap.schedule ? actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.scheduleStartDate ) : null,
+                //FIXME: type error in convert
+                //postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
+                //postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
+                //postingScheduleDateTime: requestMap.schedule ? actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.scheduleStartDate ) : null,
+                postingDisplayStartDate: requestMap.displayStartDate ,
+                postingDisplayEndDate:  requestMap.displayEndDate ,
+                postingScheduleDateTime: requestMap.schedule ? requestMap.scheduleStartDate  : null,
                 postingCreationDateTime: new Date(),
                 populationRegenerateIndicator: false,
                 postingDeleteIndicator: false,

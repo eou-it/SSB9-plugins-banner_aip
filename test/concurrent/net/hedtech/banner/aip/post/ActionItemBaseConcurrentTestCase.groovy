@@ -153,6 +153,7 @@ class ActionItemBaseConcurrentTestCase extends Assert {
                 sql.executeUpdate("Delete from GCRQRTZ_JOB_DETAILS")
                 sql.executeUpdate("Delete from GCRQRTZ_LOCKS")
                 sql.executeUpdate("Delete from GCRQRTZ_SCHEDULER_STATE")
+                /*
                 sql.executeUpdate("Delete from GCRLETM")
                 sql.executeUpdate("Delete from GCRMITM")
                 sql.executeUpdate("Delete from GCREITM")
@@ -170,6 +171,7 @@ class ActionItemBaseConcurrentTestCase extends Assert {
                 sql.executeUpdate("Delete from GCBTMPL")
                 sql.executeUpdate("Delete from GCRFLPM")
                 sql.executeUpdate("Delete from GCRCFLD")
+                */
                 sql.executeUpdate("Delete from GCRLENT")
                 sql.executeUpdate("Delete from GCRPQID")
                 sql.executeUpdate("Delete from GCRPVID")
@@ -179,16 +181,19 @@ class ActionItemBaseConcurrentTestCase extends Assert {
                 sql.executeUpdate("Delete from GCBPOPL")
                 sql.executeUpdate("Delete from GCRQRYV")
                 sql.executeUpdate("Delete from GCBQURY")
+                /*
                 sql.executeUpdate("Delete from GCRITPE")
                 sql.executeUpdate("Delete from GCRPARM")
                 sql.executeUpdate("DELETE FROM gcrfldr WHERE NOT EXISTS (SELECT a.gcbactm_gcrfldr_id FROM gcbactm a WHERE a.gcbactm_gcrfldr_id = gcrfldr_surrogate_id)")
                 sql.executeUpdate("Delete from GCRORAN")
                 sql.executeUpdate("Delete from GCBSPRP")
                 sql.executeUpdate( "Delete from GCRMBAC" )
+                */
                 sql.executeUpdate( "Delete from GCRAIIM" )
                 sql.executeUpdate( "Delete from GCRAPST" )
                 sql.executeUpdate( "Delete from GCBAPST" )
                 sql.executeUpdate( "Delete from GCBAJOB" )
+                sql.executeUpdate( "Delete from GCRAACT where GCRAACT_CREATOR_ID = \'BCMADMIN\'" )
                 tx.commit()
             }
         } finally {

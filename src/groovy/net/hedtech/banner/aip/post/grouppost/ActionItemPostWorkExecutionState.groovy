@@ -11,6 +11,7 @@ enum ActionItemPostWorkExecutionState implements Serializable {
 
 	Ready(false),
     Complete(true),
+    Partial(true),
     Stopped(true),
     Failed(true);
 

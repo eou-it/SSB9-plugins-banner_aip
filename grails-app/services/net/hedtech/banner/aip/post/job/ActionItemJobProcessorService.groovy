@@ -13,15 +13,15 @@ import org.apache.commons.logging.LogFactory
 class ActionItemJobProcessorService {
     private final Log log = LogFactory.getLog(this.getClass());
     def actionItemJobService
-    //def actionItemPerformPostService
+    def actionItemPerformPostService
 
     public void performActionItemJob( Long jobId ) {
         log.debug( "performed actionItem job with job id = ${jobId}." )
-        println "CRR perform actionItem job with job id = ${jobId}."
+        ActionItemJob job = actionItemJobService.get( jobId )
 
         // put together our insert of action items for pidm to insert
 
-        //actionItemPerformPostService.postActionItems(  )
+        actionItemPerformPostService.postActionItems(  )
     }
 
 }

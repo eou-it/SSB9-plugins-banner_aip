@@ -4,12 +4,11 @@
 
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.UserActionItem
 import net.hedtech.banner.general.person.PersonUtility
+import net.hedtech.banner.testing.BaseIntegrationTestCase
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.After
-import net.hedtech.banner.testing.BaseIntegrationTestCase
 
 
 class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
@@ -55,6 +54,178 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemsByPidm( actionItemPidm )
         assertNotNull( userActionItems.toString() )
         assertFalse userActionItems.isEmpty()
+    }
+
+    // check that new UserActionItem is the first to be added for pidm and ActionItem.
+    // No date range to check (most common condition)
+    @Test
+    void testIsExistingInDateRangeByPidmAndACTMIdNoneFound() {
+        ActionItem actionItem = ActionItem.fetchActionItems(  )[0]
+        ActionItemGroup actionItemGroup= ActionItemGroup.fetchActionItemGroups(  )[0]
+        def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
+
+        UserActionItem itemWeWantToTest = newActionItem(  )
+        itemWeWantToTest.pidm = pidmToTest
+        itemWeWantToTest.displayStartDate = new Date()
+        itemWeWantToTest.displayEndDate = new Date() + 1
+        itemWeWantToTest.actionItemId = actionItem.id
+        itemWeWantToTest.groupId = actionItemGroup.id
+        println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
+        assertFalse( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
+    }
+
+    // check that new ActionItem overlapping start date returns true
+    @Test
+    void testIsExistingInDateRangeByPidmAndACTMIdFront() {
+        ActionItem actionItem = ActionItem.fetchActionItems()[0]
+        ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
+        def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
+
+        UserActionItem itemToTestAgainst = newActionItem()
+        itemToTestAgainst.pidm = pidmToTest
+        itemToTestAgainst.displayStartDate = new Date() + 1
+        itemToTestAgainst.displayEndDate = new Date() + 10
+        itemToTestAgainst.actionItemId = actionItem.id
+        itemToTestAgainst.groupId = actionItemGroup.id
+
+        itemToTestAgainst.save( failOnError:true, flush: true )
+
+        UserActionItem itemWeWantToTest = newActionItem()
+        itemWeWantToTest.pidm = pidmToTest
+        itemWeWantToTest.displayStartDate = new Date()
+        itemWeWantToTest.displayEndDate = new Date() + 7
+        itemWeWantToTest.actionItemId = actionItem.id
+        itemWeWantToTest.groupId = actionItemGroup.id
+        println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
+        assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
+    }
+
+    // check that new ActionItem overlapping end date returns true
+    @Test
+    void testIsExistingInDateRangeByPidmAndACTMIdBack() {
+        ActionItem actionItem = ActionItem.fetchActionItems()[0]
+        ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
+        def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
+
+        UserActionItem itemToTestAgainst = newActionItem()
+        itemToTestAgainst.pidm = pidmToTest
+        itemToTestAgainst.displayStartDate = new Date()
+        itemToTestAgainst.displayEndDate = new Date() + 7
+        itemToTestAgainst.actionItemId = actionItem.id
+        itemToTestAgainst.groupId = actionItemGroup.id
+
+        itemToTestAgainst.save( failOnError:true, flush: true )
+
+        UserActionItem itemWeWantToTest = newActionItem()
+        itemWeWantToTest.pidm = pidmToTest
+        itemWeWantToTest.displayStartDate = new Date() + 5
+        itemWeWantToTest.displayEndDate = new Date() + 10
+        itemWeWantToTest.actionItemId = actionItem.id
+        itemWeWantToTest.groupId = actionItemGroup.id
+        println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
+        assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
+    }
+
+    // check that new ActionItem contained within existing date range returns true
+    @Test
+    void testIsExistingInDateRangeByPidmAndACTMIdContained() {
+        ActionItem actionItem = ActionItem.fetchActionItems()[0]
+        ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
+        def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
+
+        UserActionItem itemToTestAgainst = newActionItem()
+        itemToTestAgainst.pidm = pidmToTest
+        itemToTestAgainst.displayStartDate = new Date()
+        itemToTestAgainst.displayEndDate = new Date() + 15
+        itemToTestAgainst.actionItemId = actionItem.id
+        itemToTestAgainst.groupId = actionItemGroup.id
+
+        itemToTestAgainst.save( failOnError:true, flush: true )
+
+        UserActionItem itemWeWantToTest = newActionItem()
+        itemWeWantToTest.pidm = pidmToTest
+        itemWeWantToTest.displayStartDate = new Date() + 5
+        itemWeWantToTest.displayEndDate = new Date() + 10
+        itemWeWantToTest.actionItemId = actionItem.id
+        itemWeWantToTest.groupId = actionItemGroup.id
+        println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
+        assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
+    }
+    // check that new ActionItem containing existing date range returns true
+    @Test
+    void testIsExistingInDateRangeByPidmAndACTMIdContaining() {
+        ActionItem actionItem = ActionItem.fetchActionItems()[0]
+        ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
+        def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
+
+        UserActionItem itemToTestAgainst = newActionItem()
+        itemToTestAgainst.pidm = pidmToTest
+        itemToTestAgainst.displayStartDate = new Date() + 5
+        itemToTestAgainst.displayEndDate = new Date() + 10
+        itemToTestAgainst.actionItemId = actionItem.id
+        itemToTestAgainst.groupId = actionItemGroup.id
+
+        itemToTestAgainst.save( failOnError:true, flush: true )
+
+        UserActionItem itemWeWantToTest = newActionItem()
+        itemWeWantToTest.pidm = pidmToTest
+        itemWeWantToTest.displayStartDate = new Date()
+        itemWeWantToTest.displayEndDate = new Date() + 15
+        itemWeWantToTest.actionItemId = actionItem.id
+        itemWeWantToTest.groupId = actionItemGroup.id
+        println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
+        assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
+    }
+
+    // check that new ActionItem prior to existing date range returns false
+    @Test
+    void testIsExistingInDateRangeByPidmAndACTMIdPrior() {
+        ActionItem actionItem = ActionItem.fetchActionItems()[0]
+        ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
+        def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
+
+        UserActionItem itemToTestAgainst = newActionItem()
+        itemToTestAgainst.pidm = pidmToTest
+        itemToTestAgainst.displayStartDate = new Date() + 10
+        itemToTestAgainst.displayEndDate = new Date() + 15
+        itemToTestAgainst.actionItemId = actionItem.id
+        itemToTestAgainst.groupId = actionItemGroup.id
+
+        itemToTestAgainst.save( failOnError:true, flush: true )
+
+        UserActionItem itemWeWantToTest = newActionItem()
+        itemWeWantToTest.pidm = pidmToTest
+        itemWeWantToTest.displayStartDate = new Date()
+        itemWeWantToTest.displayEndDate = new Date() + 5
+        itemWeWantToTest.actionItemId = actionItem.id
+        itemWeWantToTest.groupId = actionItemGroup.id
+        println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
+        assertFalse( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
+    }
+    // check that new ActionItem after existing date range returns false
+    @Test
+    void testIsExistingInDateRangeByPidmAndACTMIdAfter() {
+        ActionItem actionItem = ActionItem.fetchActionItems()[0]
+        ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
+        def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
+
+        UserActionItem itemToTestAgainst = newActionItem()
+        itemToTestAgainst.pidm = pidmToTest
+        itemToTestAgainst.displayStartDate = new Date()
+        itemToTestAgainst.displayEndDate = new Date() + 5
+        itemToTestAgainst.actionItemId = actionItem.id
+        itemToTestAgainst.groupId = actionItemGroup.id
+
+        itemToTestAgainst.save( failOnError:true, flush: true )
+
+        UserActionItem itemWeWantToTest = newActionItem()
+        itemWeWantToTest.pidm = pidmToTest
+        itemWeWantToTest.displayStartDate = new Date() + 10
+        itemWeWantToTest.displayEndDate = new Date() + 15
+        itemWeWantToTest.actionItemId = actionItem.id
+        itemWeWantToTest.groupId = actionItemGroup.id
+        println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
+        assertFalse( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
     }
 
 
@@ -113,4 +284,23 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         assertFalse result
 
     }
+
+    private UserActionItem newActionItem() {
+        def userActionItemNew = new UserActionItem()
+                userActionItemNew.actionItemId = 1
+                userActionItemNew.pidm = 1
+                userActionItemNew.status = 1
+                userActionItemNew.userResponseDate = null
+                userActionItemNew.displayStartDate = null
+                userActionItemNew.displayEndDate = null
+                userActionItemNew.groupId = 1
+                userActionItemNew.userId = "GRAILS"
+                userActionItemNew.activityDate = new Date ()
+                userActionItemNew.creatorId = "GRAILS"
+                userActionItemNew.createDate = new Date ()
+                userActionItemNew.dataOrigin = "GRAILS"
+
+        return userActionItemNew
+    }
+
 }
