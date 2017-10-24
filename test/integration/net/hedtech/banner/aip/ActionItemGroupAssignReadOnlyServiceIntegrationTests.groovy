@@ -30,7 +30,7 @@ class ActionItemGroupAssignReadOnlyServiceIntegrationTests extends BaseIntegrati
     @Test
     void testListBlockedProcessById() {
         ActionItemGroupAssignReadOnly domain = ActionItemGroupAssignReadOnly.findByGroupName( 'Enrollment' )
-        def activeActionItems = actionItemGroupAssignReadOnlyService.fetchActiveActionItemByGroupId( domain.actionItemGroupId, [max: 10, offset: 0] )
+        def activeActionItems = actionItemGroupAssignReadOnlyService.fetchActiveActionItemByGroupId( domain.actionItemGroupId)
         assert activeActionItems.size() > 0
 
     }
@@ -38,18 +38,7 @@ class ActionItemGroupAssignReadOnlyServiceIntegrationTests extends BaseIntegrati
 
     @Test
     void fetchGroupLookup() {
-        def paginationParams = [max: 10, offset: 0]
-        def groupFolderList = actionItemGroupAssignReadOnlyService.fetchGroupLookup( '', paginationParams )
-        assertFalse groupFolderList.isEmpty()
-        groupFolderList = actionItemGroupAssignReadOnlyService.fetchGroupLookup( null, paginationParams )
-        assertFalse groupFolderList.isEmpty()
-
-        groupFolderList = actionItemGroupAssignReadOnlyService.fetchGroupLookup( 'AIPstudent', paginationParams )
-        assertFalse groupFolderList.isEmpty()
-
-        groupFolderList = actionItemGroupAssignReadOnlyService.fetchGroupLookup( 'student', paginationParams )
-        assertFalse groupFolderList.isEmpty()
-        groupFolderList = actionItemGroupAssignReadOnlyService.fetchGroupLookup( 'STUDENT', paginationParams )
+        def groupFolderList = actionItemGroupAssignReadOnlyService.fetchGroupLookup()
         assertFalse groupFolderList.isEmpty()
     }
 }

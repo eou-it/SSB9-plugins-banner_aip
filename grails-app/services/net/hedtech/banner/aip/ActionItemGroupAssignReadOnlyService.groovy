@@ -17,11 +17,10 @@ class ActionItemGroupAssignReadOnlyService {
     /**
      *
      * @param groupId
-     * @param paginationParam
      * @return
      */
-    def fetchActiveActionItemByGroupId( groupId, paginationParam ) {
-        ActionItemGroupAssignReadOnly.fetchActiveActionItemByGroupId( groupId, paginationParam ).collect {
+    def fetchActiveActionItemByGroupId( groupId ) {
+        ActionItemGroupAssignReadOnly.fetchActiveActionItemByGroupId( groupId ).collect {
             [actionItemId        : it[0],
              actionItemName      : it[1],
              actionItemTitle     : it[2],
@@ -30,32 +29,12 @@ class ActionItemGroupAssignReadOnlyService {
     }
 
     /**
-     *
-     * @param searchParam
-     * @param paginationParam
+     * Fetches active groups which has active action itesm
      * @return
      */
-    def fetchGroupLookup( searchParam , paginationParam) {
-        def data = ActionItemGroupAssignReadOnly.fetchGroupLookup( '%' + (searchParam ? searchParam.toUpperCase() : '') + '%', paginationParam ).collect() {
+    def fetchGroupLookup() {
+        ActionItemGroupAssignReadOnly.fetchGroupLookup().collect() {
             [folderId: it[0], folderName: it[1], groupId: it[2], groupName: it[3], groupTitle: it[4]]
         }
-        Map map = [:]
-        if (data) {
-            Map folder = data.collectEntries() {
-                [it.folderId, it.folderName]
-            }
-            println folder.keySet()
-
-            folder.keySet().each {key ->
-                map.put( folder.get( key ), data.findAll() {
-                    (it.folderId == key)
-                }.collect() {
-                    [groupId   : it.groupId,
-                     groupName : it.groupName,
-                     groupTitle: it.groupTitle]
-                } )
-            }
-        }
-        map
     }
 }

@@ -27,9 +27,8 @@ import javax.persistence.*
                                   groupName, 
                                   groupTitle 
                             FROM ActionItemGroupAssignReadOnly a
-                            where (UPPER(a.actionItemGroupFolderName) like :searchParam  or 
-                                  UPPER(a.groupName) like :searchParam or 
-                                  UPPER(a.groupTitle) like :searchParam) AND a.groupStatus = 'A' 
+                            where a.groupStatus = 'A'
+                                  and  a.actionItemStatus = 'A'
                              order by a.actionItemGroupFolderName, a.groupName
                   """),
         @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchActiveActionItemByGroupId",
@@ -203,26 +202,21 @@ class ActionItemGroupAssignReadOnly implements Serializable {
      * @param groupId
      * @return
      */
-    static def fetchActiveActionItemByGroupId( Long groupId, paginationParams ) {
+    static def fetchActiveActionItemByGroupId( Long groupId ) {
         ActionItemGroupAssignReadOnly.withSession {session ->
             session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchActiveActionItemByGroupId' )
                     .setLong( 'groupId', groupId ?: -1L )
-                    .setMaxResults( paginationParams.max )
-                    .setFirstResult( paginationParams.offset )
                     .list()
         }
     }
 
     /**
-     * @param searchParam
+     * Fetches action Groups and its active action items
      * @return
      */
-    static def fetchGroupLookup( searchParam, paginationParams ) {
+    static def fetchGroupLookup() {
         GroupFolderReadOnly.withSession {session ->
             session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchGroupLookup' )
-                    .setString( 'searchParam', searchParam )
-                    .setMaxResults( paginationParams.max )
-                    .setFirstResult( paginationParams.offset )
                     .list()
         }
     }
