@@ -16,13 +16,6 @@ import javax.persistence.*
           """),
         @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchById",
                 query = """
-            select actionItemId,
-                    sequenceNumber,
-                    actionItemName,
-                    actionItemStatus,
-                    actionItemFolderName,
-                    actionItemTitle,
-                    actionItemDescription
             FROM ActionItemGroupAssignReadOnly a 
             WHERE a.actionItemGroupId = :myId 
         """),
