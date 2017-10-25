@@ -187,7 +187,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
 
         restartMonitor()
 
-        requestMap.name = 'testRepostOfExistingData'
+        requestMap.name = 'testRepostOfExistingDataDatesInFuture'
         requestMap.referenceId = UUID.randomUUID().toString()
         requestMap.displayStartDate = new Date() + 60
         requestMap.displayEndDate = new Date() + 70

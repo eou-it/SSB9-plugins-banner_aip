@@ -3,6 +3,7 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.engine
 
+import groovy.transform.Synchronized
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.asynchronous.AsynchronousActionPoolThreadFactory
 import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
@@ -334,7 +335,7 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
         return found;
     }
 
-
+    @Synchronized
     void handleTask(AsynchronousTask job) {
         log.debug("Asynchronous Task Processing Engine handler will process job " + job.getId());
         try {
