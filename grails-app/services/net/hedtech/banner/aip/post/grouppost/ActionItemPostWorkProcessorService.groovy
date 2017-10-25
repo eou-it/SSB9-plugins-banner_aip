@@ -32,11 +32,11 @@ class ActionItemPostWorkProcessorService {
         log.debug( "Performing group send item id = " + groupSendItemId )
         boolean locked = lockGroupSendItem( groupSendItemId, ActionItemPostWorkExecutionState.Ready );
         if (!locked) {
-            println "CRR: !locked"
             // Do nothing
             return;
         }
-
+        // FIXME: put all of this in
+        // actionItemPerformPostService.postActionItems(  )
         ActionItemPost groupSend = actionItemPostWork.actionItemGroupSend
         println "CRR: groupSend: " + groupSend
         def currentExecutionState = ActionItemPostWorkExecutionState.Stopped
@@ -78,7 +78,6 @@ class ActionItemPostWorkProcessorService {
                         successful++
                     }
                 } else {
-                    println "CRR: something else happened"
                     userActionItem.errors.allErrors.each {
                         errorText += it
                     }

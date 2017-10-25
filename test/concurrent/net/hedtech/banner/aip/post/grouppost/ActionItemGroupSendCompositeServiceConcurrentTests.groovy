@@ -144,10 +144,13 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         /*
          send again. Should not get duplicates
           */
+        // monitor thread starts every 15 minutes
+        restartMonitor()
         requestMap.name = 'testRepostOfExistingData'
         requestMap.referenceId = UUID.randomUUID().toString()
-        groupSend = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
-        assertNotNull( groupSend )
+        def groupSend2 = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
+        println groupSend2 // see if id is not changed
+        assertNotNull( groupSend2 )
 
         assertTrue( "items not completed", isComplete )
 
@@ -158,12 +161,12 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         countAgainCompleted = ActionItemJob.fetchCompleted().size()
         assertEquals( 5, countAgainCompleted )
 
-        sleepUntilPostComplete( groupSend, 3 * 60 )
+        sleepUntilPostComplete( groupSend2, 3 * 60 )
 
         // test delete group send
         // TODO: send and assert for multiple action items in group
-        assertEquals( 1, fetchPostCount( groupSend.id ) )
-        assertEquals( 5, fetchPostItemCount( groupSend.id ) )
+        assertEquals( 1, fetchPostCount( groupSend2.id ) )
+        assertEquals( 5, fetchPostItemCount( groupSend2.id ) )
         assertEquals( 5, ActionItemJob.findAll().size() )
 
         // send again with future dates. Should get new items

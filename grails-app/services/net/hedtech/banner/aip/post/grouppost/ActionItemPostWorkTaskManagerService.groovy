@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional
 class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
     private final Log log = LogFactory.getLog(this.getClass());
 
-    def actionItemGroupSendItemService;
     def actionItemPostWorkProcessorService
 
     /**
@@ -78,7 +77,6 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
     @Transactional(readOnly=true, rollbackFor = Throwable.class )
     public List<ActionItemPostWork> getPendingJobs( int max ) throws ApplicationException {
         // FIXME
-        println "CRR: Get pending actionItem jobs: PostWorkTaskManager"
         log.debug( "Getting pending jobs" )
         List<ActionItemPostWork> result = ActionItemPostWork.fetchByExecutionState( ActionItemPostWorkExecutionState.Ready, max )
         log.debug( "Found " + result.size() + " jobs." )
@@ -113,7 +111,6 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
      */
     @Transactional(propagation=Propagation.REQUIRES_NEW, rollbackFor = Throwable.class )
     public void process( AsynchronousTask task) throws ApplicationException {
-        println "CRR: Process Task: PostWorkTaskManager"
         ActionItemPostWork actionItemWorkTask = task as ActionItemPostWork
         if (log.isInfoEnabled()) {
             log.info( "Processing group send item id = " + actionItemWorkTask.getId() + ", pidm = " + actionItemWorkTask.recipientPidm + "." )

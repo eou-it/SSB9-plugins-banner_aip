@@ -472,13 +472,18 @@ class ActionItemBaseConcurrentTestCase extends Assert {
         return result.rowcount
     }
 
+    protected void restartMonitor(){
+        actionItemPostMonitor.shutdown(  )
+        println "-------------------CRR Restarting Monitor-----------------------"
+        TimeUnit.SECONDS.sleep( 30 );
+        actionItemPostMonitor.startMonitoring(  )
+    }
 
     protected boolean sleepUntilPostItemsComplete( ActionItemPost groupSend, int maxSleepTime ) {
         boolean answer = false
         final int interval = 2;                 // test every second
         int count = maxSleepTime / interval;    // calculate max loop count
         while (count > 0) {
-            println count
             count--;
             TimeUnit.SECONDS.sleep( interval );
             int readyCount = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Ready, groupSend )?.size()

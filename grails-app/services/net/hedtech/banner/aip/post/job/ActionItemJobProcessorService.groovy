@@ -16,12 +16,13 @@ class ActionItemJobProcessorService {
     def actionItemPerformPostService
 
     public void performActionItemJob( Long jobId ) {
-        log.debug( "performed actionItem job with job id = ${jobId}." )
-        ActionItemJob job = actionItemJobService.get( jobId )
+        // moved to ActionItemPostWorkProcessorService
+        //log.debug( "perform actionItem job with job id = ${jobId}." )
+        //ActionItemJob job = actionItemJobService.get( jobId )
 
         // put together our insert of action items for pidm to insert
 
-        actionItemPerformPostService.postActionItems(  )
+        //actionItemPerformPostService.postActionItems(  )
     }
 
 }
