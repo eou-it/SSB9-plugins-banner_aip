@@ -24,7 +24,6 @@ class BannerCommManagementResourceAccessService {
                     """SELECT GUROCFG_VALUE 
                           FROM GUROCFG 
                             WHERE GUROCFG_NAME='BCMLOCATION' 
-                            AND GUROCFG_TYPE ='location' 
                             AND GUROCFG_GUBAPPL_APP_ID = 'GENERAL_SS'""" ).
                     uniqueResult()
             clob ? clob.asciiStream.text : ''
