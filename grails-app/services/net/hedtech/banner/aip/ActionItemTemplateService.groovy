@@ -21,7 +21,7 @@ class ActionItemTemplateService extends ServiceBase{
     }
 
     def preCreate( domainModelOrMap) {
-        ActionItemTemplate at = (domainModelOrMap instanceof Map ? domainModelOrMap.domaionModel : domainModelMap) as ActionItemTemplate
+        ActionItemTemplate at = (domainModelOrMap instanceof Map ? domainModelOrMap.domainModel : domainModelOrMap) as ActionItemTemplate
 
         if(!at.validate()) {
             def errorCodes = at.errors.allErrors.codes[0]

@@ -1,14 +1,11 @@
 /*******************************************************************************
  Copyright 2017 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
-package net.hedtech.banner.aip.post.groupsend
+package net.hedtech.banner.aip.post.grouppost
 
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.ActionItemGroupAssign
 import net.hedtech.banner.aip.post.ActionItemBaseConcurrentTestCase
-import net.hedtech.banner.aip.post.grouppost.ActionItemPost
-import net.hedtech.banner.aip.post.grouppost.ActionItemPostWork
-import net.hedtech.banner.aip.post.grouppost.ActionItemPostWorkExecutionState
 import net.hedtech.banner.aip.post.job.ActionItemJob
 import net.hedtech.banner.general.communication.population.CommunicationPopulation
 import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculation
@@ -24,10 +21,9 @@ import org.junit.Test
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 
-import java.text.SimpleDateFormat
-
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
+
 
 class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseConcurrentTestCase {
     def log = LogFactory.getLog( this.class )
@@ -88,7 +84,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         def actionItemGroup = actionItemGroups[0]
 
         List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
-        println( "CRR actionItemIds: " + actionItemIds )
+
         def requestMap = [:]
         requestMap.name = 'testPostByPopulationSendImmediately'
         requestMap.populationId = population.id
@@ -97,19 +93,17 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         requestMap.postNow = true
         requestMap.recalculateOnPost = false
         requestMap.scheduledStartDate = null
-        requestMap.displayStartDate = new SimpleDateFormat( 'MM/DD/YYYY' ).format( new Date() )
-        requestMap.displayEndDate = new SimpleDateFormat( 'MM/DD/YYYY' ).format( new Date() )
+        requestMap.displayStartDate = new Date()
+        requestMap.displayEndDate = new Date()
         requestMap.actionItemIds = actionItemIds
         groupSend = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
         assertNotNull( groupSend )
 
         def checkExpectedGroupSendItemsCreated = {
-            println "CRR: check items"
             ActionItemPost each = ActionItemPost.get( it )
             return ActionItemPostWork.fetchByGroupSend( each ).size() == 5
         }
         assertTrueWithRetry( checkExpectedGroupSendItemsCreated, groupSend.id, 15, 5 )
-        println "CRR: we have items"
         /* TODO: implement these views
         // Confirm group send view returns the correct results
         def sendViewDetails = ActionItemGroupSendDetailView.findAll()
@@ -146,6 +140,35 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         assertEquals( 0, fetchPostItemCount( groupSend.id ) )
         assertEquals( 0, ActionItemJob.findAll().size() )
         */
+
+        /*
+         send again. Should not get duplicates
+          */
+        requestMap.name = 'testRepostOfExistingData'
+        requestMap.referenceId = UUID.randomUUID().toString()
+        groupSend = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
+        assertNotNull( groupSend )
+
+        assertTrue( "items not completed", isComplete )
+
+        int countAgainCompleted = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Complete, groupSend ).size()
+        assertEquals( 5, countAgainCompleted )
+
+        sleepUntilActionItemJobsComplete( 10 * 60 )
+        countAgainCompleted = ActionItemJob.fetchCompleted().size()
+        assertEquals( 5, countAgainCompleted )
+
+        sleepUntilPostComplete( groupSend, 3 * 60 )
+
+        // test delete group send
+        // TODO: send and assert for multiple action items in group
+        assertEquals( 1, fetchPostCount( groupSend.id ) )
+        assertEquals( 5, fetchPostItemCount( groupSend.id ) )
+        assertEquals( 5, ActionItemJob.findAll().size() )
+
+        // send again with future dates. Should get new items
+
+        // send again with bad data to trigger errors
     }
 
     /*

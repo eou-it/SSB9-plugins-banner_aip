@@ -90,7 +90,7 @@ class ActionItemPost implements Serializable {
     Date postingDisplayEndDate
 
     /**
-     * POSTING SCHEDULE DELETE TIME: Delete time of action item posting schedule.
+     * POSTING SCHEDULE DATE TIME: Date time of action item posting schedule.
      */
     @Temporal(TemporalType.DATE)
     @Column(name = "GCBAPST_SCHEDULED_DATETIME")

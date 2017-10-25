@@ -41,7 +41,7 @@ import javax.persistence.*
 class UserActionItem implements Serializable {
 
     /**
-     * Surrogate ID for GCBACTM
+     * Surrogate ID for GCRAACT
      */
 
     @Id

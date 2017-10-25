@@ -3,19 +3,21 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
 
 /**
  * Service class for UserActionItem
  */
 class UserActionItemService extends ServiceBase {
-
+    static final String BAD_DATA_ERROR = '@@r1:BadDataError@@' // generic unable to insert
+    static final String ALREADY_EXISTS_CONDITION = '@@r1:AlreadyExistsCondition@@' // violated insert rule (expected condition)
     /**
      *
      * @param actionItemId
      * @return
      */
-    def getActionItemById(Long actionItemId) {
+    def getActionItemById( Long actionItemId ) {
         UserActionItem.fetchUserActionItemById( actionItemId )
     }
 
@@ -24,7 +26,18 @@ class UserActionItemService extends ServiceBase {
      * @param actionItemPidm
      * @return
      */
-    def listActionItemsByPidm(Long actionItemPidm) {
-       UserActionItem.fetchUserActionItemsByPidm( actionItemPidm )
+    def listActionItemsByPidm( Long actionItemPidm ) {
+        UserActionItem.fetchUserActionItemsByPidm( actionItemPidm )
+    }
+
+
+    def preCreate( domainModelOrMap ) {
+        UserActionItem uat = (domainModelOrMap instanceof Map ? domainModelOrMap.domainModel : domainModelOrMap) as UserActionItem
+        // guard against other violations? start date after end date? end date prior to t
+        if (UserActionItem.isExistingInDateRangeForPidmAndActionItemId( uat ))
+            throw new ApplicationException( UserActionItem, ALREADY_EXISTS_CONDITION )
+        if (!uat.validate()) {
+            throw new ApplicationException( UserActionItem, BAD_DATA_ERROR )
+        }
     }
 }

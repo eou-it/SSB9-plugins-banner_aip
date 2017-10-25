@@ -57,9 +57,12 @@ class ActionItemPostCompositeService {
                 populationListId: requestMap.populationId,
                 postingActionItemGroupId: requestMap.postGroupId,
                 postingName: requestMap.name,
-                postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
-                postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
-                postingScheduleDateTime: requestMap.scheduled ? actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.scheduledStartDate ) : null,
+                //postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
+                //postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
+                //postingScheduleDateTime: requestMap.scheduled ? actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.scheduledStartDate ) : null,
+                postingDisplayStartDate: requestMap.displayStartDate,
+                postingDisplayEndDate:  requestMap.displayEndDate,
+                postingScheduleDateTime: requestMap.scheduled ? requestMap.scheduledStartDate : null,
                 postingCreationDateTime: new Date(),
                 populationRegenerateIndicator: false,
                 postingDeleteIndicator: false,
@@ -383,7 +386,7 @@ class ActionItemPostCompositeService {
                 .setParameter( "groupSendId", groupSend.id )
 
         SchedulerJobReceipt jobReceipt = schedulerJobService.scheduleNowServiceMethod( jobContext )
-        println jobReceipt
+        println "CRR: jobReceipt: " + jobReceipt
         groupSend.markQueued( jobReceipt.jobId, jobReceipt.groupId )
         groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
         return groupSend

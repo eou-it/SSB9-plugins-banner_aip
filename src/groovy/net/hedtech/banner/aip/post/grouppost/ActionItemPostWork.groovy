@@ -2,6 +2,7 @@ package net.hedtech.banner.aip.post.grouppost
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTask
 
 import javax.persistence.*
@@ -117,9 +118,9 @@ class ActionItemPostWork implements AsynchronousTask {
      * Error Code: The error code for the error scenario that failed the Action Item Job
      */
 
-    //@Column(name = "GCRAIIM_ERROR_CODE")
-    //@Enumerated(EnumType.STRING)
-    //ActionItemErrorCode errorCode
+    @Column(name = "GCRAIIM_ERROR_CODE")
+    @Enumerated(EnumType.STRING)
+    ActionItemErrorCode errorCode
 
     static constraints = {
         lastModified( nullable: true )
@@ -128,7 +129,7 @@ class ActionItemPostWork implements AsynchronousTask {
         stopDate( nullable: true )
         errorText( nullable: true )
         mepCode( nullable: true )
-        //errorCode( nullable: true )
+        errorCode( nullable: true )
     }
 
 

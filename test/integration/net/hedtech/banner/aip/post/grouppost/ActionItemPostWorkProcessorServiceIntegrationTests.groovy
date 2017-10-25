@@ -1,47 +1,52 @@
-/*******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
- *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
 import net.hedtech.banner.aip.post.ActionItemErrorCode
-import net.hedtech.banner.aip.post.grouppost.ActionItemPost
-import net.hedtech.banner.aip.post.grouppost.ActionItemPostExecutionState
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
+
+class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegrationTestCase{
+
+    def actionItemPostWorkProcessorService
+
     @Before
-    void setUp() {
-        formContext = ['GUAGMNU']
-        super.setUp()
-    }
+        public void setUp() {
+            formContext = ['GUAGMNU']
+            super.setUp()
+        }
 
 
-    @After
-    void tearDown() {
-        super.tearDown()
-    }
+        @After
+        public void tearDown() {
+            super.tearDown()
+        }
 
+    // TODO: try posting to bad pidm
+    // TODO: try posting to date range overlap
+    // TODO: try posting with null actionitemid
+    // TODO: post a set of valid items and verify logged info
+    // TODO: post a set of items, some violating date range rule, and verify logged info
 
+    // TODO: try posting to date range overlap
     @Test
-    void testDummy() {
-        println "CRR: test ran"
-        assertTrue 1 == 1
+    // FIXME: not working
+        void testPerformGroupSendItem() {
+        ActionItemPostWork actionItemPostWork = new ActionItemPostWork()
+        actionItemPostWork.referenceId = 'somestringfortestinglswefhihvciewranc'
+        actionItemPostWork.currentExecutionState = ActionItemPostWorkExecutionState.Ready
+        ActionItemPost aip = newAIP(  )
+        aip.postingCurrentState = ActionItemPostExecutionState.New
+        aip.save()
+        actionItemPostWork.actionItemGroupSend = aip
+        actionItemPostWork.save()
+        println actionItemPostWork
+        actionItemPostWorkProcessorService.performPostItem( actionItemPostWork );
     }
 
-    @Test
-    void testActionPostConstraints() {
-        println 'CRR finish tests'
-        def actionItemPost = newAIP(  )
-        println 'CRR finish tests'
-        println actionItemPost
-        //actionItemPost.save()
 
-    }
-
-    private def newAIP(  ) {
+    private def newAIP() {
         def aigs = new ActionItemPost(
                 //id: 1L,
                 populationListId: 1L,
