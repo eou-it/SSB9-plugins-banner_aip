@@ -51,7 +51,20 @@ Brief summary/description of the plugin.
     }
 
     def doWithApplicationContext = { ctx ->
-        // TODO Implement post initialization spring config (optional)
+        def pbConfig = grails.util.Holders.getConfig().pageBuilder
+        if (pbConfig && pbConfig.locations) {
+            ctx.cssUtilService.importInitially(ctx.cssUtilService.loadOverwriteExisting)
+            ctx.pageUtilService.importInitially(ctx.pageUtilService.loadOverwriteExisting)
+            ctx.virtualDomainUtilService.importInitially(ctx.virtualDomainUtilService.loadOverwriteExisting)
+
+            // Install metadata from configured directories
+            ctx.pageUtilService.importAllFromDir(pbConfig.locations.page, ctx.pageUtilService.loadIfNew)
+            ctx.virtualDomainUtilService.importAllFromDir(pbConfig.locations.virtualDomain, ctx.virtualDomainUtilService.loadIfNew)
+            ctx.cssUtilService.importAllFromDir(pbConfig.locations.css, ctx.cssUtilService.loadIfNew)
+
+            //Initialize the request map (page security)
+            ctx.pageSecurityService.init()
+        }
     }
 
     def onChange = { event ->
