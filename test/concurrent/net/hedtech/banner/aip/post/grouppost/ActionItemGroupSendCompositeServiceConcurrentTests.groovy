@@ -21,6 +21,8 @@ import org.junit.Test
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 
+import java.util.concurrent.TimeUnit
+
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
 
@@ -94,7 +96,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         requestMap.recalculateOnPost = false
         requestMap.scheduledStartDate = null
         requestMap.displayStartDate = new Date()
-        requestMap.displayEndDate = new Date()
+        requestMap.displayEndDate = new Date() + 50
         requestMap.actionItemIds = actionItemIds
         groupSend = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
         assertNotNull( groupSend )
@@ -118,7 +120,8 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         */
         boolean isComplete = sleepUntilPostItemsComplete( groupSend, 60 )
         assertTrue( "items not completed", isComplete )
-
+        // just a little more
+        TimeUnit.SECONDS.sleep( 5 );
         int countCompleted = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Complete, groupSend ).size()
         assertEquals( 5, countCompleted )
 
@@ -146,20 +149,31 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
           */
         // monitor thread starts every 15 minutes
         restartMonitor()
+
         requestMap.name = 'testRepostOfExistingData'
         requestMap.referenceId = UUID.randomUUID().toString()
+        requestMap.displayEndDate = new Date() + 40
         def groupSend2 = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
         println groupSend2 // see if id is not changed
         assertNotNull( groupSend2 )
 
-        assertTrue( "items not completed", isComplete )
+        def checkExpectedGroupSend2ItemsCreated = {
+            ActionItemPost each = ActionItemPost.get( it )
+            return ActionItemPostWork.fetchByGroupSend( each ).size() == 5
+        }
+        assertTrueWithRetry( checkExpectedGroupSend2ItemsCreated, groupSend.id, 15, 5 )
 
-        int countAgainCompleted = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Complete, groupSend ).size()
-        assertEquals( 5, countAgainCompleted )
+        boolean isComplete2 = sleepUntilPostItemsComplete( groupSend, 60 )
+        assertTrue( "items not completed", isComplete2 )
+        // just a little more
+        TimeUnit.SECONDS.sleep( 5 );
+        int countAgain2Completed = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Partial, groupSend2 )
+                .size()
+        assertEquals( 5, countAgain2Completed )
 
         sleepUntilActionItemJobsComplete( 10 * 60 )
-        countAgainCompleted = ActionItemJob.fetchCompleted().size()
-        assertEquals( 5, countAgainCompleted )
+        countAgain2Completed = ActionItemJob.fetchCompleted().size()
+        assertEquals( 10, countAgain2Completed )
 
         sleepUntilPostComplete( groupSend2, 3 * 60 )
 
@@ -167,9 +181,45 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         // TODO: send and assert for multiple action items in group
         assertEquals( 1, fetchPostCount( groupSend2.id ) )
         assertEquals( 5, fetchPostItemCount( groupSend2.id ) )
-        assertEquals( 5, ActionItemJob.findAll().size() )
+        assertEquals( 10, ActionItemJob.findAll().size() )
 
         // send again with future dates. Should get new items
+
+        restartMonitor()
+
+        requestMap.name = 'testRepostOfExistingData'
+        requestMap.referenceId = UUID.randomUUID().toString()
+        requestMap.displayStartDate = new Date() + 60
+        requestMap.displayEndDate = new Date() + 70
+        def groupSend3 = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
+        println groupSend3 // see if id is not changed
+        assertNotNull( groupSend3 )
+
+        def checkExpectedGroupSend3ItemsCreated = {
+            ActionItemPost each = ActionItemPost.get( it )
+            return ActionItemPostWork.fetchByGroupSend( each ).size() == 5
+        }
+        assertTrueWithRetry( checkExpectedGroupSend3ItemsCreated, groupSend.id, 15, 5 )
+
+        boolean isComplete3 = sleepUntilPostItemsComplete( groupSend, 60 )
+        assertTrue( "items not completed", isComplete3 )
+        // just a little more
+        TimeUnit.SECONDS.sleep( 5 );
+        int countAgain3Completed = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Complete,
+                groupSend3 ).size()
+        assertEquals( 5, countAgain3Completed )
+
+        sleepUntilActionItemJobsComplete( 10 * 60 )
+        countAgain3Completed = ActionItemJob.fetchCompleted().size()
+        assertEquals( 15, countAgain3Completed )
+
+        sleepUntilPostComplete( groupSend3, 3 * 60 )
+
+        // test delete group send
+        // TODO: send and assert for multiple action items in group
+        assertEquals( 1, fetchPostCount( groupSend3.id ) )
+        assertEquals( 5, fetchPostItemCount( groupSend3.id ) )
+        assertEquals( 15, ActionItemJob.findAll().size() )
 
         // send again with bad data to trigger errors
     }
