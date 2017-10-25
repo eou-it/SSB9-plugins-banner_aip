@@ -5,7 +5,6 @@ package net.hedtech.banner.aip.post.job
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTask
 import net.hedtech.banner.service.DatabaseModifiesState
 

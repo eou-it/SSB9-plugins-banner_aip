@@ -6,7 +6,7 @@ package net.hedtech.banner.aip.post.grouppost.automation;
 
 /**
  * Interface for objects that perform teardown activities in support of unit testing.
- * @author Shane Riddell
+ *
  */
 public interface TearDownPerformer {
 

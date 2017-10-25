@@ -4,10 +4,6 @@
 package net.hedtech.banner.aip.post.grouppost
 
 import groovy.sql.Sql
-import net.hedtech.banner.aip.UserActionItem
-import net.hedtech.banner.aip.post.ActionItemErrorCode
-import net.hedtech.banner.aip.post.job.ActionItemJob
-import net.hedtech.banner.aip.post.job.ActionItemJobStatus
 import org.apache.log4j.Logger
 
 import java.sql.SQLException
@@ -19,9 +15,9 @@ import java.sql.SQLException
 class ActionItemPostWorkProcessorService {
     boolean transactional = true
     private static final log = Logger.getLogger(ActionItemPostWorkProcessorService.class)
+
+    def actionItemPerformPostService
     def actionItemPostWorkService
-    def userActionItemService
-    def actionItemJobService
     def sessionFactory
 
     private static final int noWaitErrorCode = 54;
@@ -35,78 +31,7 @@ class ActionItemPostWorkProcessorService {
             // Do nothing
             return;
         }
-        // FIXME: put all of this in
-        // actionItemPerformPostService.postActionItems(  )
-        ActionItemPost groupSend = actionItemPostWork.actionItemGroupSend
-        println "CRR: groupSend: " + groupSend
-        def currentExecutionState = ActionItemPostWorkExecutionState.Stopped
-        def errorCode = null
-        def errorText = null
-        if (!groupSend.getPostingCurrentState().isTerminal()) {
-            ActionItemJob actionItemJob = new ActionItemJob( referenceId: actionItemPostWork.referenceId, status: ActionItemJobStatus.PENDING )
-            actionItemJobService.create( actionItemJob )
-
-            //FIXME: CRR Do all the work of posting action Item here.
-            //FIXME: factor out
-            // Assign an action item to the pidm for each in group
-            // get all the actionItem ids (ACTM_ID) from
-            // GCRAPST -> list of GCBAPST_ID -> each GCBACTM_ID
-
-            def userPidm = actionItemPostWork.recipientPidm
-            List<ActionItemPostDetail> details = ActionItemPostDetail.fetchByActionItemPostId( groupSend.id )
-            def total = details.size()
-            def successful = 0
-
-            details.each {
-                println userPidm + ":" + it.actionItemId
-                UserActionItem userActionItem = new UserActionItem()
-                userActionItem.pidm = userPidm
-                userActionItem.actionItemId = it.actionItemId
-                userActionItem.status = 1
-                userActionItem.displayStartDate = groupSend.postingDisplayStartDate
-                userActionItem.displayEndDate = groupSend.postingDisplayEndDate
-                userActionItem.groupId = groupSend.postingActionItemGroupId
-                userActionItem.userId = groupSend.postingCreatorId
-                userActionItem.activityDate = new Date()
-                userActionItem.creatorId = groupSend.postingCreatorId
-                userActionItem.createDate = new Date()
-                userActionItem.dataOrigin = groupSend.postingCreatorId
-
-                if (userActionItem.validate()) {
-                    if (!UserActionItem.isExistingInDateRangeForPidmAndActionItemId( userActionItem )) {
-                        userActionItemService.create( userActionItem )
-                        successful++
-                    }
-                } else {
-                    userActionItem.errors.allErrors.each {
-                        errorText += it
-                    }
-                    errorCode = ActionItemErrorCode.INVALID_DATA_FIELD
-                }
-            }
-
-            // FIXME: refactor all of this redundant code
-            if (successful < total) { // FIXME: test for "not all sent"
-                println "crr success: " + successful
-                println "total: " + total
-                currentExecutionState = ActionItemPostWorkExecutionState.Partial
-            } else {
-                currentExecutionState = ActionItemPostWorkExecutionState.Complete
-            }
-
-            // TODO: make sure this is what we want to do. Probably no need to keep around these success logs
-            // deletesuccessfuljobs a configuration option?
-            // actionItemJobService.delete( actionItemJob )
-        }
-        def groupSendParamMap = [
-                id                   : actionItemPostWork.id,
-                version              : actionItemPostWork.version,
-                currentExecutionState: currentExecutionState,
-                errorCode            : errorCode,
-                errorText            : errorText,
-                stopDate             : new Date()
-        ]
-        actionItemPostWorkService.update( groupSendParamMap )
+        actionItemPostWorkService.update( actionItemPerformPostService.postActionItems( actionItemPostWork ))
     }
 
 

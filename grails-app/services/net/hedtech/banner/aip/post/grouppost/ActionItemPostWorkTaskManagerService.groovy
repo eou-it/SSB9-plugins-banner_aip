@@ -9,8 +9,6 @@ import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskManager
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskMonitorRecord
 import net.hedtech.banner.general.communication.groupsend.automation.StringHelper
 import org.apache.commons.lang.NotImplementedException
-
-// TODO: move to a more logical shared location
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.springframework.transaction.annotation.Propagation
@@ -76,7 +74,6 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
      */
     @Transactional(readOnly=true, rollbackFor = Throwable.class )
     public List<ActionItemPostWork> getPendingJobs( int max ) throws ApplicationException {
-        // FIXME
         log.debug( "Getting pending jobs" )
         List<ActionItemPostWork> result = ActionItemPostWork.fetchByExecutionState( ActionItemPostWorkExecutionState.Ready, max )
         log.debug( "Found " + result.size() + " jobs." )

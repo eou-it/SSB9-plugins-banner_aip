@@ -102,7 +102,7 @@ class ActionItemGroup implements Serializable {
     Date activityDate
 
     /**
-     * Data Origin column for SORNOTE
+     * Data Origin column for GCBAGRP
      */
     @Column(name = "GCBAGRP_DATA_ORIGIN")
     String dataOrigin

@@ -1,3 +1,6 @@
+/*******************************************************************************
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
+ *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
 import groovy.transform.EqualsAndHashCode
@@ -93,6 +96,12 @@ class ActionItemPostWork implements AsynchronousTask {
     @Enumerated(EnumType.STRING)
     ActionItemPostWorkExecutionState currentExecutionState;
 
+    @Column(name = "GCRAIIM_INSERT_COUNT")
+    Long insertedCount
+
+    @Column(name = "GCRAIIM_GCBACTM_ID_SET")
+    String insertedItemIds
+
     @Column(name = "GCRAIIM_ERROR_TEXT")
     @Lob
     String errorText;
@@ -126,6 +135,8 @@ class ActionItemPostWork implements AsynchronousTask {
         lastModified( nullable: true )
         lastModifiedBy( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 30 )
+        insertedCount( nullable: true )
+        insertedItemIds( nullable: true )
         stopDate( nullable: true )
         errorText( nullable: true )
         mepCode( nullable: true )

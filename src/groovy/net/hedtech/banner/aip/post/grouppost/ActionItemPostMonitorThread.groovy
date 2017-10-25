@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2014-2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 
 package net.hedtech.banner.aip.post.grouppost
@@ -7,7 +7,7 @@ package net.hedtech.banner.aip.post.grouppost
 import org.apache.log4j.Logger
 
 /**
- * Created by mbrzycki on 12/5/14.
+ *
  */
 class ActionItemPostMonitorThread extends Thread {
 

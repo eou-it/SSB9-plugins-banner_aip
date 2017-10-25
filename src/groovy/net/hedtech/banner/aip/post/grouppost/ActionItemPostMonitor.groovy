@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2014 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Required
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException
 
 /**
- * Created by mbrzycki on 12/5/14.
+ *
  */
 class ActionItemPostMonitor implements DisposableBean {
     private Log log = LogFactory.getLog(this.getClass())

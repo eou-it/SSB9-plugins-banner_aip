@@ -1,9 +1,7 @@
 /*******************************************************************************
- Copyright 2014 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 package net.hedtech.banner.aip.post.engine
-
-import grails.util.Holders
 
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.asynchronous.AsynchronousActionPoolThreadFactory
@@ -28,7 +26,7 @@ import java.util.concurrent.*
  * A job processing engine that processes jobs asynchronously, while providing a
  * high Quality of Service (aka will not lose jobs).
  *
- * @author charlie hardt (Very significantly based upon work by Shane Riddell)
+ *
  */
 public class ActionItemAsynchronousTaskProcessingEngineImpl implements AsynchronousTaskProcessingEngine, DisposableBean {
 
@@ -315,7 +313,6 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
             for (AsynchronousTask job : jobs) {
                 pendingJobs.add(job.getId());
                 try {
-                    println executor
                     executor.execute(new AsynchronousTaskHandler(job) {
                         @Override
                         void run() {
