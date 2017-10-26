@@ -17,8 +17,6 @@ import net.hedtech.banner.general.communication.population.*
 import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.general.scheduler.SchedulerJobReceipt
-import net.hedtech.banner.utility.DateUtility
-import org.apache.ivy.util.DateUtil
 import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.web.context.ServletContextHolder
 import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
@@ -206,7 +204,6 @@ class ActionItemPostCompositeService {
         } else {
             //if Group send is not scheduled then remove job and recipient data
             deleteActionItemJobsByGroupSendId( groupSendId )
-            deleteRecipientDataByGroupSendId( groupSendId )
         }
         actionItemPostService.delete( groupSendId )
 
@@ -478,26 +475,6 @@ class ActionItemPostCompositeService {
             LoggerUtility.debug( LOGGER, "Deleting ${rows} actionItem jobs referenced by group send id = ${groupSendId}." )
         } catch (Exception e) {
             LOGGER.error( e )
-            throw e
-        } finally {
-            sql?.close()
-        }
-    }
-
-    /**
-     * Removes all recipient data records referenced by a group send id.
-     *
-     * @param groupSendId the long id of the group send.
-     */
-    private void deleteRecipientDataByGroupSendId( Long groupSendId ) {
-        LoggerUtility.debug( LOGGER, "Attempting to delete all recipient data referenced by group send id = ${groupSendId}." )
-        Sql sql = new Sql( sessionFactory.getCurrentSession().connection() )
-        try {
-            int rows = sql.executeUpdate( "DELETE FROM gcbrdat a WHERE EXISTS (SELECT b.gcrgsim_surrogate_id FROM gcrgsim b, gcbgsnd c WHERE a.gcbrdat_reference_id = b.gcrgsim_reference_id AND b.gcrgsim_group_send_id = c.gcbgsnd_surrogate_id AND c.gcbgsnd_surrogate_id = ?)",
-                                          [groupSendId] )
-            LoggerUtility.debug( LOGGER, "Deleting ${rows} recipient data referenced by group send id = ${groupSendId}." )
-        } catch (Exception e) {
-            LoggerUtility.error( LOGGER, e )
             throw e
         } finally {
             sql?.close()
