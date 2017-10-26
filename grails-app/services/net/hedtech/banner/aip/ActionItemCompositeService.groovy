@@ -5,8 +5,8 @@ package net.hedtech.banner.aip
 
 import grails.transaction.Transactional
 import net.hedtech.banner.aip.common.AIPConstants
+import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.i18n.MessageHelper
-import org.omg.CORBA.portable.ApplicationException
 import org.springframework.transaction.annotation.Propagation
 
 import java.text.MessageFormat

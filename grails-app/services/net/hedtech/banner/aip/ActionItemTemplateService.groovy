@@ -1,9 +1,7 @@
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
-import org.omg.CORBA.portable.ApplicationException
-
-import javax.swing.Action
 
 class ActionItemTemplateService extends ServiceBase{
 

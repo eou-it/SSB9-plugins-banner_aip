@@ -4,8 +4,8 @@
 package net.hedtech.banner.aip
 
 import grails.transaction.Transactional
+import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
-import org.omg.CORBA.portable.ApplicationException
 import org.springframework.transaction.annotation.Propagation
 
 class ActionItemGroupAssignService  extends ServiceBase  {
