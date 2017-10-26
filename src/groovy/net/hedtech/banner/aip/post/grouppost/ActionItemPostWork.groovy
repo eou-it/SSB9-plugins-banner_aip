@@ -32,7 +32,12 @@ import javax.persistence.*
                      and gsi.currentExecutionState = :executionState
                      ORDER by gsi.creationDateTime asc"""
         ),
-
+        @NamedQuery(name = "ActionItemPostWork.countByExecutionStateAndGroupSend",
+                query = """ SELECT COUNT(*) FROM ActionItemPostWork gsi
+                            WHERE gsi.actionItemGroupSend = :groupSend
+                            and gsi.currentExecutionState = :executionState
+                            ORDER by gsi.creationDateTime asc"""
+        )
 ])
 
 class ActionItemPostWork implements AsynchronousTask {
@@ -181,5 +186,17 @@ class ActionItemPostWork implements AsynchronousTask {
                     ?.list()
         }
         return results
+    }
+
+
+    public static def fetchRunningGroupSendItemCount( ActionItemPost groupSend ) {
+        def result
+        ActionItemPostWork.withSession { session ->
+            result = session.getNamedQuery( 'ActionItemPostWork.countByExecutionStateAndGroupSend' )
+                    .setParameter( 'executionState', ActionItemPostWorkExecutionState.Ready )
+                    .setParameter( 'groupSend', groupSend )
+                    ?.uniqueResult()
+        }
+        return result
     }
 }

@@ -103,7 +103,7 @@ class ActionItemPostMonitor implements DisposableBean {
             for (ActionItemPost groupSend : groupSendList) {
                 if (log.isDebugEnabled()) log.debug("group send id = " + groupSend.id + ".");
                 if (groupSend.postingCurrentState.equals(ActionItemPostExecutionState.Processing)) {
-                    int runningCount = actionItemPostWorkService.fetchRunningGroupSendItemCount(groupSend.id)
+                    int runningCount = ActionItemPostWork.fetchRunningGroupSendItemCount(groupSend)
                     if (runningCount == 0) {
                         completeGroupSend( groupSend.id )
                     }
