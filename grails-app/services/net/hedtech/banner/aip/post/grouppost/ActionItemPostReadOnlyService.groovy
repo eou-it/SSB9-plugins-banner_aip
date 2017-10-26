@@ -19,7 +19,10 @@ class ActionItemPostReadOnlyService extends ServiceBase {
     def listActionItemPostJobList( params, paginationParams ) {
         params.searchParam = params.searchParam ? ('%' + params.searchParam.toUpperCase() + '%') : ('%')
         def results = ActionItemPostReadOnly.fetchJobs( params, paginationParams )
-        def resultCount = fetchJobsCount(params)
+        results.each {ActionItemPostReadOnly it ->
+            it.postingCurrentState = MessageHelper.message( 'aip.action.item.post.job.state.' + ActionItemPostExecutionState.getStateEnum( it.postingCurrentState ) )
+        }
+        def resultCount = fetchJobsCount( params )
         def resultMap = [
                 result: results,
                 length: resultCount,

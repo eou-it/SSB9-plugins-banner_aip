@@ -9,49 +9,81 @@ package net.hedtech.banner.aip.post.grouppost
  */
 enum ActionItemPostExecutionState implements Serializable {
 
-    New (false),
-    Scheduled (false),
-    Queued (false),
+    New( false ),
+    Scheduled( false ),
+    Queued( false ),
 
-    Calculating (false),
-    Processing (false),
+    Calculating( false ),
+    Processing( false ),
 
-    Complete (true),
-    Stopped (true),
-    Error (true);
+    Complete( true ),
+    Stopped( true ),
+    Error( true )
 
-    boolean terminal;
+    boolean terminal
 
-
+    /**
+     *
+     * Constructor
+     */
     ActionItemPostExecutionState( boolean terminal ) {
-        this.terminal = terminal;
+        this.terminal = terminal
     }
 
+    /**
+     * Gets Execution states
+     * @return
+     */
     Set<ActionItemPostExecutionState> set() {
-    	return EnumSet.range( New, Error );
+        return EnumSet.range( New, Error )
     }
+
 
     String toString() {
-        return this.name();
+        this.name()
     }
 
-    static ActionItemPostExecutionState valueOf( int ordinal) {
-        for(ActionItemPostExecutionState ds: values()) {
-            if (ds.ordinal() == ordinal) return ds;
+    /**
+     *
+     * @param ordinal
+     * @return
+     */
+    static ActionItemPostExecutionState valueOf( int ordinal ) {
+        for (ActionItemPostExecutionState ds : values()) {
+            if (ds.ordinal() == ordinal) {
+                return ds
+            }
         }
-        throw new IllegalArgumentException( "ordinal out of range:" + ordinal );
+        throw new IllegalArgumentException( "ordinal out of range:" + ordinal )
     }
+
+    /**
+     *
+     * @param ordinal
+     * @return
+     */
+    static ActionItemPostExecutionState getStateEnum( String executionState ) {
+        for (ActionItemPostExecutionState ds : values()) {
+            if (ds.name() == executionState) {
+                return ds
+            }
+        }
+        'undefined'
+    }
+
 
     boolean isTerminal() {
-        return terminal;
+        terminal
     }
+
 
     boolean isRunning() {
-        return !terminal;
+        !terminal
     }
 
+
     boolean isPending() {
-        return this == New || this == Scheduled || this == Queued
+        this in [New, Scheduled, Queued]
     }
 
 }

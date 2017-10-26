@@ -38,7 +38,7 @@ class ActionItemPostCompositeService {
     private static final LOGGER = Logger.getLogger( this.class )
 
     def actionItemPostService
-
+    def actionItemProcessingCommonService
     def actionItemPostDetailService
 
     def communicationPopulationCompositeService
@@ -66,12 +66,12 @@ class ActionItemPostCompositeService {
                 populationListId: requestMap.populationId,
                 postingActionItemGroupId: requestMap.postGroupId,
                 postingName: requestMap.name,
-                //postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
-                //postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
-                //postingScheduleDateTime: requestMap.scheduled ? actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.scheduledStartDate ) : null,
-                postingDisplayStartDate: requestMap.displayStartDate,
+                postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
+                postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
+                postingScheduleDateTime: requestMap.scheduled ? actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.scheduledStartDate ) : null,
+                /*postingDisplayStartDate: requestMap.displayStartDate,
                 postingDisplayEndDate: requestMap.displayEndDate,
-                postingScheduleDateTime: null,
+                postingScheduleDateTime: null, TODO ENABLE if needed for test*/
                 postingCreationDateTime: new Date(),
                 populationRegenerateIndicator: false,
                 postingDeleteIndicator: false,
@@ -167,10 +167,10 @@ class ActionItemPostCompositeService {
 
     private static void assignPopulationCalculation( ActionItemPost groupSend, String bannerUser ) {
         CommunicationPopulationCalculation calculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( groupSend
-                .getPopulationListId(), bannerUser )
+                                                                                                                                             .getPopulationListId(), bannerUser )
         if (!calculation || !calculation.status.equals( CommunicationPopulationCalculationStatus.AVAILABLE )) {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostCompositeService.class,
-                    "populationNotCalculatedForUser" )
+                                                                         "populationNotCalculatedForUser" )
         }
         groupSend.populationCalculationId = calculation.id
     }
@@ -471,10 +471,10 @@ class ActionItemPostCompositeService {
         Sql sql = new Sql( sessionFactory.getCurrentSession().connection() )
         try {
             int rows = sql.executeUpdate( "DELETE FROM gcbajob a WHERE EXISTS (SELECT b.gcraiim_surrogate_id FROM gcraiim b, gcbapst c WHERE a" +
-                    ".gcbajob_aiim_reference_id = b.gcraiim_reference_id AND b.gcraiim_gcbapst_id = c.gcbapst_surrogate_id AND c" +
-                    ".gcbapst_surrogate_id" +
-                    " = ?)",
-                    [groupSendId] )
+                                                  ".gcbajob_aiim_reference_id = b.gcraiim_reference_id AND b.gcraiim_gcbapst_id = c.gcbapst_surrogate_id AND c" +
+                                                  ".gcbapst_surrogate_id" +
+                                                  " = ?)",
+                                          [groupSendId] )
             LoggerUtility.debug( LOGGER, "Deleting ${rows} actionItem jobs referenced by group send id = ${groupSendId}." )
         } catch (Exception e) {
             LOGGER.error( e )
@@ -494,7 +494,7 @@ class ActionItemPostCompositeService {
         Sql sql = new Sql( sessionFactory.getCurrentSession().connection() )
         try {
             int rows = sql.executeUpdate( "DELETE FROM gcbrdat a WHERE EXISTS (SELECT b.gcrgsim_surrogate_id FROM gcrgsim b, gcbgsnd c WHERE a.gcbrdat_reference_id = b.gcrgsim_reference_id AND b.gcrgsim_group_send_id = c.gcbgsnd_surrogate_id AND c.gcbgsnd_surrogate_id = ?)",
-                    [groupSendId] )
+                                          [groupSendId] )
             LoggerUtility.debug( LOGGER, "Deleting ${rows} recipient data referenced by group send id = ${groupSendId}." )
         } catch (Exception e) {
             LoggerUtility.error( LOGGER, e )
@@ -511,8 +511,8 @@ class ActionItemPostCompositeService {
             Connection connection = (Connection) sessionFactory.getCurrentSession().connection()
             sql = new Sql( (Connection) sessionFactory.getCurrentSession().connection() )
             sql.executeUpdate( "update GCBAJOB set GCBAJOB_STATUS='STOPPED', GCBAJOB_ACTIVITY_DATE = SYSDATE where " +
-                    "GCBAJOB_STATUS in ('PENDING', 'DISPATCHED') and GCBAJOB_REFERENCE_ID in " +
-                    "(select GCRAIIM_REFERENCE_ID from GCRAIIM where GCRAIIM_GCBAPST_ID = ${groupSendId} and GCRAIIM_CURRENT_STATE = 'Complete')" )
+                                       "GCBAJOB_STATUS in ('PENDING', 'DISPATCHED') and GCBAJOB_REFERENCE_ID in " +
+                                       "(select GCRAIIM_REFERENCE_ID from GCRAIIM where GCRAIIM_GCBAPST_ID = ${groupSendId} and GCRAIIM_CURRENT_STATE = 'Complete')" )
         } catch (SQLException e) {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService, e )
         } catch (Exception e) {
@@ -529,8 +529,8 @@ class ActionItemPostCompositeService {
             Connection connection = (Connection) sessionFactory.getCurrentSession().connection()
             sql = new Sql( (Connection) sessionFactory.getCurrentSession().connection() )
             sql.executeUpdate( "update GCRAIIM set GCRAIIM_CURRENT_STATE='Stopped', GCRAIIM_ACTIVITY_DATE = SYSDATE, GCRAIIM_STOP_DATE = SYSDATE " +
-                    "where " +
-                    "GCRAIIM_CURRENT_STATE in ('Ready') and GCRAIIM_GCBAPST_ID = ${groupSendId}" )
+                                       "where " +
+                                       "GCRAIIM_CURRENT_STATE in ('Ready') and GCRAIIM_GCBAPST_ID = ${groupSendId}" )
         } catch (SQLException e) {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService, e )
         } catch (Exception e) {

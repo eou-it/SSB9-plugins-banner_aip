@@ -21,7 +21,7 @@ import javax.persistence.*
                 query = """FROM ActionItemPostReadOnly a WHERE upper(a.postingName) like :postingName order by a.lastModified desc
           """),
         @NamedQuery(name = "ActionItemPostReadOnly.fetchJobsCount",
-                query = """SELECT COUNT(a.id) FROM ActionItemPostReadOnly a
+                query = """SELECT COUNT(a.postingId) FROM ActionItemPostReadOnly a
                            WHERE upper(a.postingName) like :postingName 
             """
         )
@@ -33,7 +33,7 @@ class ActionItemPostReadOnly implements Serializable {
      */
     @Id
     @Column(name = "GCBAPST_SURROGATE_ID")
-    Long id
+    Long postingId
 
     /**
      * POPULATION LIST ID: Population List identification number.
@@ -189,6 +189,7 @@ class ActionItemPostReadOnly implements Serializable {
     /**
      * Action Item posted
      */
+    @Version
     @Column(name = "GCBAPST_VERSION")
     Long version
 
