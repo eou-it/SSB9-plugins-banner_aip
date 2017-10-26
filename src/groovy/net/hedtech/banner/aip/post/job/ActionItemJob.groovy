@@ -19,17 +19,26 @@ import javax.persistence.*
 @Table(name = "GCBAJOB")
 @DatabaseModifiesState
 @NamedQueries(value = [
-    @NamedQuery( name = "ActionItemJob.fetchByStatus",
-        query = """ FROM ActionItemJob job
-                    WHERE job.status = :status_
-                    ORDER BY job.id ASC """
-    ),
-    @NamedQuery( name = "ActionItemJob.fetchByStatusAndReferenceId",
-            query = """ FROM ActionItemJob job
-        WHERE job.status = :status_
-        AND job.referenceId = :referenceId_
-        ORDER BY job.id ASC """
-    )
+        @NamedQuery(name = "ActionItemJob.fetchByStatus",
+                query = """ FROM ActionItemJob job
+                            WHERE job.status = :status_
+                            ORDER BY job.id ASC """
+        ),
+        @NamedQuery(name = "ActionItemJob.fetchByJobId",
+                query = """ FROM ActionItemJob job                            
+                            WHERE job.id = :jobId_ """
+        ),
+        @NamedQuery(name = "ActionItemJob.fetchByStatusAndJobId",
+                query = """ FROM ActionItemJob job
+                            WHERE job.status = :status_
+                            AND job.id = :jobId_ """
+        ),
+        @NamedQuery(name = "ActionItemJob.fetchByStatusAndReferenceId",
+                query = """ FROM ActionItemJob job
+                            WHERE job.status = :status_
+                            AND job.referenceId = :referenceId_
+                            ORDER BY job.id ASC """
+        )
 ])
 class ActionItemJob implements AsynchronousTask {
 
@@ -139,6 +148,32 @@ class ActionItemJob implements AsynchronousTask {
                 .setFirstResult( 0 )
                 .setMaxResults( Integer.MAX_VALUE )
                 .list()
+        }
+        return results
+    }
+
+
+    public static List fetchPendingByJobId( Long jobId ) {
+        def results
+        ActionItemJob.withSession { session ->
+            results = session.getNamedQuery( 'ActionItemJob.fetchByStatusAndJobId' )
+                    .setParameter( 'status_', ActionItemJobStatus.PENDING )
+                    .setParameter( 'jobId_', jobId )
+                    .setFirstResult( 0 )
+                    .setMaxResults( Integer.MAX_VALUE )
+                    ?.list()
+        }
+        return results
+    }
+
+    public static List fetchByJobId( Long jobId ) {
+        def results
+        ActionItemJob.withSession { session ->
+            results = session.getNamedQuery( 'ActionItemJob.fetchByJobId' )
+                    .setParameter( 'jobId_', jobId )
+                    .setFirstResult( 0 )
+                    .setMaxResults( Integer.MAX_VALUE )
+                    ?.list()
         }
         return results
     }

@@ -3,7 +3,6 @@
  ********************************************************************************* */
 package net.hedtech.banner.aip.post.job
 
-import groovy.sql.Sql
 import net.hedtech.banner.service.ServiceBase
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -31,53 +30,44 @@ class ActionItemJobService extends ServiceBase {
      * Returns true if the actionItem job was acquired for the current thread.
      */
     public boolean acquire( Long jobId ) {
-        log.debug( "Attempting to acquire actionItem job id = ${jobId}.")
-        Sql sql = new Sql(sessionFactory.getCurrentSession().connection())
-        try {
-            int rows = sql.executeUpdate("update GCBAJOB set GCBAJOB_STATUS = ? where GCBAJOB_SURROGATE_ID = ? and GCBAJOB_STATUS = ? ",
-                [ActionItemJobStatus.DISPATCHED.toString(), jobId, ActionItemJobStatus.PENDING.toString() ] )
-            if (rows == 1) {
-                log.debug( "ActionItem job withid = ${jobId} acquired" )
-                return true
-            } else if (rows == 0) {
-                log.debug( "ActionItem job withid = ${jobId} not available." )
-                return false
-            } else {
-                log.error( "ActionItemJobService.acqure found more than one record with job id = ${jobId}." )
-                throw new RuntimeException( "ActionItemJobService.acquire aquire found ${rows} with job id = ${jobId} and status = ${ActionItemJobStatus.PENDING.toString()}." )
-            }
-        } catch (Exception e) {
-            log.error( e )
-            throw e
-        } finally {
-            sql?.close()
+        log.debug( "Attempting to acquire actionItem job id = ${jobId}." )
+
+        List<ActionItemJob> actionItemJobs = ActionItemJob.fetchPendingByJobId( jobId )
+        int rows = actionItemJobs.size() // should never be more than one
+        if (rows == 1) {
+            log.debug( "ActionItem job withid = ${jobId} acquired" )
+            ActionItemJob jobToAcquire = actionItemJobs[0]
+            jobToAcquire.status = ActionItemJobStatus.DISPATCHED.toString()
+            update( jobToAcquire )
+            return true
+        } else if (rows == 0) {
+            log.debug( "ActionItem job withid = ${jobId} not available." )
+            return false
+        } else {
+            log.error( "ActionItemJobService.acqure found more than one record with job id = ${jobId}." )
+            throw new RuntimeException( "ActionItemJobService.acquire aquire found ${rows} with job id = ${jobId} and status = ${ActionItemJobStatus.PENDING.toString()}." )
         }
     }
 
     /**
-     * Returns true if the actionItem job was acquired for the current thread.
+     * Marks the actionItem job completed for the current thread.
      */
     public void markCompleted( Long jobId ) {
-        log.debug( "Attempting to mark actionItem job id = ${jobId} as completed.")
-        Sql sql = new Sql(sessionFactory.getCurrentSession().connection())
-        try {
-            int rows = sql.executeUpdate("update GCBAJOB set GCBAJOB_STATUS = ? where GCBAJOB_SURROGATE_ID = ?",
-                [ActionItemJobStatus.COMPLETED.toString(), jobId ] )
-            if (rows == 0) {
-                log.debug( "No actionItem job with id = ${jobId} to update.")
-            } else if (rows == 1) {
-                log.debug( "ActionItem job with id = ${jobId} marked as completed." )
-            } else if (rows > 1) {
-                log.error( "ActionItemJobService.markCompleted updated more than one record with job id = ${jobId}." )
-                throw new RuntimeException( "ActionItemJobService.markCompleted attempted to update ${rows} with job id = ${jobId}." )
-            }
-        } catch (Exception e) {
-            log.error( e )
-            throw e
-        } finally {
-            sql?.close()
+        log.debug( "Attempting to mark actionItem job id = ${jobId} as completed." )
+
+        List<ActionItemJob> actionItemJobs = ActionItemJob.fetchByJobId( jobId )
+        int rows = actionItemJobs.size() // should never be more than one
+        if (rows == 1) {
+            ActionItemJob jobToMarkComplete = actionItemJobs[0]
+            jobToMarkComplete.status = ActionItemJobStatus.COMPLETED.toString()
+            update( jobToMarkComplete )
+            log.debug( "ActionItem job with id = ${jobId} marked as completed." )
+        } else if (rows == 0) {
+            log.debug( "No actionItem job with id = ${jobId} available to mark completed")
+        } else {
+            log.error( "ActionItemJobService.markCompleted found more than one record with job id = ${jobId}." )
+            throw new RuntimeException( "ActionItemJobService.markCompleted lookup found ${rows} with job id = ${jobId}. ")
         }
     }
-
 
 }
