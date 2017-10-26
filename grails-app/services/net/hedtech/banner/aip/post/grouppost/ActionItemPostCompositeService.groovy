@@ -68,10 +68,11 @@ class ActionItemPostCompositeService {
                 postingName: requestMap.name,
                 postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
                 postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
-                postingScheduleDateTime: requestMap.scheduled ? actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.scheduledStartDate ) : null,
-                /*postingDisplayStartDate: requestMap.displayStartDate,
-                postingDisplayEndDate: requestMap.displayEndDate,
-                postingScheduleDateTime: null, TODO ENABLE if needed for test*/
+                postingScheduleDateTime: requestMap.scheduled ? actionItemProcessingCommonService.convertToLocaleBasedDate(
+                        requestMap.scheduledStartDate ) : null,
+                //postingDisplayStartDate: requestMap.displayStartDate,
+                //postingDisplayEndDate: requestMap.displayEndDate,
+                //postingScheduleDateTime: null, //TODO ENABLE if needed for test
                 postingCreationDateTime: new Date(),
                 populationRegenerateIndicator: false,
                 postingDeleteIndicator: false,
@@ -91,7 +92,6 @@ class ActionItemPostCompositeService {
             assignPopulationVersion( groupSend )
             assignPopulationCalculation( groupSend, user.oracleUserName )
         } else if (groupSend.populationRegenerateIndicator) { // scheduled with future replica of population
-            // FIXME: put this back in once column is in db
             groupSend.populationVersionId = null
             groupSend.populationCalculationId = null
         } else { // sending now or scheduled with replica of current population
@@ -540,7 +540,7 @@ class ActionItemPostCompositeService {
         }
     }
 
-    // Taken and modifies from BCM. Use Objects instead of big insert?
+    // TODO: Taken and modified from BCM. Use Objects or a function in the DB instead of big insert?
     private void createPostItems( ActionItemPost groupSend ) {
         LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id );
         def sql
@@ -582,12 +582,12 @@ class ActionItemPostCompositeService {
                             from gcrslis, gcrlent, gcbapst, gcrpopv
                             where
                             gcbapst_surrogate_id = :group_send_key
-
+                            and gcrpopv_surrogate_id = gcbapst_popversion_id
                             and gcrslis_surrogate_id = gcrpopv_include_list_id
                             and gcrlent_slis_id = gcrslis_surrogate_id
                     )
             """ )
-//                            and gcrpopv_surrogate_id = gcbapst_popversion_id (line 555 when in db)
+
             LoggerUtility.debug( LOGGER, "Created " + sql.updateCount + " group send item records for group send with id = " + groupSend.id )
         } catch (SQLException ae) {
             LoggerUtility.debug( LOGGER, "SqlException in INSERT INTO gcraiim ${ae}" )
