@@ -267,7 +267,6 @@ class ActionItemPost implements Serializable {
 
 
     void markError( ActionItemErrorCode errorCode, String errorText ) {
-        println "mark error: " + errorCode
         assignPostExecutionState( ActionItemPostExecutionState.Error )
         this.postingErrorCode = errorCode
         this.postingErrorText = errorText

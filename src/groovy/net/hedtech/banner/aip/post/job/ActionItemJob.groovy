@@ -5,6 +5,7 @@ package net.hedtech.banner.aip.post.job
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTask
 import net.hedtech.banner.service.DatabaseModifiesState
 
@@ -102,9 +103,9 @@ class ActionItemJob implements AsynchronousTask {
     /**
      * Error Code: The error code for the error scenario that failed the ActionItem Job
      */
-    //@Column(name = "GCBAJOB_ERROR_CODE")
-    //@Enumerated(EnumType.STRING)
-    //ActionItemErrorCode errorCode
+    @Column(name = "GCBAJOB_ERROR_CODE")
+    @Enumerated(EnumType.STRING)
+    ActionItemErrorCode errorCode
 
     static constraints = {
         lastModified(nullable: true)
@@ -113,7 +114,7 @@ class ActionItemJob implements AsynchronousTask {
         referenceId(nullable: false, maxSize: 255)
         status(nullable: false, maxSize: 30)
         errorText(nullable: true)
-        //errorCode(nullable: true)
+        errorCode(nullable: true)
     }
 
     // Read Only fields that should be protected against update
