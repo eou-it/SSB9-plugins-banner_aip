@@ -4,6 +4,10 @@
 
 package net.hedtech.banner.aip.common
 
+import com.ibm.icu.util.Calendar
+import com.ibm.icu.util.ULocale
+import net.hedtech.banner.aip.post.grouppost.ActionItemPost
+import net.hedtech.banner.aip.post.grouppost.ActionItemPostService
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
@@ -46,6 +50,19 @@ class ActionItemProcessingCommonService {
             LOGGER.error( 'Error while parsing date' + e )
             throw new ApplicationException( ActionItemProcessingCommonService, new BusinessLogicValidationException( 'invalid.date.format', [] ) )
         }
+    }
+
+    /**
+     * Get locale bases current system date
+     * @return
+     */
+    def getLocaleBasedCurrentDate() {
+        Calendar calendar = Calendar.getInstance( new ULocale( dateConverterService.getDefaultCalendarULocaleString() ) )
+        calendar.set( Calendar.HOUR_OF_DAY, 0 )
+        calendar.set( Calendar.MINUTE, 0 )
+        calendar.set( Calendar.SECOND, 0 )
+        calendar.set( Calendar.MILLISECOND, 0 )
+        calendar.time
     }
 
 }

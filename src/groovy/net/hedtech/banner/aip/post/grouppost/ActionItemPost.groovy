@@ -29,6 +29,10 @@ import javax.persistence.*
         @NamedQuery(name = "ActionItemPost.fetchCompleted",
                 query = """ FROM ActionItemPost gs
                 WHERE gs.postingCurrentState = :complete_ """
+        ),
+        @NamedQuery(name = "ActionItemPost.checkIfJobNameAlreadyExists",
+                query = """ select count (gs.postingName) FROM ActionItemPost gs
+                        WHERE upper(gs.postingName) = upper( :postingName) """
         )
 ])
 class ActionItemPost implements Serializable {
@@ -226,33 +230,33 @@ class ActionItemPost implements Serializable {
     }
 
 
-    public void markScheduled( String jobId, String groupId ) {
+    void markScheduled( String jobId, String groupId ) {
         assert jobId != null
         assert groupId != null
         assignPostExecutionState( ActionItemPostExecutionState.Scheduled, jobId, groupId )
     }
 
 
-    public void markQueued( String jobId, String groupId ) {
+    void markQueued( String jobId, String groupId ) {
         assert jobId != null
         assert groupId != null
         assignPostExecutionState( ActionItemPostExecutionState.Queued, jobId, groupId )
     }
 
 
-    public void markStopped( Date stopDate = new Date() ) {
+    void markStopped( Date stopDate = new Date() ) {
         assignPostExecutionState( ActionItemPostExecutionState.Stopped )
         //this.postingStopDate = stopDate
     }
 
 
-    public void markComplete( Date stopDate = new Date() ) {
+    void markComplete( Date stopDate = new Date() ) {
         assignPostExecutionState( ActionItemPostExecutionState.Complete )
         //this.postingStopDate = stopDate
     }
 
 
-    public void markProcessing() {
+    void markProcessing() {
         assignPostExecutionState( ActionItemPostExecutionState.Processing )
         /*
         if (this.postingStartedDate == null) {
@@ -262,7 +266,7 @@ class ActionItemPost implements Serializable {
     }
 
 
-    public void markError( ActionItemErrorCode errorCode, String errorText ) {
+    void markError( ActionItemErrorCode errorCode, String errorText ) {
         println "mark error: " + errorCode
         assignPostExecutionState( ActionItemPostExecutionState.Error )
         this.postingErrorCode = errorCode
@@ -278,7 +282,7 @@ class ActionItemPost implements Serializable {
     }
 
 
-    public static List findRunning( Integer max = Integer.MAX_VALUE ) {
+    static List findRunning( Integer max = Integer.MAX_VALUE ) {
         def query
         ActionItemPost.withSession {session ->
             query = session.getNamedQuery( 'ActionItemPost.findRunning' )
@@ -295,7 +299,7 @@ class ActionItemPost implements Serializable {
     }
 
 
-    public static List fetchCompleted() {
+    static List fetchCompleted() {
         def results
         ActionItemPostWork.withSession {session ->
             results = session.getNamedQuery( 'ActionItemPost.fetchCompleted' )
@@ -306,7 +310,7 @@ class ActionItemPost implements Serializable {
     }
 
 
-    public static int findCountByPopulationCalculationId( Long populationCalculationId ) {
+    static int findCountByPopulationCalculationId( Long populationCalculationId ) {
         return ActionItemPost.createCriteria().list {
             projections {
                 count()
@@ -315,8 +319,23 @@ class ActionItemPost implements Serializable {
         }[0]
     }
 
+    /**
+     * Checks if posting name is already present
+     * @param name
+     * @return
+     */
+    static def checkIfJobNameAlreadyExists( name ) {
+        def count
+        ActionItemPostWork.withSession {session ->
+            count = session.getNamedQuery( 'ActionItemPost.checkIfJobNameAlreadyExists' )
+                    .setParameter( 'postingName', name )
+                    .uniqueResult()
+        }
+        count > 0
+    }
+
     /*
-        public static findByNameWithPagingAndSortParams(filterData, pagingAndSortParams) {
+        static findByNameWithPagingAndSortParams(filterData, pagingAndSortParams) {
 
             def descdir = pagingAndSortParams?.sortDirection?.toLowerCase() == 'desc'
 

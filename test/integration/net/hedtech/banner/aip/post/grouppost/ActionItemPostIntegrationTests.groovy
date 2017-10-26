@@ -26,24 +26,26 @@ class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
-    void testDummy() {
-        println "CRR: test ran"
-        assertTrue 1 == 1
-    }
-
-    @Test
     void testActionPostConstraints() {
         println 'CRR finish tests'
-        def actionItemPost = newAIP(  )
+        def actionItemPost = newAIP()
         println 'CRR finish tests'
         println actionItemPost
         //actionItemPost.save()
 
     }
 
-    private def newAIP(  ) {
-        def aigs = new ActionItemPost(
-                //id: 1L,
+
+    @Test
+    void testDuplicate() {
+        def actionItemPost = newAIP()
+        println 'CRR finish tests'
+        actionItemPost.save()
+    }
+
+
+    private def newAIP() {
+        new ActionItemPost(
                 populationListId: 1L,
                 populationVersionId: 1L,
                 postingName: "some name",
@@ -66,10 +68,7 @@ class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
                 postingParameterValues: null,
                 lastModified: new Date(),
                 lastModifiedBy: 'testUser',
-                version: 1L,
                 dataOrigin: 'BANNER',
-                vpdiCode: null
-        )
-        return aigs
+                )
     }
 }

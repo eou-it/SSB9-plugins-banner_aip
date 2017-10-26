@@ -11,11 +11,14 @@ import net.hedtech.banner.aip.common.LoggerUtility
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.aip.post.exceptions.ActionItemExceptionFactory
 import net.hedtech.banner.exceptions.ApplicationException
+import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.exceptions.NotFoundException
 import net.hedtech.banner.general.communication.population.*
 import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.general.scheduler.SchedulerJobReceipt
+import net.hedtech.banner.utility.DateUtility
+import org.apache.ivy.util.DateUtil
 import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.web.context.ServletContextHolder
 import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
@@ -68,6 +71,7 @@ class ActionItemPostCompositeService {
                 lastModified: new Date(),
                 lastModifiedBy: user.oracleUserName )
 
+        validateDates( groupSend, requestMap.scheduled )
         CommunicationPopulation population = communicationPopulationCompositeService.fetchPopulation( groupSend.populationListId )
         boolean hasQuery = (CommunicationPopulationQueryAssociation.countByPopulation( population ) > 0)
 
@@ -132,6 +136,27 @@ class ActionItemPostCompositeService {
                 success : success,
                 savedJob: groupSendSaved
         ]
+    }
+
+    /**
+     * Checks if posting name is already present
+     * @param name
+     * @return
+     */
+    private def validateDates( ActionItemPost groupSend, isScheduled ) {
+        Date currentDate = actionItemProcessingCommonService.getLocaleBasedCurrentDate()
+        if (currentDate.compareTo( groupSend.postingDisplayStartDate ) > 0) {
+            throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.absolete.display.start.date', [] ) )
+        }
+        if (groupSend.postingDisplayStartDate.compareTo( groupSend.postingDisplayEndDate ) > 0) {
+            throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.display.start.date.more.than.display.end.date', [] ) )
+        }
+        if (isScheduled) {
+            Date now = new Date( System.currentTimeMillis() )
+            if (now.after( groupSend.postingScheduleDateTime )) {
+                throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService.class, "preCreate.validation.display.absolete.schedule.date" )
+            }
+        }
     }
 
 

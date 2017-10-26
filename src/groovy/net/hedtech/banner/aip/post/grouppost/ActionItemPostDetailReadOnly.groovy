@@ -6,8 +6,8 @@ package net.hedtech.banner.aip.post.grouppost
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.hibernate.annotations.Type
-import javax.persistence.*
 
+import javax.persistence.*
 
 /**
  * Read only view for summary of action item posting jobs.
@@ -16,7 +16,7 @@ import javax.persistence.*
 @Table(name = "GVQ_GCRAPST")
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
-class ActionItemPostingDetailsReadOnly implements Serializable {
+class ActionItemPostDetailReadOnly implements Serializable {
 
     /**
      * SURROGATE ID: Generated unique numeric identifier for this entity.
@@ -227,3 +227,5 @@ class ActionItemPostingDetailsReadOnly implements Serializable {
     @Column(name = "ACTION_GROUP_POSTED_IND")
     Boolean groupPostedIndicator
 }
+
+

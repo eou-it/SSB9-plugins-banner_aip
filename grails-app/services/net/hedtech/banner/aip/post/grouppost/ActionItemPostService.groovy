@@ -18,11 +18,14 @@ class ActionItemPostService extends ServiceBase {
      * @param dataMap
      */
     def preCreateValidation( dataMap ) {
-        if(!dataMap){
+        if (!dataMap) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.insufficient.request', [] ) )
         }
         if (!dataMap.name) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.posting.job.name', [] ) )
+        }
+        if (isDuplicateJobName( dataMap.name )) {
+            throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.job.name.already.defined', [] ) )
         }
         if (!dataMap.postGroupId) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.group', [] ) )
@@ -50,9 +53,20 @@ class ActionItemPostService extends ServiceBase {
                 throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.schedule.start.date', [] ) )
             }
         }
+
     }
 
-    public List findRunning() {
+    /**
+     * Checks if posting name is already present
+     * @param name
+     * @return
+     */
+    def isDuplicateJobName( postingName ) {
+        ActionItemPost.checkIfJobNameAlreadyExists( postingName )
+    }
+
+
+    List findRunning() {
         return ActionItemPost.findRunning()
     }
 
