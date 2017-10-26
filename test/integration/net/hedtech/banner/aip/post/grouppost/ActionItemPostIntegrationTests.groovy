@@ -53,7 +53,6 @@ class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
                 postingScheduleType: "some type",
                 postingDisplayStartDate: new Date(),
                 postingDisplayEndDate: new Date(),
-                postingScheduleDeleteTime: new Date(), // What is this?
                 postingCreatorId: 'me',
                 postingScheduleDateTime: new Date(),
                 populationRegenerateIndicator: false,

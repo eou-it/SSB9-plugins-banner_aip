@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Required
  * Teardown performer for shutting down the notification manager while
  * table teardown is in progress.
  *
- * @author Michael Brzycki
+ *
  */
 public class ActionItemPostProcessingEngineStartupPerformer implements TearDownPerformer {
 

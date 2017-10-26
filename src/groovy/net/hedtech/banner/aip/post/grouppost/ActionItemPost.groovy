@@ -94,7 +94,7 @@ class ActionItemPost implements Serializable {
     Date postingDisplayEndDate
 
     /**
-     * POSTING SCHEDULE DELETE TIME: Delete time of action item posting schedule.
+     * POSTING SCHEDULE DATE TIME: Date time of action item posting schedule.
      */
     @Temporal(TemporalType.DATE)
     @Column(name = "GCBAPST_SCHEDULED_DATETIME")
@@ -335,7 +335,7 @@ class ActionItemPost implements Serializable {
     }
 
     /*
-        static findByNameWithPagingAndSortParams(filterData, pagingAndSortParams) {
+        public static findByNameWithPagingAndSortParams(filterData, pagingAndSortParams) {
 
             def descdir = pagingAndSortParams?.sortDirection?.toLowerCase() == 'desc'
 

@@ -25,7 +25,6 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
     private final Log log = LogFactory.getLog(this.getClass());
 
     def actionItemJobService
-    def actionItemJobProcessorService
 
     /**
      * Used for testing purposes only.  If this is not null when a job is being
@@ -77,8 +76,6 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
     @Transactional(readOnly=true, rollbackFor = Throwable.class )
     public List<ActionItemJob> getPendingJobs( int max ) throws ApplicationException {
         log.debug( "Get pending actionItem jobs" )
-        //FIXME:
-        println "CRR: Get pending actionItem jobs: JobTaskManager"
         List<ActionItemJob> result = actionItemJobService.fetchPending( max )
         log.debug( "Found ${result.size()} actionItem jobs." )
         return result;
@@ -87,7 +84,6 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
     public boolean acquire( AsynchronousTask task ) throws ApplicationException {
         ActionItemJob job = task as ActionItemJob
         log.info( "Acquiring actionItem job with id = ${job.id}." )
-        println "CRR: Acquire actionItem jobs: JobTaskManager"
         return actionItemJobService.acquire( job.id )
     }
 
@@ -110,16 +106,14 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
      */
     @Transactional(propagation=Propagation.REQUIRES_NEW, rollbackFor = Throwable.class )
     public void process( AsynchronousTask task) throws ApplicationException {
-        println "CRR: task: " + task.toString(  )
         ActionItemJob job = task as ActionItemJob
         log.info( "Processing actionItem job id = ${job.id}." )
-        println "CRR: Processing actionItem jobs: JobTaskManager"
         try {
             if (simulatedFailureException != null) {
                 throw simulatedFailureException;
             }
 
-            actionItemJobProcessorService.performActionItemJob( task.getId() );
+            //actionItemJobProcessorService.performActionItemJob( task.getId() );
 
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
@@ -168,8 +162,6 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
             log.debug( "Continuing to process actionItem job id = ${job.id}." )
         }
 
-        // Not implemented for CR1. The purpose of this service method is for debug monitoring active thread
-        // processing.
         */
         return null
     }

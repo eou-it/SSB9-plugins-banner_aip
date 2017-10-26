@@ -1,7 +1,11 @@
+/*******************************************************************************
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
+ *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTask
 
 import javax.persistence.*
@@ -92,6 +96,12 @@ class ActionItemPostWork implements AsynchronousTask {
     @Enumerated(EnumType.STRING)
     ActionItemPostWorkExecutionState currentExecutionState;
 
+    @Column(name = "GCRAIIM_INSERT_COUNT")
+    Long insertedCount
+
+    @Column(name = "GCRAIIM_GCBACTM_ID_SET")
+    String insertedItemIds
+
     @Column(name = "GCRAIIM_ERROR_TEXT")
     @Lob
     String errorText;
@@ -117,18 +127,20 @@ class ActionItemPostWork implements AsynchronousTask {
      * Error Code: The error code for the error scenario that failed the Action Item Job
      */
 
-    //@Column(name = "GCRAIIM_ERROR_CODE")
-    //@Enumerated(EnumType.STRING)
-    //ActionItemErrorCode errorCode
+    @Column(name = "GCRAIIM_ERROR_CODE")
+    @Enumerated(EnumType.STRING)
+    ActionItemErrorCode errorCode
 
     static constraints = {
         lastModified( nullable: true )
         lastModifiedBy( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 30 )
+        insertedCount( nullable: true )
+        insertedItemIds( nullable: true )
         stopDate( nullable: true )
         errorText( nullable: true )
         mepCode( nullable: true )
-        //errorCode( nullable: true )
+        errorCode( nullable: true )
     }
 
 

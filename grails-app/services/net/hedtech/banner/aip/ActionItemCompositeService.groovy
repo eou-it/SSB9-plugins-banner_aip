@@ -5,7 +5,6 @@ package net.hedtech.banner.aip
 
 import grails.transaction.Transactional
 import net.hedtech.banner.aip.common.AIPConstants
-import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.i18n.MessageHelper
 import org.omg.CORBA.portable.ApplicationException
 import org.springframework.transaction.annotation.Propagation
@@ -32,7 +31,6 @@ class ActionItemCompositeService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     def addActionItem( map ) {
         def user = springSecurityService.getAuthentication()?.user
-        println user
         ActionItem savedActionItem
         def success = false
         def message
