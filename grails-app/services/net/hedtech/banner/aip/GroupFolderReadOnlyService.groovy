@@ -3,9 +3,8 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.MessageUtility
-import net.hedtech.banner.service.ServiceBase
 import net.hedtech.banner.i18n.MessageHelper
+import net.hedtech.banner.service.ServiceBase
 
 /**
  * Service class for GroupFolder ( read only ) Domain
