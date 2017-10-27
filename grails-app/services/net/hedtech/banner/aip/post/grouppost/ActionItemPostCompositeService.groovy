@@ -89,7 +89,7 @@ class ActionItemPostCompositeService {
             }
         }
         if (requestMap.postNow) {
-            markActionItemGroupPosted( groupSendSaved.postingActionItemGroupId )
+            markActionItemGroupPosted( groupSendSaved.postingActionItemGroupId, user )
         }
         if (requestMap.postNow) {
             if (hasQuery) {
