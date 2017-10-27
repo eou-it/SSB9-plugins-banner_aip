@@ -63,7 +63,7 @@ class GroupFolderReadOnlyService extends ServiceBase {
         def resultCount = listGroupFolderROCount( params )
         def resultMap = [
                 result: results,
-                length: resultCount[0],
+                length: resultCount,
                 header: [
                         [name: "groupId", title: "id", options: [visible: false, isSortable: true]],
                         [name: "groupName", title: MessageHelper.message( "aip.common.group.name" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
