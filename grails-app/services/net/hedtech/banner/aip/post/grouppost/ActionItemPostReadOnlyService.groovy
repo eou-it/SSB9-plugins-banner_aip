@@ -37,7 +37,6 @@ class ActionItemPostReadOnlyService extends ServiceBase {
                         [name: "submittedBy", title: MessageHelper.message( "aip.admin.actionItem.post.grid.job.submittedBy" ), options: [visible: true], width: 0]
                 ]
         ]
-        println resultMap
         resultMap
     }
 
