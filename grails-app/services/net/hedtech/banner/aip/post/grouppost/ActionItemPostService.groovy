@@ -45,14 +45,16 @@ class ActionItemPostService extends ServiceBase {
         if (!dataMap.displayEndDate) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.display.end.date', [] ) )
         }
-        if (!dataMap.postNow && !dataMap.scheduled) {
+        if (!dataMap.postNow && !dataMap.scheduledStartDate) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.schedule', [] ) )
         }
-        if (dataMap.scheduled) {
-            if (!dataMap.scheduledStartDate) {
-                throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.schedule.start.date', [] ) )
-            }
-        }
+        // TODO: intent? ended up with duplicate case. Not sure if something got lost
+        //if (dataMap.scheduledStartDate) {
+        //    if (!dataMap.scheduledStartDate) {
+        //        throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException(
+        //                'preCreate.validation.no.schedule.start.date', [] ) )
+        //    }
+        //}
 
     }
 
