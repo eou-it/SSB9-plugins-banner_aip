@@ -77,13 +77,13 @@ class ActionItem implements Serializable {
      * User action item pertains to
      */
     @Column(name = "GCBACTM_USER_ID")
-    String userId
+    String lastModifiedBy
 
     /**
      * Last activity date for the action item
      */
     @Column(name = "GCBACTM_ACTIVITY_DATE")
-    Date activityDate
+    Date lastModified
 
     /**
      * Description for action item
@@ -123,8 +123,8 @@ class ActionItem implements Serializable {
         name( blank: false, nullable: false, maxSize: 60 )
         status( blank: false, nullable: false, maxSize: 1 )
         postedIndicator( nullable: false, maxSize: 1 )
-        userId( blank: false, nullable: false, maxSize: 30 )
-        activityDate( blank: false, nullable: false, maxSize: 30 )
+        lastModifiedBy( nullable: true, maxSize: 30 )
+        lastModified( nullable: true, maxSize: 30 )
         description( nullable: true ) //summary length only for now
         creatorId( nullable: true, maxSize: 30 )
         createDate( nullable: true )

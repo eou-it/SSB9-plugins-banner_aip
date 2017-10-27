@@ -40,8 +40,6 @@ class ActionItemPerformPostService {
                 userActionItem.displayStartDate = groupSend.postingDisplayStartDate
                 userActionItem.displayEndDate = groupSend.postingDisplayEndDate
                 userActionItem.groupId = groupSend.postingActionItemGroupId
-                userActionItem.userId = groupSend.postingCreatorId
-                userActionItem.activityDate = new Date()
                 userActionItem.creatorId = groupSend.postingCreatorId
                 userActionItem.createDate = new Date()
                 userActionItem.dataOrigin = groupSend.postingCreatorId
