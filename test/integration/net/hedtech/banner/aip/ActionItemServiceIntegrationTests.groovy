@@ -47,10 +47,8 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ai.status = 'D'
         ai.name = 'Test Action Item. unique 98d7efh'
         ai.title = 'Test Action Item. unique 98d7efh'
-        ai.userId = 'something'
         ai.description = 'this is some action item'
         ai.postedIndicator = 'N'
-        ai.activityDate = new java.util.Date( System.currentTimeMillis() )
         ActionItem createdItem = actionItemService.create( ai )
         assertEquals( 'Test Action Item. unique 98d7efh', createdItem.title )
         assertEquals( folderId, createdItem.folderId )
@@ -69,10 +67,8 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ai.status = 'P'
         ai.name = 'Test Action Item'
         ai.title = 'Test Action Item'
-        ai.userId = 'something'
         ai.postedIndicator = 'N'
         ai.description = 'this is some action item'
-        ai.activityDate = new java.util.Date( System.currentTimeMillis() )
         // fails due to no folder matching id
         try {
             actionItemService.create( ai )
@@ -92,9 +88,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ai.folderId = existingAI.folderId
         ai.status = 'Pending'
         ai.title = null
-        ai.userId = 'something'
         ai.description = 'this is some action item'
-        ai.activityDate = new java.util.Date( System.currentTimeMillis() )
         // fails due to no folder matching id
         try {
             actionItemService.create( ai )
@@ -114,9 +108,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ai.status = null
         ai.name = ' a title ds8f4h3'
         ai.title = ' a title ds8f4h3'
-        ai.userId = 'something'
         ai.description = 'this is some action item'
-        ai.activityDate = new java.util.Date( System.currentTimeMillis() )
         // fails due to no folder matching id
         try {
             actionItemService.create( ai )
@@ -135,9 +127,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ai.folderId = null
         ai.status = 'Pending'
         ai.title = ' a title ds8f4h3'
-        ai.userId = 'something'
         ai.description = 'this is some action item'
-        ai.activityDate = new java.util.Date( System.currentTimeMillis() )
         // fails due to no folder matching id
         try {
             actionItemService.create( ai )
@@ -157,9 +147,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ai.status = 'Ginormous Status 123456789012345678901234567890'
         ai.name = ' a title ds8f4h3'
         ai.title = ' a title ds8f4h3'
-        ai.userId = 'something'
         ai.description = 'this is some action item'
-        ai.activityDate = new java.util.Date( System.currentTimeMillis() )
         // fails due to no folder matching id
         try {
             actionItemService.create( ai )
@@ -179,10 +167,8 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ai.status = 'P'
         ai.name = existingAI.title
         ai.title = existingAI.title
-        ai.userId = 'something'
         ai.postedIndicator = 'N'
         ai.description = 'this is some action item'
-        ai.activityDate = new java.util.Date( System.currentTimeMillis() )
         try {
             actionItemService.create( ai )
             Assert.fail "Expected duplicate title in folder to fail because of name unique constraint."

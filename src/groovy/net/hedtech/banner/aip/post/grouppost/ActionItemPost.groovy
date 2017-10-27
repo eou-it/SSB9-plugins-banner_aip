@@ -223,8 +223,8 @@ class ActionItemPost implements Serializable {
         postingErrorText( nullable: true )
         postingGroupId( nullable: true, maxSize: 256 )
         postingParameterValues( nullable: true )
-        lastModified( nullable: false )
-        lastModifiedBy( nullable: false, maxSize: 30 )
+        lastModified( nullable: true )
+        lastModifiedBy( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 30 )
         vpdiCode( nullable: true, maxSize: 6 )
     }

@@ -266,12 +266,13 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         userActionItemNewList.displayStartDate = userActionItem.displayStartDate
         userActionItemNewList.displayEndDate = userActionItem.displayEndDate
         userActionItemNewList.groupId = userActionItem.groupId
-        userActionItemNewList.userId = userActionItem.userId
-        userActionItemNewList.activityDate = userActionItem.activityDate
         userActionItemNewList.creatorId = userActionItem.creatorId
+        userActionItemNewList.lastModified = userActionItem.lastModified
+        userActionItemNewList.lastModifiedBy = userActionItem.lastModifiedBy
         userActionItemNewList.createDate = userActionItem.createDate
         userActionItemNewList.version = userActionItem.version
         userActionItemNewList.dataOrigin = userActionItem.dataOrigin
+
 
         def result = userActionItemNewList.equals( userActionItem )
         assertTrue result
@@ -294,8 +295,6 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
                 userActionItemNew.displayStartDate = null
                 userActionItemNew.displayEndDate = null
                 userActionItemNew.groupId = 1
-                userActionItemNew.userId = "GRAILS"
-                userActionItemNew.activityDate = new Date ()
                 userActionItemNew.creatorId = "GRAILS"
                 userActionItemNew.createDate = new Date ()
                 userActionItemNew.dataOrigin = "GRAILS"

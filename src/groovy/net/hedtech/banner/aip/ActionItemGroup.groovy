@@ -93,13 +93,13 @@ class ActionItemGroup implements Serializable {
      * User action item pertains to
      */
     @Column(name = "GCBAGRP_USER_ID")
-    String userId
+    String lastModifiedBy
 
     /**
      * Last activity date for the action item
      */
     @Column(name = "GCBAGRP_ACTIVITY_DATE")
-    Date activityDate
+    Date lastModified
 
     /**
      * Data Origin column for GCBAGRP
@@ -114,8 +114,8 @@ class ActionItemGroup implements Serializable {
         postingInd(nullabe: true)
         folderId( nullable: false, maxSize: 30 )
         status( nullable: false, maxSize: 1 )
-        userId( nullable: false, maxSize: 30 )
-        activityDate( nullable: false, maxSize: 30 )
+        lastModified( nullable: true, maxSize: 30 )
+        lastModifiedBy( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 19 )
     }
 
