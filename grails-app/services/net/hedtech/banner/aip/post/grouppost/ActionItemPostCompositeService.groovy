@@ -444,8 +444,6 @@ class ActionItemPostCompositeService {
 
 
     private ActionItemPost generatePostItemsImpl( ActionItemPost groupSend ) {
-        // We'll created the group send items synchronously for now until we have support for scheduling.
-        // The individual group send items will still be processed asynchronously via the framework.
         createPostItems( groupSend )
         groupSend.markProcessing()
         groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
@@ -454,8 +452,7 @@ class ActionItemPostCompositeService {
 
 
     private ActionItemPost savePost( ActionItemPost groupSend ) {
-        //TODO: Figure out why ServiceBase.update is not working with this domain.
-        return groupSend.save( flush: true ) //update( groupSend )
+        actionItemPostService.update( groupSend )
     }
 
     /**
@@ -517,7 +514,7 @@ class ActionItemPostCompositeService {
         }
     }
 
-    // TODO: Taken and modified from BCM. Use Objects or a function in the DB instead of big insert?
+    // TODO: Taken and modified from BCM. Use Hibernate Batch Update or a function in the DB instead of big insert?
     private void createPostItems( ActionItemPost groupSend ) {
         LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id );
         def sql
