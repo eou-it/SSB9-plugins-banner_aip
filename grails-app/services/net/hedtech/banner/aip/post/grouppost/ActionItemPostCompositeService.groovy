@@ -60,31 +60,11 @@ class ActionItemPostCompositeService {
         actionItemPostService.preCreateValidation( requestMap )
         def user = springSecurityService.getAuthentication()?.user
         def success = false
-        ActionItemPost groupSend = new ActionItemPost(
-                populationListId: requestMap.populationId,
-                postingActionItemGroupId: requestMap.postGroupId,
-                postingName: requestMap.name,
-                postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
-                postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
-                postingScheduleDateTime: requestMap.scheduled ? actionItemProcessingCommonService.convertToLocaleBasedDate(
-                        requestMap.scheduledStartDate ) : null,
-                //postingDisplayStartDate: requestMap.displayStartDate,
-                //postingDisplayEndDate: requestMap.displayEndDate,
-                //postingScheduleDateTime: null, //TODO ENABLE if needed for test
-                postingCreationDateTime: new Date(),
-                populationRegenerateIndicator: false,
-                postingDeleteIndicator: false,
-                postingCreatorId: user.oracleUserName,
-                postingCurrentState: requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New),
-                lastModified: new Date(),
-                lastModifiedBy: user.oracleUserName )
-
+        ActionItemPost groupSend = getActionPostInstance( requestMap, user )
         validateDates( groupSend, requestMap.scheduled )
         CommunicationPopulation population = communicationPopulationCompositeService.fetchPopulation( groupSend.populationListId )
         boolean hasQuery = (CommunicationPopulationQueryAssociation.countByPopulation( population ) > 0)
-
         boolean useCurrentReplica = (!groupSend.populationRegenerateIndicator || !requestMap.scheduledStartDate)
-
         if (hasQuery && useCurrentReplica) {
             // this will need to be updated once we allow queries to be added to existing manual only populations
             assignPopulationVersion( groupSend )
@@ -103,28 +83,13 @@ class ActionItemPostCompositeService {
         ActionItemPost groupSendSaved = actionItemPostService.create( groupSend )
         // Create the details records.
         requestMap.actionItemIds.each {
-            ActionItemPostDetail groupDetail = new ActionItemPostDetail(
-                    lastModifiedBy: user.oracleUserName,
-                    lastModified: new Date(),
-                    actionItemPostId: groupSendSaved.id,
-                    actionItemId: it
-            )
-            actionItemPostDetailService.create( groupDetail )
-
+            addPostingDetail( it, groupSendSaved.id, user )
             if (requestMap.postNow) {
-                ActionItem actionItem = actionItemService.get( it )
-                actionItem.activityDate = new Date()
-                actionItem.userId = user.oracleUserName
-                actionItem.postedIndicator = AIPConstants.YES_IND
-                actionItemService.update( actionItem )
+                markActionItemPosted( it, user )
             }
         }
         if (requestMap.postNow) {
-            ActionItemGroup actionItemGroup = actionItemGroupService.get( groupSendSaved.postingActionItemGroupId )
-            actionItemGroup.activityDate = new Date()
-            actionItemGroup.userId = user.oracleUserName
-            actionItemGroup.postingInd = AIPConstants.YES_IND
-            actionItemGroupService.update( actionItemGroup )
+            markActionItemGroupPosted( groupSendSaved.postingActionItemGroupId, user )
         }
         if (requestMap.postNow) {
             if (hasQuery) {
@@ -139,6 +104,78 @@ class ActionItemPostCompositeService {
                 success : success,
                 savedJob: groupSendSaved
         ]
+    }
+
+    /**
+     * Creates new Instanace of Action Item Post
+     * @param requestMap
+     * @param user
+     * @return
+     */
+    private ActionItemPost getActionPostInstance( requestMap, user ) {
+        new ActionItemPost(
+                populationListId: requestMap.populationId,
+                postingActionItemGroupId: requestMap.postGroupId,
+                postingName: requestMap.name,
+                postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
+                postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
+                postingScheduleDateTime: requestMap.scheduled ? actionItemProcessingCommonService.convertToLocaleBasedDate(
+                        requestMap.scheduledStartDate ) : null,
+                //postingDisplayStartDate: requestMap.displayStartDate,
+                //postingDisplayEndDate: requestMap.displayEndDate,
+                //postingScheduleDateTime: null, //TODO ENABLE if needed for test
+                postingCreationDateTime: new Date(),
+                populationRegenerateIndicator: false,
+                postingDeleteIndicator: false,
+                postingCreatorId: user.oracleUserName,
+                postingCurrentState: requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New),
+                lastModified: new Date(),
+                lastModifiedBy: user.username )
+    }
+
+    /**
+     * Add Posting Details
+     * @param actionItemId
+     * @param postingId
+     * @param user
+     * @return
+     */
+    private addPostingDetail( actionItemId, postingId, user ) {
+        ActionItemPostDetail groupDetail = new ActionItemPostDetail(
+                lastModifiedBy: user.username,
+                lastModified: new Date(),
+                actionItemPostId: postingId,
+                actionItemId: actionItemId
+        )
+        actionItemPostDetailService.create( groupDetail )
+    }
+
+    /**
+     * Marks Action Item Posted
+     * @param actionItemId
+     * @param user
+     * @return
+     */
+    private markActionItemPosted( actionItemId, user ) {
+        ActionItem actionItem = actionItemService.get( actionItemId )
+        actionItem.activityDate = new Date()
+        actionItem.userId = user.username
+        actionItem.postedIndicator = AIPConstants.YES_IND
+        actionItemService.update( actionItem )
+    }
+
+    /**
+     * Marks Action Item Group Posted
+     * @param actionItemGroupId
+     * @param user
+     * @return
+     */
+    private markActionItemGroupPosted( actionItemGroupId, user ) {
+        ActionItemGroup actionItemGroup = actionItemGroupService.get( actionItemGroupId )
+        actionItemGroup.activityDate = new Date()
+        actionItemGroup.userId = user.username
+        actionItemGroup.postingInd = AIPConstants.YES_IND
+        actionItemGroupService.update( actionItemGroup )
     }
 
     /**
@@ -179,7 +216,7 @@ class ActionItemPostCompositeService {
      *
      * @param groupSendId the long id of the group send
      */
-    public void deletePost( Long groupSendId ) {
+    void deletePost( Long groupSendId ) {
         LoggerUtility.debug( LOGGER, "deleteGroupSend for id = ${groupSendId}." )
 
         ActionItemPost groupSend = (ActionItemPost) actionItemPostService.get( groupSendId )
@@ -226,7 +263,7 @@ class ActionItemPostCompositeService {
      * @param groupSendId the long id of the group send
      * @return the updated (stopped) group send
      */
-    public ActionItemPost stopPost( Long groupSendId ) {
+    ActionItemPost stopPost( Long groupSendId ) {
         LoggerUtility.debug( LOGGER, "Stopping group send with id = ${groupSendId}." )
 
         ActionItemPost groupSend = (ActionItemPost) actionItemPostService.get( groupSendId )
@@ -255,7 +292,7 @@ class ActionItemPostCompositeService {
      * @param groupSendId the id of the group post.
      * @return the updated group post
      */
-    public ActionItemPost completePost( Long groupSendId ) {
+    ActionItemPost completePost( Long groupSendId ) {
         LoggerUtility.debug( LOGGER, "Completing group send with id = " + groupSendId + "." )
         ActionItemPost aGroupSend = (ActionItemPost) actionItemPostService.get( groupSendId )
         aGroupSend.markComplete()
@@ -266,22 +303,22 @@ class ActionItemPostCompositeService {
     // Scheduling service callback job methods
     //////////////////////////////////////////////////////////////////////////////////////
 
-    public ActionItemPost calculatePopulationVersionForPostFired( SchedulerJobContext jobContext ) {
+    ActionItemPost calculatePopulationVersionForPostFired( SchedulerJobContext jobContext ) {
         calculatePopulationVersionForGroupSend( jobContext.parameters )
     }
 
 
-    public ActionItemPost calculatePopulationVersionForPostFailed( SchedulerErrorContext errorContext ) {
+    ActionItemPost calculatePopulationVersionForPostFailed( SchedulerErrorContext errorContext ) {
         return scheduledPostCallbackFailed( errorContext )
     }
 
 
-    public ActionItemPost generatePostItemsFired( SchedulerJobContext jobContext ) {
+    ActionItemPost generatePostItemsFired( SchedulerJobContext jobContext ) {
         return generatePostItems( jobContext.parameters )
     }
 
 
-    public ActionItemPost generatePostItemsFailed( SchedulerErrorContext errorContext ) {
+    ActionItemPost generatePostItemsFailed( SchedulerErrorContext errorContext ) {
         return scheduledPostCallbackFailed( errorContext )
     }
 

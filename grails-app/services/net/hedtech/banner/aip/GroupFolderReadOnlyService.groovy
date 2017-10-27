@@ -3,8 +3,8 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.service.ServiceBase
 import net.hedtech.banner.i18n.MessageHelper
+import net.hedtech.banner.service.ServiceBase
 
 /**
  * Service class for GroupFolder ( read only ) Domain
@@ -19,7 +19,6 @@ class GroupFolderReadOnlyService extends ServiceBase {
         GroupFolderReadOnly.fetchGroupFolders()
     }
 
-
     /**
      * Gets Action Item Group by Id
      * @param actionItemGroupId
@@ -30,22 +29,21 @@ class GroupFolderReadOnlyService extends ServiceBase {
     }
 
     /**Lists Group Folder count
-     *
+     * @param params
      * @return
      */
-    def listGroupFolderROCount() {
-        GroupFolderReadOnly.fetchGroupFolderROCount()
+    def listGroupFolderROCount( params ) {
+        GroupFolderReadOnly.fetchGroupFolderROCount( params )
     }
 
     /**
      * Lists Group Folders
      * @param params
+     * @param paginationParams
      * @return
      */
-    def listGroupFolderPageSort( Map params ) {
-        def results = GroupFolderReadOnly.fetchWithPagingAndSortParams(
-                [params: [name: params?.filterName]],
-                [sortColumn: params?.sortColumn, sortAscending: params?.sortAscending, max: params?.max, offset: params?.offset] )
+    def listGroupFolderPageSort( Map params, paginationParams ) {
+        def results = GroupFolderReadOnly.fetchWithPagingAndSortParams( params, paginationParams )
         results = results.collect {
             [id               : it.groupId,
              groupId          : it.groupId,
@@ -61,10 +59,19 @@ class GroupFolderReadOnlyService extends ServiceBase {
              groupActivityDate: it.groupActivityDate
             ]
         }
-        def resultCount = listGroupFolderROCount()
+        def resultCount = listGroupFolderROCount( params )
         def resultMap = [
                 result: results,
-                length: resultCount[0]
+                length: resultCount,
+                header: [
+                        [name: "groupId", title: "id", options: [visible: false, isSortable: true]],
+                        [name: "groupName", title: MessageHelper.message( "aip.common.group.name" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
+                        [name: "groupTitle", title: MessageHelper.message( "aip.common.group.title" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
+                        [name: "groupStatus", title: MessageHelper.message( "aip.common.status" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
+                        [name: "folderName", title: MessageHelper.message( "aip.common.folder" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
+                        [name: "groupActivityDate", title: MessageHelper.message( "aip.common.activity.date" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
+                        [name: "groupUserId", title: MessageHelper.message( "aip.common.last.updated.by" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0]
+                ]
         ]
 
         resultMap

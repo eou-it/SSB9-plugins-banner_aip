@@ -78,7 +78,7 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testGroupFolderSortNameAsc() {
         def results = GroupFolderReadOnly.fetchWithPagingAndSortParams(
-                [params: [name: "%"]],
+                [name: "%"],
                 [sortColumn: "groupTitle", sortAscending: true, max: 10, offset: 0] )
 
         assertEquals( 10, results.size() )
@@ -88,7 +88,7 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testGroupFolderSortNameDesc() {
         def results = GroupFolderReadOnly.fetchWithPagingAndSortParams(
-                [params: [name: "%"]],
+                [name: "%"],
                 [sortColumn: "groupTitle", sortAscending: false, max: 10, offset: 0] )
 
         assertEquals( 10, results.size() )
@@ -98,7 +98,7 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testGroupFolderSortSecondaryAsc() {
         def results = GroupFolderReadOnly.fetchWithPagingAndSortParams(
-                [params: [name: "%"]],
+                [name: "%"],
                 [sortColumn: "groupStatus", sortAscending: true, max: 50, offset: 0] )
 
         def foundActive = false
@@ -138,7 +138,7 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testGroupFolderSortSecondaryDesc() {
         def results = GroupFolderReadOnly.fetchWithPagingAndSortParams(
-                [params: [name: "%"]],
+                [name: "%"],
                 [sortColumn: "groupStatus", sortAscending: false, max: 50, offset: 0] )
         def foundActive = false
         def foundInactive = false
