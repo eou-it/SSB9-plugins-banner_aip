@@ -121,9 +121,6 @@ class ActionItemPostCompositeService {
                 postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
                 postingScheduleDateTime: requestMap.scheduled ? actionItemProcessingCommonService.convertToLocaleBasedDate(
                         requestMap.scheduledStartDate ) : null,
-                //postingDisplayStartDate: requestMap.displayStartDate,
-                //postingDisplayEndDate: requestMap.displayEndDate,
-                //postingScheduleDateTime: null, //TODO ENABLE if needed for test
                 postingCreationDateTime: new Date(),
                 populationRegenerateIndicator: false,
                 postingDeleteIndicator: false,
