@@ -148,6 +148,12 @@ class ActionItemPostReadOnly implements Serializable {
     Long groupFolderId
 
     /**
+     * GROUP FOLDER NAME: folder Name selected for the Action Item Group.
+     */
+    @Column(name = "ACTION_GROUP_GCRFLDR_NAME")
+    String groupFolderName
+
+    /**
      * GROUP NAME: Name for the action Item Group for Group management control.
      */
     @Column(name = "ACTION_GROUP_NAME")
