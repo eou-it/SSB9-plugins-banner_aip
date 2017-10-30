@@ -54,7 +54,7 @@ class ActionItemPostDetail implements Serializable {
     /**
      * ACTIVITY DATE: Date that record was created or last updated.
      */
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "GCRAPST_ACTIVITY_DATE")
     Date lastModified
 

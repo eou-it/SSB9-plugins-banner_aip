@@ -111,9 +111,12 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         requestMap.postGroupId = actionItemGroup.id
         requestMap.postNow = false
         requestMap.recalculateOnPost = false
-        requestMap.scheduledStartDate = testingFormat.format( twoMinutesFromNow )
-        requestMap.displayStartDate = testingFormat.format( new Date() )
-        requestMap.displayEndDate = testingFormat.format( new Date() + 50 )
+        //requestMap.scheduledStartDate = testingFormat.format( twoMinutesFromNow )
+        //requestMap.displayStartDate = testingFormat.format( new Date() )
+        //requestMap.displayEndDate = testingFormat.format( new Date() + 50 )
+        requestMap.scheduledStartDate = twoMinutesFromNow
+        requestMap.displayStartDate = new Date() + 1
+        requestMap.displayEndDate = new Date() + 50
         requestMap.actionItemIds = actionItemIds
         groupSend = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
         assertNotNull( groupSend )
@@ -123,12 +126,12 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         assertTrue ActionItemPostWork.fetchByGroupSend(groupSend).size(  ) == 0
         assertTrue ActionItemPost.findAllByPostingName('testPostByPopulationSendInTwoMinutes').size() == 1
 
-        // ok, this should pass within db entries within 60 seconds
+        // ok, this should pass with db entries in about 60 seconds
         def checkExpectedGroupSendItemsCreated = {
             ActionItemPost each = ActionItemPost.get( it )
             return ActionItemPostWork.fetchByGroupSend( each ).size() == 5
         }
-        assertTrueWithRetry( checkExpectedGroupSendItemsCreated, groupSend.id, 15, 5 )
+        assertTrueWithRetry( checkExpectedGroupSendItemsCreated, groupSend.id, 15, 10 )
 
         boolean isComplete = sleepUntilPostItemsComplete( groupSend, 60 )
         assertTrue( "items not completed", isComplete )

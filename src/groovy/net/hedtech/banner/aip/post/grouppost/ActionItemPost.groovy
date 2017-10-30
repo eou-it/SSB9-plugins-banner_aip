@@ -82,21 +82,21 @@ class ActionItemPost implements Serializable {
     /**
      * POSTING DISPLAY START DATE: Display Start Date of Action Item Posting.
      */
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "GCBAPST_DISPLAY_START_DATE")
     Date postingDisplayStartDate
 
     /**
      * POSTING DISPLAY END DATE: Display End Date of Action Item Posting.
      */
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "GCBAPST_DISPLAY_END_DATE")
     Date postingDisplayEndDate
 
     /**
      * POSTING SCHEDULE DATE TIME: Date time of action item posting schedule.
      */
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "GCBAPST_SCHEDULED_DATETIME")
     Date postingScheduleDateTime
 
@@ -109,7 +109,7 @@ class ActionItemPost implements Serializable {
     /**
      * POSTING SCHEDULE DATE TIME: The date and time the posting job is scheduled to be processed.
      */
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "GCBAPST_CREATION_DATETIME")
     Date postingCreationDateTime
 
@@ -181,7 +181,7 @@ class ActionItemPost implements Serializable {
     /**
      * ACTIVITY DATE: Date that record was created or last updated.
      */
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "GCBAPST_ACTIVITY_DATE")
     Date lastModified
 

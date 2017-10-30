@@ -96,7 +96,7 @@ class ActionItemPostCompositeService {
                 assert (groupSendSaved.populationCalculationId != null)
             }
             groupSendSaved = schedulePostImmediately( groupSendSaved, user.oracleUserName )
-        } else if (requestMap.scheduled) {
+        } else if (requestMap.scheduledStartDate) {
             groupSendSaved = schedulePost( groupSendSaved, user.oracleUserName )
         }
         success = true
@@ -117,10 +117,13 @@ class ActionItemPostCompositeService {
                 populationListId: requestMap.populationId,
                 postingActionItemGroupId: requestMap.postGroupId,
                 postingName: requestMap.name,
-                postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
-                postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
-                postingScheduleDateTime: requestMap.scheduledStartDate ? actionItemProcessingCommonService.convertToLocaleBasedDate(
-                        requestMap.scheduledStartDate ) : null,
+                //postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
+                //postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
+                //postingScheduleDateTime: requestMap.scheduledStartDate ? actionItemProcessingCommonService.convertToLocaleBasedDate(
+                //        requestMap.scheduledStartDate ) : null,
+                postingDisplayStartDate: requestMap.displayStartDate,
+                postingDisplayEndDate: requestMap.displayEndDate,
+                postingScheduleDateTime: requestMap.scheduledStartDate,
                 postingCreationDateTime: new Date(),
                 populationRegenerateIndicator: false,
                 postingDeleteIndicator: false,
@@ -428,8 +431,8 @@ class ActionItemPostCompositeService {
 
 
     private ActionItemPost schedulePostImmediately( ActionItemPost groupSend, String bannerUser ) {
-        SchedulerJobContext jobContext = new SchedulerJobContext( groupSend.postingJobId != null ? groupSend.postingJobId : UUID.randomUUID().toString
-                () )
+        SchedulerJobContext jobContext = new SchedulerJobContext(
+                groupSend.postingJobId != null ? groupSend.postingJobId : UUID.randomUUID().toString() )
                 .setBannerUser( bannerUser )
                 .setMepCode( groupSend.vpdiCode )
                 .setJobHandle( "actionItemPostCompositeService", "generatePostItemsFired" )
@@ -449,7 +452,8 @@ class ActionItemPostCompositeService {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService.class, "invalidScheduledDate" )
         }
 
-        SchedulerJobContext jobContext = new SchedulerJobContext( groupSend.postingJobId )
+        SchedulerJobContext jobContext = new SchedulerJobContext(
+                groupSend.postingJobId != null ? groupSend.postingJobId : UUID.randomUUID().toString() )
                 .setBannerUser( bannerUser )
                 .setMepCode( groupSend.vpdiCode )
                 .setScheduledStartDate( groupSend.postingScheduleDateTime )
