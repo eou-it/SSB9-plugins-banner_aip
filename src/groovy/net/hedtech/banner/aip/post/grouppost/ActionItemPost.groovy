@@ -127,11 +127,11 @@ class ActionItemPost implements Serializable {
     @Enumerated(EnumType.STRING)
     ActionItemPostExecutionState postingCurrentState = ActionItemPostExecutionState.New
 
-    @Column(name = "GCBAPST_STARTED_DATE", nullable = true)
+    @Column(name = "GCBAPST_STARTED_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     Date postingStartedDate
 
-    @Column(name = "GCBAPST_STOP_DATE", nullable = true)
+    @Column(name = "GCBAPST_STOP_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     Date postingStopDate
 
@@ -217,6 +217,8 @@ class ActionItemPost implements Serializable {
         postingJobId( nullable: true, maxSize: 64 )
         populationCalculationId( nullable: true, maxSize: 19 )
         populationVersionId( nullable: true, maxSize: 19 )
+        postingStartedDate( nullable: true )
+        postingStopDate( nullable: true )
         postingErrorCode( nullable: true, maxSize: 256 )
         postingErrorText( nullable: true )
         postingGroupId( nullable: true, maxSize: 256 )
