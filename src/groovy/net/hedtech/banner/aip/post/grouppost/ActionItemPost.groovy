@@ -246,13 +246,13 @@ class ActionItemPost implements Serializable {
 
     void markStopped( Date stopDate = new Date() ) {
         assignPostExecutionState( ActionItemPostExecutionState.Stopped )
-        //this.postingStopDate = stopDate
+        this.postingStopDate = stopDate
     }
 
 
     void markComplete( Date stopDate = new Date() ) {
         assignPostExecutionState( ActionItemPostExecutionState.Complete )
-        //this.postingStopDate = stopDate
+        this.postingStopDate = stopDate
     }
 
 
@@ -268,7 +268,7 @@ class ActionItemPost implements Serializable {
         assignPostExecutionState( ActionItemPostExecutionState.Error )
         this.postingErrorCode = errorCode
         this.postingErrorText = errorText
-        //this.postingStopDate = postingStopDate
+        this.postingStopDate = postingStopDate
     }
 
 
