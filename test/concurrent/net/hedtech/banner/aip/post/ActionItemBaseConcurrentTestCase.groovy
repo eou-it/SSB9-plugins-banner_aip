@@ -80,7 +80,7 @@ class ActionItemBaseConcurrentTestCase extends Assert {
 
     @After
     public void tearDown() {
-        //deleteAll()
+        deleteAll()
         defaultTearDown()
     }
 
@@ -153,25 +153,6 @@ class ActionItemBaseConcurrentTestCase extends Assert {
                 sql.executeUpdate("Delete from GCRQRTZ_JOB_DETAILS")
                 sql.executeUpdate("Delete from GCRQRTZ_LOCKS")
                 sql.executeUpdate("Delete from GCRQRTZ_SCHEDULER_STATE")
-                /*
-                sql.executeUpdate("Delete from GCRLETM")
-                sql.executeUpdate("Delete from GCRMITM")
-                sql.executeUpdate("Delete from GCREITM")
-                sql.executeUpdate("Delete from GCRCITM")
-                sql.executeUpdate("Delete from GCRMINT")
-                sql.executeUpdate("Delete from GCBCJOB")
-                sql.executeUpdate("Delete from GCRFVAL")
-                sql.executeUpdate("Delete from GCBRDAT")
-                sql.executeUpdate("Delete from GCRGSIM")
-                sql.executeUpdate("Delete from GCBGSND")
-                sql.executeUpdate("Delete from GCRTPFL")
-                sql.executeUpdate("Delete from GCBEMTL")
-                sql.executeUpdate("Delete from GCBMNTL")
-                sql.executeUpdate("Delete from GCBLTPL")
-                sql.executeUpdate("Delete from GCBTMPL")
-                sql.executeUpdate("Delete from GCRFLPM")
-                sql.executeUpdate("Delete from GCRCFLD")
-                */
                 sql.executeUpdate("Delete from GCRLENT")
                 sql.executeUpdate("Delete from GCRPQID")
                 sql.executeUpdate("Delete from GCRPVID")
@@ -181,14 +162,7 @@ class ActionItemBaseConcurrentTestCase extends Assert {
                 sql.executeUpdate("Delete from GCBPOPL")
                 sql.executeUpdate("Delete from GCRQRYV")
                 sql.executeUpdate("Delete from GCBQURY")
-                /*
-                sql.executeUpdate("Delete from GCRITPE")
-                sql.executeUpdate("Delete from GCRPARM")
-                sql.executeUpdate("DELETE FROM gcrfldr WHERE NOT EXISTS (SELECT a.gcbactm_gcrfldr_id FROM gcbactm a WHERE a.gcbactm_gcrfldr_id = gcrfldr_surrogate_id)")
-                sql.executeUpdate("Delete from GCRORAN")
-                sql.executeUpdate("Delete from GCBSPRP")
-                sql.executeUpdate( "Delete from GCRMBAC" )
-                */
+                sql.executeUpdate( "DELETE FROM gcrfldr WHERE gcrfldr_name = \'ActionItemPostCompositeServiceTests\'" )
                 sql.executeUpdate( "Delete from GCRAIIM" )
                 sql.executeUpdate( "Delete from GCRAPST" )
                 sql.executeUpdate( "Delete from GCBAPST" )

@@ -76,6 +76,8 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         actionItemGroupNewList.folderId = actionItemGroup.folderId
         actionItemGroupNewList.description = actionItemGroup.description
         actionItemGroupNewList.postingInd = actionItemGroup.postingInd
+        actionItemGroupNewList.lastModifiedBy = actionItemGroup.lastModifiedBy
+        actionItemGroupNewList.lastModified = actionItemGroup.lastModified
         actionItemGroupNewList.status = actionItemGroup.status
 
         def result = actionItemGroupNewList.equals( actionItemGroup )

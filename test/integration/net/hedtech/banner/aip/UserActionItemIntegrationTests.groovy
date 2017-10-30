@@ -268,7 +268,10 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         userActionItemNewList.groupId = userActionItem.groupId
         userActionItemNewList.creatorId = userActionItem.creatorId
         userActionItemNewList.createDate = userActionItem.createDate
-
+        userActionItemNewList.lastModifiedBy = userActionItem.lastModifiedBy
+        userActionItemNewList.lastModified = userActionItem.lastModified
+        userActionItemNewList.version = userActionItem.version
+        userActionItemNewList.dataOrigin = userActionItem.dataOrigin
 
         def result = userActionItemNewList.equals( userActionItem )
         assertTrue result

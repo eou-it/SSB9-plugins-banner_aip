@@ -119,6 +119,8 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
         long actionItemStatusListVersion = actionItemStatusList.version
         actionItemStatusNewList.id = actionItemStatusListId
         actionItemStatusNewList.version = actionItemStatusListVersion
+        actionItemStatusNewList.lastModifiedBy = actionItemStatusList.lastModifiedBy
+        actionItemStatusNewList.lastModified = actionItemStatusList.lastModified
 
         def result = actionItemStatusList.equals( actionItemStatusList )
         assertTrue result
