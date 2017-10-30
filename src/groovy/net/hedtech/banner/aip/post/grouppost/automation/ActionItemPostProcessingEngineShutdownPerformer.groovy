@@ -16,14 +16,14 @@ import org.springframework.beans.factory.annotation.Required
  */
 public class ActionItemPostProcessingEngineShutdownPerformer implements TearDownPerformer {
 
-    private AsynchronousTaskProcessingEngine jobProcessingEngine;
+    private AsynchronousTaskProcessingEngine jobProcessingEngine
 
 
     /**
      * Performs tear down activities.
      */
     public void execute() throws Exception {
-        jobProcessingEngine.stopRunning();
+        jobProcessingEngine.stopRunning()
     }
 
 
@@ -32,7 +32,7 @@ public class ActionItemPostProcessingEngineShutdownPerformer implements TearDown
      */
     @Required
     public void setJobProcessingEngine( AsynchronousTaskProcessingEngine jobProcessingEngine ) {
-        this.jobProcessingEngine = jobProcessingEngine;
+        this.jobProcessingEngine = jobProcessingEngine
     }
 
 }

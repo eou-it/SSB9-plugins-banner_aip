@@ -56,14 +56,14 @@ class ActionItemPostMonitor implements DisposableBean {
 
 
     public void init() {
-        log.info("Initialized.");
+        log.info("Initialized.")
 
     }
 
 
     @Override
     void destroy() throws Exception {
-        log.info("Calling disposable bean method.");
+        log.info("Calling disposable bean method.")
         if (monitorThread) {
             monitorThread.stopRunning()
         }
@@ -73,18 +73,18 @@ class ActionItemPostMonitor implements DisposableBean {
     public void startMonitoring() {
         log.info("Monitor thread started.")
         if (!monitorThread) {
-            monitorThread = new ActionItemPostMonitorThread(this);
+            monitorThread = new ActionItemPostMonitorThread(this)
         }
-        monitorThread.start();
+        monitorThread.start()
     }
 
 
     public void shutdown() {
-        log.debug("Shutting down.");
+        log.debug("Shutting down.")
         if (monitorThread) {
-            monitorThread.stopRunning();
+            monitorThread.stopRunning()
             try {
-                this.monitorThread.join();
+                this.monitorThread.join()
             } catch (InterruptedException e) {
             }
         }
@@ -98,10 +98,10 @@ class ActionItemPostMonitor implements DisposableBean {
         asynchronousBannerAuthenticationSpoofer.authenticateAndSetFormContextForExecute()
         try {
             List<ActionItemPost> groupSendList = ActionItemPost.findRunning()
-            if (log.isDebugEnabled()) log.debug("Running group send count = " + groupSendList.size() + ".");
+            if (log.isDebugEnabled()) log.debug("Running group send count = " + groupSendList.size() + ".")
 
             for (ActionItemPost groupSend : groupSendList) {
-                if (log.isDebugEnabled()) log.debug("group send id = " + groupSend.id + ".");
+                if (log.isDebugEnabled()) log.debug("group send id = " + groupSend.id + ".")
                 if (groupSend.postingCurrentState.equals(ActionItemPostExecutionState.Processing)) {
                     int runningCount = ActionItemPostWork.fetchRunningGroupSendItemCount(groupSend)
                     if (runningCount == 0) {

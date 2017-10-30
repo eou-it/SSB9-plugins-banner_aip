@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -28,10 +28,11 @@ class ActionItemGroupService extends ServiceBase {
 
     //simple return of all action items
     def listActionItemGroups() {
-        return ActionItemGroup.fetchActionItemGroups( )
+        return ActionItemGroup.fetchActionItemGroups()
     }
 
-    def getActionItemGroupById(Long actionItemGroupId) {
+
+    def getActionItemGroupById( Long actionItemGroupId ) {
         return ActionItemGroup.fetchActionItemGroupById( actionItemGroupId )
     }
 
@@ -58,7 +59,7 @@ class ActionItemGroupService extends ServiceBase {
             throw new ApplicationException( ActionItemGroup, FOLDER_VALIDATION_ERROR, 'actionItemGroup.folder.validation.error' )
         }
 
-        if (ActionItemGroup.existsSameNameInFolder( aig.folderId, aig.name)) {
+        if (ActionItemGroup.existsSameNameInFolder( aig.folderId, aig.name )) {
             throw new ApplicationException( ActionItemGroup, UNIQUE_NAME_ERROR, 'actionItemGroup.name.unique.error' )
         }
     }

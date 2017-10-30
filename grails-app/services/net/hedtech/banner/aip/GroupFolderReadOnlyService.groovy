@@ -25,7 +25,20 @@ class GroupFolderReadOnlyService extends ServiceBase {
      * @return
      */
     def getActionItemGroupById( Long actionItemGroupId ) {
-        GroupFolderReadOnly.fetchGroupFoldersById( actionItemGroupId )
+        def groupRO = GroupFolderReadOnly.fetchGroupFoldersById( actionItemGroupId )
+        [
+                groupId          : groupRO.groupId[0],
+                groupTitle       : groupRO.groupTitle[0],
+                groupName        : groupRO.groupName[0],
+                groupStatus      : MessageHelper.message( "aip.status.${groupRO.groupStatus[0]}" ),
+                folderId         : groupRO.folderId[0],
+                folderName       : groupRO.folderName[0],
+                folderDesc       : groupRO.folderDesc[0],
+                groupUserId      : groupRO.groupUserId[0],
+                groupDesc        : groupRO.groupDesc[0],
+                groupActivityDate: groupRO.groupActivityDate[0],
+                groupVersion     : groupRO.groupVersion[0]
+        ]
     }
 
     /**Lists Group Folder count
@@ -63,15 +76,6 @@ class GroupFolderReadOnlyService extends ServiceBase {
         def resultMap = [
                 result: results,
                 length: resultCount,
-                header: [
-                        [name: "groupId", title: "id", options: [visible: false, isSortable: true]],
-                        [name: "groupName", title: MessageHelper.message( "aip.common.group.name" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
-                        [name: "groupTitle", title: MessageHelper.message( "aip.common.group.title" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
-                        [name: "groupStatus", title: MessageHelper.message( "aip.common.status" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
-                        [name: "folderName", title: MessageHelper.message( "aip.common.folder" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
-                        [name: "groupActivityDate", title: MessageHelper.message( "aip.common.activity.date" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
-                        [name: "groupUserId", title: MessageHelper.message( "aip.common.last.updated.by" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0]
-                ]
         ]
 
         resultMap

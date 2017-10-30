@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional
  * methods for manipulating group send item tasks.
  */
 class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
-    private final Log log = LogFactory.getLog(this.getClass());
+    private final Log log = LogFactory.getLog(this.getClass())
 
     def actionItemPostWorkProcessorService
 
@@ -27,19 +27,19 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
      * Used for testing purposes only.  If this is not null when a job is being
      * processed, that processing will throw this exception.
      */
-    private Exception simulatedFailureException;
+    private Exception simulatedFailureException
 
 
     public Class<ActionItemPostWork> getJobType() {
-        return ActionItemPostWork.class;
+        return ActionItemPostWork.class
     }
 
     public AsynchronousTask create( AsynchronousTask job) throws ApplicationException {
-        throw new NotImplementedException();
+        throw new NotImplementedException()
     }
 
     public void init() {
-        log.debug( "${this.getClass().getSimpleName()} initialized." );
+        log.debug( "${this.getClass().getSimpleName()} initialized." )
     }
 
     /**
@@ -49,9 +49,9 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
     @Transactional(rollbackFor = Throwable.class )
     public void delete( AsynchronousTask jobItem )  throws ApplicationException {
         ActionItemPostWork groupSendItem = jobItem as ActionItemPostWork
-        ActionItemPostWorkService.delete( groupSendItem );
+        ActionItemPostWorkService.delete( groupSendItem )
         if (log.isDebugEnabled()) {
-            log.debug( "GroupSendItemManagerImpl deleted group send item " + groupSendItem.getId() );
+            log.debug( "GroupSendItemManagerImpl deleted group send item " + groupSendItem.getId() )
         }
     }
 
@@ -62,7 +62,7 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
      */
     @Transactional(readOnly=true, rollbackFor = Throwable.class )
     public List getFailedJobs() {
-        throw new NotImplementedException();
+        throw new NotImplementedException()
     }
 
     // This method is called often from a polling thread, so it is imperative that
@@ -77,7 +77,7 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
         log.debug( "Getting pending jobs" )
         List<ActionItemPostWork> result = ActionItemPostWork.fetchByExecutionState( ActionItemPostWorkExecutionState.Ready, max )
         log.debug( "Found " + result.size() + " jobs." )
-        return result;
+        return result
     }
 
     public boolean acquire( AsynchronousTask task ) throws ApplicationException {
@@ -85,7 +85,7 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
             ActionItemPostWork groupSendItem = task as ActionItemPostWork
             log.info( "Acquired group send item id = " + groupSendItem.getId() + ", pidm = " + groupSendItem.recipientPidm + "." )
         }
-        return true;
+        return true
     }
 
 
@@ -115,23 +115,23 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
 
         try {
             if (simulatedFailureException != null) {
-                throw simulatedFailureException;
+                throw simulatedFailureException
             }
 
-            actionItemPostWorkProcessorService.performPostItem( actionItemWorkTask );
+            actionItemPostWorkProcessorService.performPostItem( actionItemWorkTask )
 
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.debug( "GroupSendItemManagerImpl.process caught exception " + e.getMessage(), e );
+                log.debug( "GroupSendItemManagerImpl.process caught exception " + e.getMessage(), e )
             }
 
             // we MUST re-throw as the thread which invoked this method must
             // mark the job as failed by using another thread (as the
             // thread associated with this thread will likely be rolled back)
             if (e instanceof ApplicationException) {
-                throw (ApplicationException) e;
+                throw (ApplicationException) e
             } else {
-                throw new RuntimeException( e );
+                throw new RuntimeException( e )
             }
         }
     }
@@ -145,9 +145,9 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
     @Transactional(propagation=Propagation.REQUIRES_NEW, rollbackFor = Throwable.class )
     public void markFailed( AsynchronousTask task, String errorCode, Throwable cause ) throws ApplicationException {
         ActionItemPostWork groupSendItem = (ActionItemPostWork) task
-        actionItemPostWorkProcessorService.failGroupSendItem( groupSendItem.getId(), errorCode, StringHelper.stackTraceToString( cause ) );
+        actionItemPostWorkProcessorService.failGroupSendItem( groupSendItem.getId(), errorCode, StringHelper.stackTraceToString( cause ) )
         if (log.isDebugEnabled()) {
-            log.debug( "GroupSendItemManager.markFailed(task=" + groupSendItem.getId() + ") has marked the task as failed " );
+            log.debug( "GroupSendItemManager.markFailed(task=" + groupSendItem.getId() + ") has marked the task as failed " )
         }
     }
 
@@ -173,7 +173,7 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
      * @param cause the exception to throw when processing a job
      */
     public void setSimulatedFailureException( Exception cause ) {
-        this.simulatedFailureException = cause;
+        this.simulatedFailureException = cause
     }
 
 }

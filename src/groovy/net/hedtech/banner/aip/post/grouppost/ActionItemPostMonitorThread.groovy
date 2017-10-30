@@ -11,7 +11,7 @@ import org.apache.log4j.Logger
  */
 class ActionItemPostMonitorThread extends Thread {
 
-    private boolean keepRunning = true;
+    private boolean keepRunning = true
     private ActionItemPostMonitor monitor
     private static final log = Logger.getLogger(ActionItemPostMonitorThread.class)
 
@@ -23,11 +23,11 @@ class ActionItemPostMonitorThread extends Thread {
     @Override
     public void run() {
         while (keepRunning) {
-            monitorPosts();
+            monitorPosts()
             long nextMonitorTime = System.currentTimeMillis() + monitor.monitorIntervalInSeconds * 1000
             synchronized (this) {
                 try {
-                    while (System.currentTimeMillis() < nextMonitorTime) wait( monitor.monitorIntervalInSeconds * 1000);
+                    while (System.currentTimeMillis() < nextMonitorTime) wait( monitor.monitorIntervalInSeconds * 1000)
                 } catch (InterruptedException e) {
                 }
             }
@@ -35,9 +35,9 @@ class ActionItemPostMonitorThread extends Thread {
     }
 
     void stopRunning() {
-        keepRunning = false;
+        keepRunning = false
         synchronized (this) {
-            notify();
+            notify()
         }
     }
 
@@ -48,7 +48,7 @@ class ActionItemPostMonitorThread extends Thread {
                 try {
                     monitor.monitorPosts()
                 } catch (Throwable t) {
-                    log.error( "Exception monitoring posts", t );
+                    log.error( "Exception monitoring posts", t )
                 }
             }
         } finally {

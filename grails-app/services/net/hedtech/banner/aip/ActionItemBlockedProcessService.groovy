@@ -21,10 +21,6 @@ class ActionItemBlockedProcessService extends ServiceBase {
         ConfigurationData.name = 'registerForClasses'
         ConfigurationData.type = 'json/aipBlock'
         ConfigurationData.value = '{"aipBlock": {"processNamei18n":"aip.blocked.process.name.register.for.classes","urls":["/ssb/term/termSelection?mode=registration" ] }}'
-        ConfigurationData.version='1'
-        ConfigurationData.lastModifiedBy = 'CSRADM001'
-        ConfigurationData.dataOrigin = 'GRAILS'
-        ConfigurationData.lastModified= '01-JAN-2017'
 
 
         return [ConfigurationData]
@@ -38,10 +34,6 @@ class ActionItemBlockedProcessService extends ServiceBase {
         ConfigurationData.name = 'registerForClasses'
         ConfigurationData.type = 'json/aipBlock'
         ConfigurationData.value = '{"aipBlock": {"processNamei18n":"aip.blocked.process.name.register.for.classes","urls":["/ssb/term/termSelection?mode=registration" ] }}'
-        ConfigurationData.version='1'
-        ConfigurationData.lastModifiedBy = 'CSRADM001'
-        ConfigurationData.dataOrigin = 'GRAILS'
-        ConfigurationData.lastModified= '01-JAN-2017'
 
 
         def configData = ConfigurationData

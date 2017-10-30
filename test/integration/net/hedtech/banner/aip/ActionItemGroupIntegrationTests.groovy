@@ -77,10 +77,6 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         actionItemGroupNewList.description = actionItemGroup.description
         actionItemGroupNewList.postingInd = actionItemGroup.postingInd
         actionItemGroupNewList.status = actionItemGroup.status
-        actionItemGroupNewList.userId = actionItemGroup.userId
-        actionItemGroupNewList.activityDate = actionItemGroup.activityDate
-        actionItemGroupNewList.version = actionItemGroup.version
-        actionItemGroupNewList.dataOrigin = actionItemGroup.dataOrigin
 
         def result = actionItemGroupNewList.equals( actionItemGroup )
         assertTrue result
@@ -105,8 +101,6 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         actionItemGroupNewList.description = actionItemGroup.description
         actionItemGroupNewList.postingInd = actionItemGroup.postingInd
         actionItemGroupNewList.status = actionItemGroup.status
-        actionItemGroupNewList.userId = actionItemGroup.userId
-        actionItemGroupNewList.activityDate = actionItemGroup.activityDate
         actionItemGroupNewList.version = actionItemGroup.version
         actionItemGroupNewList.dataOrigin = actionItemGroup.dataOrigin
 
@@ -141,8 +135,6 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         actionItemGroupNewList.description = actionItemGroup.description
         actionItemGroupNewList.postingInd = actionItemGroup.postingInd
         actionItemGroupNewList.status = actionItemGroup.status
-        actionItemGroupNewList.userId = actionItemGroup.userId
-        actionItemGroupNewList.activityDate = actionItemGroup.activityDate
         actionItemGroupNewList.version = actionItemGroup.version
         actionItemGroupNewList.dataOrigin = actionItemGroup.dataOrigin
 
@@ -164,8 +156,6 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         actionItemGroupNewList.description = actionItemGroup.description
         actionItemGroupNewList.postingInd = actionItemGroup.postingInd
         actionItemGroupNewList.status = "pendingstatusoverthe30characterlimit"
-        actionItemGroupNewList.userId = actionItemGroup.userId
-        actionItemGroupNewList.activityDate = actionItemGroup.activityDate
         actionItemGroupNewList.version = actionItemGroup.version
         actionItemGroupNewList.dataOrigin = actionItemGroup.dataOrigin
 

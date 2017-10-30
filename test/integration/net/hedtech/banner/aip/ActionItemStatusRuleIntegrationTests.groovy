@@ -82,10 +82,7 @@ class ActionItemStatusRuleIntegrationTests extends BaseIntegrationTestCase {
                 seqOrder: actionItemStatusRule.seqOrder,
                 actionItemStatusId: actionItemStatusRule.actionItemStatusId,
                 resubmitInd: actionItemStatusRule.resubmitInd,
-                labelText: actionItemStatusRule.labelText,
-                activityDate: actionItemStatusRule.activityDate,
-                userId: actionItemStatusRule.userId,
-                dataOrigin: actionItemStatusRule.dataOrigin
+                labelText: actionItemStatusRule.labelText
         )
         newActionItemStatusRule.id = actionItemStatusRule.id
         newActionItemStatusRule.version = actionItemStatusRule.version

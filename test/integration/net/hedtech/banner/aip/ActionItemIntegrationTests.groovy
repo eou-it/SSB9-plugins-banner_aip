@@ -63,16 +63,13 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         def actionItem = actionItems[0]
         def actionItemNew = new ActionItem(
                 status: actionItem.status,
-                activityDate: actionItem.activityDate,
                 createDate: actionItem.createDate,
                 creatorId: actionItem.creatorId,
-                dataOrigin: actionItem.dataOrigin,
                 folderId: actionItem.folderId,
                 description: actionItem.description,
                 postedIndicator: actionItem.postedIndicator,
                 name: actionItem.name,
-                title: actionItem.title,
-                userId: actionItem.userId )
+                title: actionItem.title)
         long actionItemListId = actionItem.id
         long actionItemListVersion = actionItem.version
         actionItemNew.id = actionItemListId
@@ -104,8 +101,6 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         actionNew.name = actionItem.name
         actionNew.folderId = actionItem.folderId
         actionNew.status = actionItem.status
-        actionNew.userId = actionItem.userId
-        actionNew.activityDate = actionItem.activityDate
         actionNew.description = actionItem.description
         actionNew.creatorId = actionItem.creatorId
         actionNew.createDate = actionItem.createDate
@@ -124,8 +119,6 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         actionNew.title = null
         actionNew.folderId = actionItem.folderId
         actionNew.status = actionItem.status
-        actionNew.userId = actionItem.userId
-        actionNew.activityDate = actionItem.activityDate
         actionNew.description = actionItem.description
         actionNew.creatorId = actionItem.creatorId
         actionNew.createDate = actionItem.createDate
@@ -147,8 +140,6 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         actionNew.title = 'a title f984h'
         actionNew.folderId = actionItem.folderId
         actionNew.status = null
-        actionNew.userId = actionItem.userId
-        actionNew.activityDate = actionItem.activityDate
         actionNew.description = actionItem.description
         actionNew.creatorId = actionItem.creatorId
         actionNew.createDate = actionItem.createDate
@@ -169,8 +160,6 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         actionNew.title = 'a title f984h'
         actionNew.folderId = null
         actionNew.status = 'Pending'
-        actionNew.userId = actionItem.userId
-        actionNew.activityDate = actionItem.activityDate
         actionNew.description = actionItem.description
         actionNew.creatorId = actionItem.creatorId
         actionNew.createDate = actionItem.createDate
@@ -191,8 +180,6 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         actionNew.title = ''
         actionNew.folderId = actionItem.folderId
         actionNew.status = actionItem.status
-        actionNew.userId = actionItem.userId
-        actionNew.activityDate = actionItem.activityDate
         actionNew.description = actionItem.description
         actionNew.creatorId = actionItem.creatorId
         actionNew.createDate = actionItem.createDate

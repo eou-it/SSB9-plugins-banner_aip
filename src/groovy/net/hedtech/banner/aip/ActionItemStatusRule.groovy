@@ -95,13 +95,13 @@ class ActionItemStatusRule implements Serializable {
      * User action item status rule was last updated by
      */
     @Column(name = "GCRAISR_USER_ID")
-    String userId
+    String lastModifiedBy
 
     /***
      * Last activity date for the action item status rule
      */
     @Column(name = "GCRAISR_ACTIVITY_DATE")
-    Date activityDate
+    Date lastModified
 
     /***
      * Data Origin column for GCRAISR
@@ -115,8 +115,8 @@ class ActionItemStatusRule implements Serializable {
         labelText( blank: false, nullable: false, maxSize: 150 )
         actionItemStatusId( blank: true, nullable: true, maxSize: 19 )
         resubmitInd( blank: true, nullable: true, maxSize: 1 )
-        userId( blank: false, nullable: false, maxSize: 30 )
-        activityDate( blank: false, nullable: false, maxSize: 30 )
+        lastModifiedBy( blank: false, nullable: true, maxSize: 30 )
+        lastModified( blank: false, nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 30 )
         version( nullable: true, maxSize: 30 )
     }

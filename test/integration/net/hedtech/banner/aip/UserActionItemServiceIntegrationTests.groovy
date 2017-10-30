@@ -14,8 +14,6 @@ import org.junit.Test
 
 class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
-    def actionItemService
-
     def userActionItemService
 
 
@@ -68,8 +66,6 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         userActionItem.displayStartDate = existingUserActionItem.displayStartDate + 1
         userActionItem.displayEndDate = existingUserActionItem.displayEndDate
         userActionItem.groupId = existingUserActionItem.groupId
-        userActionItem.userId = existingUserActionItem.userId
-        userActionItem.activityDate = new Date()
         userActionItem.creatorId = existingUserActionItem.creatorId
         userActionItem.createDate = new Date()
         userActionItem.dataOrigin = existingUserActionItem.dataOrigin
@@ -101,8 +97,6 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         userActionItem.displayStartDate = startDate
         userActionItem.displayEndDate = endDate
         userActionItem.groupId = existingUserActionItem.groupId
-        userActionItem.userId = existingUserActionItem.userId
-        userActionItem.activityDate = new Date()
         userActionItem.creatorId = existingUserActionItem.creatorId
         userActionItem.createDate = new Date()
         userActionItem.dataOrigin = existingUserActionItem.dataOrigin

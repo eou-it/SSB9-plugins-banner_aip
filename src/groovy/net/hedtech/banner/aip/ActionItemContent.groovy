@@ -87,8 +87,8 @@ class ActionItemContent implements Serializable {
         actionItemId( nullable: false, maxSize: 19 )
         text( nullable: true )
         actionItemTemplateId( nullable: true )
-        lastModifiedby( nullable: false, maxSize: 30 )
-        lastModified( nullable: false )
+        lastModifiedby( nullable: true, maxSize: 30 )
+        lastModified( nullable: true )
         version( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 19 )
     }

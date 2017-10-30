@@ -80,8 +80,8 @@ class ActionItemPostDetail implements Serializable {
         version( nullable: true, maxSize: 19 )
         actionItemPostId( nullable: false, maxSize: 19 )
         actionItemId( nullable: false, maxSize: 19 )
-        lastModified( nullable: false )
-        lastModifiedBy( nullable: false, maxSize: 30 )
+        lastModified( nullable: true )
+        lastModifiedBy( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 30 )
         vpdiCode( nullable: true, maxSize: 6 )
     }

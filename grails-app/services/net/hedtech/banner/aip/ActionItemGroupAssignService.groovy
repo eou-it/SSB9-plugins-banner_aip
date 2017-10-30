@@ -35,9 +35,7 @@ class ActionItemGroupAssignService  extends ServiceBase  {
                 assign = new ActionItemGroupAssign(
                         groupId: groupId,
                         actionItemId: assignment.actionItemId,
-                        seqNo: assignment.seq,
-                        activityDate: new Date(),
-                        userId: aipUser.username
+                        seqNo: assignment.seq
                 )
             }
             assignList.push(assign)
