@@ -83,13 +83,13 @@ class ActionItemPostCompositeService {
         ActionItemPost groupSendSaved = actionItemPostService.create( groupSend )
         // Create the details records.
         requestMap.actionItemIds.each {
-            addPostingDetail( it, groupSendSaved.id, user )
+            addPostingDetail( it, groupSendSaved.id )
             if (requestMap.postNow) {
-                markActionItemPosted( it, user )
+                markActionItemPosted( it )
             }
         }
         if (requestMap.postNow) {
-            markActionItemGroupPosted( groupSendSaved.postingActionItemGroupId, user )
+            markActionItemGroupPosted( groupSendSaved.postingActionItemGroupId )
         }
         if (requestMap.postNow) {
             if (hasQuery) {
@@ -136,7 +136,7 @@ class ActionItemPostCompositeService {
      * @param user
      * @return
      */
-    private addPostingDetail( actionItemId, postingId, user ) {
+    private addPostingDetail( actionItemId, postingId ) {
         ActionItemPostDetail groupDetail = new ActionItemPostDetail(
                 actionItemPostId: postingId,
                 actionItemId: actionItemId
@@ -150,7 +150,7 @@ class ActionItemPostCompositeService {
      * @param user
      * @return
      */
-    private markActionItemPosted( actionItemId, user ) {
+    private markActionItemPosted( actionItemId ) {
         ActionItem actionItem = actionItemService.get( actionItemId )
         actionItem.postedIndicator = AIPConstants.YES_IND
         actionItemService.update( actionItem )
@@ -162,7 +162,7 @@ class ActionItemPostCompositeService {
      * @param user
      * @return
      */
-    private markActionItemGroupPosted( actionItemGroupId, user ) {
+    private markActionItemGroupPosted( actionItemGroupId ) {
         ActionItemGroup actionItemGroup = actionItemGroupService.get( actionItemGroupId )
         actionItemGroup.postingInd = AIPConstants.YES_IND
         actionItemGroupService.update( actionItemGroup )
@@ -274,7 +274,7 @@ class ActionItemPostCompositeService {
         stopPendingActionItemJobs( groupSend.id )
         stopPendingPostItems( groupSend.id )
 
-        return groupSend
+        groupSend
     }
 
     /**
@@ -286,7 +286,7 @@ class ActionItemPostCompositeService {
         LoggerUtility.debug( LOGGER, "Completing group send with id = " + groupSendId + "." )
         ActionItemPost aGroupSend = (ActionItemPost) actionItemPostService.get( groupSendId )
         aGroupSend.markComplete()
-        return savePost( aGroupSend )
+        savePost( aGroupSend )
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -299,17 +299,17 @@ class ActionItemPostCompositeService {
 
 
     ActionItemPost calculatePopulationVersionForPostFailed( SchedulerErrorContext errorContext ) {
-        return scheduledPostCallbackFailed( errorContext )
+        scheduledPostCallbackFailed( errorContext )
     }
 
 
     ActionItemPost generatePostItemsFired( SchedulerJobContext jobContext ) {
-        return generatePostItems( jobContext.parameters )
+        generatePostItems( jobContext.parameters )
     }
 
 
     ActionItemPost generatePostItemsFailed( SchedulerErrorContext errorContext ) {
-        return scheduledPostCallbackFailed( errorContext )
+        scheduledPostCallbackFailed( errorContext )
     }
 
 
@@ -327,7 +327,7 @@ class ActionItemPostCompositeService {
         }
         assert populationVersion.id
         groupSend.populationVersionId = populationVersion.id
-        return populationVersion
+        populationVersion
     }
 
 
@@ -347,7 +347,7 @@ class ActionItemPostCompositeService {
             groupSend.postingErrorCode = ActionItemErrorCode.UNKNOWN_ERROR
         }
         groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
-        return groupSend
+        groupSend
     }
 
     /**
@@ -398,7 +398,7 @@ class ActionItemPostCompositeService {
                 groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
             }
         }
-        return groupSend
+        groupSend
     }
 
     /**
@@ -423,7 +423,7 @@ class ActionItemPostCompositeService {
                 groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
             }
         }
-        return groupSend
+        groupSend
     }
 
 
@@ -439,7 +439,7 @@ class ActionItemPostCompositeService {
         SchedulerJobReceipt jobReceipt = schedulerJobService.scheduleNowServiceMethod( jobContext )
         groupSend.markQueued( jobReceipt.jobId, jobReceipt.groupId )
         groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
-        return groupSend
+        groupSend
     }
 
 
@@ -466,7 +466,7 @@ class ActionItemPostCompositeService {
         SchedulerJobReceipt jobReceipt = schedulerJobService.scheduleServiceMethod( jobContext )
         groupSend.markScheduled( jobReceipt.jobId, jobReceipt.groupId )
         groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
-        return groupSend
+        groupSend
     }
 
 
@@ -474,7 +474,7 @@ class ActionItemPostCompositeService {
         createPostItems( groupSend )
         groupSend.markProcessing()
         groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
-        return groupSend
+        groupSend
     }
 
 
