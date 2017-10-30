@@ -365,7 +365,8 @@ class ActionItemPostCompositeService {
         if (!groupSend) {
             throw new ApplicationException( "groupSend", new NotFoundException() )
         }
-
+        // TODO: this doesn't seem to be using the versioning mechanism properly. Just creates new
+        // TODO: not sure if this will work when we implement recurring
         if (!groupSend.postingCurrentState.isTerminal()) {
             try {
                 boolean shouldUpdateGroupSend = false
