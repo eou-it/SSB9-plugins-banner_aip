@@ -56,7 +56,7 @@ class ActionItemPostCompositeService {
      * @param requestMap the post to initiate
      */
     def sendAsynchronousPostItem( requestMap ) {
-        LoggerUtility.debug( LOGGER, "Method sendAsynchronousGroupActionItem reached." );
+        LoggerUtility.debug( LOGGER, "Method sendAsynchronousGroupActionItem reached." )
         actionItemPostService.preCreateValidation( requestMap )
         def user = springSecurityService.getAuthentication()?.user
         def success = false
@@ -543,7 +543,7 @@ class ActionItemPostCompositeService {
 
     // TODO: Taken and modified from BCM. Use Hibernate Batch Update or a function in the DB instead of big insert?
     private void createPostItems( ActionItemPost groupSend ) {
-        LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id );
+        LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id )
         def sql
         try {
             def ctx = ServletContextHolder.servletContext.getAttribute( GrailsApplicationAttributes.APPLICATION_CONTEXT )

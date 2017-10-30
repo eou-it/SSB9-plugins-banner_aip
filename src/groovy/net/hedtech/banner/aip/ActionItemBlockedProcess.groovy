@@ -5,7 +5,6 @@ package net.hedtech.banner.aip
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-import org.hibernate.FlushMode
 
 import javax.persistence.*
 
@@ -68,13 +67,13 @@ class ActionItemBlockedProcess implements Serializable {
      * User action item pertains to
      */
     @Column(name = "GCRABLK_USER_ID")
-    String blockUserId
+    String lastModifiedBy
 
     /**
      * Last activity date for the action item
      */
     @Column(name = "GCRABLK_ACTIVITY_DATE")
-    Date blockActivityDate
+    Date lastModified
 
     /**
      * Version of the action item: required for app
@@ -93,8 +92,8 @@ class ActionItemBlockedProcess implements Serializable {
         blockActionItemId( blank: false, nullable: false, maxSize: 19 )
         blockConfigName( blank: false, nullable: false, maxSize: 50 )
         blockConfigType( blank: false, nullable: false, maxSize: 30 )
-        blockUserId( blank: false, nullable: false, maxSize: 30 )
-        blockActivityDate( blank: false, nullable: false )
+        lastModifiedBy( blank: false, nullable: true, maxSize: 30 )
+        lastModified( blank: false, nullable: true )
         version( nullable: true )
         dataOrigin( nullable: true, maxSize: 30 )
     }

@@ -83,13 +83,13 @@ class ActionItemGroupAssign implements Serializable {
      */
 
     @Column(name = "GCRAGRA_ACTIVITY_DATE")
-    Date activityDate
+    Date lastModified
 
     /**
      * User ID of the person who inserted or last updated
      */
     @Column(name = "GCRAGRA_USER_ID")
-    String userId
+    String lastModifiedBy
 
     /**
      * Version
@@ -108,8 +108,8 @@ class ActionItemGroupAssign implements Serializable {
         groupId( blank: false, nullable: false, maxSize: 19 )
         actionItemId( blank: false, nullable: false, maxSize: 19)
         seqNo(blank: false, nullable: false, maxSize: 19)
-        userId( blank: false, nullable: false, maxSize: 30 )
-        activityDate( blank: false, nullable: false )
+        lastModifiedBy( blank: false, nullable: true, maxSize: 30 )
+        lastModified( blank: false, nullable: true )
         dataOrigin( nullable: true, maxSize: 19 )
     }
 
@@ -162,7 +162,7 @@ class ActionItemGroupAssign implements Serializable {
     static Boolean existsSameSeqNoInActionItem( Long groupId ) {
         def count
         ActionItem.withSession {session ->
-            session.setFlushMode( FlushMode.MANUAL );
+            session.setFlushMode( FlushMode.MANUAL )
             try {
                 count = session.getNamedQuery( 'ActionItemGroupAssign.existsSameSeqNoInActionItem' )
                         .setLong( 'groupId', groupId )

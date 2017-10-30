@@ -42,7 +42,7 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
         actionItemPostWork.actionItemGroupSend = aip
         actionItemPostWork.save()
         println actionItemPostWork
-        actionItemPostWorkProcessorService.performPostItem( actionItemPostWork );
+        actionItemPostWorkProcessorService.performPostItem( actionItemPostWork )
     }
 
 

@@ -3,6 +3,7 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import groovy.time.TimeCategory
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.ActionItemGroupAssign
 import net.hedtech.banner.aip.post.ActionItemBaseConcurrentTestCase
@@ -59,6 +60,94 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         super.tearDown()
 //        sessionFactory.currentSession?.close()
         logout()
+    }
+
+
+    @Test
+    void testPostByPopulationSchedule() {
+        println "testPostByPopulationSchedule"
+        ActionItemPost groupSend
+        //ActionItemGroup aig = actionItemGroupService
+        CommunicationPopulationQuery populationQuery = communicationPopulationQueryCompositeService.createPopulationQuery( newPopulationQuery(
+                "testPopForSchedTest" ) )
+        CommunicationPopulationQueryVersion queryVersion = communicationPopulationQueryCompositeService.publishPopulationQuery( populationQuery )
+        populationQuery = queryVersion.query
+
+        CommunicationPopulation population = communicationPopulationCompositeService.createPopulationFromQuery( populationQuery,
+                "testPopulationForSchedTest" )
+        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( population.id, 'BCMADMIN' )
+        assertEquals( populationCalculation.status, CommunicationPopulationCalculationStatus.PENDING_EXECUTION )
+        def isAvailable = {
+            def theCalculation = CommunicationPopulationCalculation.get( it )
+            theCalculation.refresh()
+            return theCalculation.status == CommunicationPopulationCalculationStatus.AVAILABLE
+        }
+        assertTrueWithRetry( isAvailable, populationCalculation.id, 15, 5 )
+
+        List queryAssociations = CommunicationPopulationVersionQueryAssociation.findByPopulationVersion( populationCalculation.populationVersion )
+        assertEquals( 1, queryAssociations.size() )
+
+        def selectionListEntryList = CommunicationPopulationSelectionListEntry.fetchBySelectionListId( populationCalculation.selectionList.id )
+        assertNotNull( selectionListEntryList )
+        assertEquals( 5, selectionListEntryList.size() )
+
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+        def actionItemGroup = actionItemGroups[0]
+
+        List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect { it.actionItemId }
+
+        def twoMinutesFromNow
+        use (TimeCategory) {
+            twoMinutesFromNow = new Date() + 2.minutes
+        }
+
+        println "now" + new Date()
+        println "future" + twoMinutesFromNow
+
+        def requestMap = [:]
+        requestMap.name = 'testPostByPopulationSendInTwoMinutes'
+        requestMap.populationId = population.id
+        requestMap.referenceId = UUID.randomUUID().toString()
+        requestMap.postGroupId = actionItemGroup.id
+        requestMap.postNow = false
+        requestMap.recalculateOnPost = false
+        requestMap.scheduledStartDate = testingFormat.format( twoMinutesFromNow )
+        requestMap.displayStartDate = testingFormat.format( new Date() )
+        requestMap.displayEndDate = testingFormat.format( new Date() + 50 )
+        requestMap.actionItemIds = actionItemIds
+        groupSend = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
+        assertNotNull( groupSend )
+
+        TimeUnit.SECONDS.sleep( 60 )
+        // ActionItemPost should exist. Work should not yet exist (2 minute future schedule)
+        assertTrue ActionItemPostWork.fetchByGroupSend(groupSend).size(  ) == 0
+        assertTrue ActionItemPost.findAllByPostingName('testPostByPopulationSendInTwoMinutes').size() == 1
+
+        // ok, this should pass within db entries within 60 seconds
+        def checkExpectedGroupSendItemsCreated = {
+            ActionItemPost each = ActionItemPost.get( it )
+            return ActionItemPostWork.fetchByGroupSend( each ).size() == 5
+        }
+        assertTrueWithRetry( checkExpectedGroupSendItemsCreated, groupSend.id, 15, 5 )
+
+        boolean isComplete = sleepUntilPostItemsComplete( groupSend, 60 )
+        assertTrue( "items not completed", isComplete )
+        // just a little more
+        TimeUnit.SECONDS.sleep( 5 )
+        int countCompleted = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Complete, groupSend ).size()
+        assertEquals( 5, countCompleted )
+
+        sleepUntilActionItemJobsComplete( 10 * 60 )
+        countCompleted = ActionItemJob.fetchCompleted().size()
+        assertEquals( 5, countCompleted )
+
+        sleepUntilPostComplete( groupSend, 3 * 60 )
+
+        // test delete group send
+        // TODO: send and assert for multiple action items in group
+        assertEquals( 1, fetchPostCount( groupSend.id ) )
+        assertEquals( 5, fetchPostItemCount( groupSend.id ) )
+        assertEquals( 5, ActionItemJob.findAll().size() )
     }
 
 
@@ -127,7 +216,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         boolean isComplete = sleepUntilPostItemsComplete( groupSend, 60 )
         assertTrue( "items not completed", isComplete )
         // just a little more
-        TimeUnit.SECONDS.sleep( 5 );
+        TimeUnit.SECONDS.sleep( 5 )
         int countCompleted = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Complete, groupSend ).size()
         assertEquals( 5, countCompleted )
 
@@ -172,7 +261,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         boolean isComplete2 = sleepUntilPostItemsComplete( groupSend, 60 )
         assertTrue( "items not completed", isComplete2 )
         // just a little more
-        TimeUnit.SECONDS.sleep( 5 );
+        TimeUnit.SECONDS.sleep( 5 )
         int countAgain2Completed = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Partial, groupSend2 )
                 .size()
         assertEquals( 5, countAgain2Completed )
@@ -210,7 +299,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         boolean isComplete3 = sleepUntilPostItemsComplete( groupSend, 60 )
         assertTrue( "items not completed", isComplete3 )
         // just a little more
-        TimeUnit.SECONDS.sleep( 5 );
+        TimeUnit.SECONDS.sleep( 5 )
         int countAgain3Completed = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Complete,
                 groupSend3 ).size()
         assertEquals( 5, countAgain3Completed )

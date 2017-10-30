@@ -20,16 +20,16 @@ class ActionItemPostWorkProcessorService {
     def actionItemPostWorkService
     def sessionFactory
 
-    private static final int noWaitErrorCode = 54;
+    private static final int noWaitErrorCode = 54
 
 
     public void performPostItem( ActionItemPostWork actionItemPostWork ) {
         def groupSendItemId = actionItemPostWork.id
         log.debug( "Performing group send item id = " + groupSendItemId )
-        boolean locked = lockGroupSendItem( groupSendItemId, ActionItemPostWorkExecutionState.Ready );
+        boolean locked = lockGroupSendItem( groupSendItemId, ActionItemPostWorkExecutionState.Ready )
         if (!locked) {
             // Do nothing
-            return;
+            return
         }
         actionItemPostWorkService.update( actionItemPerformPostService.postActionItems( actionItemPostWork ))
     }

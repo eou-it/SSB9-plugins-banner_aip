@@ -25,7 +25,20 @@ class GroupFolderReadOnlyService extends ServiceBase {
      * @return
      */
     def getActionItemGroupById( Long actionItemGroupId ) {
-        GroupFolderReadOnly.fetchGroupFoldersById( actionItemGroupId )
+        def groupRO = GroupFolderReadOnly.fetchGroupFoldersById( actionItemGroupId )
+        [
+                groupId          : groupRO.groupId[0],
+                groupTitle       : groupRO.groupTitle[0],
+                groupName        : groupRO.groupName[0],
+                groupStatus      : MessageHelper.message( "aip.status.${groupRO.groupStatus[0]}" ),
+                folderId         : groupRO.folderId[0],
+                folderName       : groupRO.folderName[0],
+                folderDesc       : groupRO.folderDesc[0],
+                groupUserId      : groupRO.groupUserId[0],
+                groupDesc        : groupRO.groupDesc[0],
+                groupActivityDate: groupRO.groupActivityDate[0],
+                groupVersion     : groupRO.groupVersion[0]
+        ]
     }
 
     /**Lists Group Folder count
