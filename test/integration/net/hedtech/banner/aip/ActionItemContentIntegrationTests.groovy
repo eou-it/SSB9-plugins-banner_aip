@@ -71,10 +71,6 @@ class ActionItemContentIntegrationTests extends BaseIntegrationTestCase {
         actionItemNewDetail.actionItemId = actionItemContent.actionItemId
         actionItemNewDetail.text = actionItemContent.text
         actionItemNewDetail.actionItemTemplateId = actionItemContent.actionItemTemplateId
-        actionItemNewDetail.lastModifiedby = actionItemContent.lastModifiedby
-        actionItemNewDetail.lastModified = actionItemContent.lastModified
-        actionItemNewDetail.version = actionItemContent.version
-        actionItemNewDetail.dataOrigin = actionItemContent.dataOrigin
         actionItemNewDetail.actionItemTemplateId = actionItemContent.actionItemTemplateId
 
         def result = actionItemNewDetail.equals( actionItemContent )

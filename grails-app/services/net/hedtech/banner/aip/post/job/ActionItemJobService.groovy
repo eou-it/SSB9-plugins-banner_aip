@@ -11,7 +11,7 @@ import org.apache.commons.logging.LogFactory
  *  DAO service interface for actionItem group send item objects.
  */
 class ActionItemJobService extends ServiceBase {
-    private final Log log = LogFactory.getLog(this.getClass());
+    private final Log log = LogFactory.getLog(this.getClass())
 
     def preCreate( domainModelOrMap ) {
         ActionItemJob job = (domainModelOrMap instanceof Map ? domainModelOrMap?.domainModel : domainModelOrMap) as ActionItemJob

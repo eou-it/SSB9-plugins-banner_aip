@@ -160,7 +160,7 @@ class ActionItem implements Serializable {
     static Boolean existsSameNameInFolder( Long folderId, String name ) {
         def count
         ActionItem.withSession {session ->
-            session.setFlushMode( FlushMode.MANUAL );
+            session.setFlushMode( FlushMode.MANUAL )
             try {
                 count = session.getNamedQuery( 'ActionItem.existsSameNameInFolder' )
                         .setString( 'name', name )

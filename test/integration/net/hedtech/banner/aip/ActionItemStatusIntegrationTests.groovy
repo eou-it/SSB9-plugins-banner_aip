@@ -111,18 +111,14 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
         def actionItemStatusList = actionItemStatuses[0]
         def actionItemStatusNewList = new ActionItemStatus(
                 actionItemStatus: actionItemStatusList.actionItemStatus,
-                actionItemStatusActivityDate: actionItemStatusList.actionItemStatusActivityDate,
                 actionItemStatusBlockedProcess: actionItemStatusList.actionItemStatusBlockedProcess,
                 actionItemStatusSystemRequired: actionItemStatusList.actionItemStatusSystemRequired,
-                actionItemStatusDataOrigin: actionItemStatusList.actionItemStatusDataOrigin,
-                actionItemStatusUserId: actionItemStatusList.actionItemStatusUserId,
-                actionItemStatusVersion: actionItemStatusList.actionItemStatusVersion,
                 actionItemStatusActive: actionItemStatusList.actionItemStatusActive,
                 actionItemStatusDefault: actionItemStatusList.actionItemStatusDefault )
         long actionItemStatusListId = actionItemStatusList.id
-        long actionItemStatusListVersion = actionItemStatusList.actionItemStatusVersion
+        long actionItemStatusListVersion = actionItemStatusList.version
         actionItemStatusNewList.id = actionItemStatusListId
-        actionItemStatusNewList.actionItemStatusVersion = actionItemStatusListVersion
+        actionItemStatusNewList.version = actionItemStatusListVersion
 
         def result = actionItemStatusList.equals( actionItemStatusList )
         assertTrue result
@@ -151,9 +147,7 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
         actionItemStatusNew.actionItemStatus = null
         actionItemStatusNew.actionItemStatusActive = "Y"
         actionItemStatusNew.actionItemStatusSystemRequired = "Y"
-        actionItemStatusNew.actionItemStatusActivityDate = new Date()
         actionItemStatusNew.actionItemStatusActive = "Y"
-        actionItemStatusNew.actionItemStatusUserId = "GRAILS"
 
         //
         assertFalse actionItemStatusNew.validate()
@@ -171,9 +165,7 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
         actionItemStatusNew.actionItemStatusBlockedProcess = null
         actionItemStatusNew.actionItemStatusActive = "Y"
         actionItemStatusNew.actionItemStatusSystemRequired = "Y"
-        actionItemStatusNew.actionItemStatusActivityDate = new Date()
         actionItemStatusNew.actionItemStatusActive = "Y"
-        actionItemStatusNew.actionItemStatusUserId = "GRAILS"
 
         //
         assertFalse actionItemStatusNew.validate()

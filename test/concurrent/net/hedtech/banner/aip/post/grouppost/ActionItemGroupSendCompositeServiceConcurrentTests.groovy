@@ -136,7 +136,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         boolean isComplete = sleepUntilPostItemsComplete( groupSend, 60 )
         assertTrue( "items not completed", isComplete )
         // just a little more
-        TimeUnit.SECONDS.sleep( 5 );
+        TimeUnit.SECONDS.sleep( 5 )
         int countCompleted = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Complete, groupSend ).size()
         assertEquals( 5, countCompleted )
 
@@ -219,7 +219,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         boolean isComplete = sleepUntilPostItemsComplete( groupSend, 60 )
         assertTrue( "items not completed", isComplete )
         // just a little more
-        TimeUnit.SECONDS.sleep( 5 );
+        TimeUnit.SECONDS.sleep( 5 )
         int countCompleted = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Complete, groupSend ).size()
         assertEquals( 5, countCompleted )
 
@@ -264,7 +264,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         boolean isComplete2 = sleepUntilPostItemsComplete( groupSend, 60 )
         assertTrue( "items not completed", isComplete2 )
         // just a little more
-        TimeUnit.SECONDS.sleep( 5 );
+        TimeUnit.SECONDS.sleep( 5 )
         int countAgain2Completed = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Partial, groupSend2 )
                 .size()
         assertEquals( 5, countAgain2Completed )
@@ -302,7 +302,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         boolean isComplete3 = sleepUntilPostItemsComplete( groupSend, 60 )
         assertTrue( "items not completed", isComplete3 )
         // just a little more
-        TimeUnit.SECONDS.sleep( 5 );
+        TimeUnit.SECONDS.sleep( 5 )
         int countAgain3Completed = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Complete,
                 groupSend3 ).size()
         assertEquals( 5, countAgain3Completed )

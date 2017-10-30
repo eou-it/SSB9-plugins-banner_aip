@@ -77,7 +77,7 @@ class ActionItemPost implements Serializable {
 
     @Column(name = "GCBAPST_DELETED")
     @Type(type = "yes_no")
-    boolean postingDeleteIndicator = false;
+    boolean postingDeleteIndicator = false
 
     /**
      * POSTING DISPLAY START DATE: Display Start Date of Action Item Posting.
@@ -125,16 +125,16 @@ class ActionItemPost implements Serializable {
      */
     @Column(name = "GCBAPST_CURRENT_STATE")
     @Enumerated(EnumType.STRING)
-    ActionItemPostExecutionState postingCurrentState = ActionItemPostExecutionState.New;
+    ActionItemPostExecutionState postingCurrentState = ActionItemPostExecutionState.New
 
     /*
     @Column(name = "GCBAPST_STARTED_DATE", nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
-    Date postingStartedDate;
+    Date postingStartedDate
 
     @Column(name = "GCBAPST_STOP_DATE", nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
-    Date postingStopDate;
+    Date postingStopDate
     */
 
     /**
