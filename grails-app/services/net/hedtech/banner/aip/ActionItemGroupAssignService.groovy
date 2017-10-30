@@ -28,8 +28,8 @@ class ActionItemGroupAssignService  extends ServiceBase  {
                 assign.groupId = groupId
                 assign.actionItemId = assignment.actionItemId
                 assign.seqNo = assignment.seq
-                assign.activityDate = new Date()
-                assign.userId = aipUser.username
+                assign.lastModified = new Date()
+                assign.lastModifiedBy = aipUser.username
             } else {
                 //create
                 assign = new ActionItemGroupAssign(
