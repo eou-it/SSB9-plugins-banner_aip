@@ -20,10 +20,10 @@ import javax.persistence.*
                    AND a.isBlocking is true
                    """),
         @NamedQuery(name = "UserActionItemReadOnly.fetchUserActionItemsROByPidmDate",
-                query = $/FROM UserActionItemReadOnly a
+                query = """FROM UserActionItemReadOnly a
                     WHERE a.pidm = :myPidm
                     AND sysdate BETWEEN a.displayStartDate AND a.displayEndDate
-                    /$)
+                    """)
 ])
 
 @Entity
