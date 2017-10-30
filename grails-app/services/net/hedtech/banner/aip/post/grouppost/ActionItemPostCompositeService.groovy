@@ -121,16 +121,12 @@ class ActionItemPostCompositeService {
                 postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
                 postingScheduleDateTime: requestMap.scheduled ? actionItemProcessingCommonService.convertToLocaleBasedDate(
                         requestMap.scheduledStartDate ) : null,
-                //postingDisplayStartDate: requestMap.displayStartDate,
-                //postingDisplayEndDate: requestMap.displayEndDate,
-                //postingScheduleDateTime: null, //TODO ENABLE if needed for test
                 postingCreationDateTime: new Date(),
                 populationRegenerateIndicator: false,
                 postingDeleteIndicator: false,
                 postingCreatorId: user.oracleUserName,
                 postingCurrentState: requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New),
-                lastModified: new Date(),
-                lastModifiedBy: user.username )
+                )
     }
 
     /**
@@ -142,8 +138,6 @@ class ActionItemPostCompositeService {
      */
     private addPostingDetail( actionItemId, postingId, user ) {
         ActionItemPostDetail groupDetail = new ActionItemPostDetail(
-                lastModifiedBy: user.username,
-                lastModified: new Date(),
                 actionItemPostId: postingId,
                 actionItemId: actionItemId
         )
@@ -158,8 +152,6 @@ class ActionItemPostCompositeService {
      */
     private markActionItemPosted( actionItemId, user ) {
         ActionItem actionItem = actionItemService.get( actionItemId )
-        actionItem.activityDate = new Date()
-        actionItem.userId = user.username
         actionItem.postedIndicator = AIPConstants.YES_IND
         actionItemService.update( actionItem )
     }
@@ -172,8 +164,6 @@ class ActionItemPostCompositeService {
      */
     private markActionItemGroupPosted( actionItemGroupId, user ) {
         ActionItemGroup actionItemGroup = actionItemGroupService.get( actionItemGroupId )
-        actionItemGroup.activityDate = new Date()
-        actionItemGroup.userId = user.username
         actionItemGroup.postingInd = AIPConstants.YES_IND
         actionItemGroupService.update( actionItemGroup )
     }
@@ -481,8 +471,6 @@ class ActionItemPostCompositeService {
 
 
     private ActionItemPost generatePostItemsImpl( ActionItemPost groupSend ) {
-        // We'll created the group send items synchronously for now until we have support for scheduling.
-        // The individual group send items will still be processed asynchronously via the framework.
         createPostItems( groupSend )
         groupSend.markProcessing()
         groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
@@ -491,8 +479,7 @@ class ActionItemPostCompositeService {
 
 
     private ActionItemPost savePost( ActionItemPost groupSend ) {
-        //TODO: Figure out why ServiceBase.update is not working with this domain.
-        return groupSend.save( flush: true ) //update( groupSend )
+        actionItemPostService.update( groupSend )
     }
 
     /**
@@ -554,7 +541,7 @@ class ActionItemPostCompositeService {
         }
     }
 
-    // TODO: Taken and modified from BCM. Use Objects or a function in the DB instead of big insert?
+    // TODO: Taken and modified from BCM. Use Hibernate Batch Update or a function in the DB instead of big insert?
     private void createPostItems( ActionItemPost groupSend ) {
         LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id );
         def sql

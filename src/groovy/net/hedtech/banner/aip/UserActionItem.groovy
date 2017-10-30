@@ -96,13 +96,13 @@ class UserActionItem implements Serializable {
      * User action item pertains to
      */
     @Column(name = "GCRAACT_USER_ID")
-    String userId
+    String lastModifiedBy
 
     /**
      * Last activity date for the action item
      */
     @Column(name = "GCRAACT_ACTIVITY_DATE")
-    Date activityDate
+    Date lastModified
 
     /**
      * UserID that created the action item
@@ -133,12 +133,12 @@ class UserActionItem implements Serializable {
         actionItemId( nullable: false, maxSize: 19 )
         pidm( nullable: false, maxSize: 9 )
         status( nullable: false, maxSize: 30 )
-        userId( nullable: false, maxSize: 30 )
+        lastModifiedBy( nullable: true, maxSize: 30 )
         userResponseDate( nullable: true )
         displayStartDate( nullable: false )
         displayEndDate( nullable: false )
         groupId( nullable: false )
-        activityDate( nullable: false )
+        lastModified( nullable: true )
         creatorId( nullable: true, maxSize: 30 )
         createDate( nullable: true )
         dataOrigin( nullable: true, maxSize: 30 )

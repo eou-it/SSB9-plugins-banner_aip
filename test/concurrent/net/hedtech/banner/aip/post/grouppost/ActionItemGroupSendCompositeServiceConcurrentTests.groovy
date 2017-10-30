@@ -21,6 +21,7 @@ import org.junit.Test
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 
+import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 
 import static org.junit.Assert.assertEquals
@@ -28,8 +29,13 @@ import static org.junit.Assert.assertNotNull
 
 
 class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseConcurrentTestCase {
+
+    public final static String TESTING_DATE_FORMAT = 'MM/dd/yyyy'
+    SimpleDateFormat testingFormat = new SimpleDateFormat(TESTING_DATE_FORMAT)
+
     def log = LogFactory.getLog( this.class )
     def selfServiceBannerAuthenticationProvider
+
 
 
     @Before
@@ -95,8 +101,8 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         requestMap.postNow = true
         requestMap.recalculateOnPost = false
         requestMap.scheduledStartDate = null
-        requestMap.displayStartDate = new Date()
-        requestMap.displayEndDate = new Date() + 50
+        requestMap.displayStartDate = testingFormat.format(new Date())
+        requestMap.displayEndDate = testingFormat.format(new Date() + 50)
         requestMap.actionItemIds = actionItemIds
         groupSend = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
         assertNotNull( groupSend )
@@ -152,7 +158,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
 
         requestMap.name = 'testRepostOfExistingData'
         requestMap.referenceId = UUID.randomUUID().toString()
-        requestMap.displayEndDate = new Date() + 40
+        requestMap.displayEndDate = testingFormat.format( new Date() + 40 )
         def groupSend2 = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
         println groupSend2 // see if id is not changed
         assertNotNull( groupSend2 )
@@ -189,8 +195,8 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
 
         requestMap.name = 'testRepostOfExistingDataDatesInFuture'
         requestMap.referenceId = UUID.randomUUID().toString()
-        requestMap.displayStartDate = new Date() + 60
-        requestMap.displayEndDate = new Date() + 70
+        requestMap.displayStartDate = testingFormat.format( new Date() + 60 )
+        requestMap.displayEndDate = testingFormat.format( new Date() + 70 )
         def groupSend3 = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
         println groupSend3 // see if id is not changed
         assertNotNull( groupSend3 )
