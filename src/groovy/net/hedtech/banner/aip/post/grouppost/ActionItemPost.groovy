@@ -82,14 +82,14 @@ class ActionItemPost implements Serializable {
     /**
      * POSTING DISPLAY START DATE: Display Start Date of Action Item Posting.
      */
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Column(name = "GCBAPST_DISPLAY_START_DATE")
     Date postingDisplayStartDate
 
     /**
      * POSTING DISPLAY END DATE: Display End Date of Action Item Posting.
      */
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     @Column(name = "GCBAPST_DISPLAY_END_DATE")
     Date postingDisplayEndDate
 
@@ -127,7 +127,6 @@ class ActionItemPost implements Serializable {
     @Enumerated(EnumType.STRING)
     ActionItemPostExecutionState postingCurrentState = ActionItemPostExecutionState.New
 
-    /*
     @Column(name = "GCBAPST_STARTED_DATE", nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
     Date postingStartedDate
@@ -135,7 +134,6 @@ class ActionItemPost implements Serializable {
     @Column(name = "GCBAPST_STOP_DATE", nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
     Date postingStopDate
-    */
 
     /**
      * POSTING JOB ID: The job ID of the scheduled job.
@@ -258,11 +256,9 @@ class ActionItemPost implements Serializable {
 
     void markProcessing() {
         assignPostExecutionState( ActionItemPostExecutionState.Processing )
-        /*
         if (this.postingStartedDate == null) {
             this.postingStartedDate = new Date()
         }
-        */
     }
 
 
