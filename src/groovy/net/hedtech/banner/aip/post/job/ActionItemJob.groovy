@@ -94,11 +94,11 @@ class ActionItemJob implements AsynchronousTask {
 
     @Column(name="GCBAJOB_CREATION_DATE", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    Date creationDateTime;
+    Date creationDateTime
 
     @Column(name="GCBAJOB_ERROR_TEXT")
     @Lob
-    String errorText;
+    String errorText
 
     /**
      * Error Code: The error code for the error scenario that failed the ActionItem Job

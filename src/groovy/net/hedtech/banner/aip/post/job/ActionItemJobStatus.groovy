@@ -12,7 +12,7 @@ public enum ActionItemJobStatus {
     DISPATCHED,  // The job has been given to a thread for execution
     STOPPED, // The job has been requested to stop
     FAILED,    // The job has been processed, but failed
-    COMPLETED; // The job has been processed successfully
+    COMPLETED // The job has been processed successfully
 
 
     /**
@@ -20,6 +20,6 @@ public enum ActionItemJobStatus {
      * @return Set<ActionItemJobStatus> the set of ActionItemJobStatus
      */
     public Set<ActionItemJobStatus> set() {
-        return EnumSet.range( ActionItemJobStatus.PENDING, ActionItemJobStatus.COMPLETED );
+        return EnumSet.range( ActionItemJobStatus.PENDING, ActionItemJobStatus.COMPLETED )
     }
 }

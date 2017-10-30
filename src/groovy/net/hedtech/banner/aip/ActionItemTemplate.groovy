@@ -59,7 +59,7 @@ class ActionItemTemplate implements Serializable{
      *
      */
     @Column(name = "GCBPBTR_USER_ID")
-    String userId
+    String lastModifiedBy
 
     /**
      *
@@ -77,7 +77,7 @@ class ActionItemTemplate implements Serializable{
      *
      */
     @Column(name = "GCBPBTR_ACTIVITY_DATE")
-    Date activityDate
+    Date lastModified
 
     /**
      *
@@ -101,11 +101,8 @@ class ActionItemTemplate implements Serializable{
     static constraints = {
         title(blank: false, nullable: false)
         sourceInd(blank: false, nullable: false)
-        userId(blank: false, nullable: false)
         systemRequired(blank: false, nullable: false)
         activeInd(nullable: false)
-        activityDate(blank: false, nullable: false)
-        dataOrigin(nullable: false)
     }
 
     /**

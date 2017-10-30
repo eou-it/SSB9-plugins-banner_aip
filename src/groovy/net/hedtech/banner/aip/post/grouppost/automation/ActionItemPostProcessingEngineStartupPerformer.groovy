@@ -15,14 +15,14 @@ import org.springframework.beans.factory.annotation.Required
  */
 public class ActionItemPostProcessingEngineStartupPerformer implements TearDownPerformer {
 
-    private AsynchronousTaskProcessingEngine jobProcessingEngine;
+    private AsynchronousTaskProcessingEngine jobProcessingEngine
 
 
     /**
      * Performs teardown activities.
      */
     public void execute() throws Exception {
-        jobProcessingEngine.startRunning();
+        jobProcessingEngine.startRunning()
     }
 
 
@@ -31,7 +31,7 @@ public class ActionItemPostProcessingEngineStartupPerformer implements TearDownP
      */
     @Required
     public void setJobProcessingEngine( AsynchronousTaskProcessingEngine jobProcessingEngine ) {
-        this.jobProcessingEngine = jobProcessingEngine;
+        this.jobProcessingEngine = jobProcessingEngine
     }
 
 }

@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional
  *
  */
 class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
-    private final Log log = LogFactory.getLog(this.getClass());
+    private final Log log = LogFactory.getLog(this.getClass())
 
     def actionItemJobService
 
@@ -30,19 +30,19 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
      * Used for testing purposes only.  If this is not null when a job is being
      * processed, that processing will throw this exception.
      */
-    private Exception simulatedFailureException;
+    private Exception simulatedFailureException
 
 
     public Class<ActionItemPostWork> getJobType() {
-        return ActionItemPostWork.class;
+        return ActionItemPostWork.class
     }
 
     public AsynchronousTask create( AsynchronousTask job) throws ApplicationException {
-        throw new NotImplementedException();
+        throw new NotImplementedException()
     }
 
     public void init() {
-        log.debug( "${this.getClass().getSimpleName()} initialized." );
+        log.debug( "${this.getClass().getSimpleName()} initialized." )
     }
 
     /**
@@ -52,8 +52,8 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
     @Transactional(rollbackFor = Throwable.class )
     public void delete( AsynchronousTask jobItem )  throws ApplicationException {
         ActionItemJob actionItemJob = (ActionItemJob) jobItem
-        actionItemJobService.delete( actionItemJob );
-        log.debug( "${this.getClass().getSimpleName()} deleted actionItem job with id = ${actionItemJob.id}." );
+        actionItemJobService.delete( actionItemJob )
+        log.debug( "${this.getClass().getSimpleName()} deleted actionItem job with id = ${actionItemJob.id}." )
     }
 
 
@@ -63,7 +63,7 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
      */
     @Transactional(readOnly=true, rollbackFor = Throwable.class )
     public List getFailedJobs() {
-        throw new NotImplementedException();
+        throw new NotImplementedException()
     }
 
     // This method is called often from a polling thread, so it is imperative that
@@ -78,7 +78,7 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
         log.debug( "Get pending actionItem jobs" )
         List<ActionItemJob> result = actionItemJobService.fetchPending( max )
         log.debug( "Found ${result.size()} actionItem jobs." )
-        return result;
+        return result
     }
 
     public boolean acquire( AsynchronousTask task ) throws ApplicationException {
@@ -110,23 +110,23 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
         log.info( "Processing actionItem job id = ${job.id}." )
         try {
             if (simulatedFailureException != null) {
-                throw simulatedFailureException;
+                throw simulatedFailureException
             }
 
-            //actionItemJobProcessorService.performActionItemJob( task.getId() );
+            //actionItemJobProcessorService.performActionItemJob( task.getId() )
 
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.debug( "${this.getClass().getSimpleName()}.process caught exception " + e.getMessage(), e );
+                log.debug( "${this.getClass().getSimpleName()}.process caught exception " + e.getMessage(), e )
             }
 
             // we MUST re-throw as the thread which invoked this method must
             // mark the job as failed by using another thread (as the
             // thread associated with this thread will likely be rolled back)
             if (e instanceof ApplicationException) {
-                throw (ApplicationException) e;
+                throw (ApplicationException) e
             } else {
-                throw new RuntimeException( e );
+                throw new RuntimeException( e )
             }
         }
     }
@@ -146,7 +146,7 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
         job.setErrorCode(ActionItemErrorCode.valueOf(errorCode))
         actionItemJobService.update( job )
         if (cause) {
-            log.info( "Marked job with id = ${job.id} as failed; cause = ${cause.toString()}." )
+            log.info( "Marked job with id = ${job.id} as failed cause = ${cause.toString()}." )
         } else {
             log.info( "Marked job with id = ${job.id} as failed." )
         }
@@ -173,7 +173,7 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
      * @param cause the exception to throw when processing a job
      */
     public void setSimulatedFailureException( Exception cause ) {
-        this.simulatedFailureException = cause;
+        this.simulatedFailureException = cause
     }
 
 }

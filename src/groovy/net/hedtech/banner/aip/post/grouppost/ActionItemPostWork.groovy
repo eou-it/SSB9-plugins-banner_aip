@@ -90,16 +90,16 @@ class ActionItemPostWork implements AsynchronousTask {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "GCRAIIM_GCBAPST_ID", referencedColumnName = "GCBAPST_SURROGATE_ID")
-    ActionItemPost actionItemGroupSend;
+    ActionItemPost actionItemGroupSend
 
     /** The target of the send item */
 
     @Column(name = "GCRAIIM_PIDM")
-    Long recipientPidm;
+    Long recipientPidm
 
     @Column(name = "GCRAIIM_CURRENT_STATE")
     @Enumerated(EnumType.STRING)
-    ActionItemPostWorkExecutionState currentExecutionState;
+    ActionItemPostWorkExecutionState currentExecutionState
 
     @Column(name = "GCRAIIM_INSERT_COUNT")
     Long insertedCount
@@ -109,15 +109,15 @@ class ActionItemPostWork implements AsynchronousTask {
 
     @Column(name = "GCRAIIM_ERROR_TEXT")
     @Lob
-    String errorText;
+    String errorText
 
     @Column(name = "GCRAIIM_STARTED_DATE")
     @Temporal(TemporalType.TIMESTAMP)
-    Date startedDate;
+    Date startedDate
 
     @Column(name = "GCRAIIM_STOP_DATE")
     @Temporal(TemporalType.TIMESTAMP)
-    Date stopDate;
+    Date stopDate
 
     /** Correlation ID linking the request to the recipient data to the job to the final item. **/
 
@@ -126,7 +126,7 @@ class ActionItemPostWork implements AsynchronousTask {
 
     @Column(name = "GCRAIIM_CREATIONDATETIME")
     @Temporal(TemporalType.TIMESTAMP)
-    Date creationDateTime;
+    Date creationDateTime
 
     /**
      * Error Code: The error code for the error scenario that failed the Action Item Job

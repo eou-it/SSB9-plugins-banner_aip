@@ -79,37 +79,37 @@ class ActionItemStatus implements Serializable {
      * User action item status was last updated by
      */
     @Column(name = "GCVASTS_USER_ID")
-    String actionItemStatusUserId
+    String lastModifiedBy
 
     /**
      * Last activity date for the action item sttus
      */
     @Column(name = "GCVASTS_ACTIVITY_DATE")
-    Date actionItemStatusActivityDate
+    Date lastModified
 
     /**
      * Version of the action item
      */
     @Version
     @Column(name = "GCVASTS_VERSION")
-    Long actionItemStatusVersion
+    Long version
 
     /**
      * Data Origin column for GCVASTS
      */
     @Column(name = "GCVASTS_DATA_ORIGIN")
-    String actionItemStatusDataOrigin
+    String dataOrigin
 
     static constraints = {
         actionItemStatus( blank: false, nullable: false, maxSize: 30, unique: true )
         actionItemStatusActive( blank: false, nullable: false, maxSize: 1 )
-        actionItemStatusActivityDate( blank: false, nullable: false )
+        lastModified( blank: false, nullable: true )
         actionItemStatusBlockedProcess( blank: false, nullable: false, maxSize: 1 )
         actionItemStatusDefault( blank: true, nullable: true, maxSize: 1 )
         actionItemStatusSystemRequired( blank: false, nullable: false, maxSize: 1 )
-        actionItemStatusUserId( blank: false, nullable: false, maxSize: 30 )
-        actionItemStatusVersion( nullable: true )
-        actionItemStatusDataOrigin( nullable: true, maxSize: 30 )
+        lastModifiedBy( blank: false, nullable: true, maxSize: 30 )
+        version( nullable: true )
+        dataOrigin( nullable: true, maxSize: 30 )
     }
 
     /**

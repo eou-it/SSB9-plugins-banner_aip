@@ -70,8 +70,6 @@ class ActionItemCompositeService {
         ActionItemContent aic = actionItemContentService.listActionItemContentById( actionItemId )
         aic.actionItemId = actionItemId
         aic.actionItemTemplateId = templateId
-        aic.lastModifiedby = aipUser.bannerId
-        aic.lastModified = new Date()
         aic.text = actionItemDetailText
 
         List<Long> tempRuleIdList = inputRules.statusRuleId.toList()
@@ -97,9 +95,7 @@ class ActionItemCompositeService {
                         labelText: !rule.statusRuleLabelText ? null : rule.statusRuleLabelText,
                         actionItemId: actionItemId,
                         actionItemStatusId: rule.statusId,
-                        resubmitInd:rule.resubmitInd,
-                        userId: aipUser.bannerId,
-                        activityDate: new Date()
+                        resubmitInd:rule.resubmitInd
                 )
             }
             ruleList.push( statusRule )

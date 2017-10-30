@@ -152,7 +152,7 @@ class ActionItemGroup implements Serializable {
     public static Boolean existsSameNameInFolder( Long folderId, String name ) {
         def query
         ActionItem.withSession {session ->
-            session.setFlushMode( FlushMode.MANUAL );
+            session.setFlushMode( FlushMode.MANUAL )
             try {
                 query = session.getNamedQuery( 'ActionItemGroup.existsSameNameInFolder' )
                         .setString( 'name', name )

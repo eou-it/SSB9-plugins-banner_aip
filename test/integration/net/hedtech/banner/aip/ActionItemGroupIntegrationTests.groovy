@@ -77,10 +77,6 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         actionItemGroupNewList.description = actionItemGroup.description
         actionItemGroupNewList.postingInd = actionItemGroup.postingInd
         actionItemGroupNewList.status = actionItemGroup.status
-        actionItemGroupNewList.lastModifiedBy = actionItemGroup.lastModifiedBy
-        actionItemGroupNewList.lastModified = actionItemGroup.lastModified
-        actionItemGroupNewList.version = actionItemGroup.version
-        actionItemGroupNewList.dataOrigin = actionItemGroup.dataOrigin
 
         def result = actionItemGroupNewList.equals( actionItemGroup )
         assertTrue result
