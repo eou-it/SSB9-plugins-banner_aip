@@ -41,14 +41,12 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
         aip.save()
         actionItemPostWork.actionItemGroupSend = aip
         actionItemPostWork.save()
-        println actionItemPostWork
         actionItemPostWorkProcessorService.performPostItem( actionItemPostWork )
     }
 
 
     private def newAIP() {
         def aigs = new ActionItemPost(
-                //id: 1L,
                 populationListId: 1L,
                 populationVersionId: 1L,
                 postingName: "some name",
@@ -67,12 +65,7 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
                 postingErrorCode: ActionItemErrorCode.DATA_FIELD_SQL_ERROR,
                 postingErrorText: null,
                 postingGroupId: null,
-                postingParameterValues: null,
-                lastModified: new Date(),
-                lastModifiedBy: 'testUser',
-                version: 1L,
-                dataOrigin: 'BANNER',
-                vpdiCode: null
+                postingParameterValues: null
         )
         return aigs
     }

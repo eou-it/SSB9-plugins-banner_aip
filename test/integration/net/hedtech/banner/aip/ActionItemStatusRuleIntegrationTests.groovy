@@ -84,6 +84,8 @@ class ActionItemStatusRuleIntegrationTests extends BaseIntegrationTestCase {
                 resubmitInd: actionItemStatusRule.resubmitInd,
                 lastModified: actionItemStatusRule.lastModified,
                 lastModifiedBy: actionItemStatusRule.lastModifiedBy,
+                version: actionItemStatusRule.version,
+                dataOrigin: actionItemStatusRule.dataOrigin,
                 labelText: actionItemStatusRule.labelText
         )
         newActionItemStatusRule.id = actionItemStatusRule.id
