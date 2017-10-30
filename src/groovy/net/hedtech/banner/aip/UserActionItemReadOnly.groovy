@@ -18,7 +18,12 @@ import javax.persistence.*
                 query = """FROM UserActionItemReadOnly a
                    WHERE a.pidm = :myPidm
                    AND a.isBlocking is true
-                   """)
+                   """),
+        @NamedQuery(name = "UserActionItemReadOnly.fetchUserActionItemsROByPidmDate",
+                query = $/FROM UserActionItemReadOnly a
+                    WHERE a.pidm = :myPidm
+                    AND sysdate BETWEEN a.displayStartDate AND a.displayEndDate
+                    /$)
 ])
 
 @Entity
@@ -188,6 +193,15 @@ class UserActionItemReadOnly implements Serializable {
     static def fetchUserActionItemsROByPidm( Long pidm ) {
         UserActionItemReadOnly.withSession {session ->
             session.getNamedQuery( 'UserActionItemReadOnly.fetchUserActionItemROByPidm' )
+                    .setLong(
+                    'myPidm', pidm )
+                    .list()
+        }
+    }
+
+    static def fetchUserActionItemsROByPidmDate( Long pidm) {
+        UserActionItemReadOnly.withSession {session ->
+            session.getNamedQuery( 'UserActionItemReadOnly.fetchUserActionItemsROByPidmDate' )
                     .setLong(
                     'myPidm', pidm )
                     .list()
