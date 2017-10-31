@@ -93,7 +93,7 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         UserActionItem userActionItem = new UserActionItem()
         userActionItem.pidm = actionItemPidm
         userActionItem.actionItemId = existingUserActionItem.actionItemId
-        userActionItem.status = 1
+        userActionItem.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
         userActionItem.displayStartDate = startDate
         userActionItem.displayEndDate = endDate
         userActionItem.groupId = existingUserActionItem.groupId

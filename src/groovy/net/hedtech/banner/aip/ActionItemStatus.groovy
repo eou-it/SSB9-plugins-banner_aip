@@ -16,6 +16,11 @@ import javax.persistence.*
                 query = """
            FROM ActionItemStatus a
           """),
+        @NamedQuery(name = "ActionItemStatus.fetchDefaultActionItemStatus",
+                query = """
+                   FROM ActionItemStatus a
+                   WHERE a.actionItemStatusDefault = :myY
+                  """),
         @NamedQuery(name = "ActionItemStatus.fetchActionItemStatusById",
                 query = """
            FROM ActionItemStatus a
@@ -123,6 +128,16 @@ class ActionItemStatus implements Serializable {
         }
     }
 
+    /**
+     *
+     * @param myId
+     * @return
+     */
+    public static ActionItemStatus fetchDefaultActionItemStatus(  ) {
+        ActionItemStatus.withSession {session ->
+            session.getNamedQuery( 'ActionItemStatus.fetchDefaultActionItemStatus' ).setString('myY', 'Y')?.uniqueResult()
+        }
+    }
     /**
      *
      * @param myId

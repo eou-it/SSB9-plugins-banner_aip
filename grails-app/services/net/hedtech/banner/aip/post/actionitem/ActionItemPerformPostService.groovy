@@ -3,6 +3,7 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.actionitem
 
+import net.hedtech.banner.aip.ActionItemStatus
 import net.hedtech.banner.aip.UserActionItem
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.aip.post.grouppost.ActionItemPost
@@ -36,7 +37,7 @@ class ActionItemPerformPostService {
                 UserActionItem userActionItem = new UserActionItem()
                 userActionItem.pidm = userPidm
                 userActionItem.actionItemId = it.actionItemId
-                userActionItem.status = 1
+                userActionItem.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
                 userActionItem.displayStartDate = groupSend.postingDisplayStartDate
                 userActionItem.displayEndDate = groupSend.postingDisplayEndDate
                 userActionItem.groupId = groupSend.postingActionItemGroupId
