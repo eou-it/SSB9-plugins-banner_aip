@@ -41,11 +41,9 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         List<GroupFolderReadOnly> groupFolderList = GroupFolderReadOnly.fetchGroupFolders()
         def groupFolderId = groupFolderList[0].groupId
         def groupFolderTitle = groupFolderList[0].groupTitle
-        List<GroupFolderReadOnly> groupFolderListById = GroupFolderReadOnly.fetchGroupFoldersById( groupFolderId )
-        def groupFolderByIdSort = groupFolderListById
-        assertFalse groupFolderListById.isEmpty()
-        assertEquals( groupFolderListById[0].groupTitle, groupFolderTitle )
-        assertEquals( 1, groupFolderListById.size() )
+        GroupFolderReadOnly groupFolderById = GroupFolderReadOnly.fetchGroupFolderById( groupFolderId )
+        def groupFolderByIdSort = groupFolderById
+        assertEquals( groupFolderById.groupTitle, groupFolderTitle )
         assertNotNull groupFolderByIdSort
     }
 
@@ -54,9 +52,9 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     void testGroupFolderReadOnlyToString() {
         List<GroupFolderReadOnly> groupFolderList = GroupFolderReadOnly.fetchGroupFolders()
         def groupFolderId = groupFolderList[0].groupId
-        List<GroupFolderReadOnly> groupFolderReadOnlyById = GroupFolderReadOnly.fetchGroupFoldersById( groupFolderId )
+        GroupFolderReadOnly groupFolderReadOnlyById = GroupFolderReadOnly.fetchGroupFolderById( groupFolderId )
         assertNotNull( groupFolderReadOnlyById.toString() )
-        assertFalse groupFolderReadOnlyById.isEmpty()
+        assertEquals(groupFolderList[0].folderName, groupFolderReadOnlyById.folderName)
     }
 
 
@@ -64,9 +62,9 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     void testGroupFolderHashCode() {
         List<GroupFolderReadOnly> groupFolderList = GroupFolderReadOnly.fetchGroupFolders()
         def groupFolderId = groupFolderList[0].groupId
-        List<GroupFolderReadOnly> groupFolderListById = GroupFolderReadOnly.fetchGroupFoldersById( groupFolderId )
+        GroupFolderReadOnly groupFolderById = GroupFolderReadOnly.fetchGroupFolderById( groupFolderId )
 
-        def result = groupFolderListById.hashCode()
+        def result = groupFolderById.hashCode()
         assertNotNull result
 
         def groupFolderObj = new GroupFolderReadOnly()
@@ -181,8 +179,7 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         List<GroupFolderReadOnly> groupFolderList = GroupFolderReadOnly.fetchGroupFolders()
         def groupFolder = groupFolderList[0]
         def groupFolderId = groupFolder.groupId
-        List<GroupFolderReadOnly> groupFolderByIdList = GroupFolderReadOnly.fetchGroupFoldersById( groupFolderId )
-        def groupFolderById = groupFolderByIdList[0]
+        GroupFolderReadOnly groupFolderById = GroupFolderReadOnly.fetchGroupFolderById( groupFolderId )
         def groupFolderNew = new GroupFolderReadOnly()
 
         groupFolderNew.groupId = groupFolderById.groupId

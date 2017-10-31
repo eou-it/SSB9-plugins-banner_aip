@@ -18,7 +18,7 @@ import javax.persistence.*
                 query = """
            FROM GroupFolderReadOnly a
           """),
-        @NamedQuery(name = "GroupFolderReadOnly.fetchGroupFoldersById",
+        @NamedQuery(name = "GroupFolderReadOnly.fetchGroupFolderById",
                 query = """
            FROM GroupFolderReadOnly a
            WHERE a.id = :myId
@@ -138,9 +138,9 @@ class GroupFolderReadOnly implements Serializable {
      * @param id
      * @return
      */
-    static def fetchGroupFoldersById( Long id ) {
+    static GroupFolderReadOnly fetchGroupFolderById( Long id ) {
         GroupFolderReadOnly.withSession {session ->
-            session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFoldersById' ).setLong( 'myId', id ).list()
+            session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolderById' ).setLong( 'myId', id )?.uniqueResult()
         }
     }
 

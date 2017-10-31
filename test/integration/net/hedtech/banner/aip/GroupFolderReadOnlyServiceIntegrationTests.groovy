@@ -39,9 +39,9 @@ class GroupFolderReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase
         List<GroupFolderReadOnly> groupFolderList = groupFolderReadOnlyService.listActionItemGroups()
         def groupFolderId = groupFolderList[0].groupId
         def groupFolderTitle = groupFolderList[0].groupTitle
-        def groupFolderListById = groupFolderReadOnlyService.getActionItemGroupById( groupFolderId )
-        assertFalse groupFolderListById.isEmpty()
-        assertEquals( groupFolderListById.groupTitle, groupFolderTitle )
+        def groupFolderById = groupFolderReadOnlyService.getActionItemGroupById( groupFolderId )
+        assertFalse groupFolderById.isEmpty()
+        assertEquals( groupFolderById.groupTitle, groupFolderTitle )
     }
 
 

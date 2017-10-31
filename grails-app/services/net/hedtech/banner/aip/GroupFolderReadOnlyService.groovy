@@ -24,21 +24,20 @@ class GroupFolderReadOnlyService extends ServiceBase {
      * @param actionItemGroupId
      * @return
      */
-    // FIXME: is there one folder for a groupId? We should name the query singularly and return a single object
     def getActionItemGroupById( Long actionItemGroupId ) {
-        def groupRO = GroupFolderReadOnly.fetchGroupFoldersById( actionItemGroupId )
+        GroupFolderReadOnly groupRO = GroupFolderReadOnly.fetchGroupFolderById( actionItemGroupId )
         [
-                groupId          : groupRO.groupId[0],
-                groupTitle       : groupRO.groupTitle[0],
-                groupName        : groupRO.groupName[0],
-                groupStatus      : MessageHelper.message( "aip.status.${groupRO.groupStatus[0]}" ),
-                folderId         : groupRO.folderId[0],
-                folderName       : groupRO.folderName[0],
-                folderDesc       : groupRO.folderDesc[0],
-                groupUserId      : groupRO.groupUserId[0],
-                groupDesc        : groupRO.groupDesc[0],
-                groupActivityDate: groupRO.groupActivityDate[0],
-                groupVersion     : groupRO.groupVersion[0]
+                groupId          : groupRO.groupId,
+                groupTitle       : groupRO.groupTitle,
+                groupName        : groupRO.groupName,
+                groupStatus      : MessageHelper.message( "aip.status.${groupRO.groupStatus}" ),
+                folderId         : groupRO.folderId,
+                folderName       : groupRO.folderName,
+                folderDesc       : groupRO.folderDesc,
+                groupUserId      : groupRO.groupUserId,
+                groupDesc        : groupRO.groupDesc,
+                groupActivityDate: groupRO.groupActivityDate,
+                groupVersion     : groupRO.groupVersion
         ]
     }
 

@@ -3,7 +3,6 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import grails.converters.JSON
 import net.hedtech.banner.MessageUtility
 import net.hedtech.banner.service.ServiceBase
 
@@ -21,7 +20,7 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
      */
     def listActionItemByPidmWithinDate() {
         def user = springSecurityService.getAuthentication()?.user
-        def actionItems = userActionItemReadOnlyService.listActionItemByPidmWithinDate( user.pidm)
+        List <UserActionItemReadOnly> actionItems = userActionItemReadOnlyService.listActionItemByPidmWithinDate( user.pidm)
 
         def userGroupInfo = []
         actionItems.each { item ->
