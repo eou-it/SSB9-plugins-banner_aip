@@ -80,6 +80,10 @@ class ActionItemPostReadOnly implements Serializable {
     @Column(name = "GCBAPST_SCHEDULED_DATETIME")
     Date postingScheduleDeleteTime
 
+    @Column(name = "GCBAPST_STARTED_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    Date postingStartedDate
+
     /**
      * POSTING CREATOR ID: The ID of user who created the Action item posting.
      */
