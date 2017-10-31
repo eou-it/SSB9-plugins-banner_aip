@@ -78,6 +78,8 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         actionItemGroupNewList.postingInd = actionItemGroup.postingInd
         actionItemGroupNewList.lastModifiedBy = actionItemGroup.lastModifiedBy
         actionItemGroupNewList.lastModified = actionItemGroup.lastModified
+        actionItemGroupNewList.dataOrigin = actionItemGroup.dataOrigin
+        actionItemGroupNewList.version = actionItemGroup.version
         actionItemGroupNewList.status = actionItemGroup.status
 
         def result = actionItemGroupNewList.equals( actionItemGroup )

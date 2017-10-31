@@ -68,6 +68,10 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
                 folderId: actionItem.folderId,
                 description: actionItem.description,
                 postedIndicator: actionItem.postedIndicator,
+                lastModified: actionItem.lastModified,
+                lastModifiedBy: actionItem.lastModifiedBy,
+                dataOrigin: actionItem.dataOrigin,
+                version: actionItem.version,
                 name: actionItem.name,
                 title: actionItem.title)
         long actionItemListId = actionItem.id

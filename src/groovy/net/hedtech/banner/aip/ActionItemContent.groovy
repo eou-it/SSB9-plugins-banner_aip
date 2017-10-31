@@ -60,7 +60,7 @@ class ActionItemContent implements Serializable {
      * User action item pertains to
      */
     @Column(name = "GCRACNT_USER_ID")
-    String lastModifiedby
+    String lastModifiedBy
 
     /**
      * Last activity date for the action item
@@ -87,7 +87,7 @@ class ActionItemContent implements Serializable {
         actionItemId( nullable: false, maxSize: 19 )
         text( nullable: true )
         actionItemTemplateId( nullable: true )
-        lastModifiedby( nullable: true, maxSize: 30 )
+        lastModifiedBy( nullable: true, maxSize: 30 )
         lastModified( nullable: true )
         version( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 19 )
