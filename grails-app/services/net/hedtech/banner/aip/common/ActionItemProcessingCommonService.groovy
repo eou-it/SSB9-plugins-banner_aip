@@ -65,4 +65,23 @@ class ActionItemProcessingCommonService {
         calendar.time
     }
 
+    /**
+     * List Admin Group/Action Item Status
+     * @return
+     */
+    def listStatus() {
+        [
+                [
+                        "id"   : 1,
+                        "value": "Draft"
+                ], [
+                        "id"   : 2,
+                        "value": "Active"
+                ], [
+                        "id"   : 3,
+                        "value": "Inactive"
+                ]
+        ]
+    }
+
 }

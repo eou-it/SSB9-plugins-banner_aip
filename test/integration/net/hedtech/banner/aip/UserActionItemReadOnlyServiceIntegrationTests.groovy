@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -10,52 +10,28 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-
 class UserActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase {
-
     def userActionItemReadOnlyService
 
+
     @Before
-    public void setUp() {
+    void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
     }
 
+
     @After
-    public void tearDown() {
+    void tearDown() {
         super.tearDown()
     }
+
 
     @Test
     void testFetchUserActionItemByROPidmNoResults() {
         def actionItemPidm = PersonUtility.getPerson( "STUADV425" ).pidm
-        List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listActionItemsByPidm( actionItemPidm )
+        List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listActionItemByPidmWithinDate( actionItemPidm )
         assertEquals( 0, userActionItems.size() )
     }
 
-
-    @Test
-    void testFetchUserActionItemByROPidmService() { // FIXME: do in service test
-        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listActionItemsByPidm( actionItemPidm )
-        assertEquals( 10, userActionItems.size() )
-    }
-
-
-    @Test
-    void testFetchBlockingUserActionItemsROByPidm() {
-        def actionItemPidm = PersonUtility.getPerson( "CSRSTU001" ).pidm
-        List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listBlockingActionItemsByPidm( actionItemPidm )
-        userActionItems.each { item ->
-            assertTrue item.isBlocking
-        }
-    }
-
-
-    @Test
-    void testFetchBlockingUserActionItemsROByPidmAllComplete() {
-        def actionItemPidm = PersonUtility.getPerson( "CSRSTU013" ).pidm
-        List<UserActionItemReadOnly> userActionItems = userActionItemReadOnlyService.listBlockingActionItemsByPidm( actionItemPidm )
-        assertTrue( userActionItems.size() == 0 )
-    }
 }
