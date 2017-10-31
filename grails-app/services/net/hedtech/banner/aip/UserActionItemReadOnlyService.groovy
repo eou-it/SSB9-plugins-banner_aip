@@ -17,6 +17,10 @@ class UserActionItemReadOnlyService extends ServiceBase {
        //return itemByPidm.encodeAsHTML()
     }
 
+    def listActionItemByPidmWithinDate(Long ActionItemPidm) {
+        return UserActionItemReadOnly.fetchUserActionItemsROByPidmDate( ActionItemPidm )
+    }
+
 
     def listBlockingActionItemsByPidm( Long actionItemPidm ) {
         return UserActionItemReadOnly.fetchBlockingUserActionItemsROByPidm( actionItemPidm )
