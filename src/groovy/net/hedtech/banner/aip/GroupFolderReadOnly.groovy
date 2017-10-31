@@ -164,10 +164,10 @@ class GroupFolderReadOnly implements Serializable {
     static fetchWithPagingAndSortParams( filterData, pagingAndSortParams ) {
         def queryCriteria = GroupFolderReadOnly.createCriteria()
         def results = queryCriteria.list( max: pagingAndSortParams.max, offset: pagingAndSortParams.offset ) {
-            ilike( "groupTitle", CommunicationCommonUtility.getScrubbedInput( filterData.name ) )
+            ilike( "groupName", CommunicationCommonUtility.getScrubbedInput( filterData.name ) )
             order( (pagingAndSortParams.sortAscending ? Order.asc( pagingAndSortParams?.sortColumn ) : Order.desc( pagingAndSortParams?.sortColumn )).ignoreCase() )
-            if (!pagingAndSortParams?.sortColumn.equals( "groupTitle" )) {
-                order( Order.asc( 'groupTitle' ).ignoreCase() )
+            if (!pagingAndSortParams?.sortColumn.equals( "groupName" )) {
+                order( Order.asc( 'groupName' ).ignoreCase() )
             }
         }
         results
