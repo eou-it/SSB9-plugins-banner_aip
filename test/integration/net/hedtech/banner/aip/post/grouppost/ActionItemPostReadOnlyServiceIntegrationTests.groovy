@@ -28,8 +28,9 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
 
     @Test
     void testFetchJobs() {
-        List<ActionItemPostReadOnly> actionItemReadPostOnlyList = actionItemPostReadOnlyService.listActionItemPostJobList( [searchParam: '%'], [max: 1000, offset: 0] )
-        assert actionItemReadPostOnlyList.result.size() > 0
+        List<ActionItemPostReadOnly> actionItemReadPostOnlyList = actionItemPostReadOnlyService.listActionItemPostJobList( [searchParam: '%'],
+                [max: 1000, offset: 0] ).result
+        assert actionItemReadPostOnlyList.size() > 0
     }
 
 }

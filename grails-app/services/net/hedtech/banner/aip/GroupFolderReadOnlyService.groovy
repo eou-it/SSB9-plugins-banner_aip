@@ -24,6 +24,7 @@ class GroupFolderReadOnlyService extends ServiceBase {
      * @param actionItemGroupId
      * @return
      */
+    // FIXME: is there one folder for a groupId? We should name the query singularly and return a single object
     def getActionItemGroupById( Long actionItemGroupId ) {
         def groupRO = GroupFolderReadOnly.fetchGroupFoldersById( actionItemGroupId )
         [
