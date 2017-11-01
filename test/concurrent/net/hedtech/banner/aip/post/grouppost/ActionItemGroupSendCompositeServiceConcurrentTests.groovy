@@ -29,8 +29,10 @@ import static org.junit.Assert.assertNotNull
 class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseConcurrentTestCase {
 
     public final static String TESTING_DATE_FORMAT = 'MM/dd/yyyy'
+    public final static String TESTING_DATETIME_FORMAT = 'MM/dd/yyyy HH:mm:ss'
 
-    SimpleDateFormat testingFormat = new SimpleDateFormat( TESTING_DATE_FORMAT )
+    SimpleDateFormat testingDateFormat = new SimpleDateFormat( TESTING_DATE_FORMAT )
+    SimpleDateFormat testingDateTimeFormat = new SimpleDateFormat( TESTING_DATETIME_FORMAT )
 
     def log = LogFactory.getLog( this.class )
 
@@ -109,12 +111,10 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         requestMap.postGroupId = actionItemGroup.id
         requestMap.postNow = false
         requestMap.recalculateOnPost = false
-        //requestMap.scheduledStartDate = testingFormat.format( twoMinutesFromNow )
-        //requestMap.displayStartDate = testingFormat.format( new Date() )
-        //requestMap.displayEndDate = testingFormat.format( new Date() + 50 )
+        //requestMap.scheduledStartDate = testingDateTimeFormat.format( twoMinutesFromNow )
+        requestMap.displayStartDate = testingDateFormat.format( new Date() )
+        requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = twoMinutesFromNow
-        requestMap.displayStartDate = new Date()
-        requestMap.displayEndDate = new Date() + 50
         requestMap.actionItemIds = actionItemIds
         groupSend = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
         assertNotNull( groupSend )
@@ -200,12 +200,10 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         requestMap.postGroupId = actionItemGroup.id
         requestMap.postNow = false
         requestMap.recalculateOnPost = true
-        //requestMap.scheduledStartDate = testingFormat.format( twoMinutesFromNow )
-        //requestMap.displayStartDate = testingFormat.format( new Date() )
-        //requestMap.displayEndDate = testingFormat.format( new Date() + 50 )
+        //requestMap.scheduledStartDate = testingDateTimeFormat.format( twoMinutesFromNow )
+        requestMap.displayStartDate = testingDateFormat.format( new Date() )
+        requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = twoMinutesFromNow
-        requestMap.displayStartDate = new Date() + 1
-        requestMap.displayEndDate = new Date() + 50
         requestMap.actionItemIds = actionItemIds
         groupSend = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
         assertNotNull( groupSend )
@@ -287,10 +285,8 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         requestMap.postNow = true
         requestMap.recalculateOnPost = false
         requestMap.scheduledStartDate = null
-        //requestMap.displayStartDate = testingFormat.format(new Date())
-        //requestMap.displayEndDate = testingFormat.format(new Date() + 50)
-        requestMap.displayStartDate = new Date()
-        requestMap.displayEndDate = new Date() + 50
+        requestMap.displayStartDate = testingDateFormat.format(new Date())
+        requestMap.displayEndDate = testingDateFormat.format(new Date() + 50)
         requestMap.actionItemIds = actionItemIds
         groupSend = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
         assertNotNull( groupSend )
@@ -346,8 +342,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
 
         requestMap.name = 'testRepostOfExistingData'
         requestMap.referenceId = UUID.randomUUID().toString()
-        //requestMap.displayEndDate = testingFormat.format( new Date() + 40 )
-        requestMap.displayEndDate = new Date() + 40
+        requestMap.displayEndDate = testingDateFormat.format( new Date() + 40 )
         def groupSend2 = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
         println groupSend2 // see if id is not changed
         assertNotNull( groupSend2 )
@@ -384,10 +379,8 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
 
         requestMap.name = 'testRepostOfExistingDataDatesInFuture'
         requestMap.referenceId = UUID.randomUUID().toString()
-        //requestMap.displayStartDate = testingFormat.format( new Date() + 60 )
-        //requestMap.displayEndDate = testingFormat.format( new Date() + 70 )
-        requestMap.displayStartDate = new Date() + 60
-        requestMap.displayEndDate = new Date() + 70
+        requestMap.displayStartDate = testingDateFormat.format( new Date() + 60 )
+        requestMap.displayEndDate = testingDateFormat.format( new Date() + 70 )
         def groupSend3 = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap ).savedJob
         println groupSend3 // see if id is not changed
         assertNotNull( groupSend3 )
@@ -441,8 +434,8 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         requestMap.referenceId = UUID.randomUUID().toString()
         requestMap.postGroupId = actionItemGroup.id
         requestMap.actionItemIds = actionItemIds
-        requestMap.displayStartDate = new Date() + 60
-        requestMap.displayEndDate = new Date() + 70
+        requestMap.displayStartDate = testingDateFormat.format( new Date() + 60 )
+        requestMap.displayEndDate = testingDateFormat.format( new Date() + 70 )
         requestMap.postNow = true
         requestMap.recalculateOnSend = false
 
