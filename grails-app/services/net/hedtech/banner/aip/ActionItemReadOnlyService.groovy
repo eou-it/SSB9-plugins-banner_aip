@@ -3,28 +3,35 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.service.ServiceBase
 import net.hedtech.banner.i18n.MessageHelper
+import net.hedtech.banner.service.ServiceBase
 
 class ActionItemReadOnlyService extends ServiceBase {
 
+    /**
+     *
+     * @param aiId
+     * @return
+     */
     def getActionItemROById( Long aiId ) {
-        return ActionItemReadOnly.fetchActionItemROById( aiId )
+        ActionItemReadOnly.fetchActionItemROById( aiId )
     }
 
-    //simple return of all action items
+    /**
+     *
+     * @return
+     */
     def listActionItemRO() {
-        return ActionItemReadOnly.fetchActionItemRO()
+        ActionItemReadOnly.fetchActionItemRO()
     }
 
-
-    def listActionItemROCount() {
-        return ActionItemReadOnly.fetchActionItemROCount()
-    }
-
-
-    def listActionItemROByFolder( Long folderId ) {
-        return ActionItemReadOnly.fetchActionItemROByFolder( folderId )
+    /**
+     *
+     * @param param
+     * @return
+     */
+    def listActionItemROCount( param ) {
+        ActionItemReadOnly.fetchActionItemROCount( param )
     }
 
     /**
@@ -35,10 +42,10 @@ class ActionItemReadOnlyService extends ServiceBase {
     def listActionItemsPageSort( Map params ) {
 
         def results = ActionItemReadOnly.fetchWithPagingAndSortParams(
-                [params: [name: params?.filterName]],
-                [sortColumn: params?.sortColumn, sortAscending: params?.sortAscending, max: params?.max, offset: params?.offset] )
+                [name: params?.filterName],
+                [sortColumn: params.sortColumn, sortAscending: params.sortAscending, max: params.max, offset: params.offset] )
 
-        def resultCount = listActionItemROCount()
+        def resultCount = listActionItemROCount( [name: params?.filterName] )
         def resultMap = [
                 result: results?.collect {actionItem ->
                     [
@@ -66,7 +73,7 @@ class ActionItemReadOnlyService extends ServiceBase {
                             actionItemContent      : actionItem.actionItemContent
                     ]
                 },
-                length: resultCount[0],
+                length: resultCount,
                 header: [
                         [name: "actionItemId", title: "id", options: [visible: false, isSortable: true]],
                         [name: "actionItemName", title: MessageHelper.message( "aip.common.title" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
@@ -76,9 +83,7 @@ class ActionItemReadOnlyService extends ServiceBase {
                         [name: "actionItemLastUserId", title: MessageHelper.message( "aip.common.last.updated.by" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0]
                 ]
         ]
-
-        return resultMap
-
+        resultMap
     }
 
 }

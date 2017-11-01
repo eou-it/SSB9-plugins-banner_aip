@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -22,12 +22,9 @@ import javax.persistence.*
                 query = """
            FROM ActionItemReadOnly a
           """),
-        @NamedQuery(name = "ActionItemReadOnly.fetchActionItemROByFolder",
-                query = """FROM ActionItemReadOnly a
-           WHERE a.folderId = :myFolder
-           """),
         @NamedQuery(name = "ActionItemReadOnly.fetchActionItemROCount",
-                query = """SELECT COUNT(a.actionItemId) FROM ActionItemReadOnly a
+                query = """SELECT COUNT(a.actionItemId) FROM ActionItemReadOnly a 
+                           WHERE upper(a.actionItemName) like upper(:actionItemName) 
             """
         )
 
@@ -201,11 +198,11 @@ class ActionItemReadOnly implements Serializable {
      * @param myId
      * @return
      */
-    public static def fetchActionItemROById( Long myId ) {
+    static def fetchActionItemROById( Long myId ) {
         ActionItemReadOnly.withSession {session ->
-            ActionItemReadOnly actionItemReadOnly = session.getNamedQuery( 'ActionItemReadOnly.fetchActionItemROById' ).setLong( 'myId',
-                                                                                                                                 myId ).list()[0]
-            return actionItemReadOnly
+            session.getNamedQuery( 'ActionItemReadOnly.fetchActionItemROById' )
+                    .setLong( 'myId', myId )
+                    .list()[0]
         }
     }
 
@@ -213,22 +210,9 @@ class ActionItemReadOnly implements Serializable {
      *
      * @return
      */
-    public static def fetchActionItemRO() {
+    static def fetchActionItemRO() {
         ActionItemReadOnly.withSession {session ->
-            List actionItemReadOnly = session.getNamedQuery( 'ActionItemReadOnly.fetchActionItemRO' ).list()
-            return actionItemReadOnly
-        }
-    }
-
-    /**
-     *
-     * @param folderId
-     * @return
-     */
-    public static def fetchActionItemROByFolder( Long folderId ) {
-        ActionItemReadOnly.withSession {session ->
-            List actionItemReadOnly = session.getNamedQuery( 'ActionItemReadOnly.fetchActionItemROByFolder' ).setLong( 'myFolder', folderId ).list()
-            return actionItemReadOnly
+            session.getNamedQuery( 'ActionItemReadOnly.fetchActionItemRO' ).list()
         }
     }
 
@@ -236,10 +220,11 @@ class ActionItemReadOnly implements Serializable {
      *
      * @return
      */
-    public static def fetchActionItemROCount() {
+    static def fetchActionItemROCount( params ) {
         ActionItemReadOnly.withSession {session ->
-            List actionItemReadOnlyCount = session.getNamedQuery( 'ActionItemReadOnly.fetchActionItemROCount' ).list()
-            return actionItemReadOnlyCount
+            session.getNamedQuery( 'ActionItemReadOnly.fetchActionItemROCount' )
+                    .setString( 'actionItemName', CommunicationCommonUtility.getScrubbedInput( params?.name ) )
+                    .uniqueResult()
         }
     }
 
@@ -251,18 +236,15 @@ class ActionItemReadOnly implements Serializable {
      * @param pagingAndSortParams
      * @return
      */
-    public static fetchWithPagingAndSortParams( filterData, pagingAndSortParams ) {
+    static fetchWithPagingAndSortParams( filterData, pagingAndSortParams ) {
         def queryCriteria = ActionItemReadOnly.createCriteria()
-
-        def results = queryCriteria.list( max: pagingAndSortParams.max, offset: pagingAndSortParams.offset ) {
-            ilike( "actionItemName", CommunicationCommonUtility.getScrubbedInput( filterData?.params?.name ) )
+        queryCriteria.list( max: pagingAndSortParams.max, offset: pagingAndSortParams.offset ) {
+            ilike( "actionItemName", CommunicationCommonUtility.getScrubbedInput( filterData?.name ) )
             order( (pagingAndSortParams.sortAscending ? Order.asc( pagingAndSortParams?.sortColumn ) : Order.desc( pagingAndSortParams?.sortColumn )).ignoreCase() )
             if (!pagingAndSortParams?.sortColumn.equals( "actionItemName" )) {
                 order( Order.asc( 'actionItemName' ).ignoreCase() )
             }
         }
-
-        return results
     }
 
 }

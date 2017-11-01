@@ -38,25 +38,6 @@ class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase 
     }
 
     @Test
-    void testFetchActionItemByROFolderNoResults() {
-        def folderId = 0
-
-        List<ActionItemReadOnly> actionItemsRO = actionItemReadOnlyService.listActionItemROByFolder( folderId )
-        assertEquals( 0, actionItemsRO.size() )
-    }
-
-
-    @Test
-    void testFetchActionItemByROFolderService() {
-        List<ActionItemReadOnly> actionItemROList = actionItemReadOnlyService.listActionItemRO()
-        def folderId = actionItemROList[0].folderId
-
-        List<ActionItemReadOnly> actionItemsRO = actionItemReadOnlyService.listActionItemROByFolder(folderId)
-        assert 0 < actionItemsRO.size()
-    }
-
-
-    @Test
     void testFetchActionItemROPageSortService() {
         Map params1 = [filterName:"%",sortColumn:"actionItemName", sortAscending:true, max:10, offset:0]
 
