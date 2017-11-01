@@ -117,13 +117,10 @@ class ActionItemPostCompositeService {
                 populationListId: requestMap.populationId,
                 postingActionItemGroupId: requestMap.postGroupId,
                 postingName: requestMap.name,
-                //postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
-                //postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
-                //postingScheduleDateTime: requestMap.scheduledStartDate ? actionItemProcessingCommonService.convertToLocaleBasedDate(
-                //        requestMap.scheduledStartDate ) : null,
-                postingDisplayStartDate: requestMap.displayStartDate,
-                postingDisplayEndDate: requestMap.displayEndDate,
-                postingScheduleDateTime: requestMap.scheduledStartDate,
+                postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
+                postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
+                postingScheduleDateTime: requestMap.scheduledStartDate ? actionItemProcessingCommonService.convertToLocaleBasedDate(
+                        requestMap.scheduledStartDate ) : null,
                 postingCreationDateTime: new Date(),
                 populationRegenerateIndicator: false,
                 postingDeleteIndicator: false,
