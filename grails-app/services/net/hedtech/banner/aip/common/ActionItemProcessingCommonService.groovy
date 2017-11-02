@@ -6,13 +6,11 @@ package net.hedtech.banner.aip.common
 
 import com.ibm.icu.util.Calendar
 import com.ibm.icu.util.ULocale
-import net.hedtech.banner.aip.post.grouppost.ActionItemPost
-import net.hedtech.banner.aip.post.grouppost.ActionItemPostService
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
-import net.hedtech.banner.i18n.LocalizeUtil
 import net.hedtech.banner.general.communication.population.CommunicationPopulationListView
+import net.hedtech.banner.i18n.LocalizeUtil
 import org.apache.log4j.Logger
 
 class ActionItemProcessingCommonService {
@@ -32,7 +30,6 @@ class ActionItemProcessingCommonService {
      * @return
      */
     def fetchPopulationListForSend( searchParam, paginationParam ) {
-        println 'search Param' + searchParam
         CommunicationPopulationListView.findAllForSendByPagination( [params: [name: searchParam]], paginationParam )
     }
     /**

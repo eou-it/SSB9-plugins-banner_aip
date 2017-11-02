@@ -13,13 +13,15 @@ import net.hedtech.banner.aip.post.grouppost.ActionItemPostWorkExecutionState
 import net.hedtech.banner.aip.post.job.ActionItemJob
 import net.hedtech.banner.aip.post.job.ActionItemJobStatus
 
-
+/**
+ * Service class for Action Item Perform Posting
+ */
 class ActionItemPerformPostService {
     def userActionItemService
     def actionItemJobService
 
 
-    public Map postActionItems( ActionItemPostWork actionItemPostWork ) {
+    Map postActionItems( ActionItemPostWork actionItemPostWork ) {
         ActionItemPost groupSend = actionItemPostWork.actionItemGroupSend
         def currentExecutionState = ActionItemPostWorkExecutionState.Stopped
         def errorCode = null
@@ -37,7 +39,7 @@ class ActionItemPerformPostService {
                 UserActionItem userActionItem = new UserActionItem()
                 userActionItem.pidm = userPidm
                 userActionItem.actionItemId = it.actionItemId
-                userActionItem.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
+                userActionItem.status = ActionItemStatus.fetchDefaultActionItemStatus().id
                 userActionItem.displayStartDate = groupSend.postingDisplayStartDate
                 userActionItem.displayEndDate = groupSend.postingDisplayEndDate
                 userActionItem.groupId = groupSend.postingActionItemGroupId
@@ -49,7 +51,7 @@ class ActionItemPerformPostService {
                     if (!UserActionItem.isExistingInDateRangeForPidmAndActionItemId( userActionItem )) {
                         userActionItemService.create( userActionItem )
                         successful++
-                        insertedIds.add(userActionItem.actionItemId)
+                        insertedIds.add( userActionItem.actionItemId )
                     }
                 } else {
                     userActionItem.errors.allErrors.each {
@@ -65,7 +67,7 @@ class ActionItemPerformPostService {
                 currentExecutionState = ActionItemPostWorkExecutionState.Complete
             }
         }
-        def groupSendParamMap = [
+        [
                 id                   : actionItemPostWork.id,
                 version              : actionItemPostWork.version,
                 currentExecutionState: currentExecutionState,
@@ -75,7 +77,5 @@ class ActionItemPerformPostService {
                 errorText            : errorText,
                 stopDate             : new Date()
         ]
-
-        return groupSendParamMap
     }
 }

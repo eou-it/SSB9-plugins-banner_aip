@@ -149,54 +149,46 @@ class ActionItemPostWork implements AsynchronousTask {
     }
 
 
-    public static List fetchByExecutionState( ActionItemPostWorkExecutionState executionState, Integer max = Integer.MAX_VALUE ) {
-        def results
-        ActionItemPostWork.withSession { session ->
-            results = session.getNamedQuery( 'ActionItemPostWork.fetchByExecutionState' )
+    static List fetchByExecutionState( ActionItemPostWorkExecutionState executionState, Integer max = Integer.MAX_VALUE ) {
+        ActionItemPostWork.withSession {session ->
+            session.getNamedQuery( 'ActionItemPostWork.fetchByExecutionState' )
                     .setParameter( 'executionState', executionState )
                     .setFirstResult( 0 )
                     .setMaxResults( max )
-                    ?.list()
+                    .list()
         }
-        return results
     }
 
 
-    public static List fetchByGroupSend( ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
-        def results
-        ActionItemPostWork.withSession { session ->
-            results = session.getNamedQuery( 'ActionItemPostWork.fetchByGroupSend' )
+    static List fetchByGroupSend( ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
+        ActionItemPostWork.withSession {session ->
+            session.getNamedQuery( 'ActionItemPostWork.fetchByGroupSend' )
                     .setParameter( 'groupSend', groupSend )
                     .setFirstResult( 0 )
                     .setMaxResults( max )
-                    ?.list()
+                    .list()
         }
-        return results
     }
 
 
-    public static List fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState executionState, ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
-        def results
-        ActionItemPostWork.withSession { session ->
-            results = session.getNamedQuery( 'ActionItemPostWork.fetchByExecutionStateAndGroupSend' )
+    static List fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState executionState, ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
+        ActionItemPostWork.withSession {session ->
+            session.getNamedQuery( 'ActionItemPostWork.fetchByExecutionStateAndGroupSend' )
                     .setParameter( 'executionState', executionState )
                     .setParameter( 'groupSend', groupSend )
                     .setFirstResult( 0 )
                     .setMaxResults( max )
-                    ?.list()
+                    .list()
         }
-        return results
     }
 
 
-    public static def fetchRunningGroupSendItemCount( ActionItemPost groupSend ) {
-        def result
-        ActionItemPostWork.withSession { session ->
-            result = session.getNamedQuery( 'ActionItemPostWork.countByExecutionStateAndGroupSend' )
+    static def fetchRunningGroupSendItemCount( ActionItemPost groupSend ) {
+        ActionItemPostWork.withSession {session ->
+            session.getNamedQuery( 'ActionItemPostWork.countByExecutionStateAndGroupSend' )
                     .setParameter( 'executionState', ActionItemPostWorkExecutionState.Ready )
                     .setParameter( 'groupSend', groupSend )
-                    ?.uniqueResult()
+                    .uniqueResult()
         }
-        return result
     }
 }

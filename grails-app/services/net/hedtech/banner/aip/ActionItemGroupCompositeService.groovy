@@ -58,26 +58,25 @@ class ActionItemGroupCompositeService {
 
     }
 
+
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
-    def updateActionItemGroupAssignment(aipUser, map ) {
+    def updateActionItemGroupAssignment( map ) {
         def groupId = map.groupId
         def inputGroupAssignments = map.assignment
-        def groupAssignment = actionItemGroupAssignService.fetchByGroupId(groupId)
-        List<Long>inputAssignActionItemIds = inputGroupAssignments.actionItemId.toList().collect{new Long(it)}
-        List<Long>existingAssignId = groupAssignment.actionItemId.toList()
+        def groupAssignment = actionItemGroupAssignService.fetchByGroupId( groupId )
+        List<Long> inputAssignActionItemIds = inputGroupAssignments.actionItemId.toList().collect {new Long( it )}
+        List<Long> existingAssignId = groupAssignment.actionItemId.toList()
         def deleteActionItems = existingAssignId - inputAssignActionItemIds
 
         //prepare create/update items
         List<ActionItemGroupAssign> assignList = []
-        inputGroupAssignments.each { assignment ->
-            def assign = actionItemGroupAssignService.fetchByActionItemIdAndGroupId(assignment.actionItemId ,groupId)
-            if( assign.hasProperty("id")) {
+        inputGroupAssignments.each {assignment ->
+            def assign = actionItemGroupAssignService.fetchByActionItemIdAndGroupId( assignment.actionItemId, groupId )
+            if (assign.hasProperty( "id" )) {
                 //update
                 assign.groupId = groupId
                 assign.actionItemId = assignment.actionItemId
                 assign.seqNo = assignment.seq
-                assign.lastModified = new Date()
-                assign.lastModifiedBy = aipUser.username
             } else {
                 //create
                 assign = new ActionItemGroupAssign(
@@ -86,15 +85,15 @@ class ActionItemGroupCompositeService {
                         seqNo: assignment.seq
                 )
             }
-            assignList.push(assign)
+            assignList.push( assign )
         }
         List<Long> deleteList = []
-        deleteActionItems.each { actionItemId ->
-            def assign = actionItemGroupAssignService.fetchByActionItemIdAndGroupId(actionItemId, groupId)
-            if (assign.hasProperty("id")) {
-                deleteList.push(assign.id)
+        deleteActionItems.each {actionItemId ->
+            def assign = actionItemGroupAssignService.fetchByActionItemIdAndGroupId( actionItemId, groupId )
+            if (assign.hasProperty( "id" )) {
+                deleteList.push( assign.id )
             } else {
-                throw ApplicationException("Deleting item does not exist")
+                throw ApplicationException( "Deleting item does not exist" )
             }
         }
 
@@ -102,20 +101,20 @@ class ActionItemGroupCompositeService {
         List<ActionItemGroupAssignReadOnly> updatedActionItemGroupAssignment
         try {
             //do preupdate to test
-            assignList.each {item -> actionItemGroupAssignService.preUpdate(item)}
+            assignList.each {item -> actionItemGroupAssignService.preUpdate( item )}
         } catch (net.hedtech.banner.exceptions.ApplicationException ae) {
             weGood = false
-            throw new ApplicationException("rollback", ae.message, ae.defaultMessage)
+            throw new ApplicationException( "rollback", ae.message, ae.defaultMessage )
         }
         if (weGood) {
             try {
-                actionItemGroupAssignService.delete(deleteList)
-                actionItemGroupAssignService.createOrUpdate(assignList, false)
-                updatedActionItemGroupAssignment = actionItemGroupAssignReadOnlyService.getAssignedActionItemsInGroup(groupId)
+                actionItemGroupAssignService.delete( deleteList )
+                actionItemGroupAssignService.createOrUpdate( assignList, false )
+                updatedActionItemGroupAssignment = actionItemGroupAssignReadOnlyService.getAssignedActionItemsInGroup( groupId )
             } catch (ApplicationException ae) {
-                throw new ApplicationException("rollback", ae.message, ae.defaultMessage)
+                throw new ApplicationException( "rollback", ae.message, ae.defaultMessage )
             }
         }
-        return updatedActionItemGroupAssignment
+        updatedActionItemGroupAssignment
     }
 }

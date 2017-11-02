@@ -3,18 +3,18 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import net.hedtech.banner.aip.common.LoggerUtility
 import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
+import org.apache.log4j.Logger
 import org.springframework.beans.factory.DisposableBean
 import org.springframework.beans.factory.annotation.Required
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException
 
 /**
- *
+ * Action Item Monitor class
  */
 class ActionItemPostMonitor implements DisposableBean {
-    private Log log = LogFactory.getLog(this.getClass())
+    private static final log = Logger.getLogger( this.class )
     private ActionItemPostMonitorThread monitorThread
     private ActionItemPostService actionItemPostService
     private ActionItemPostWorkService actionItemPostWorkService
@@ -22,65 +22,68 @@ class ActionItemPostMonitor implements DisposableBean {
     private AsynchronousBannerAuthenticationSpoofer asynchronousBannerAuthenticationSpoofer
     private int monitorIntervalInSeconds = 10
 
+
     @Required
-    void setMonitorIntervalInSeconds(int monitorIntervalInSeconds) {
+    void setMonitorIntervalInSeconds( int monitorIntervalInSeconds ) {
         this.monitorIntervalInSeconds = monitorIntervalInSeconds
     }
+
 
     int getMonitorIntervalInSeconds() {
         return monitorIntervalInSeconds
     }
 
+
     @Required
-    void setAsynchronousBannerAuthenticationSpoofer(AsynchronousBannerAuthenticationSpoofer asynchronousBannerAuthenticationSpoofer) {
+    void setAsynchronousBannerAuthenticationSpoofer( AsynchronousBannerAuthenticationSpoofer asynchronousBannerAuthenticationSpoofer ) {
         this.asynchronousBannerAuthenticationSpoofer = asynchronousBannerAuthenticationSpoofer
     }
 
 
     @Required
-    public void setActionItemPostService(ActionItemPostService actionItemPostService) {
+    void setActionItemPostService( ActionItemPostService actionItemPostService ) {
         this.actionItemPostService = actionItemPostService
     }
 
 
     @Required
-    public void setActionItemPostWorkService(ActionItemPostWorkService actionItemPostWorkService) {
+    void setActionItemPostWorkService( ActionItemPostWorkService actionItemPostWorkService ) {
         this.actionItemPostWorkService = actionItemPostWorkService
     }
 
 
     @Required
-    public void setActionItemPostCompositeService(ActionItemPostCompositeService actionItemPostCompositeService) {
+    void setActionItemPostCompositeService( ActionItemPostCompositeService actionItemPostCompositeService ) {
         this.actionItemPostCompositeService = actionItemPostCompositeService
     }
 
 
-    public void init() {
-        log.info("Initialized.")
+    void init() {
+        LoggerUtility.info( log, "Initialized." )
 
     }
 
 
     @Override
     void destroy() throws Exception {
-        log.info("Calling disposable bean method.")
+        LoggerUtility.info( log, "Calling disposable bean method." )
         if (monitorThread) {
             monitorThread.stopRunning()
         }
     }
 
 
-    public void startMonitoring() {
-        log.info("Monitor thread started.")
+    void startMonitoring() {
+        LoggerUtility.info( log, "Monitor thread started." )
         if (!monitorThread) {
-            monitorThread = new ActionItemPostMonitorThread(this)
+            monitorThread = new ActionItemPostMonitorThread( this )
         }
         monitorThread.start()
     }
 
 
-    public void shutdown() {
-        log.debug("Shutting down.")
+    void shutdown() {
+        LoggerUtility.debug( log, "Shutting down." )
         if (monitorThread) {
             monitorThread.stopRunning()
             try {
@@ -92,26 +95,25 @@ class ActionItemPostMonitor implements DisposableBean {
     }
 
 
-    public void monitorPosts() {
-        if (log.isDebugEnabled()) log.debug("Checking posts for status updates.")
+    void monitorPosts() {
+        LoggerUtility.debug( log, "Checking posts for status updates." )
         // begin setup
         asynchronousBannerAuthenticationSpoofer.authenticateAndSetFormContextForExecute()
         try {
             List<ActionItemPost> groupSendList = ActionItemPost.findRunning()
-            if (log.isDebugEnabled()) log.debug("Running group send count = " + groupSendList.size() + ".")
+            LoggerUtility.debug( log, "Running group send count = " + groupSendList.size() + "." )
 
             for (ActionItemPost groupSend : groupSendList) {
-                if (log.isDebugEnabled()) log.debug("group send id = " + groupSend.id + ".")
-                if (groupSend.postingCurrentState.equals(ActionItemPostExecutionState.Processing)) {
-                    int runningCount = ActionItemPostWork.fetchRunningGroupSendItemCount(groupSend)
+                LoggerUtility.debug( log, "group send id = " + groupSend.id + "." )
+                if (groupSend.postingCurrentState.equals( ActionItemPostExecutionState.Processing )) {
+                    int runningCount = ActionItemPostWork.fetchRunningGroupSendItemCount( groupSend )
                     if (runningCount == 0) {
                         completeGroupSend( groupSend.id )
                     }
                 }
             }
         } catch (Throwable t) {
-            t.printStackTrace()
-            log.error(t)
+            LoggerUtility.error( log, t )
         }
     }
 
@@ -121,10 +123,10 @@ class ActionItemPostMonitor implements DisposableBean {
      * @return the updated group send
      */
     private ActionItemPost completeGroupSend( Long groupSendId ) {
-        if (log.isDebugEnabled()) log.debug( "Completing group send with id = " + groupSendId + "." )
+        LoggerUtility.debug( log, "Completing group send with id = " + groupSendId + "." )
 
         int retries = 2
-        while(retries > 0) {
+        while (retries > 0) {
             retries--
             try {
                 return actionItemPostCompositeService.completePost( groupSendId )

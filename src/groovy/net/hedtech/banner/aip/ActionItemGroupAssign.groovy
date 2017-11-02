@@ -11,36 +11,16 @@ import javax.persistence.*
 
 
 @NamedQueries(value = [
-        @NamedQuery(name = "ActionItemGroupAssign.fetchActionItemGroupAssign",
-                query = """
-           FROM ActionItemGroupAssign a
-          """),
-        @NamedQuery(name = "ActionItemGroupAssign.fetchById",
-                query = """
-            FROM ActionItemGroupAssign a 
-            WHERE a.id = :myId 
-        """),
         @NamedQuery(name = "ActionItemGroupAssign.fetchByGroupId",
                 query = """
             FROM ActionItemGroupAssign a
             WHERE a.groupId = :myId
-        """),
-        @NamedQuery(name = "ActionItemGroupAssign.fetchByActionId",
-                query = """
-            FROM ActionItemGroupAssign a
-            WHERE a.actionItemId = :myId
         """),
         @NamedQuery(name = "ActionItemGroupAssign.fetchByActionItemGroup",
                 query = """
             FROM ActionItemGroupAssign a
             WHERE a.actionItemId = :actionItemId
             AND a.groupId = :groupId
-        """),
-        @NamedQuery(name = "ActionItemGroupAssign.existsSameSeqNoInActionItem",
-                query = """ select a.actionItemId, a.seqNo, COUNT(*) FROM ActionItemGroupAssign a
-                    WHERE a.groupId = :groupId
-                    GROUP BY a.actionItemId, a.seqNo
-                    HAVING COUNT(*) > 1
         """)
 ])
 
@@ -113,64 +93,15 @@ class ActionItemGroupAssign implements Serializable {
         dataOrigin( nullable: true, maxSize: 19 )
     }
 
-
-    static def fetchActionItemGroupAssign() {
-        ActionItem.withSession {session ->
-            session.getNamedQuery( 'ActionItemGroupAssign.fetchActionItemGroupAssign' ).list()
-        }
-    }
-
-    /**
-     *
-     * @param myId
-     * @return
-     */
-    // ReadOnly View?
-    static def fetchById( Long myId ) {
-        ActionItemGroupAssign.withSession {session ->
-            def actionItemGroupAssign = session.getNamedQuery( 'ActionItemGroupAssign.fetchById' ).setLong( 'myId', myId )?.list()[0]
-            return actionItemGroupAssign
-        }
-    }
-
     static def fetchByGroupId ( Long myId) {
         ActionItemGroupAssign.withSession {session ->
-            def actionItemGroupAssign = session.getNamedQuery('ActionItemGroupAssign.fetchByGroupId').setLong('myId', myId)?.list()
-            return actionItemGroupAssign
-        }
-    }
-
-    static def fetchByActionItemId( Long myId ) {
-        ActionItemGroupAssign.withSession {session ->
-            List actionItemGroupAssign = session.getNamedQuery( 'ActionItemGroupAssign.fetchByActionId').setLong( 'myId', myId)?.list()
-            return actionItemGroupAssign
+            session.getNamedQuery('ActionItemGroupAssign.fetchByGroupId').setLong('myId', myId)?.list()
         }
     }
 
     static def fetchByActionItemIdAndGroupId (Long actionItemId, Long groupId) {
         ActionItemGroupAssign.withSession {session ->
-            def actionItemGroupAssign = session.getNamedQuery( 'ActionItemGroupAssign.fetchByActionItemGroup').setLong('actionItemId', actionItemId).setLong('groupId', groupId)?.list()[0]
-            return actionItemGroupAssign
+            session.getNamedQuery( 'ActionItemGroupAssign.fetchByActionItemGroup').setLong('actionItemId', actionItemId).setLong('groupId', groupId)?.list()[0]
         }
-    }
-
-    /**
-     * Checks if ActionItems in same group have same seq Number
-     * @return
-     */
-    // Check constraint requirement that a Name in a folder must be unique
-    static Boolean existsSameSeqNoInActionItem( Long groupId ) {
-        def count
-        ActionItem.withSession {session ->
-            session.setFlushMode( FlushMode.MANUAL )
-            try {
-                count = session.getNamedQuery( 'ActionItemGroupAssign.existsSameSeqNoInActionItem' )
-                        .setLong( 'groupId', groupId )
-                        .uniqueResult()
-            } finally {
-                session.setFlushMode( FlushMode.AUTO )
-            }
-        }
-        count > 0
     }
 }

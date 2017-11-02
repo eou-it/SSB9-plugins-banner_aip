@@ -11,8 +11,6 @@ import net.hedtech.banner.service.ServiceBase
 
 class ActionItemBlockedProcessService extends ServiceBase {
 
-    private static BLOCKING_CONFIG_NAME = 'json/aipBlock'
-
     def listBlockedProcessesByType() {
 
         def ConfigurationData = [:]

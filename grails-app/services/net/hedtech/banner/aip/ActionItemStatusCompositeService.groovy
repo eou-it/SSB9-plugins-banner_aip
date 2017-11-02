@@ -123,7 +123,6 @@ class ActionItemStatusCompositeService {
         if (!user) {
             throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'user.id.not.valid', [] ) )
         }
-        def aipUser = PersonUtility.getPerson( user.pidm )
         ActionItemStatus status = new ActionItemStatus(
                 actionItemStatus: title,
                 actionItemStatusActive: 'Y',
@@ -132,7 +131,6 @@ class ActionItemStatusCompositeService {
         )
         ActionItemStatus newStatus
         def success = false
-        def message
 
         try {
             newStatus = actionItemStatusService.create( status )
