@@ -48,9 +48,6 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
                 userGroupInfo[exist].items.push( item )
             }
         }
-        //TODO:: order action items in group by seq number
-        def orderBySeqNumber = new OrderBy( [{it.actionItemSequenceNumber}] )
-        //userGroupInfo.items.sort( orderBySeqNumber )
         [
                 groups: userGroupInfo,
                 header: ["title", "state", "completedDate", "description"]

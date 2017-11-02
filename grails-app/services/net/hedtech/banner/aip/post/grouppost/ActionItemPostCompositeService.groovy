@@ -509,9 +509,8 @@ class ActionItemPostCompositeService {
 
 
     private void stopPendingActionItemJobs( Long groupSendId ) {
-        def Sql sql
+        Sql sql
         try {
-            Connection connection = (Connection) sessionFactory.getCurrentSession().connection()
             sql = new Sql( (Connection) sessionFactory.getCurrentSession().connection() )
             sql.executeUpdate( "update GCBAJOB set GCBAJOB_STATUS='STOPPED', GCBAJOB_ACTIVITY_DATE = SYSDATE where " +
                                        "GCBAJOB_STATUS in ('PENDING', 'DISPATCHED') and GCBAJOB_REFERENCE_ID in " +
@@ -529,7 +528,6 @@ class ActionItemPostCompositeService {
     private void stopPendingPostItems( Long groupSendId ) {
         Sql sql
         try {
-            Connection connection = (Connection) sessionFactory.getCurrentSession().connection()
             sql = new Sql( (Connection) sessionFactory.getCurrentSession().connection() )
             sql.executeUpdate( "update GCRAIIM set GCRAIIM_CURRENT_STATE='Stopped', GCRAIIM_ACTIVITY_DATE = SYSDATE, GCRAIIM_STOP_DATE = SYSDATE " +
                                        "where " +

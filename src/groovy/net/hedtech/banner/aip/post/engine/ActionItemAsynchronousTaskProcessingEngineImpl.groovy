@@ -4,17 +4,12 @@
 package net.hedtech.banner.aip.post.engine
 
 import groovy.transform.Synchronized
+import net.hedtech.banner.aip.post.ActionItemErrorCode
+import net.hedtech.banner.aip.post.exceptions.ActionItemApplicationException
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.asynchronous.AsynchronousActionPoolThreadFactory
 import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
-import net.hedtech.banner.general.asynchronous.task.AsynchronousTask
-import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskConfiguration
-import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskHandler
-import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskManager
-import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskMonitorRecord
-import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskProcessingEngine
-import net.hedtech.banner.aip.post.ActionItemErrorCode
-import net.hedtech.banner.aip.post.exceptions.ActionItemApplicationException
+import net.hedtech.banner.general.asynchronous.task.*
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.springframework.beans.factory.DisposableBean
@@ -32,11 +27,6 @@ import java.util.concurrent.*
 public class ActionItemAsynchronousTaskProcessingEngineImpl implements AsynchronousTaskProcessingEngine, DisposableBean {
 
     private final Log log = LogFactory.getLog(this.getClass())
-
-    /*
-     * Configuration Bean that this engine will work with
-     */
-    private AsynchronousTaskConfiguration config
 
     /**
      * The job manager for which this processing engine is configured to support.
