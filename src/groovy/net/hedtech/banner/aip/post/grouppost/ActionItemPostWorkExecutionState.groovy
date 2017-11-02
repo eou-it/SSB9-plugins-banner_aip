@@ -23,26 +23,28 @@ enum ActionItemPostWorkExecutionState implements Serializable {
     }
 
     Set<ActionItemPostWorkExecutionState> set() {
-    	return EnumSet.range( Ready, Failed )
+    	EnumSet.range( Ready, Failed )
     }
 
     String toString() {
-        return this.name()
+        name
     }
 
     static ActionItemPostWorkExecutionState valueOf( int ordinal) {
         for(ActionItemPostWorkExecutionState ds: values()) {
-            if (ds.ordinal() == ordinal) return ds
+            if (ds.ordinal() == ordinal){
+                ds
+            }
         }
         throw new IllegalArgumentException( "ordinal out of range:" + ordinal )
     }
 
     boolean isTerminal() {
-        return terminal
+        terminal
     }
 
     boolean isRunning() {
-        return !terminal
+        !terminal
     }
 
 }

@@ -14,7 +14,7 @@ import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureExcep
  * Action Item Monitor class
  */
 class ActionItemPostMonitor implements DisposableBean {
-    private static final LOGGER = Logger.getLogger( this.class )
+    private static final log = Logger.getLogger( this.class )
     private ActionItemPostMonitorThread monitorThread
     private ActionItemPostService actionItemPostService
     private ActionItemPostWorkService actionItemPostWorkService
