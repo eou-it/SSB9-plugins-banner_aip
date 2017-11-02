@@ -5,7 +5,6 @@ package net.hedtech.banner.aip.post.grouppost
 
 import net.hedtech.banner.aip.common.LoggerUtility
 import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
-import org.apache.commons.logging.Log
 import org.apache.log4j.Logger
 import org.springframework.beans.factory.DisposableBean
 import org.springframework.beans.factory.annotation.Required
@@ -15,7 +14,7 @@ import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureExcep
  * Action Item Monitor class
  */
 class ActionItemPostMonitor implements DisposableBean {
-    private Log log = Logger.getLogger( this.getClass() )
+    private static final LOGGER = Logger.getLogger( this.class )
     private ActionItemPostMonitorThread monitorThread
     private ActionItemPostService actionItemPostService
     private ActionItemPostWorkService actionItemPostWorkService
