@@ -28,13 +28,4 @@ class ActionItemTemplateServiceIntegraionTests extends BaseIntegrationTestCase {
         List<ActionItemTemplate> actionItemTemplates = actionItemTemplateService.listActionItemTemplates()
         assertFalse actionItemTemplates.isEmpty()
     }
-
-    @Test
-    void testFetchActionItemTemplateFetchActionItemTemplateByIdService() {
-        List<ActionItemTemplate> actionItemTemplates = actionItemTemplateService.listActionItemTemplates()
-        def actionItemTemplateId = actionItemTemplates[0].id
-        List<ActionItemTemplate> actionItemTemplate = actionItemTemplateService.getActionItemTemplateById(actionItemTemplateId)
-        assertEquals(actionItemTemplateId, actionItemTemplate[0].id)
-        assertEquals(1, actionItemTemplate.size())
-    }
 }

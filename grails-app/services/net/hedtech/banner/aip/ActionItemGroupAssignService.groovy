@@ -5,22 +5,17 @@ package net.hedtech.banner.aip
 
 import net.hedtech.banner.service.ServiceBase
 
-class ActionItemGroupAssignService  extends ServiceBase  {
+/**
+ * Service classes for Action Item Group Assign
+ */
+class ActionItemGroupAssignService extends ServiceBase {
 
-    def fetchByGroupId(Long id) {
+    def fetchByGroupId( Long id ) {
         ActionItemGroupAssign.fetchByGroupId( id )
     }
 
-    def fetchByActionItemIdAndGroupId (Long actionItemId, Long groupId) {
-        ActionItemGroupAssign.fetchByActionItemIdAndGroupId(actionItemId, groupId)
-    }
 
-
-    def preCreate(domainModelOrMap) {
-
-    }
-
-    def preUpdate (domainModelOrMap) {
-        preCreate(domainModelOrMap)
+    def fetchByActionItemIdAndGroupId( Long actionItemId, Long groupId ) {
+        ActionItemGroupAssign.fetchByActionItemIdAndGroupId( actionItemId, groupId )
     }
 }

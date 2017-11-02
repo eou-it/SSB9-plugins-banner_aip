@@ -14,10 +14,6 @@ class ActionItemTemplateService extends ServiceBase{
         return ActionItemTemplate.fetchActionItemTemplates()
     }
 
-    def getActionItemTemplateById(Long actionItemTemplateId) {
-        return ActionItemTemplate.fetchActionItemTemplateById(actionItemTemplateId)
-    }
-
     def preCreate( domainModelOrMap) {
         ActionItemTemplate at = (domainModelOrMap instanceof Map ? domainModelOrMap.domainModel : domainModelOrMap) as ActionItemTemplate
 
