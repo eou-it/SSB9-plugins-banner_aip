@@ -83,7 +83,6 @@ class ActionItemContent implements Serializable {
     String dataOrigin
 
     static constraints = {
-        id( nullable: false, maxSize: 19 )
         actionItemId( nullable: false, maxSize: 19 )
         text( nullable: true )
         actionItemTemplateId( nullable: true )

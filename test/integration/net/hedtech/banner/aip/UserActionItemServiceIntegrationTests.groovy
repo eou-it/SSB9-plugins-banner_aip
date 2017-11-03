@@ -18,14 +18,14 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Before
-    public void setUp() {
+    void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
     }
 
 
     @After
-    public void tearDown() {
+    void tearDown() {
         super.tearDown()
     }
 
@@ -58,7 +58,7 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
         // existing date range (at time of writing this test) is 2/9/2016 - 12/9/2017 . Increment start by one day
         def existingUserActionItem = existingUserActionItems[0]
-        def origSize = existingUserActionItems.size(  )
+        def origSize = existingUserActionItems.size()
         UserActionItem userActionItem = new UserActionItem()
         userActionItem.pidm = actionItemPidm
         userActionItem.actionItemId = existingUserActionItem.actionItemId
@@ -72,7 +72,7 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         def message = shouldFail( ApplicationException ) {
             userActionItemService.create( userActionItem )
         }
-        assertEquals( "@@r1:AlreadyExistsCondition@@", message)
+        assertEquals( "@@r1:AlreadyExistsCondition@@", message )
 
         List<UserActionItem> newUserActionItems = userActionItemService.listActionItemsByPidm( actionItemPidm )
         assertEquals( origSize, newUserActionItems.size() )
@@ -86,14 +86,14 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
         // existing date range (at time of writing this test) is 2/9/2016 - 12/9/2017 .
         // make start and end well past this range
-        def startDate = new Date().copyWith( year: 2024, month: Calendar.APRIL, dayOfMonth: 3)
-        def endDate = new Date().copyWith( year: 2024, month: Calendar.JULY, dayOfMonth: 3)
+        def startDate = new Date().copyWith( year: 2024, month: Calendar.APRIL, dayOfMonth: 3 )
+        def endDate = new Date().copyWith( year: 2024, month: Calendar.JULY, dayOfMonth: 3 )
         def existingUserActionItem = existingUserActionItems[0]
         def origSize = existingUserActionItems.size()
         UserActionItem userActionItem = new UserActionItem()
         userActionItem.pidm = actionItemPidm
         userActionItem.actionItemId = existingUserActionItem.actionItemId
-        userActionItem.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
+        userActionItem.status = ActionItemStatus.fetchDefaultActionItemStatus().id
         userActionItem.displayStartDate = startDate
         userActionItem.displayEndDate = endDate
         userActionItem.groupId = existingUserActionItem.groupId

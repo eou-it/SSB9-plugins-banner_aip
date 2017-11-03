@@ -17,7 +17,7 @@ class ActionItemPostService extends ServiceBase {
      * Validation before creation of Posting
      * @param dataMap
      */
-    def preCreateValidation( dataMap ) {
+    def  preCreateValidation( dataMap ) {
         if (!dataMap) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.insufficient.request', [] ) )
         }

@@ -5,10 +5,8 @@ package net.hedtech.banner.aip
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-import org.hibernate.FlushMode
 
 import javax.persistence.*
-
 
 @NamedQueries(value = [
         @NamedQuery(name = "ActionItemGroupAssign.fetchByGroupId",
@@ -86,22 +84,24 @@ class ActionItemGroupAssign implements Serializable {
 
     static constraints = {
         groupId( blank: false, nullable: false, maxSize: 19 )
-        actionItemId( blank: false, nullable: false, maxSize: 19)
-        seqNo(blank: false, nullable: false, maxSize: 19)
+        actionItemId( blank: false, nullable: false, maxSize: 19 )
+        seqNo( blank: false, nullable: false, maxSize: 19 )
         lastModifiedBy( blank: false, nullable: true, maxSize: 30 )
         lastModified( blank: false, nullable: true )
         dataOrigin( nullable: true, maxSize: 19 )
     }
 
-    static def fetchByGroupId ( Long myId) {
+
+    static def fetchByGroupId( Long myId ) {
         ActionItemGroupAssign.withSession {session ->
-            session.getNamedQuery('ActionItemGroupAssign.fetchByGroupId').setLong('myId', myId)?.list()
+            session.getNamedQuery( 'ActionItemGroupAssign.fetchByGroupId' ).setLong( 'myId', myId )?.list()
         }
     }
 
-    static def fetchByActionItemIdAndGroupId (Long actionItemId, Long groupId) {
+
+    static def fetchByActionItemIdAndGroupId( Long actionItemId, Long groupId ) {
         ActionItemGroupAssign.withSession {session ->
-            session.getNamedQuery( 'ActionItemGroupAssign.fetchByActionItemGroup').setLong('actionItemId', actionItemId).setLong('groupId', groupId)?.list()[0]
+            session.getNamedQuery( 'ActionItemGroupAssign.fetchByActionItemGroup' ).setLong( 'actionItemId', actionItemId ).setLong( 'groupId', groupId )?.list()[0]
         }
     }
 }
