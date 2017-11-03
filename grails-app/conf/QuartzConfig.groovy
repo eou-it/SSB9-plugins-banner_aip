@@ -8,9 +8,11 @@ if (System.properties['grails.test.phase'] == 'concurrent') {
             scheduler.skipUpdateCheck = true
             scheduler.instanceName = 'Banner Quartz Scheduler'
             scheduler.instanceId = 'AUTO'
+            //scheduler.instanceId = 'AIP' // new instance?
             scheduler.idleWaitTime = 1000
 
             jobStore.class = 'net.hedtech.banner.general.scheduler.quartz.BannerDataSourceJobStoreCMT'
+//            jobStore.class = 'net.hedtech.banner.general.scheduler.quartz.ActionItemDataSourceJobStoreCMT' // ok to reuse?
             jobStore.driverDelegateClass = 'org.quartz.impl.jdbcjobstore.oracle.OracleDelegate'
             jobStore.tablePrefix = 'GCRQRTZ_'
 //        jobStore.isClustered = false
