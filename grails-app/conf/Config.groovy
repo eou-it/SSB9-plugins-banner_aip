@@ -78,12 +78,12 @@ environments {
 aip {
     weblogicDeployment = false
 
-    aipPostMonitor {
+    actionItemPostMonitor {
         enabled = true
         monitorIntervalInSeconds = 10
     }
 
-    aipPostWorkProcessingEngine {
+    actionItemPostWorkProcessingEngine {
         enabled = true
         maxThreads = 1
         maxQueueSize = 5000
@@ -92,7 +92,7 @@ aip {
         deleteSuccessfullyCompleted = false
     }
 
-    aipJobProcessingEngine {
+    actionItemJobProcessingEngine {
         enabled = true
         maxThreads = 2
         maxQueueSize = 5000
