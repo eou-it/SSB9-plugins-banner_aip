@@ -21,7 +21,7 @@ import javax.persistence.*
            WHERE a.pidm = :myPidm
           """),
         @NamedQuery(name = "UserActionItem.isExistingInDateRangeForPidmAndActionItemId",
-                query = """
+                query = """ SELECT count(a.pidm)
                    FROM UserActionItem a
                    WHERE a.pidm = :myPidm
                    AND a.actionItemId = :myActionItemId
@@ -151,8 +151,7 @@ class UserActionItem implements Serializable {
      */
     static def fetchUserActionItemById( Long id ) {
         UserActionItem.withSession {session ->
-            UserActionItem userActionItem = session.getNamedQuery( 'UserActionItem.fetchUserActionItemById' ).setLong( 'myId', id ).list()[0]
-            return userActionItem
+            session.getNamedQuery( 'UserActionItem.fetchUserActionItemById' ).setLong( 'myId', id ).list()[0]
         }
     }
 
@@ -163,8 +162,7 @@ class UserActionItem implements Serializable {
      */
     static def fetchUserActionItemsByPidm( Long pidm ) {
         UserActionItem.withSession {session ->
-            List userActionItem = session.getNamedQuery( 'UserActionItem.fetchUserActionItemByPidm' ).setLong( 'myPidm', pidm ).list()
-            return userActionItem
+            session.getNamedQuery( 'UserActionItem.fetchUserActionItemByPidm' ).setLong( 'myPidm', pidm ).list()
         }
     }
 
@@ -174,14 +172,13 @@ class UserActionItem implements Serializable {
      * @return boolean Does an UserActionItem for this pidm and and ActionItem with overlapping display dates already exist
      */
     static boolean isExistingInDateRangeForPidmAndActionItemId( UserActionItem itemToTest ) {
-        UserActionItem.withSession { session ->
-            boolean userActionItem = session.getNamedQuery(
+        UserActionItem.withSession {session ->
+            session.getNamedQuery(
                     'UserActionItem.isExistingInDateRangeForPidmAndActionItemId' ).setLong( 'myPidm', itemToTest.pidm )
                     .setLong( 'myActionItemId', itemToTest.actionItemId )
                     .setDate( 'myDisplayStartDate', itemToTest.displayStartDate )
                     .setDate( 'myDisplayEndDate', itemToTest.displayEndDate )
-                    ?.list()?.size() > 0
-            return userActionItem
+                    .uniqueResult() > 0
         }
     }
 }
