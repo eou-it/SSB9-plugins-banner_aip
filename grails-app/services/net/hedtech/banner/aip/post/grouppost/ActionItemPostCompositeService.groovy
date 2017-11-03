@@ -119,8 +119,9 @@ class ActionItemPostCompositeService {
                 postingName: requestMap.name,
                 postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
                 postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
-                postingScheduleDateTime: requestMap.scheduledStartDate ? actionItemProcessingCommonService.convertToLocaleBasedDate(
-                        requestMap.scheduledStartDate ) : null,
+                //postingScheduleDateTime: requestMap.scheduledStartDate ? actionItemProcessingCommonService.convertToLocaleBasedDate(
+                //        requestMap.scheduledStartDate ) : null,
+                postingScheduleDateTime: requestMap.scheduledStartDate,
                 postingCreationDateTime: new Date(),
                 populationRegenerateIndicator: false,
                 postingDeleteIndicator: false,

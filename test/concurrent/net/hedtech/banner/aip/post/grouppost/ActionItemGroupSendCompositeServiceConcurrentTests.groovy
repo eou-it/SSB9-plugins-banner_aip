@@ -42,7 +42,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
     @Before
     void setUp() {
         formContext = ['GUAGMNU', 'SELFSERVICE']
-        def auth = selfServiceBannerAuthenticationProvider.authenticate( new UsernamePasswordAuthenticationToken( 'BCMADMIN', '111111' ) )
+        def auth = selfServiceBannerAuthenticationProvider.authenticate( new UsernamePasswordAuthenticationToken( TEST_USER, '111111' ) )
         SecurityContextHolder.getContext().setAuthentication( auth )
         super.setUp()
         actionItemPostMonitor.startMonitoring()
@@ -75,7 +75,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
 
         CommunicationPopulation population = communicationPopulationCompositeService.createPopulationFromQuery( populationQuery,
                 "testPopulationForSchedTest" )
-        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( population.id, 'BCMADMIN' )
+        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( population.id, TEST_USER )
         assertEquals( populationCalculation.status, CommunicationPopulationCalculationStatus.PENDING_EXECUTION )
         def isAvailable = {
             def theCalculation = CommunicationPopulationCalculation.get( it )
@@ -164,10 +164,11 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
 
         CommunicationPopulation population = communicationPopulationCompositeService.createPopulationFromQuery( populationQuery,
                 "testPopulationForRegenTest" )
-        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( population.id, 'BCMADMIN' )
+        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( population.id, TEST_USER )
         assertEquals( populationCalculation.status, CommunicationPopulationCalculationStatus.PENDING_EXECUTION )
         def isAvailable = {
             def theCalculation = CommunicationPopulationCalculation.get( it )
+            println( theCalculation )
             theCalculation.refresh()
             return theCalculation.status == CommunicationPopulationCalculationStatus.AVAILABLE
         }
@@ -255,7 +256,7 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         populationQuery = queryVersion.query
 
         CommunicationPopulation population = communicationPopulationCompositeService.createPopulationFromQuery( populationQuery, "testPopulation" )
-        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( population.id, 'BCMADMIN' )
+        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( population.id, TEST_USER )
         assertEquals( populationCalculation.status, CommunicationPopulationCalculationStatus.PENDING_EXECUTION )
         def isAvailable = {
             def theCalculation = CommunicationPopulationCalculation.get( it )

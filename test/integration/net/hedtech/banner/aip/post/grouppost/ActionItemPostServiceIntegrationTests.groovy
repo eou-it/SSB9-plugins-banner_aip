@@ -20,7 +20,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemPostService
-    def communicationPopulationQueryCompositeService
     def actionItemProcessingCommonService
     def communicationFolderService
 
