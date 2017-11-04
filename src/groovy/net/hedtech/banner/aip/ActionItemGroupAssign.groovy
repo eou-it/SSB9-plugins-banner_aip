@@ -5,6 +5,7 @@ package net.hedtech.banner.aip
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import org.hibernate.FlushMode
 
 import javax.persistence.*
 
@@ -19,6 +20,12 @@ import javax.persistence.*
             FROM ActionItemGroupAssign a
             WHERE a.actionItemId = :actionItemId
             AND a.groupId = :groupId
+        """),
+        @NamedQuery(name = "ActionItemGroupAssign.existsSameSeqNoInActionItem",
+                query = """ select a.actionItemId, a.seqNo, COUNT(*) FROM ActionItemGroupAssign a
+                    WHERE a.groupId = :groupId
+                    GROUP BY a.actionItemId, a.seqNo
+                    HAVING COUNT(*) > 1
         """)
 ])
 
@@ -103,5 +110,25 @@ class ActionItemGroupAssign implements Serializable {
         ActionItemGroupAssign.withSession {session ->
             session.getNamedQuery( 'ActionItemGroupAssign.fetchByActionItemGroup' ).setLong( 'actionItemId', actionItemId ).setLong( 'groupId', groupId )?.list()[0]
         }
+    }
+
+    /**
+     * Checks if ActionItems in same group have same seq Number
+     * @return
+     */
+    // Check constraint requirement that a Name in a folder must be unique
+    static Boolean existsSameSeqNoInActionItem( Long groupId ) {
+        def count
+        ActionItem.withSession {session ->
+            session.setFlushMode( FlushMode.MANUAL )
+            try {
+                count = session.getNamedQuery( 'ActionItemGroupAssign.existsSameSeqNoInActionItem' )
+                        .setLong( 'groupId', groupId )
+                        .uniqueResult()
+            } finally {
+                session.setFlushMode( FlushMode.AUTO )
+            }
+        }
+        count > 0
     }
 }
