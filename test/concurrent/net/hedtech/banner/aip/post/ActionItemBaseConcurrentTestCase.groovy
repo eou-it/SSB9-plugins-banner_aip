@@ -37,6 +37,7 @@ class ActionItemBaseConcurrentTestCase extends Assert {
 
     //public static final String TEST_USER = 'BCMADMIN'
     public static final String TEST_USER = 'CSRADM002'
+    public static final String TEST_ORACLE_ID = 'CSRAOR002' // TODO look this up from TEST_USER
 
 
     def actionItemPostMonitor
@@ -157,21 +158,21 @@ class ActionItemBaseConcurrentTestCase extends Assert {
                 sql.executeUpdate("Delete from GCRQRTZ_JOB_DETAILS")
                 sql.executeUpdate("Delete from GCRQRTZ_LOCKS")
                 sql.executeUpdate("Delete from GCRQRTZ_SCHEDULER_STATE")
-                sql.executeUpdate("Delete from GCRLENT where GCRLENT_USER_ID = \'${TEST_USER}\'" )
+                sql.executeUpdate("Delete from GCRLENT where GCRLENT_USER_ID = \'${TEST_ORACLE_ID}\'" )
                 sql.executeUpdate("Delete from GCRPQID where GCRPQID_USER_ID = \'${TEST_USER}\'" )
                 sql.executeUpdate("Delete from GCRPVID where GCRPVID_USER_ID = \'${TEST_USER}\'" )
-                sql.executeUpdate("Delete from GCRPOPC where GCRPOPC_CREATOR_ID = \'${TEST_USER}\'" )
-                sql.executeUpdate("Delete from GCRPOPV where GCRPOPV_CREATOR_ID = \'${TEST_USER}\'" )
-                sql.executeUpdate("Delete from GCRSLIS where GCRSLIS_USER_ID = \'${TEST_USER}\'" )
+                sql.executeUpdate("Delete from GCRPOPC" )
+                sql.executeUpdate("Delete from GCRPOPV where GCRPOPV_USER_ID = \'${TEST_USER}\'" )
+                sql.executeUpdate("Delete from GCRSLIS where GCRSLIS_USER_ID = \'${TEST_ORACLE_ID}\'" )
                 sql.executeUpdate("Delete from GCBPOPL where GCBPOPL_USER_ID = \'${TEST_USER}\'" )
                 sql.executeUpdate("Delete from GCRQRYV where GCRQRYV_USER_ID = \'${TEST_USER}\'" )
                 sql.executeUpdate("Delete from GCBQURY where GCBQURY_USER_ID = \'${TEST_USER}\'" )
                 sql.executeUpdate( "DELETE FROM gcrfldr WHERE gcrfldr_name = \'ActionItemPostCompositeServiceTests\'" )
                 sql.executeUpdate( "Delete from GCRAIIM" )
                 sql.executeUpdate( "Delete from GCRAPST where GCRAPST_USER_ID = \'${TEST_USER}\'" )
-                sql.executeUpdate( "Delete from GCBAPST where GCBAPST_CREATOR_ID = \'${TEST_USER}\'" )
+                sql.executeUpdate( "Delete from GCBAPST where GCBAPST_CREATOR_ID = \'${TEST_ORACLE_ID}\'" )
                 sql.executeUpdate( "Delete from GCBAJOB" )
-                sql.executeUpdate( "Delete from GCRAACT where GCRAACT_CREATOR_ID = \'${TEST_USER}\'" )
+                sql.executeUpdate( "Delete from GCRAACT where GCRAACT_CREATOR_ID = \'${TEST_ORACLE_ID}\'" )
                 tx.commit()
             }
         } finally {

@@ -75,7 +75,8 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
 
         CommunicationPopulation population = communicationPopulationCompositeService.createPopulationFromQuery( populationQuery,
                 "testPopulationForSchedTest" )
-        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( population.id, TEST_USER )
+        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy(
+                population.id, TEST_ORACLE_ID )
         assertEquals( populationCalculation.status, CommunicationPopulationCalculationStatus.PENDING_EXECUTION )
         def isAvailable = {
             def theCalculation = CommunicationPopulationCalculation.get( it )
@@ -164,11 +165,11 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
 
         CommunicationPopulation population = communicationPopulationCompositeService.createPopulationFromQuery( populationQuery,
                 "testPopulationForRegenTest" )
-        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( population.id, TEST_USER )
+        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy(
+                population.id, TEST_ORACLE_ID )
         assertEquals( populationCalculation.status, CommunicationPopulationCalculationStatus.PENDING_EXECUTION )
         def isAvailable = {
             def theCalculation = CommunicationPopulationCalculation.get( it )
-            println( theCalculation )
             theCalculation.refresh()
             return theCalculation.status == CommunicationPopulationCalculationStatus.AVAILABLE
         }
@@ -256,7 +257,8 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         populationQuery = queryVersion.query
 
         CommunicationPopulation population = communicationPopulationCompositeService.createPopulationFromQuery( populationQuery, "testPopulation" )
-        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( population.id, TEST_USER )
+        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy(
+                population.id, TEST_ORACLE_ID )
         assertEquals( populationCalculation.status, CommunicationPopulationCalculationStatus.PENDING_EXECUTION )
         def isAvailable = {
             def theCalculation = CommunicationPopulationCalculation.get( it )
