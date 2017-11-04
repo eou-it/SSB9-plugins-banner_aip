@@ -60,7 +60,7 @@ class ActionItemGroupCompositeService {
 
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
-    def updateActionItemGroupAssignment( map ) {
+    def updateActionItemGroupAssignment( aipUser, map ) {
         def groupId = map.groupId
         def inputGroupAssignments = map.assignment
         def groupAssignment = actionItemGroupAssignService.fetchByGroupId( groupId )
@@ -77,6 +77,8 @@ class ActionItemGroupCompositeService {
                 assign.groupId = groupId
                 assign.actionItemId = assignment.actionItemId
                 assign.seqNo = assignment.seq
+                assign.lastModified = new Date()
+                assign.lastModifiedBy = aipUser.username
             } else {
                 //create
                 assign = new ActionItemGroupAssign(
