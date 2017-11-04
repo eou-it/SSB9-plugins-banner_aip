@@ -27,7 +27,7 @@ enum ActionItemPostWorkExecutionState implements Serializable {
     }
 
     String toString() {
-        name
+        this.name(  )
     }
 
     static ActionItemPostWorkExecutionState valueOf( int ordinal) {

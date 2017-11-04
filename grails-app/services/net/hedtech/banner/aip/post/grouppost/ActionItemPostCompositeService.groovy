@@ -290,25 +290,25 @@ class ActionItemPostCompositeService {
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
-    // Scheduling service callback job methods
+    // Scheduling service callback job methods (leave public)
     //////////////////////////////////////////////////////////////////////////////////////
 
-    ActionItemPost calculatePopulationVersionForPostFired( SchedulerJobContext jobContext ) {
+    public ActionItemPost calculatePopulationVersionForPostFired( SchedulerJobContext jobContext ) {
         calculatePopulationVersionForGroupSend( jobContext.parameters )
     }
 
 
-    ActionItemPost calculatePopulationVersionForPostFailed( SchedulerErrorContext errorContext ) {
+    public ActionItemPost calculatePopulationVersionForPostFailed( SchedulerErrorContext errorContext ) {
         scheduledPostCallbackFailed( errorContext )
     }
 
 
-    ActionItemPost generatePostItemsFired( SchedulerJobContext jobContext ) {
+    public ActionItemPost generatePostItemsFired( SchedulerJobContext jobContext ) {
         generatePostItems( jobContext.parameters )
     }
 
 
-    ActionItemPost generatePostItemsFailed( SchedulerErrorContext errorContext ) {
+    public ActionItemPost generatePostItemsFailed( SchedulerErrorContext errorContext ) {
         scheduledPostCallbackFailed( errorContext )
     }
 
