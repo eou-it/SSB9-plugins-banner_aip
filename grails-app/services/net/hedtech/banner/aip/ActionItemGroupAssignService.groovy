@@ -15,20 +15,7 @@ class ActionItemGroupAssignService extends ServiceBase {
         ActionItemGroupAssign.fetchByGroupId( id )
     }
 
-
     def fetchByActionItemIdAndGroupId( Long actionItemId, Long groupId ) {
         ActionItemGroupAssign.fetchByActionItemIdAndGroupId( actionItemId, groupId )
-    }
-
-    def preCreate( domainModelOrMap ) {
-        ActionItemGroupAssign aiga = (domainModelOrMap instanceof Map ? domainModelOrMap?.domainModel : domainModelOrMap) as ActionItemGroupAssign
-
-        if (!aiga.validate()) {
-            throw new ApplicationException(ActionItemGroupAssign,"@@r1:DomainInvalidError@@", "actionItemGroupAssign.invalid.error" )
-        }
-    }
-
-    def preUpdate (domainModelOrMap) {
-        preCreate( domainModelOrMap)
     }
 }
