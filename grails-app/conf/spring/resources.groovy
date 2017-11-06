@@ -22,7 +22,7 @@ beans = {
         bean.autowire = 'byName'
         bean.initMethod = 'init'
         asynchronousBannerAuthenticationSpoofer = ref('asynchronousBannerAuthenticationSpoofer')
-        monitorIntervalInSeconds =  Holders.config.aip?.aipPostMonitor?.monitorIntervalInSeconds ?: 10
+        monitorIntervalInSeconds =  Holders.config.aip?.actionItemPostMonitor?.monitorIntervalInSeconds ?: 10
     }
 
     actionItemPostWorkProcessingEngine (ActionItemAsynchronousTaskProcessingEngineImpl) { bean ->
