@@ -30,10 +30,8 @@ grails.project.dependency.resolution = {
         if (System.properties['PROXY_SERVER_NAME']) {
             mavenRepo "${System.properties['PROXY_SERVER_NAME']}"
         }
-        mavenLocal()
         grailsCentral()
         mavenCentral()
-        mavenRepo "https://code.lds.org/nexus/content/groups/main-repo"
         mavenRepo "http://repository.jboss.org/maven2/"
     }
 
@@ -42,9 +40,6 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-         // test ':code-coverage:1.2.5'
-        test ':code-coverage:2.0.3-3'
-
     }
 
 }
