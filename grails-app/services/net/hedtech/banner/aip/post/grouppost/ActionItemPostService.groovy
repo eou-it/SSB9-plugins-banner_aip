@@ -66,10 +66,4 @@ class ActionItemPostService extends ServiceBase {
     def isDuplicateJobName( postingName ) {
         ActionItemPost.checkIfJobNameAlreadyExists( postingName )
     }
-
-
-    List findRunning() {
-        return ActionItemPost.findRunning()
-    }
-
 }

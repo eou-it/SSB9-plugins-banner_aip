@@ -51,6 +51,20 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         assertEquals( actionItemId, userActionItemId.id )
     }
 
+
+    @Test
+    void testPreCreateInvalidData() {
+        List<UserActionItem> existingUserActionItems = userActionItemService.listActionItemsByPidm( PersonUtility.getPerson( "CSRSTU018" ).pidm )
+        UserActionItem domain = existingUserActionItems[0]
+        domain.creatorId = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+        try {
+            userActionItemService.preCreate( existingUserActionItems[0] )
+        } catch (ApplicationException ae) {
+            assertApplicationException( ae, '@@r1:BadDataError@@' )
+        }
+    }
+
+
     @Test
     void testRejectDuplicateDateOverlap() {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm

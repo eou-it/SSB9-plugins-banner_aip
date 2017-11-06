@@ -19,16 +19,12 @@ class BannerCommManagementResourceAccessService {
      */
     @Transactional(readOnly = true)
     def getBCMLocation() {
-        try {
-            def clob = (Clob) sessionFactory.currentSession.createSQLQuery(
-                    """SELECT GUROCFG_VALUE 
+        def clob = (Clob) sessionFactory.currentSession.createSQLQuery(
+                """SELECT GUROCFG_VALUE 
                           FROM GUROCFG 
                             WHERE GUROCFG_NAME='BCMLOCATION' 
                             AND GUROCFG_GUBAPPL_APP_ID = 'GENERAL_SS'""" ).
-                    uniqueResult()
-            clob ? clob.asciiStream.text : ''
-        } catch (HibernateException he) {
-            log.error( 'Error while querying BCM location' + he )
-        }
+                uniqueResult()
+        clob ? clob.asciiStream.text : ''
     }
 }
