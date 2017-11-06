@@ -93,8 +93,8 @@ class ActionItemGroupAssign implements Serializable {
         groupId( blank: false, nullable: false, maxSize: 19 )
         actionItemId( blank: false, nullable: false, maxSize: 19 )
         seqNo( blank: false, nullable: false, maxSize: 19 )
-        lastModifiedBy( blank: false, nullable: true, maxSize: 30 )
-        lastModified( blank: false, nullable: true )
+        lastModifiedBy( nullable: true, maxSize: 30 )
+        lastModified( nullable: true )
         dataOrigin( nullable: true, maxSize: 19 )
     }
 

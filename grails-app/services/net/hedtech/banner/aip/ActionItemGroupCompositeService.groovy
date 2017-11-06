@@ -4,6 +4,7 @@
 package net.hedtech.banner.aip
 
 import grails.transaction.Transactional
+import grails.validation.ValidationException
 import net.hedtech.banner.MessageUtility
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.exceptions.ApplicationException
@@ -60,7 +61,7 @@ class ActionItemGroupCompositeService {
 
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
-    def updateActionItemGroupAssignment( aipUser, map ) {
+    def updateActionItemGroupAssignment( map ) {
         def groupId = map.groupId
         def inputGroupAssignments = map.assignment
         def groupAssignment = actionItemGroupAssignService.fetchByGroupId( groupId )
@@ -77,8 +78,6 @@ class ActionItemGroupCompositeService {
                 assign.groupId = groupId
                 assign.actionItemId = assignment.actionItemId
                 assign.seqNo = assignment.seq
-                assign.lastModified = new Date()
-                assign.lastModifiedBy = aipUser.username
             } else {
                 //create
                 assign = new ActionItemGroupAssign(
@@ -99,14 +98,14 @@ class ActionItemGroupCompositeService {
             }
         }
 
-        def weGood = true
+        def weGood = false
         List<ActionItemGroupAssignReadOnly> updatedActionItemGroupAssignment
         try {
             //do preupdate to test
-            assignList.each {item -> actionItemGroupAssignService.preUpdate( item )}
-        } catch (net.hedtech.banner.exceptions.ApplicationException ae) {
-            weGood = false
-            throw new ApplicationException( "rollback", ae.message, ae.defaultMessage )
+            assignList.each {item -> actionItemGroupAssignService.validate( item )}
+            weGood = true
+        } catch (ValidationException ae) {
+            throw new ApplicationException( ActionItemGroupAssign, "@@r1:DomainInvalidError@@", "actionItemGroupAssign.invalid.error" )
         }
         if (weGood) {
             try {

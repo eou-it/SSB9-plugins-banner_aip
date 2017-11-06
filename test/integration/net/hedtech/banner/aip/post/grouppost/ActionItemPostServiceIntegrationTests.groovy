@@ -4,18 +4,14 @@
 package net.hedtech.banner.aip.post.grouppost
 
 import net.hedtech.banner.aip.ActionItemGroup
-import net.hedtech.banner.aip.ActionItemGroupAssign
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
-import net.hedtech.banner.general.communication.population.CommunicationPopulation
 import net.hedtech.banner.general.communication.population.query.CommunicationPopulationQuery
-import net.hedtech.banner.general.communication.population.query.CommunicationPopulationQueryVersion
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 
 class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
@@ -128,6 +124,9 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
             actionItemPostService.preCreateValidation( requestMap )
         } catch (ApplicationException e) {
             assertApplicationException( e, 'preCreate.validation.job.name.already.defined' )
+        }
+        finally {
+            logout()
         }
     }
 
