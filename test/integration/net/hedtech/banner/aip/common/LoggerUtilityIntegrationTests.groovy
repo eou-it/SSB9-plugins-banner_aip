@@ -4,12 +4,13 @@
 
 package net.hedtech.banner.aip.common
 
+import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
 import org.junit.Test
 
 
-class LoggerUtilityIntegrationTests {
+class LoggerUtilityIntegrationTests extends BaseIntegrationTestCase{
     private static final LOGGER = Logger.getLogger( this.class )
 
 
