@@ -14,7 +14,7 @@ import javax.persistence.*
                 query = """FROM UserActionItemReadOnly a
                     WHERE a.pidm = :myPidm
                     AND CURRENT_DATE BETWEEN a.displayStartDate AND a.displayEndDate
-                    ORDER BY a.actionItemGroupID,  a.actionItemSequenceNumber
+                    ORDER BY a.actionItemGroupName,  a.actionItemSequenceNumber
                     """)
 ])
 
