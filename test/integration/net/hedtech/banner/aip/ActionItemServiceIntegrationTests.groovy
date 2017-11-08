@@ -165,7 +165,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ActionItem ai = new ActionItem()
         ai.folderId = existingAI.folderId
         ai.status = 'P'
-        ai.name = existingAI.title
+        ai.name = existingAI.name
         ai.title = existingAI.title
         ai.postedIndicator = 'N'
         ai.description = 'this is some action item'

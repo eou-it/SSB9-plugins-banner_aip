@@ -54,11 +54,9 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testPreCreateInvalidData() {
-        List<UserActionItem> existingUserActionItems = userActionItemService.listActionItemsByPidm( PersonUtility.getPerson( "CSRSTU018" ).pidm )
-        UserActionItem domain = existingUserActionItems[0]
-        domain.creatorId = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+        Map userActionItem = [actionItemId: -1, pidm: 1, status: 'P', displayEndDate: new Date(), displayStartDate: new Date(), groupId: 1, creatorId: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA']
         try {
-            userActionItemService.preCreate( existingUserActionItems[0] )
+            userActionItemService.preCreate( [domainModel: userActionItem] )
         } catch (ApplicationException ae) {
             assertApplicationException( ae, '@@r1:BadDataError@@' )
         }
