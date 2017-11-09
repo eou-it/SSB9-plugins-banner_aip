@@ -108,7 +108,7 @@ class ActionItemStatus implements Serializable {
     static constraints = {
         actionItemStatus( blank: false, nullable: false, maxSize: 30, unique: true )
         actionItemStatusActive( blank: false, nullable: false, maxSize: 1 )
-        lastModified( blank: false, nullable: true )
+        lastModified( nullable: true )
         actionItemStatusBlockedProcess( blank: false, nullable: false, maxSize: 1 )
         actionItemStatusDefault( blank: true, nullable: true, maxSize: 1 )
         actionItemStatusSystemRequired( blank: false, nullable: false, maxSize: 1 )

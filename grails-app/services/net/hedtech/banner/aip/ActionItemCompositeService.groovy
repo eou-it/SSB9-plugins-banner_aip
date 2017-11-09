@@ -107,7 +107,7 @@ class ActionItemCompositeService {
         List<ActionItemStatusRule> updatedActionItemStatusRules
         def weGood = true
         try {
-            ruleList.each {rule -> actionItemStatusRuleService.preUpdate( rule )}
+            ruleList.each {rule -> actionItemStatusRuleService.validate( rule )}
         } catch (ApplicationException ae) {
             weGood = false
             throw new ApplicationException( "rollback", ae.message, ae.defaultMessage )

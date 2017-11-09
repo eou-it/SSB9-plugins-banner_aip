@@ -7,7 +7,9 @@ import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.service.ServiceBase
 
-
+/**
+ * Service class for Action Item Group
+ */
 class ActionItemGroupService extends ServiceBase {
 
     boolean transactional = true
@@ -26,17 +28,27 @@ class ActionItemGroupService extends ServiceBase {
 
     static final String OTHER_VALIDATION_ERROR = '@@r1:ValidationError@@'
 
-    //simple return of all action items
+    /**
+     * Lists All Action Item Groups
+     * @return
+     */
     def listActionItemGroups() {
-        return ActionItemGroup.fetchActionItemGroups()
+        ActionItemGroup.fetchActionItemGroups()
     }
 
-
+    /**
+     * Fetch Action Item Group for specipied group Id
+     * @param actionItemGroupId
+     * @return
+     */
     def getActionItemGroupById( Long actionItemGroupId ) {
-        return ActionItemGroup.fetchActionItemGroupById( actionItemGroupId )
+        ActionItemGroup.fetchActionItemGroupById( actionItemGroupId )
     }
 
-
+    /**
+     * Validation before create
+     * @param domainModelOrMap
+     */
     def preCreate( domainModelOrMap ) {
         ActionItemGroup aig = (domainModelOrMap instanceof Map ? domainModelOrMap?.domainModel : domainModelOrMap) as ActionItemGroup
 
@@ -54,7 +66,6 @@ class ActionItemGroupService extends ServiceBase {
                 throw new ApplicationException( ActionItemGroup, OTHER_VALIDATION_ERROR, 'operation.not.permitted' )
             }
         }
-
         if (!CommunicationFolder.get( aig.folderId )) {
             throw new ApplicationException( ActionItemGroup, FOLDER_VALIDATION_ERROR, 'actionItemGroup.folder.validation.error' )
         }

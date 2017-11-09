@@ -93,7 +93,7 @@ class ActionItemBlockedProcess implements Serializable {
         blockConfigName( blank: false, nullable: false, maxSize: 50 )
         blockConfigType( blank: false, nullable: false, maxSize: 30 )
         lastModifiedBy( blank: false, nullable: true, maxSize: 30 )
-        lastModified( blank: false, nullable: true )
+        lastModified( nullable: true )
         version( nullable: true )
         dataOrigin( nullable: true, maxSize: 30 )
     }

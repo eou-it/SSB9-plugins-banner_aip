@@ -13,7 +13,7 @@ import org.junit.Test
 
 
 class LoggerUtilityIntegrationTests extends BaseIntegrationTestCase {
-    private static final LOGGER = Logger.getLogger( this.class )
+    private LOGGER = Logger.getLogger( this.class )
 
 
     @Before
@@ -38,6 +38,20 @@ class LoggerUtilityIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testLogWarn() {
         LoggerUtility.warn( LOGGER, 'warningMessage' )
+    }
+
+
+    @Test
+    void testLogInfo() {
+        LOGGER.setLevel( Level.INFO )
+        LoggerUtility.info( LOGGER, 'infoMessage' )
+    }
+
+
+    @Test
+    void testLogInfoInfoLevelNotEnabled() {
+        LOGGER.setLevel( Level.ERROR )
+        LoggerUtility.info( LOGGER, 'infoMessage' )
     }
 
 

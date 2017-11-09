@@ -1,9 +1,7 @@
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
@@ -12,14 +10,14 @@ class ActionItemTemplateServiceIntegraionTests extends BaseIntegrationTestCase {
     def actionItemTemplateService
 
     @Before
-    public void setUp() {
+    void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
     }
 
 
     @After
-    public void tearDown() {
+    void tearDown() {
         super.tearDown()
     }
 

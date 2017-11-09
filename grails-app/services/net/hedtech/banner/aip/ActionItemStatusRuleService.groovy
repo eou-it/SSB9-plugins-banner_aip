@@ -6,7 +6,9 @@ package net.hedtech.banner.aip
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
 
-
+/**
+ * Service class for Action Item Status Rules
+ */
 class ActionItemStatusRuleService extends ServiceBase {
 
     static final String NO_ACTIONITEMID_ERROR = "@@r1:ActionItemIdCanNotBeNullError@@"
@@ -19,17 +21,28 @@ class ActionItemStatusRuleService extends ServiceBase {
 
     static final String OTHER_VALIDATION_ERROR = "@@r1:ValidationError@@"
 
-
+    /**
+     *
+     * @return
+     */
     def listActionItemStatusRules() {
         ActionItemStatusRule.fetchActionItemStatusRules()
     }
 
-
+    /**
+     *
+     * @param actionItemStatusRuleId
+     * @return
+     */
     def getActionItemStatusRuleById( Long actionItemStatusRuleId ) {
         ActionItemStatusRule.fetchActionItemStatusRuleById( actionItemStatusRuleId )
     }
 
-
+    /**
+     *
+     * @param actionItemId
+     * @return
+     */
     def getActionItemStatusRuleByActionItemId( Long actionItemId ) {
         ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId( actionItemId )
 
@@ -53,10 +66,12 @@ class ActionItemStatusRuleService extends ServiceBase {
         ActionItemStatusRule.checkIfPresentAndAssociatedToActionItemContent( actionItemStatusId )
     }
 
-
-    def preCreate( domainModelOrMap ) {
+    /**
+     *
+     * @param domainModelOrMap
+     */
+    def validate( domainModelOrMap ) {
         ActionItemStatusRule aisr = (domainModelOrMap instanceof Map ? domainModelOrMap?.domainModel : domainModelOrMap) as ActionItemStatusRule
-
         if (!aisr.validate()) {
             def errorCodes = aisr.errors.allErrors.codes[0]
             if (errorCodes.contains( "actionItemStatusRule.actionItemId.nullable" )) {
@@ -71,10 +86,5 @@ class ActionItemStatusRuleService extends ServiceBase {
                 throw new ApplicationException( ActionItemStatusRule, OTHER_VALIDATION_ERROR, 'actionItemStatusRule.operation.not.permitted' )
             }
         }
-    }
-
-
-    def preUpdate( domainModelOrMap ) {
-        preCreate( domainModelOrMap )
     }
 }

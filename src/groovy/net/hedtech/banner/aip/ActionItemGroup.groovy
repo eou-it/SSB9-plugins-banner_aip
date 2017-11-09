@@ -111,10 +111,10 @@ class ActionItemGroup implements Serializable {
         title( nullable: false, maxSize: 2048 )
         name( nullabe: false, maxSize: 60 )
         description( nullable: true )
-        postingInd(nullabe: true)
+        postingInd(nullabe: false, maxSize: 1 )
         folderId( nullable: false, maxSize: 30 )
         status( nullable: false, maxSize: 1 )
-        lastModified( nullable: true, maxSize: 30 )
+        lastModified( nullable: true)
         lastModifiedBy( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 19 )
     }

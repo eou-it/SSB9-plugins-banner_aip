@@ -109,22 +109,11 @@ class ActionItemTemplate implements Serializable{
      *
      * @return
      */
-    public static def fetchActionItemTemplates() {
+    static def fetchActionItemTemplates() {
         ActionItemTemplate.withSession {session ->
             List actionItemTemplates = session.getNamedQuery('ActionItemTemplate.fetchActionItemTemplates').list()
             return actionItemTemplates
         }
     }
 
-    /**
-     *
-     * @param myId
-     * @return
-     */
-    public static def fetchActionItemTemplateById( Long myId ) {
-        ActionItemTemplate.withSession {session ->
-            List actionItemTemplates = session.getNamedQuery('ActionItemTemplate.fetchActionItemTemplateById').setLong('myId', myId)?.list()
-            return actionItemTemplates
-        }
-    }
 }

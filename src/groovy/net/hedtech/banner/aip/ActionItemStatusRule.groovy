@@ -115,8 +115,8 @@ class ActionItemStatusRule implements Serializable {
         labelText( blank: false, nullable: false, maxSize: 150 )
         actionItemStatusId( blank: true, nullable: true, maxSize: 19 )
         resubmitInd( blank: true, nullable: true, maxSize: 1 )
-        lastModifiedBy( blank: false, nullable: true, maxSize: 30 )
-        lastModified( blank: false, nullable: true, maxSize: 30 )
+        lastModifiedBy( nullable: true, maxSize: 30 )
+        lastModified( nullable: true)
         dataOrigin( nullable: true, maxSize: 30 )
         version( nullable: true, maxSize: 30 )
     }
