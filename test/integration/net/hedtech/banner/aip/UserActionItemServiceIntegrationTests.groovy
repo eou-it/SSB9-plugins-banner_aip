@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -67,8 +67,6 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
     void testRejectDuplicateDateOverlap() {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
         List<UserActionItem> existingUserActionItems = userActionItemService.listActionItemsByPidm( actionItemPidm )
-
-        // existing date range (at time of writing this test) is 2/9/2016 - 12/9/2017 . Increment start by one day
         def existingUserActionItem = existingUserActionItems[0]
         def origSize = existingUserActionItems.size()
         UserActionItem userActionItem = new UserActionItem()
@@ -95,8 +93,6 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
     void testAcceptDuplicateNoDateOverlap() {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
         List<UserActionItem> existingUserActionItems = userActionItemService.listActionItemsByPidm( actionItemPidm )
-
-        // existing date range (at time of writing this test) is 2/9/2016 - 12/9/2017 .
         // make start and end well past this range
         def startDate = new Date().copyWith( year: 2024, month: Calendar.APRIL, dayOfMonth: 3 )
         def endDate = new Date().copyWith( year: 2024, month: Calendar.JULY, dayOfMonth: 3 )

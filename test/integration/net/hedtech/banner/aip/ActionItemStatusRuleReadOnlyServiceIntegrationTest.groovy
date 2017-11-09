@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -10,7 +10,7 @@ import org.junit.Before
 import org.junit.Test
 
 /**
- * Created by jshin on 10/26/16.
+ * Test class for Action Item Status Rule Readonly
  */
 class ActionItemStatusRuleReadOnlyServiceIntegrationTest extends BaseIntegrationTestCase{
 

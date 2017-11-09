@@ -1,19 +1,16 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip.common
 
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.testing.BaseIntegrationTestCase
-import org.apache.log4j.Level
-import org.apache.log4j.Logger
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
 import java.text.SimpleDateFormat
-
 
 class ActionItemProcessingCommonServiceIntegrationTests extends BaseIntegrationTestCase {
     def actionItemProcessingCommonService
