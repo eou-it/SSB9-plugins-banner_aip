@@ -11,13 +11,13 @@ import org.junit.Test
 
 class ActionItemStatusRuleReadOnlyIntegrationTest extends BaseIntegrationTestCase{
     @Before
-    public void setUp() {
+    void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
     }
 
     @After
-    public void tearDown() {
+    void tearDown() {
         super.tearDown()
     }
 
