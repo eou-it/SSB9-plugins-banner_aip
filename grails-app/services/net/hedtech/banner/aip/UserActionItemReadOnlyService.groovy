@@ -12,10 +12,20 @@ class UserActionItemReadOnlyService extends ServiceBase {
 
     /**
      * Lists user specific action items
-     * @param ActionItemPidm
+     * @param pidm
      * @return
      */
-    def listActionItemByPidmWithinDate( Long ActionItemPidm ) {
-        return UserActionItemReadOnly.fetchUserActionItemsROByPidmDate( ActionItemPidm )
+    def listActionItemByPidmWithinDate( Long pidm ) {
+        return UserActionItemReadOnly.fetchUserActionItemsROByPidmDate( pidm )
     }
+
+    /**
+     * Check if Lists of user specific action items present
+     * @param pidm
+     * @return
+     */
+    def checkIfActionItemPresent( Long pidm ) {
+        return UserActionItemReadOnly.checkIfActionItemPresent( pidm )
+    }
+
 }

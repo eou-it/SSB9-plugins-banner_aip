@@ -34,6 +34,13 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
+    void checkIfActionItemPresent() {
+        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
+        assert UserActionItemReadOnly.checkIfActionItemPresent( actionItemPidm ) == true
+    }
+
+
+    @Test
     void testFetchUserActionItemByROPidmNoReuslts() {
         def actionItemPidm = PersonUtility.getPerson( "STUADV425" ).pidm
         List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemsROByPidmDate( actionItemPidm )

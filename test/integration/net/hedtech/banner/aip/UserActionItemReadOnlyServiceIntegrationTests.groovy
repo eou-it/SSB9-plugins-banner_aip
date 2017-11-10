@@ -34,4 +34,12 @@ class UserActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
         assertEquals( 0, userActionItems.size() )
     }
 
+
+    @Test
+    void checkIfActionItemPresent() {
+        def actionItemPidm = PersonUtility.getPerson( "STUADV425" ).pidm
+        assert userActionItemReadOnlyService.checkIfActionItemPresent( actionItemPidm ) == true
+    }
+
+
 }

@@ -15,7 +15,12 @@ import javax.persistence.*
                     WHERE a.pidm = :myPidm
                     AND CURRENT_DATE BETWEEN a.displayStartDate AND a.displayEndDate
                     ORDER BY a.actionItemGroupName,  a.actionItemSequenceNumber
-                    """)
+                    """),
+        @NamedQuery(name = "UserActionItemReadOnly.checkIfUserActionItemsPresentByPidmAndCurrentDate",
+                query = """select count (id) FROM UserActionItemReadOnly a
+                            WHERE a.pidm = :myPidm
+                            AND CURRENT_DATE BETWEEN a.displayStartDate AND a.displayEndDate
+                            """)
 ])
 
 @Entity
@@ -179,7 +184,7 @@ class UserActionItemReadOnly implements Serializable {
 
     /**
      * Lists user specific action items
-     * @param ActionItemPidm
+     * @param pidm
      * @return
      */
     static def fetchUserActionItemsROByPidmDate( Long pidm ) {
@@ -187,6 +192,19 @@ class UserActionItemReadOnly implements Serializable {
             session.getNamedQuery( 'UserActionItemReadOnly.fetchUserActionItemsROByPidmDate' )
                     .setLong( 'myPidm', pidm )
                     .list()
+        }
+    }
+
+    /**
+     * Check if Lists of user specific action items present
+     * @param pidm
+     * @return
+     */
+    static def checkIfActionItemPresent( Long pidm ) {
+        UserActionItemReadOnly.withSession {session ->
+            session.getNamedQuery( 'UserActionItemReadOnly.checkIfUserActionItemsPresentByPidmAndCurrentDate' )
+                    .setLong( 'myPidm', pidm )
+                    .uniqueResult() > 0
         }
     }
 
