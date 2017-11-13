@@ -106,7 +106,7 @@ class ActionItemStatus implements Serializable {
     String dataOrigin
 
     static constraints = {
-        actionItemStatus( blank: false, nullable: false, maxSize: 30, unique: true )
+        actionItemStatus( blank: false, nullable: false, maxSize: 30 ) //unique: true produces stacktrace during create
         actionItemStatusActive( blank: false, nullable: false, maxSize: 1 )
         lastModified( nullable: true )
         actionItemStatusBlockedProcess( blank: false, nullable: false, maxSize: 1 )
