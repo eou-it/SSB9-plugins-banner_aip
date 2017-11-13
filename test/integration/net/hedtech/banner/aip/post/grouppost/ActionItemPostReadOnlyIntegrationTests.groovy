@@ -51,7 +51,7 @@ class ActionItemPostReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         assert ActionItemPostReadOnly.findAllByPostingName( ourName ).size() > 0
 
         List<ActionItemPostReadOnly> actionItemReadPostOnlyList = ActionItemPostReadOnly.fetchJobs(
-                [searchParam: '%' + ourName + '%'], [max: 1000, offset: 0] )
+                [searchParam: '%' + ourName.toUpperCase(  ) + '%'], [max: 1000, offset: 0] )
 
         assert actionItemReadPostOnlyList.size() > 0
         assertEquals( ourName, actionItemReadPostOnlyList[0].postingName )
