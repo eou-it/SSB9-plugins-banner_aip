@@ -5,9 +5,7 @@
 package net.hedtech.banner.aip
 
 import net.hedtech.banner.exceptions.ApplicationException
-import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
-import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
@@ -100,6 +98,7 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
         assertEquals actionItemStatus.actionItemStatusActive, 'Y'
         assertEquals actionItemStatus.actionItemStatusBlockedProcess, 'N'
         assertEquals actionItemStatus.actionItemStatusSystemRequired, 'N'
+        assertTrue( ActionItemStatus.fetchActionItemStatuses().any { it == actionItemStatus } )
     }
 
 

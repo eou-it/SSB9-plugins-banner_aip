@@ -27,6 +27,13 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
+    void testCount() {
+        def myCount = ActionItemStatus.fetchActionItemStatusCount()
+        assert myCount > 0
+    }
+
+
+    @Test
     void testFetchActionItemStatusString() {
         List<ActionItemStatus> actionItemStatuses = ActionItemStatus.fetchActionItemStatuses()
         def actionItemStatusList = actionItemStatuses[0]
