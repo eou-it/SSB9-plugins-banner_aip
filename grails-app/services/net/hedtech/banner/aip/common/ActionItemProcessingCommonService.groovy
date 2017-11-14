@@ -30,7 +30,7 @@ class ActionItemProcessingCommonService {
      * @return
      */
     def fetchPopulationListForSend( searchParam, paginationParam ) {
-        CommunicationPopulationListView.findAllForSendByPagination( [params: [name: searchParam]], paginationParam )
+        CommunicationPopulationListView.findAllForSendByPagination( [params: [name: searchParam ?: '%']], paginationParam )
     }
     /**
      * Converts give date into localized formatted date. If user want to have default Date to current date if date
