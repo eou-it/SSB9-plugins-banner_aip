@@ -60,7 +60,7 @@ class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTes
     @Test
     void listBlockedProcessesByNameAndType() {
         def processMap = actionItemBlockedProcessService.listBlockedProcessesByNameAndType( null )
-        assert processMap.url== '[/ssb/term/termSelection?mode=registration]'
+        assert processMap.url== '["/ssb/term/termSelection?mode=registration"]'
         assert processMap.processNamei18n == 'aip.blocked.process.name.register.for.classes'
     }
 
