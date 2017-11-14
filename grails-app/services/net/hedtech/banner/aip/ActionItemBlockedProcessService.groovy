@@ -7,58 +7,59 @@ package net.hedtech.banner.aip
 import grails.converters.JSON
 import net.hedtech.banner.service.ServiceBase
 
-
-
+/**
+ * Service class for Action item Blocked Process
+ */
 class ActionItemBlockedProcessService extends ServiceBase {
-
+    /**
+     * Lists bloced process by Type
+     * @return
+     */
     def listBlockedProcessesByType() {
-
-        def ConfigurationData = [:]
-
-        ConfigurationData.id = '1'
-        ConfigurationData.name = 'registerForClasses'
-        ConfigurationData.type = 'json/aipBlock'
-        ConfigurationData.value = '{"aipBlock": {"processNamei18n":"aip.blocked.process.name.register.for.classes","urls":["/ssb/term/termSelection?mode=registration" ] }}'
-
-
-        return [ConfigurationData]
+        [[id   : 1,
+          name : 'registerForClasses',
+          type : 'json/aipBlock',
+          value: '{"aipBlock": {"processNamei18n":"aip.blocked.process.name.register.for.classes","urls":["/ssb/term/termSelection?mode=registration" ] }}']]
     }
 
-    def listBlockedProcessesByNameAndType(  String myConfigName ) {
-
-        def ConfigurationData = [:]
-
-        ConfigurationData.id = '1'
-        ConfigurationData.name = 'registerForClasses'
-        ConfigurationData.type = 'json/aipBlock'
-        ConfigurationData.value = '{"aipBlock": {"processNamei18n":"aip.blocked.process.name.register.for.classes","urls":["/ssb/term/termSelection?mode=registration" ] }}'
-
-
-        def configData = ConfigurationData
+    /**
+     *
+     * @param myConfigName
+     * @return
+     */
+    def listBlockedProcessesByNameAndType( String myConfigName ) {
+        def configData = [id   : 1,
+                          name : 'registerForClasses',
+                          type : 'json/aipBlock',
+                          value: '{"aipBlock": {"processNamei18n":"aip.blocked.process.name.register.for.classes","urls":["/ssb/term/termSelection?mode=registration" ] }}']
         def configDataJson = JSON.parse( configData.value.toString() ) as ConfigObject
         def configProps = configDataJson.toProperties()
-
-        String urlProp = "aipBlock.urls"
-        String i18nProp = "aipBlock.processNamei18n"
-
-        def processMap = [ url: configProps[urlProp], processNamei18n:configProps[i18nProp] ]
-
-        return processMap
+        [url: configProps["aipBlock.urls"], processNamei18n: configProps["aipBlock.processNamei18n"]]
     }
 
-
+    /**
+     *
+     * @return
+     */
     def listBlockedActionItems() {
-        return ActionItemBlockedProcess.fetchActionItemBlockedProcessList()
+        ActionItemBlockedProcess.fetchActionItemBlockedProcessList()
     }
 
-    def listBlockedProcessById(Long myId) {
-        return ActionItemBlockedProcess.fetchActionItemBlockProcessById( myId )
+    /**
+     *
+     * @param myId
+     * @return
+     */
+    def listBlockedProcessById( Long myId ) {
+        ActionItemBlockedProcess.fetchActionItemBlockProcessById( myId )
     }
 
-    def listBlockedProcessByActionItemId(Long myId) {
-        return ActionItemBlockedProcess.fetchActionItemBlockProcessByActionId( myId )
+    /**
+     *
+     * @param myId
+     * @return
+     */
+    def listBlockedProcessByActionItemId( Long myId ) {
+        ActionItemBlockedProcess.fetchActionItemBlockProcessByActionId( myId )
     }
-
-    /*todo: future work - add methods for exclude/include configs and url redirect destination for action item list*/
-
 }

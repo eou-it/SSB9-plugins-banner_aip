@@ -46,4 +46,31 @@ class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTes
 
     }
 
+
+    @Test
+    void listBlockedProcessByActionItemId() {
+        ActionItem.findByName( 'Notice of Scholastic Standards' ).id
+        List<ActionItemBlockedProcess> actionItemBlockedProcess = actionItemBlockedProcessService.listBlockedProcessByActionItemId( ActionItem.findByName( 'Notice of Scholastic Standards' ).id )
+        assert actionItemBlockedProcess.find() {
+            it.blockConfigName == 'planAhead'
+        }.blockConfigName == 'planAhead'
+    }
+
+
+    @Test
+    void listBlockedProcessesByNameAndType() {
+        def processMap = actionItemBlockedProcessService.listBlockedProcessesByNameAndType( null )
+        assert processMap.url.getAt(0)== '/ssb/term/termSelection?mode=registration'
+        assert processMap.processNamei18n == 'aip.blocked.process.name.register.for.classes'
+    }
+
+
+    @Test
+    void listBlockedProcessesByType() {
+        def processMap = actionItemBlockedProcessService.listBlockedProcessesByType()[0]
+        assert processMap.id == 1
+        assert processMap.name == 'registerForClasses'
+        assert processMap.type == 'json/aipBlock'
+        assert processMap.value == '{"aipBlock": {"processNamei18n":"aip.blocked.process.name.register.for.classes","urls":["/ssb/term/termSelection?mode=registration" ] }}'
+    }
 }

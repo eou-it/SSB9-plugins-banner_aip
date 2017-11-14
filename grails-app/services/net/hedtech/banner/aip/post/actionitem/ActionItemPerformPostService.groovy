@@ -29,7 +29,7 @@ class ActionItemPerformPostService {
         def successful = 0
         def insertedIds = []
         if (!groupSend.getPostingCurrentState().isTerminal()) {
-            ActionItemJob actionItemJob = new ActionItemJob( referenceId: actionItemPostWork.referenceId, status: ActionItemJobStatus.PENDING )
+            ActionItemJob actionItemJob = new ActionItemJob( referenceId: actionItemPostWork.referenceId, status: ActionItemJobStatus.PENDING, creationDateTime: new Date() )
             actionItemJobService.create( actionItemJob )
 
             def userPidm = actionItemPostWork.recipientPidm

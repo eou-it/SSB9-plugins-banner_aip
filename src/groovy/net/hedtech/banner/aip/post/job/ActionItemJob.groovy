@@ -23,15 +23,6 @@ import javax.persistence.*
                             WHERE job.status = :status_
                             ORDER BY job.id ASC """
         ),
-        @NamedQuery(name = "ActionItemJob.fetchByJobId",
-                query = """ FROM ActionItemJob job                            
-                            WHERE job.id = :jobId_ """
-        ),
-        @NamedQuery(name = "ActionItemJob.fetchByStatusAndJobId",
-                query = """ FROM ActionItemJob job
-                            WHERE job.status = :status_
-                            AND job.id = :jobId_ """
-        ),
         @NamedQuery(name = "ActionItemJob.fetchByStatusAndReferenceId",
                 query = """ FROM ActionItemJob job
                             WHERE job.status = :status_
@@ -89,7 +80,7 @@ class ActionItemJob implements AsynchronousTask {
     @Column(name = "GCBAJOB_DATA_ORIGIN")
     String dataOrigin
 
-    @Column(name = "GCBAJOB_CREATION_DATE", nullable = false)
+    @Column(name = "GCBAJOB_CREATION_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     Date creationDateTime
 
@@ -110,6 +101,7 @@ class ActionItemJob implements AsynchronousTask {
         dataOrigin( nullable: true, maxSize: 30 )
         referenceId( nullable: false, maxSize: 255 )
         status( nullable: false, maxSize: 30 )
+        creationDateTime( nullable: false )
         errorText( nullable: true )
         errorCode( nullable: true )
     }
@@ -127,7 +119,11 @@ class ActionItemJob implements AsynchronousTask {
         this.status = status
     }
 
-
+    /**
+     * Lists Pending Jobs
+     * @param max
+     * @return
+     */
     static List fetchPending( Integer max = Integer.MAX_VALUE ) {
         ActionItemJob.withSession {session ->
             session.getNamedQuery( 'ActionItemJob.fetchByStatus' )
@@ -138,7 +134,10 @@ class ActionItemJob implements AsynchronousTask {
         }
     }
 
-
+    /**
+     * Lists Completed jobs
+     * @return
+     */
     static List fetchCompleted() {
         ActionItemJob.withSession {session ->
             session.getNamedQuery( 'ActionItemJob.fetchByStatus' )
@@ -148,28 +147,4 @@ class ActionItemJob implements AsynchronousTask {
                     .list()
         }
     }
-
-
-    static List fetchPendingByJobId( Long jobId ) {
-        ActionItemJob.withSession {session ->
-            session.getNamedQuery( 'ActionItemJob.fetchByStatusAndJobId' )
-                    .setParameter( 'status_', ActionItemJobStatus.PENDING )
-                    .setParameter( 'jobId_', jobId )
-                    .setFirstResult( 0 )
-                    .setMaxResults( Integer.MAX_VALUE )
-                    .list()
-        }
-    }
-
-
-    static List fetchByJobId( Long jobId ) {
-        ActionItemJob.withSession {session ->
-            session.getNamedQuery( 'ActionItemJob.fetchByJobId' )
-                    .setParameter( 'jobId_', jobId )
-                    .setFirstResult( 0 )
-                    .setMaxResults( Integer.MAX_VALUE )
-                    .list()
-        }
-    }
-
 }

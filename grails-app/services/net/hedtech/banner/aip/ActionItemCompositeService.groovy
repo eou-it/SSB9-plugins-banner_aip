@@ -16,18 +16,14 @@ import java.text.MessageFormat
  */
 class ActionItemCompositeService {
     static transactional = true
-
-    def actionItemContentService
-
-    def actionItemReadOnlyService
-
-    def actionItemStatusRuleService
-
     def actionItemService
-
     def springSecurityService
 
-
+    /**
+     * Adds Action Item
+     * @param map
+     * @return
+     */
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     def addActionItem( map ) {
         def user = springSecurityService.getAuthentication()?.user
@@ -61,74 +57,6 @@ class ActionItemCompositeService {
                 message      : message,
                 newActionItem: savedActionItem
         ]
-    }
-
-
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
-    def updateDetailsAndStatusRules( aipUser, inputRules, templateId, actionItemId, actionItemDetailText ) {
-        def answer = [:]
-        ActionItemContent aic = actionItemContentService.listActionItemContentById( actionItemId )
-        aic.actionItemId = actionItemId
-        aic.actionItemTemplateId = templateId
-        aic.text = actionItemDetailText
-
-        List<Long> tempRuleIdList = inputRules.statusRuleId.toList()
-        List<ActionItemStatusRule> actionItemStatusRules = actionItemStatusRuleService.getActionItemStatusRuleByActionItemId( actionItemId )
-        def existingRuleId = actionItemStatusRules.id
-        def deleteRules = existingRuleId - tempRuleIdList
-
-        //update&create
-        List<ActionItemStatusRule> ruleList = []
-        inputRules.each {rule ->
-            def statusRule
-            if (rule.statusRuleId) {
-                statusRule = ActionItemStatusRule.get( rule.statusRuleId )
-                statusRule.seqOrder = rule.statusRuleSeqOrder
-                statusRule.labelText = !rule.statusRuleLabelText ? null : rule.statusRuleLabelText
-                statusRule.actionItemStatusId = rule.statusId
-                statusRule.actionItemId = actionItemId
-                statusRule.userId = aipUser.bannerId
-                statusRule.activityDate = new Date()
-            } else {
-                statusRule = new ActionItemStatusRule(
-                        seqOrder: rule.statusRuleSeqOrder,
-                        labelText: !rule.statusRuleLabelText ? null : rule.statusRuleLabelText,
-                        actionItemId: actionItemId,
-                        actionItemStatusId: rule.statusId,
-                        resubmitInd:rule.resubmitInd
-                )
-            }
-            ruleList.push( statusRule )
-        }
-        //delete
-
-        ActionItemContent newAic
-        ActionItemReadOnly actionItemRO
-        List<ActionItemStatusRule> updatedActionItemStatusRules
-        def weGood = true
-        try {
-            ruleList.each {rule -> actionItemStatusRuleService.validate( rule )}
-        } catch (ApplicationException ae) {
-            weGood = false
-            throw new ApplicationException( "rollback", ae.message, ae.defaultMessage )
-        }
-        if (weGood) {
-            try {
-                newAic = actionItemContentService.createOrUpdate( aic, false )
-                //todo: add new method to service for action item detail to retreive an action item by detail id and action item id
-                actionItemRO = actionItemReadOnlyService.getActionItemROById( newAic.actionItemId )
-                actionItemStatusRuleService.delete( deleteRules ) //list of ids to be deleted
-                actionItemStatusRuleService.createOrUpdate( ruleList, false )
-                //list of domain objects to be updated or created
-                updatedActionItemStatusRules = actionItemStatusRuleService.getActionItemStatusRuleByActionItemId( actionItemId )
-
-            } catch (ApplicationException e) {
-                throw new ApplicationException( "rollback", e.message, e.defaultMessage )
-            }
-        }
-
-        answer = ['actionItemRO': actionItemRO, 'statusRules': updatedActionItemStatusRules]
-        return answer
     }
 }
 

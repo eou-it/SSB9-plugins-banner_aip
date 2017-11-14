@@ -3,70 +3,54 @@
  ********************************************************************************* */
 package net.hedtech.banner.aip.post.job
 
+import net.hedtech.banner.aip.common.LoggerUtility
+import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
+import org.apache.log4j.Logger
 
 /**
  *  DAO service interface for actionItem group send item objects.
  */
 class ActionItemJobService extends ServiceBase {
-    private final Log log = LogFactory.getLog(this.getClass())
+    private static final LOGGER = Logger.getLogger( this.class )
 
-    def preCreate( domainModelOrMap ) {
-        ActionItemJob job = (domainModelOrMap instanceof Map ? domainModelOrMap?.domainModel : domainModelOrMap) as ActionItemJob
-        if (job.getCreationDateTime() == null) {
-            job.setCreationDateTime(new Date())
-        }
-    }
 
     public List fetchPending( Integer max = Integer.MAX_VALUE ) {
-        List found = ActionItemJob.fetchPending( max )
-        log.debug( "Found ${found.size()} pending actionItem jobs." )
-        return found
+        List pendingList = ActionItemJob.fetchPending( max )
+        LoggerUtility.debug( LOGGER, "Found ${pendingList.size()} pending actionItem jobs." )
+        pendingList
     }
 
     /**
      * Returns true if the actionItem job was acquired for the current thread.
      */
     public boolean acquire( Long jobId ) {
-        log.debug( "Attempting to acquire actionItem job id = ${jobId}." )
-
-        List<ActionItemJob> actionItemJobs = ActionItemJob.fetchPendingByJobId( jobId )
-        int rows = actionItemJobs.size() // should never be more than one
-        if (rows == 1) {
-            log.debug( "ActionItem job withid = ${jobId} acquired" )
-            ActionItemJob jobToAcquire = actionItemJobs[0]
+        LoggerUtility.debug( LOGGER, "Attempting to acquire actionItem job id = ${jobId}." )
+        try {
+            ActionItemJob jobToAcquire = get( jobId )
+            LoggerUtility.debug( LOGGER, "ActionItem job withid = ${jobId} acquired" )
             jobToAcquire.status = ActionItemJobStatus.DISPATCHED.toString()
             update( jobToAcquire )
             return true
-        } else if (rows == 0) {
-            log.debug( "ActionItem job withid = ${jobId} not available." )
-            return false
-        } else {
-            log.error( "ActionItemJobService.acqure found more than one record with job id = ${jobId}." )
-            throw new RuntimeException( "ActionItemJobService.acquire aquire found ${rows} with job id = ${jobId} and status = ${ActionItemJobStatus.PENDING.toString()}." )
+        } catch (ApplicationException e) {
+            LoggerUtility.debug( LOGGER, "ActionItem job withid = ${jobId} not available." )
         }
+        false
     }
 
     /**
      * Marks the actionItem job completed for the current thread.
      */
     public void markCompleted( Long jobId ) {
-        log.debug( "Attempting to mark actionItem job id = ${jobId} as completed." )
-
-        List<ActionItemJob> actionItemJobs = ActionItemJob.fetchByJobId( jobId )
-        int rows = actionItemJobs.size() // should never be more than one
-        if (rows == 1) {
-            ActionItemJob jobToMarkComplete = actionItemJobs[0]
+        LoggerUtility.debug( LOGGER, "Attempting to mark actionItem job id = ${jobId} as completed." )
+        try {
+            ActionItemJob jobToMarkComplete = get( jobId )
+            LoggerUtility.debug( LOGGER, "ActionItem job withid = ${jobId} acquired" )
             jobToMarkComplete.status = ActionItemJobStatus.COMPLETED.toString()
             update( jobToMarkComplete )
-            log.debug( "ActionItem job with id = ${jobId} marked as completed." )
-        } else if (rows == 0) {
-            log.debug( "No actionItem job with id = ${jobId} available to mark completed")
-        } else {
-            log.error( "ActionItemJobService.markCompleted found more than one record with job id = ${jobId}." )
-            throw new RuntimeException( "ActionItemJobService.markCompleted lookup found ${rows} with job id = ${jobId}. ")
+            LoggerUtility.debug( LOGGER, "ActionItem job with id = ${jobId} marked as completed." )
+        } catch (ApplicationException e) {
+            LoggerUtility.debug( LOGGER, "No actionItem job with id = ${jobId} available to mark completed" )
         }
     }
 
