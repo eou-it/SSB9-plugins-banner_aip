@@ -63,15 +63,12 @@ class ActionItemPostWorkServiceIntegrationTests extends BaseIntegrationTestCase 
 
     @Test
     void testCreateWithModelWithNoDate() {
-        def user = springSecurityService.getAuthentication()?.user
-        Map actionItemPostWork = [referenceId          : 'somestringfortestinglswefhihvciewranc',
-                                  currentExecutionState: ActionItemPostWorkExecutionState.Ready,
-                                  creationDateTime     : null, recipientPidm: user.pidm,
-                                  actionItemGroupSend  : null]
+        ActionItemPostWork actionItemPostWork = newActionItemPostWork()
         ActionItemPost aip = newAIP()
         actionItemPostService.create( aip )
         actionItemPostWork.actionItemGroupSend = aip
-        ActionItemPostWork savedOne = actionItemPostWorkService.create( [domainModel: actionItemPostWork] )
+        actionItemPostWork.creationDateTime = null
+        ActionItemPostWork savedOne = actionItemPostWorkService.create( actionItemPostWork)
         assert savedOne.id != null
         assert savedOne.referenceId == 'somestringfortestinglswefhihvciewranc'
     }

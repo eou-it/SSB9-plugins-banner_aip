@@ -9,6 +9,9 @@ import org.junit.Before
 import org.junit.Test
 
 class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
+    def actionItemPostCompositeService
+
+
     @Before
     void setUp() {
         formContext = ['GUAGMNU']
