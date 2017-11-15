@@ -137,11 +137,14 @@ class ActionItemPostWork implements AsynchronousTask {
     ActionItemErrorCode errorCode
 
     static constraints = {
+        recipientPidm( nullable: false )
+        currentExecutionState( nullable: false )
         lastModified( nullable: true )
         lastModifiedBy( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 30 )
         insertedCount( nullable: true )
         insertedItemIds( nullable: true )
+        startedDate( nullable: true )
         stopDate( nullable: true )
         errorText( nullable: true )
         mepCode( nullable: true )

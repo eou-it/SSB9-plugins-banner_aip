@@ -12,7 +12,7 @@ import net.hedtech.banner.service.ServiceBase
  */
 class ActionItemBlockedProcessService extends ServiceBase {
     /**
-     * Lists bloced process by Type
+     * Lists blocked process by Type
      * @return
      */
     def listBlockedProcessesByType() {

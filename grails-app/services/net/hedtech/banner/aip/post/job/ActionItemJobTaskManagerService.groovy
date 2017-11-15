@@ -3,16 +3,16 @@
  *********************************************************************************/
 package net.hedtech.banner.aip.post.job
 
-import net.hedtech.banner.exceptions.ApplicationException
+import net.hedtech.banner.aip.common.LoggerUtility
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.aip.post.grouppost.ActionItemPostWork
+import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTask
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskManager
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskMonitorRecord
 import net.hedtech.banner.general.communication.groupsend.automation.StringHelper
 import org.apache.commons.lang.NotImplementedException
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
+import org.apache.log4j.Logger
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 
@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional
  *
  */
 class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
-    private final Log log = LogFactory.getLog(this.getClass())
+    private static final LOGGER = Logger.getLogger( this.class )
 
     def actionItemJobService
 
@@ -34,34 +34,36 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
 
 
     public Class<ActionItemPostWork> getJobType() {
-        return ActionItemPostWork.class
+        ActionItemPostWork.class
     }
 
-    public AsynchronousTask create( AsynchronousTask job) throws ApplicationException {
+
+    public AsynchronousTask create( AsynchronousTask job ) throws ApplicationException {
         throw new NotImplementedException()
     }
 
+
     public void init() {
-        log.debug( "${this.getClass().getSimpleName()} initialized." )
+        LoggerUtility.debug( LOGGER, "${this.getClass().getSimpleName()} initialized." )
+
     }
 
     /**
      * Deletes an existing actionItem job from the persistent store.
      * @param job the actionItem job to remove
      */
-    @Transactional(rollbackFor = Throwable.class )
-    public void delete( AsynchronousTask jobItem )  throws ApplicationException {
+    @Transactional(rollbackFor = Throwable.class)
+    public void delete( AsynchronousTask jobItem ) throws ApplicationException {
         ActionItemJob actionItemJob = (ActionItemJob) jobItem
         actionItemJobService.delete( actionItemJob )
-        log.debug( "${this.getClass().getSimpleName()} deleted actionItem job with id = ${actionItemJob.id}." )
+        LoggerUtility.debug( LOGGER, "${this.getClass().getSimpleName()} deleted actionItem job with id = ${actionItemJob.id}." )
     }
-
 
     /**
      * Returns jobs that have failed.
-     * @return List<ActionItemJob> the failed jobs
+     * @return List < ActionItemJob >  the failed jobs
      */
-    @Transactional(readOnly=true, rollbackFor = Throwable.class )
+    @Transactional(readOnly = true, rollbackFor = Throwable.class)
     public List getFailedJobs() {
         throw new NotImplementedException()
     }
@@ -73,30 +75,26 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
      * @param max maximum number of jobs to return.
      * @return
      */
-    @Transactional(readOnly=true, rollbackFor = Throwable.class )
+    @Transactional(readOnly = true, rollbackFor = Throwable.class)
     public List<ActionItemJob> getPendingJobs( int max ) throws ApplicationException {
-        log.debug( "Get pending actionItem jobs" )
+        LoggerUtility.debug( LOGGER, "Get pending actionItem jobs" )
         List<ActionItemJob> result = actionItemJobService.fetchPending( max )
-        log.debug( "Found ${result.size()} actionItem jobs." )
-        return result
+        LoggerUtility.debug( LOGGER, "Found ${result.size()} actionItem jobs." )
+        result
     }
+
 
     public boolean acquire( AsynchronousTask task ) throws ApplicationException {
         ActionItemJob job = task as ActionItemJob
-        log.info( "Acquiring actionItem job with id = ${job.id}." )
-        return actionItemJobService.acquire( job.id )
+        LoggerUtility.info( LOGGER, "Acquiring actionItem job with id = ${job.id}." )
+        actionItemJobService.acquire( job.id )
     }
 
-
-    /* (non-Javadoc)
-     * @see com.sungardhe.common.services.commsupport.jobs.JobManager#markComplete(com.sungardhe.common.services.commsupport.jobs.Job)
-     */
     public void markComplete( AsynchronousTask task ) throws ApplicationException {
         ActionItemJob job = task as ActionItemJob
-        log.info( "Marking completed actionItem job id = ${job.id}." )
+        LoggerUtility.info( LOGGER, "Marking completed actionItem job id = ${job.id}." )
         actionItemJobService.markCompleted( job.id )
     }
-
 
     /**
      * Performs work for the specified job.
@@ -104,10 +102,9 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
      *         able to obtain an exclusive lock on the job and process it.  If false, the job was either
      *         already processed, or locked by another thread, and the call returned without doing any work
      */
-    @Transactional(propagation=Propagation.REQUIRES_NEW, rollbackFor = Throwable.class )
-    public void process( AsynchronousTask task) throws ApplicationException {
+    public void process( AsynchronousTask task ) throws ApplicationException {
         ActionItemJob job = task as ActionItemJob
-        log.info( "Processing actionItem job id = ${job.id}." )
+        LoggerUtility.info( LOGGER, "Processing actionItem job id = ${job.id}." )
         try {
             if (simulatedFailureException != null) {
                 throw simulatedFailureException
@@ -117,7 +114,7 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
 
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.debug( "${this.getClass().getSimpleName()}.process caught exception " + e.getMessage(), e )
+                LoggerUtility.debug( LOGGER, "${this.getClass().getSimpleName()}.process caught exception " + e.getMessage(), e )
             }
 
             // we MUST re-throw as the thread which invoked this method must
@@ -131,30 +128,27 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
         }
     }
 
-
     /**
      * Marks a job as having failed.
      * @param job the job that failed
      * @param cause the cause of the failure
      */
-    @Transactional(propagation=Propagation.REQUIRES_NEW, rollbackFor = Throwable.class )
-    public void markFailed( AsynchronousTask task, String errorCode, Throwable cause  ) throws ApplicationException {
+    public void markFailed( AsynchronousTask task, String errorCode, Throwable cause ) throws ApplicationException {
         ActionItemJob job = (ActionItemJob) task
         job.refresh()
         job.setStatus( ActionItemJobStatus.FAILED )
         job.setErrorText( StringHelper.stackTraceToString( cause ) )
-        job.setErrorCode(ActionItemErrorCode.valueOf(errorCode))
+        job.setErrorCode( ActionItemErrorCode.valueOf( errorCode ) )
         actionItemJobService.update( job )
         if (cause) {
-            log.info( "Marked job with id = ${job.id} as failed cause = ${cause.toString()}." )
+            LoggerUtility.info( LOGGER, "Marked job with id = ${job.id} as failed cause = ${cause.toString()}." )
         } else {
-            log.info( "Marked job with id = ${job.id} as failed." )
+            LoggerUtility.info( LOGGER, "Marked job with id = ${job.id} as failed." )
         }
     }
 
 
-    @Transactional(rollbackFor = Throwable.class )
-
+    @Transactional(rollbackFor = Throwable.class)
     public AsynchronousTaskMonitorRecord updateMonitorRecord( AsynchronousTaskMonitorRecord monitorRecord ) {
         /*
         if (log.isDebugEnabled()) {
@@ -163,7 +157,7 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
         }
 
         */
-        return null
+        null
     }
 
     /**

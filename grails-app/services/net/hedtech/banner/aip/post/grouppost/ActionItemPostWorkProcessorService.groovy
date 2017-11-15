@@ -4,6 +4,7 @@
 package net.hedtech.banner.aip.post.grouppost
 
 import groovy.sql.Sql
+import net.hedtech.banner.aip.post.ActionItemErrorCode
 import org.apache.log4j.Logger
 
 import java.sql.SQLException
@@ -14,7 +15,7 @@ import java.sql.SQLException
  */
 class ActionItemPostWorkProcessorService {
     boolean transactional = true
-    private static final log = Logger.getLogger(ActionItemPostWorkProcessorService.class)
+    private static final log = Logger.getLogger( ActionItemPostWorkProcessorService.class )
 
     def actionItemPerformPostService
     def actionItemPostWorkService
@@ -31,7 +32,7 @@ class ActionItemPostWorkProcessorService {
             // Do nothing
             return
         }
-        actionItemPostWorkService.update( actionItemPerformPostService.postActionItems( actionItemPostWork ))
+        actionItemPostWorkService.update( actionItemPerformPostService.postActionItems( actionItemPostWork ) )
     }
 
 
@@ -43,14 +44,13 @@ class ActionItemPostWorkProcessorService {
                 currentExecutionState: ActionItemPostWorkExecutionState.Failed,
                 stopDate             : new Date(),
                 errorText            : errorText,
-                errorCode            : errorCode
+                errorCode            : ActionItemErrorCode.valueOf( errorCode )
         ]
 
-        log.warn("Group send item failed id = ${groupSendItemId}, errorText = ${errorText}.")
+        log.warn( "Group send item failed id = ${groupSendItemId}, errorText = ${errorText}." )
 
-        actionItemPostWorkService.update(groupSendItemParamMap)
+        actionItemPostWorkService.update( groupSendItemParamMap )
     }
-
 
     /**
      * Attempts to create a pessimistic lock on the group send item record.
@@ -58,18 +58,18 @@ class ActionItemPostWorkProcessorService {
      * @param state the group send item execution state
      * @return true if the record was successfully locked and false otherwise
      */
-    public boolean lockGroupSendItem(final Long groupSendItemId, final ActionItemPostWorkExecutionState state) {
+    public boolean lockGroupSendItem( final Long groupSendItemId, final ActionItemPostWorkExecutionState state ) {
         Sql sql = null
         try {
-            sql = new Sql(sessionFactory.getCurrentSession().connection())
-            def rows = sql.rows("select GCRAIIM_SURROGATE_ID from GCRAIIM where GCRAIIM_SURROGATE_ID = ? and GCRAIIM_CURRENT_STATE = ? for update " +
-                    "nowait",
-                    [groupSendItemId, state.name()],
-                    0, 2
+            sql = new Sql( sessionFactory.getCurrentSession().connection() )
+            def rows = sql.rows( "select GCRAIIM_SURROGATE_ID from GCRAIIM where GCRAIIM_SURROGATE_ID = ? and GCRAIIM_CURRENT_STATE = ? for update " +
+                                         "nowait",
+                                 [groupSendItemId, state.name()],
+                                 0, 2
             )
 
             if (rows.size() > 1) {
-                throw new RuntimeException("Found more than one GCRAIIM row for a single group send item id")
+                throw new RuntimeException( "Found more than one GCRAIIM row for a single group send item id" )
             } else {
                 return rows.size() == 1
             }

@@ -204,6 +204,7 @@ class ActionItemPost implements Serializable {
 
     static constraints = {
         version( nullable: true, maxSize: 19 )
+        postingCreationDateTime(nullable: false)
         populationListId( nullable: false, maxSize: 19 )
         postingActionItemGroupId( nullable: false, maxSize: 19 )
         postingName( nullable: false, maxSize: 2048 )

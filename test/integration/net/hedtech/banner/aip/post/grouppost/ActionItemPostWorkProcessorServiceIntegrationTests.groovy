@@ -7,21 +7,22 @@ import org.junit.Before
 import org.junit.Test
 
 
-class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegrationTestCase{
+class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemPostWorkProcessorService
 
+
     @Before
-        public void setUp() {
-            formContext = ['GUAGMNU']
-            super.setUp()
-        }
+    public void setUp() {
+        formContext = ['GUAGMNU']
+        super.setUp()
+    }
 
 
-        @After
-        public void tearDown() {
-            super.tearDown()
-        }
+    @After
+    public void tearDown() {
+        super.tearDown()
+    }
 
     // TODO: try posting to bad pidm
     // TODO: try posting to date range overlap
@@ -32,11 +33,12 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
     // TODO: try posting to date range overlap
     @Test
     // FIXME: not working
-        void testPerformGroupSendItem() {
+    void testPerformGroupSendItem() {
         ActionItemPostWork actionItemPostWork = new ActionItemPostWork()
         actionItemPostWork.referenceId = 'somestringfortestinglswefhihvciewranc'
         actionItemPostWork.currentExecutionState = ActionItemPostWorkExecutionState.Ready
-        ActionItemPost aip = newAIP(  )
+        actionItemPostWork.creationDateTime = new Date()
+        ActionItemPost aip = newAIP()
         aip.postingCurrentState = ActionItemPostExecutionState.New
         aip.save()
         actionItemPostWork.actionItemGroupSend = aip
@@ -46,7 +48,7 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
 
 
     private def newAIP() {
-        def aigs = new ActionItemPost(
+        new ActionItemPost(
                 populationListId: 1L,
                 populationVersionId: 1L,
                 postingName: "some name",
@@ -67,6 +69,5 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
                 postingGroupId: null,
                 postingParameterValues: null
         )
-        return aigs
     }
 }
