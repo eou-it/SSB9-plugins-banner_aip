@@ -123,6 +123,9 @@ class ActionItemStatusCompositeService {
         if (!user) {
             throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'user.id.not.valid', [] ) )
         }
+        if (actionItemStatusService.checkIfNameAlreadyPresent( title )) {
+            throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'actionItemStatus.status.unique', [] ) )
+        }
         ActionItemStatus status = new ActionItemStatus(
                 actionItemStatus: title,
                 actionItemStatusActive: 'Y',
@@ -131,13 +134,8 @@ class ActionItemStatusCompositeService {
         )
         ActionItemStatus newStatus
         def success = false
-
-        try {
-            newStatus = actionItemStatusService.create( status )
-            success = true
-        } catch (ApplicationException e) {
-            throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'actionItemStatus.status.unique', [] ) )
-        }
+        newStatus = actionItemStatusService.create( status )
+        success = true
         [
                 success: success,
                 status : newStatus

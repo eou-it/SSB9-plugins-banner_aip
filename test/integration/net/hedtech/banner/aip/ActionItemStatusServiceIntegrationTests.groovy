@@ -55,4 +55,20 @@ class ActionItemStatusServiceIntegrationTests extends BaseIntegrationTestCase {
     void testListActionItemStatusCount() {
         assert 0 < actionItemStatusService.listActionItemStatusCount()
     }
+
+
+    @Test
+    void checkIfNameAlreadyPresent() {
+        List<ActionItemStatus> actionItemStatusList = actionItemStatusService.listActionItemStatuses()
+        assertTrue actionItemStatusService.checkIfNameAlreadyPresent( actionItemStatusList[0].actionItemStatus )
+    }
+
+
+    @Test
+    void checkIfNameAlreadyPresentCaseTest() {
+        assertTrue actionItemStatusService.checkIfNameAlreadyPresent( 'Completed' )
+        assertTrue actionItemStatusService.checkIfNameAlreadyPresent( 'completed' )
+        assertTrue actionItemStatusService.checkIfNameAlreadyPresent( 'COMPLETED' )
+        assertTrue actionItemStatusService.checkIfNameAlreadyPresent( 'CompLeTeD' )
+    }
 }

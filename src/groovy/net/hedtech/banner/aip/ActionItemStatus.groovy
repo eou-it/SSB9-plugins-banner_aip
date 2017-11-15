@@ -21,6 +21,11 @@ import javax.persistence.*
                    FROM ActionItemStatus a
                    WHERE a.actionItemStatusDefault = :myY
                   """),
+        @NamedQuery(name = "ActionItemStatus.checkIfNameAlreadyPresent",
+                query = """ SELECT COUNT(actionItemStatus)
+                           FROM ActionItemStatus a
+                           WHERE UPPER(a.actionItemStatus) = UPPER( :actionItemStatus)
+                          """),
         @NamedQuery(name = "ActionItemStatus.fetchActionItemStatusById",
                 query = """
            FROM ActionItemStatus a
@@ -121,7 +126,7 @@ class ActionItemStatus implements Serializable {
      *
      * @return
      */
-    public static def fetchActionItemStatuses() {
+    static def fetchActionItemStatuses() {
         ActionItemStatus.withSession {session ->
             List<ActionItemStatus> actionItemStatus = session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatuses' ).list()
             return actionItemStatus
@@ -133,9 +138,9 @@ class ActionItemStatus implements Serializable {
      * @param myId
      * @return
      */
-    public static ActionItemStatus fetchDefaultActionItemStatus(  ) {
+    static ActionItemStatus fetchDefaultActionItemStatus() {
         ActionItemStatus.withSession {session ->
-            session.getNamedQuery( 'ActionItemStatus.fetchDefaultActionItemStatus' ).setString('myY', 'Y')?.uniqueResult()
+            session.getNamedQuery( 'ActionItemStatus.fetchDefaultActionItemStatus' ).setString( 'myY', 'Y' )?.uniqueResult()
         }
     }
     /**
@@ -143,7 +148,7 @@ class ActionItemStatus implements Serializable {
      * @param myId
      * @return
      */
-    public static def fetchActionItemStatusById( Long myId ) {
+    static def fetchActionItemStatusById( Long myId ) {
         ActionItemStatus.withSession {session ->
             session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatusById' ).setLong( 'myId', myId )?.list()[0]
         }
@@ -153,9 +158,22 @@ class ActionItemStatus implements Serializable {
      *
      * @return
      */
-    public static def fetchActionItemStatusCount() {
+    static def fetchActionItemStatusCount() {
         ActionItemStatus.withSession {session ->
             session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatusCount' ).uniqueResult()
+        }
+    }
+
+    /**
+     *
+     * @param actionItemStatus
+     * @return
+     */
+    static def checkIfNameAlreadyPresent( actionItemStatus ) {
+        ActionItemStatus.withSession {session ->
+            session.getNamedQuery( 'ActionItemStatus.checkIfNameAlreadyPresent' )
+                    .setString( 'actionItemStatus', actionItemStatus )
+                    .uniqueResult() > 0
         }
     }
 
@@ -165,7 +183,7 @@ class ActionItemStatus implements Serializable {
      * @param pagingAndSortParams
      * @return
      */
-    public static fetchWithPagingAndSortParams( filterData, pagingAndSortParams ) {
+    static fetchWithPagingAndSortParams( filterData, pagingAndSortParams ) {
         def queryCriteria = ActionItemStatus.createCriteria()
         def results = queryCriteria.list( max: pagingAndSortParams.max, offset: pagingAndSortParams.offset ) {
             ilike( "actionItemStatus", CommunicationCommonUtility.getScrubbedInput( filterData?.params?.name ) )
