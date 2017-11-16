@@ -120,7 +120,7 @@ class ActionItemPostCompositeService {
      * @param user
      * @return
      */
-    def ActionItemPost getActionPostInstance( requestMap, user ) {
+    ActionItemPost getActionPostInstance( requestMap, user ) {
         new ActionItemPost(
                 populationListId: requestMap.populationId,
                 postingActionItemGroupId: requestMap.postGroupId,
