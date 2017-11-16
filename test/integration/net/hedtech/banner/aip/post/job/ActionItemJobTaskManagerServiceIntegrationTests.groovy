@@ -30,7 +30,7 @@ class ActionItemJobTaskManagerServiceIntegrationTests extends BaseIntegrationTes
 
     @Test
     void getJobType() {
-        assert actionItemJobTaskManagerService.getJobType().name == 'net.hedtech.banner.aip.post.grouppost.ActionItemPostWork'
+        assert actionItemJobTaskManagerService.getJobType().name == 'net.hedtech.banner.aip.post.job.ActionItemJob'
     }
 
 

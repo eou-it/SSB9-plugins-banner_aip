@@ -33,8 +33,8 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
     private Exception simulatedFailureException
 
 
-    public Class<ActionItemPostWork> getJobType() {
-        ActionItemPostWork.class
+    public Class<ActionItemJob> getJobType() {
+        ActionItemJob.class
     }
 
 
