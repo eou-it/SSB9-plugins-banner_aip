@@ -281,8 +281,7 @@ class ActionItemPostCompositeService {
 
         // fetch any post jobs for this group send and marked as stopped
         stopPendingActionItemJobs( groupSend.id )
-        stopPendingPostItems( groupSend.id )
-
+        actionItemPostWorkService.updateStateToStop( groupSend )
         groupSend
     }
 
@@ -533,27 +532,11 @@ class ActionItemPostCompositeService {
         }
     }
 
-
-    private void stopPendingPostItems( Long groupSendId ) {
-        Sql sql
-        try {
-            sql = new Sql( (Connection) sessionFactory.getCurrentSession().connection() )
-            sql.executeUpdate( "update GCRAIIM set GCRAIIM_CURRENT_STATE='Stopped', GCRAIIM_ACTIVITY_DATE = SYSDATE, GCRAIIM_STOP_DATE = SYSDATE " +
-                                       "where " +
-                                       "GCRAIIM_CURRENT_STATE in ('Ready') and GCRAIIM_GCBAPST_ID = ${groupSendId}" )
-        } catch (SQLException e) {
-            throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService, e )
-        } catch (Exception e) {
-            throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService, e )
-        } finally {
-            sql?.close()
-        }
-    }
     /**
      *
      * @param groupSend
      */
-    void createPostItemsModified( ActionItemPost groupSend ) {
+    void createPostItems( ActionItemPost groupSend ) {
         LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id )
         List<ActionItemPostSelectionDetailReadOnly> list = actionItemPostSelectionDetailReadOnlyService.fetchSelectionIds( groupSend.id )
         list?.each {ActionItemPostSelectionDetailReadOnly it ->
@@ -570,69 +553,6 @@ class ActionItemPostCompositeService {
             actionItemPostWorkService.create( actionItemPostWork )
         }
         LoggerUtility.debug( LOGGER, "Created " + list?.size() + " group send item records for group send with id = " + groupSend.id )
-    }
-
-    // TODO: Taken and modified from BCM. Use Hibernate Batch Update or a function in the DB instead of big insert?
-    // TODO Check if createPostItemsModified can replace this.
-    private void createPostItems( ActionItemPost groupSend ) {
-        LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id )
-        def sql
-        try {
-            def ctx = ServletContextHolder.servletContext.getAttribute( GrailsApplicationAttributes.APPLICATION_CONTEXT )
-            def sessionFactory = ctx.sessionFactory
-            def session = sessionFactory.currentSession
-            sql = new Sql( session.connection() )
-
-            sql.execute(
-                    [
-                            state         : ActionItemPostWorkExecutionState.Ready.toString(),
-                            group_send_key: groupSend.id,
-                            current_time  : new Date().toTimestamp()
-                    ],
-                    """
-                INSERT INTO gcraiim (gcraiim_gcbapst_id, gcraiim_pidm, gcraiim_creationdatetime
-                                                ,gcraiim_current_state, gcraiim_reference_id, gcraiim_user_id, gcraiim_activity_date, 
-                                                gcraiim_started_date)
-                        select
-                            gcbapst_surrogate_id,
-                            gcrlent_pidm,
-                            :current_time,
-                            :state,
-                            sys_guid(),
-                            gcbapst_user_id,
-                            :current_time,
-                            :current_time
-                        from (
-                            select gcrlent_pidm, gcbapst_surrogate_id, gcbapst_user_id
-                                from gcrslis, gcrlent, gcbapst, gcrpopc
-                                where
-                                gcbapst_surrogate_id = :group_send_key
-                                and gcrpopc_surrogate_id = gcbapst_popcalc_id
-                                and gcrslis_surrogate_id = gcrpopc_slis_id
-                                and gcrlent_slis_id = gcrslis_surrogate_id
-                            union
-                            select gcrlent_pidm, gcbapst_surrogate_id, gcbapst_user_id
-                                from gcrslis, gcrlent, gcbapst, gcrpopv
-                                where
-                                gcbapst_surrogate_id = :group_send_key
-                                and gcrpopv_surrogate_id = gcbapst_popversion_id
-                                and gcrslis_surrogate_id = gcrpopv_include_list_id
-                                and gcrlent_slis_id = gcrslis_surrogate_id
-                        )
-                """ )
-
-            LoggerUtility.debug( LOGGER, "Created " + sql.updateCount + " group send item records for group send with id = " + groupSend.id )
-        } catch (SQLException ae) {
-            LoggerUtility.debug( LOGGER, "SqlException in INSERT INTO gcraiim ${ae}" )
-            LoggerUtility.debug( LOGGER, ae.stackTrace )
-            throw ae
-        } catch (Exception ae) {
-            LoggerUtility.debug( LOGGER, "Exception in INSERT INTO gcraiim ${ae}" )
-            LoggerUtility.debug( LOGGER, ae.stackTrace )
-            throw ae
-        } finally {
-            sql?.close()
-        }
     }
 
     /**
