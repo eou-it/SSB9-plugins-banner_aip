@@ -49,12 +49,15 @@ class ActionItemPostCompositeService {
     def schedulerJobService
 
     def sessionFactory
+    def actionItemPostWorkService
 
     def springSecurityService
 
     def actionItemService
 
     def actionItemGroupService
+
+    def actionItemPostSelectionDetailReadOnlyService
 
     /**
      * Initiate the posting of a actionItems to a set of prospect recipients
@@ -117,7 +120,7 @@ class ActionItemPostCompositeService {
      * @param user
      * @return
      */
-    private ActionItemPost getActionPostInstance( requestMap, user ) {
+    ActionItemPost getActionPostInstance( requestMap, user ) {
         new ActionItemPost(
                 populationListId: requestMap.populationId,
                 postingActionItemGroupId: requestMap.postGroupId,
@@ -546,8 +549,31 @@ class ActionItemPostCompositeService {
             sql?.close()
         }
     }
+    /**
+     *
+     * @param groupSend
+     */
+    void createPostItemsModified( ActionItemPost groupSend ) {
+        LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id )
+        List<ActionItemPostSelectionDetailReadOnly> list = actionItemPostSelectionDetailReadOnlyService.fetchSelectionIds( groupSend.id )
+        list?.each {ActionItemPostSelectionDetailReadOnly it ->
+            def currentTime = new Date().toTimestamp()
+            ActionItemPostWork actionItemPostWork = new ActionItemPostWork(
+                    actionItemGroupSend: groupSend,
+                    recipientPidm: it.actionItemPostSelectionPidm,
+                    creationDateTime: currentTime,
+                    currentExecutionState: ActionItemPostWorkExecutionState.Ready,
+                    referenceId: sysGuId,
+                    startedDate: currentTime,
+                    lastModifiedBy: it.postingUserId
+            )
+            actionItemPostWorkService.create( actionItemPostWork )
+        }
+        LoggerUtility.debug( LOGGER, "Created " + list?.size() + " group send item records for group send with id = " + groupSend.id )
+    }
 
     // TODO: Taken and modified from BCM. Use Hibernate Batch Update or a function in the DB instead of big insert?
+    // TODO Check if createPostItemsModified can replace this.
     private void createPostItems( ActionItemPost groupSend ) {
         LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id )
         def sql
@@ -564,36 +590,36 @@ class ActionItemPostCompositeService {
                             current_time  : new Date().toTimestamp()
                     ],
                     """
-            INSERT INTO gcraiim (gcraiim_gcbapst_id, gcraiim_pidm, gcraiim_creationdatetime
-                                            ,gcraiim_current_state, gcraiim_reference_id, gcraiim_user_id, gcraiim_activity_date, 
-                                            gcraiim_started_date)
-                    select
-                        gcbapst_surrogate_id,
-                        gcrlent_pidm,
-                        :current_time,
-                        :state,
-                        sys_guid(),
-                        gcbapst_user_id,
-                        :current_time,
-                        :current_time
-                    from (
-                        select gcrlent_pidm, gcbapst_surrogate_id, gcbapst_user_id
-                            from gcrslis, gcrlent, gcbapst, gcrpopc
-                            where
-                            gcbapst_surrogate_id = :group_send_key
-                            and gcrpopc_surrogate_id = gcbapst_popcalc_id
-                            and gcrslis_surrogate_id = gcrpopc_slis_id
-                            and gcrlent_slis_id = gcrslis_surrogate_id
-                        union
-                        select gcrlent_pidm, gcbapst_surrogate_id, gcbapst_user_id
-                            from gcrslis, gcrlent, gcbapst, gcrpopv
-                            where
-                            gcbapst_surrogate_id = :group_send_key
-                            and gcrpopv_surrogate_id = gcbapst_popversion_id
-                            and gcrslis_surrogate_id = gcrpopv_include_list_id
-                            and gcrlent_slis_id = gcrslis_surrogate_id
-                    )
-            """ )
+                INSERT INTO gcraiim (gcraiim_gcbapst_id, gcraiim_pidm, gcraiim_creationdatetime
+                                                ,gcraiim_current_state, gcraiim_reference_id, gcraiim_user_id, gcraiim_activity_date, 
+                                                gcraiim_started_date)
+                        select
+                            gcbapst_surrogate_id,
+                            gcrlent_pidm,
+                            :current_time,
+                            :state,
+                            sys_guid(),
+                            gcbapst_user_id,
+                            :current_time,
+                            :current_time
+                        from (
+                            select gcrlent_pidm, gcbapst_surrogate_id, gcbapst_user_id
+                                from gcrslis, gcrlent, gcbapst, gcrpopc
+                                where
+                                gcbapst_surrogate_id = :group_send_key
+                                and gcrpopc_surrogate_id = gcbapst_popcalc_id
+                                and gcrslis_surrogate_id = gcrpopc_slis_id
+                                and gcrlent_slis_id = gcrslis_surrogate_id
+                            union
+                            select gcrlent_pidm, gcbapst_surrogate_id, gcbapst_user_id
+                                from gcrslis, gcrlent, gcbapst, gcrpopv
+                                where
+                                gcbapst_surrogate_id = :group_send_key
+                                and gcrpopv_surrogate_id = gcbapst_popversion_id
+                                and gcrslis_surrogate_id = gcrpopv_include_list_id
+                                and gcrlent_slis_id = gcrslis_surrogate_id
+                        )
+                """ )
 
             LoggerUtility.debug( LOGGER, "Created " + sql.updateCount + " group send item records for group send with id = " + groupSend.id )
         } catch (SQLException ae) {
@@ -607,5 +633,13 @@ class ActionItemPostCompositeService {
         } finally {
             sql?.close()
         }
+    }
+
+    /**
+     * Get system GU id
+     * @return
+     */
+    String getSysGuId() {
+        sessionFactory.currentSession.createSQLQuery( ' select RAWTOHEX(sys_guid()) from dual' ).uniqueResult()
     }
 }
