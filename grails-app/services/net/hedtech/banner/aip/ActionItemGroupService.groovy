@@ -17,6 +17,7 @@ class ActionItemGroupService extends ServiceBase {
     static final String UNIQUE_NAME_ERROR = '@@r1:UniqueNameInFolderError@@'
 
     static final String NO_TITLE_ERROR = '@@r1:TitleCanNotBeNullError@@'
+    static final String NO_NAME_ERROR = '@@r1:NameCanNotBeNullError@@'
 
     static final String FOLDER_VALIDATION_ERROR = '@@r1:FolderDoesNotExist@@'
 
@@ -54,6 +55,9 @@ class ActionItemGroupService extends ServiceBase {
 
         if (!aig.validate()) {
             def errorCodes = aig.errors.allErrors.codes[0]
+            if (errorCodes.contains( 'actionItemGroup.name.nullable' )) {
+                throw new ApplicationException( ActionItem, NO_NAME_ERROR, 'actionItemGroup.name.nullable.error' )
+            }
             if (errorCodes.contains( 'actionItemGroup.title.nullable' )) {
                 throw new ApplicationException( ActionItem, NO_TITLE_ERROR, 'actionItemGroup.title.nullable.error' )
             } else if (errorCodes.contains( 'actionItemGroup.folderId.nullable' )) {

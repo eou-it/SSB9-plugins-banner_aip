@@ -40,9 +40,9 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
 
     @Test
-    void createPostItemsModified() {
+    void createPostItems() {
         ActionItemPost actionItemPost = ActionItemPost.findById( 1L )
-        actionItemPostCompositeService.createPostItemsModified( actionItemPost )
+        actionItemPostCompositeService.createPostItems( actionItemPost )
         assert actionItemPostWorkService.list( [max: Integer.MAX_VALUE] ).size() > 0
     }
 

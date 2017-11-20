@@ -53,7 +53,7 @@ class ActionItemGroupCompositeService {
         [
                 success: success,
                 message: message,
-                group  : groupFolderReadOnlyService.getActionItemGroupById( groupNew.id.toInteger() )
+                group  : success ? groupFolderReadOnlyService.getActionItemGroupById( groupNew.id.toInteger() ) : null
         ]
 
 
