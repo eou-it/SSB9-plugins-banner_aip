@@ -123,8 +123,8 @@ class ActionItemPostCompositeService {
     ActionItemPost getActionPostInstance( requestMap, user ) {
         new ActionItemPost(
                 populationListId: requestMap.populationId,
-                postingActionItemGroupId: requestMap.postGroupId,
-                postingName: requestMap.name,
+                postingActionItemGroupId: requestMap.postingActionItemGroupId,
+                postingName: requestMap.postingName,
                 postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
                 postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
                 //postingScheduleDateTime: requestMap.scheduledStartDate ? actionItemProcessingCommonService.convertToLocaleBasedDate(
@@ -235,8 +235,8 @@ class ActionItemPostCompositeService {
         }
 
         //if group send is scheduled
-        if (groupSend.postingJobId != null) {
-            schedulerJobService.deleteScheduledJob( groupSend.postingJobId, groupSend.postingGroupId )
+        if (groupSend.aSyncJobId != null) {
+            schedulerJobService.deleteScheduledJob( groupSend.aSyncJobId, groupSend.aSyncGroupId )
         } else {
             //if Group send is not scheduled then remove job and recipient data
             deleteActionItemJobsByGroupSendId( groupSendId )
@@ -275,8 +275,8 @@ class ActionItemPostCompositeService {
         groupSend.markStopped()
         groupSend = savePost( groupSend )
 
-        if (groupSend.postingJobId != null) {
-            this.schedulerJobService.deleteScheduledJob( groupSend.postingJobId, groupSend.postingGroupId )
+        if (groupSend.aSyncJobId != null) {
+            this.schedulerJobService.deleteScheduledJob( groupSend.aSyncJobId, groupSend.aSyncGroupId )
         }
 
         // fetch any post jobs for this group send and marked as stopped
@@ -439,7 +439,7 @@ class ActionItemPostCompositeService {
 
     private ActionItemPost schedulePostImmediately( ActionItemPost groupSend, String bannerUser ) {
         SchedulerJobContext jobContext = new SchedulerJobContext(
-                groupSend.postingJobId != null ? groupSend.postingJobId : UUID.randomUUID().toString() )
+                groupSend.aSyncJobId != null ? groupSend.aSyncJobId : UUID.randomUUID().toString() )
                 .setBannerUser( bannerUser )
                 .setMepCode( groupSend.vpdiCode )
                 .setJobHandle( "actionItemPostCompositeService", "generatePostItemsFired" )
@@ -460,7 +460,7 @@ class ActionItemPostCompositeService {
         }
 
         SchedulerJobContext jobContext = new SchedulerJobContext(
-                groupSend.postingJobId != null ? groupSend.postingJobId : UUID.randomUUID().toString() )
+                groupSend.aSyncJobId != null ? groupSend.aSyncJobId : UUID.randomUUID().toString() )
                 .setBannerUser( bannerUser )
                 .setMepCode( groupSend.vpdiCode )
                 .setScheduledStartDate( groupSend.postingScheduleDateTime )
@@ -553,7 +553,7 @@ class ActionItemPostCompositeService {
      *
      * @param groupSend
      */
-    void createPostItemsModified( ActionItemPost groupSend ) {
+    void createPostItems( ActionItemPost groupSend ) {
         LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id )
         List<ActionItemPostSelectionDetailReadOnly> list = actionItemPostSelectionDetailReadOnlyService.fetchSelectionIds( groupSend.id )
         list?.each {ActionItemPostSelectionDetailReadOnly it ->
@@ -574,7 +574,7 @@ class ActionItemPostCompositeService {
 
     // TODO: Taken and modified from BCM. Use Hibernate Batch Update or a function in the DB instead of big insert?
     // TODO Check if createPostItemsModified can replace this.
-    private void createPostItems( ActionItemPost groupSend ) {
+    private void createPostItemsDeleteMe( ActionItemPost groupSend ) {
         LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id )
         def sql
         try {
