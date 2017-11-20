@@ -5,6 +5,7 @@ package net.hedtech.banner.aip.post.grouppost
 
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.ActionItemGroupAssign
+import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.general.communication.population.CommunicationPopulationListView
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
@@ -40,12 +41,43 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
 
     @Test
-    void createPostItemsModified() {
-        ActionItemPost actionItemPost = ActionItemPost.findById( 1L )
-        actionItemPostCompositeService.createPostItemsModified( actionItemPost )
+    void createPostItems() {
+        ActionItemPost aip = newAIP()
+        aip.save()
+        // lookup. save should have worked. Use "stopped" to avoid job getting processed?
+        List<ActionItemPost> aipToUse = ActionItemPost.findAll(  )
+        actionItemPostCompositeService.createPostItems( aipToUse[0] )
         assert actionItemPostWorkService.list( [max: Integer.MAX_VALUE] ).size() > 0
     }
 
+    private def newAIP() {
+            new ActionItemPost(
+                    populationListId: 1L,
+                    populationVersionId: 1L,
+                    postingName: "some name",
+                    postingActionItemGroupId: ActionItemGroup.findByName('Enrollment').id,
+                    postingDeleteIndicator: false,
+                    postingScheduleType: "some type",
+                    postingCreationDateTime: new Date(),
+                    postingDisplayStartDate: new Date(),
+                    postingDisplayEndDate: new Date(),
+                    postingCreatorId: 'me',
+                    postingScheduleDateTime: new Date(),
+                    populationRegenerateIndicator: false,
+                    postingCurrentState: ActionItemPostExecutionState.New,
+                    postingStartedDate: null,
+                    postingStopDate: null,
+                    aSyncJobId: "la43j45h546k56g6f6r77a7kjfn",
+                    populationCalculationId: 1L,
+                    postingErrorCode: ActionItemErrorCode.DATA_FIELD_SQL_ERROR,
+                    postingErrorText: null,
+                    aSyncGroupId: null,
+                    postingParameterValues: null,
+                    lastModified: new Date(),
+                    lastModifiedBy: 'testUser',
+                    dataOrigin: 'BANNER'
+                    )
+        }
 
     private getInstance() {
         SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
@@ -54,10 +86,10 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         def actionItemGroup = actionItemGroups[0]
         List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
         def requestMap = [:]
-        requestMap.name = 'testPostByPopulationSendInTwoMinutes'
+        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.populationId = populationListView.id
         requestMap.referenceId = UUID.randomUUID().toString()
-        requestMap.postGroupId = actionItemGroup.id
+        requestMap.postActionItemGroupId = actionItemGroup.id
         requestMap.postNow = false
         requestMap.recalculateOnPost = false
         requestMap.displayStartDate = testingDateFormat.format( new Date() )

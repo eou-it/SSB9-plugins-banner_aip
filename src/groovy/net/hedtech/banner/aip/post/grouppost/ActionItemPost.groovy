@@ -135,15 +135,6 @@ class ActionItemPost implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     Date postingStopDate
 
-    /**
-     * POSTING JOB ID: The job ID of the scheduled job.
-     */
-    @Column(name = "GCBAPST_JOB_ID")
-    String postingJobId
-
-    /**
-     * POPULATION CALCULATION ID: The id of the specific population calculation resolved to feed the Action Item post.
-     */
     @Column(name = "GCBAPST_POPCALC_ID")
     Long populationCalculationId
 
@@ -165,16 +156,27 @@ class ActionItemPost implements Serializable {
     String postingErrorText
 
     /**
-     * POSTING GROUP ID: The group ID of Action Item post.
-     */
-    @Column(name = "GCBAPST_GROUP_ID")
-    String postingGroupId
-
-    /**
      * POSTING PARAMETER VALUES: The map of parameter name and values for a specific Action Item post.
      */
+
     @Column(name = "GCBAPST_PARAMETER_VALUES")
     String postingParameterValues
+
+    /**
+     * POSTING JOB ID: The job ID of the scheduled job.
+     */
+
+    @Column(name = "GCBAPST_JOB_ID")
+    String aSyncJobId
+    /**
+     * POSTING GROUP ID: The group ID of the job.
+     */
+
+    @Column(name = "GCBAPST_GROUP_ID")
+    String aSyncGroupId
+    /**
+     * POPULATION CALCULATION ID: The id of the specific population calculation resolved to feed the Action Item post.
+     */
 
     /**
      * ACTIVITY DATE: Date that record was created or last updated.
@@ -215,15 +217,15 @@ class ActionItemPost implements Serializable {
         postingCreatorId( nullable: false, maxSize: 30 )
         populationRegenerateIndicator( nullable: false, maxSize: 1 )
         postingCurrentState( nullable: true, maxSize: 255 )
-        postingJobId( nullable: true, maxSize: 64 )
         populationCalculationId( nullable: true, maxSize: 19 )
         populationVersionId( nullable: true, maxSize: 19 )
         postingStartedDate( nullable: true )
         postingStopDate( nullable: true )
         postingErrorCode( nullable: true, maxSize: 256 )
         postingErrorText( nullable: true )
-        postingGroupId( nullable: true, maxSize: 256 )
         postingParameterValues( nullable: true )
+        aSyncJobId( nullable: true, maxSize: 64 )
+        aSyncGroupId( nullable: true, maxSize: 256 )
         lastModified( nullable: true )
         lastModifiedBy( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 30 )
@@ -275,8 +277,8 @@ class ActionItemPost implements Serializable {
 
     private void assignPostExecutionState( ActionItemPostExecutionState executionState, String jobId = null, String groupId = null ) {
         this.postingCurrentState = executionState
-        this.postingJobId = jobId
-        this.postingGroupId = groupId
+        this.aSyncJobId = jobId
+        this.aSyncGroupId = groupId
     }
 
 

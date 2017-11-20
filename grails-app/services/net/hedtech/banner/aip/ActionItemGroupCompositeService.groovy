@@ -50,10 +50,11 @@ class ActionItemGroupCompositeService {
                 message = MessageUtility.message( e.getDefaultMessage() )
             }
         }
+
         [
                 success: success,
                 message: message,
-                group  : groupFolderReadOnlyService.getActionItemGroupById( groupNew.id.toInteger() )
+                group  : groupNew
         ]
 
 

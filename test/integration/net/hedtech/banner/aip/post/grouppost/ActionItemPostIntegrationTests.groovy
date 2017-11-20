@@ -3,6 +3,7 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.aip.post.grouppost.ActionItemPost
 import net.hedtech.banner.aip.post.grouppost.ActionItemPostExecutionState
@@ -27,10 +28,7 @@ class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testActionPostConstraints() {
-        println 'CRR finish tests'
         def actionItemPost = newAIP()
-        println 'CRR finish tests'
-        println actionItemPost
         //actionItemPost.save()
 
     }
@@ -39,7 +37,6 @@ class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testDuplicate() {
         def actionItemPost = newAIP()
-        println 'CRR finish tests'
         actionItemPost.save()
     }
 
@@ -49,8 +46,10 @@ class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
                 populationListId: 1L,
                 populationVersionId: 1L,
                 postingName: "some name",
+                postingActionItemGroupId: ActionItemGroup.findByName('Enrollment').id,
                 postingDeleteIndicator: false,
                 postingScheduleType: "some type",
+                postingCreationDateTime: new Date(),
                 postingDisplayStartDate: new Date(),
                 postingDisplayEndDate: new Date(),
                 postingCreatorId: 'me',
@@ -59,15 +58,15 @@ class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
                 postingCurrentState: ActionItemPostExecutionState.New,
                 postingStartedDate: null,
                 postingStopDate: null,
-                postingJobId: "la43j45h546k56g6f6r77a7kjfn",
+                aSyncJobId: "la43j45h546k56g6f6r77a7kjfn",
                 populationCalculationId: 1L,
                 postingErrorCode: ActionItemErrorCode.DATA_FIELD_SQL_ERROR,
                 postingErrorText: null,
-                postingGroupId: null,
+                aSyncGroupId: null,
                 postingParameterValues: null,
                 lastModified: new Date(),
                 lastModifiedBy: 'testUser',
-                dataOrigin: 'BANNER',
+                dataOrigin: 'BANNER'
                 )
     }
 }
