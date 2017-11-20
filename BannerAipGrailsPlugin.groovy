@@ -52,7 +52,7 @@ Brief summary/description of the plugin.
 
     def doWithApplicationContext = { ctx ->
         def pbConfig = grails.util.Holders.getConfig().pageBuilder
-        if (pbConfig && pbConfig.locations) {
+        if (pbConfig && pbConfig.locations && pbConfig.locations.page) {
             ctx.cssUtilService.importInitially(ctx.cssUtilService.loadOverwriteExisting)
             ctx.pageUtilService.importInitially(ctx.pageUtilService.loadOverwriteExisting)
             ctx.virtualDomainUtilService.importInitially(ctx.virtualDomainUtilService.loadOverwriteExisting)
