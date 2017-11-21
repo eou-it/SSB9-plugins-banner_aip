@@ -400,10 +400,12 @@ class ActionItemPostCompositeService {
                 if (shouldUpdateGroupSend) {
                     groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
                 }
+
                 groupSend = generatePostItemsImpl( groupSend )
             } catch (Throwable t) {
                 LOGGER.error( t.getMessage() )
                 groupSend.refresh()
+                // error generated here not very useful
                 groupSend.markError( ActionItemErrorCode.UNKNOWN_ERROR, t.getMessage() )
                 groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
             }
@@ -553,7 +555,8 @@ class ActionItemPostCompositeService {
      *
      * @param groupSend
      */
-    void createPostItems( ActionItemPost groupSend ) {
+    // Getting a SQLGrammarException at namedQuery in running app though logged sql can run fine from sqlDeveloper and integration tests seem to work
+    void createPostItemsModified( ActionItemPost groupSend ) {
         LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id )
         List<ActionItemPostSelectionDetailReadOnly> list = actionItemPostSelectionDetailReadOnlyService.fetchSelectionIds( groupSend.id )
         list?.each {ActionItemPostSelectionDetailReadOnly it ->
@@ -574,7 +577,7 @@ class ActionItemPostCompositeService {
 
     // TODO: Taken and modified from BCM. Use Hibernate Batch Update or a function in the DB instead of big insert?
     // TODO Check if createPostItemsModified can replace this.
-    private void createPostItemsDeleteMe( ActionItemPost groupSend ) {
+    private void createPostItems( ActionItemPost groupSend ) {
         LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id )
         def sql
         try {
