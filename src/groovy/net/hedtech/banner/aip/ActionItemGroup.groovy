@@ -93,13 +93,13 @@ class ActionItemGroup implements Serializable {
      * User action item pertains to
      */
     @Column(name = "GCBAGRP_USER_ID")
-    String userId
+    String lastModifiedBy
 
     /**
      * Last activity date for the action item
      */
     @Column(name = "GCBAGRP_ACTIVITY_DATE")
-    Date activityDate
+    Date lastModified
 
     /**
      * Data Origin column for GCBAGRP
@@ -111,11 +111,11 @@ class ActionItemGroup implements Serializable {
         title( nullable: false, maxSize: 2048 )
         name( nullabe: false, maxSize: 60 )
         description( nullable: true )
-        postingInd(nullabe: true)
+        postingInd(nullabe: false, maxSize: 1 )
         folderId( nullable: false, maxSize: 30 )
         status( nullable: false, maxSize: 1 )
-        userId( nullable: false, maxSize: 30 )
-        activityDate( nullable: false, maxSize: 30 )
+        lastModified( nullable: true)
+        lastModifiedBy( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 19 )
     }
 
@@ -152,7 +152,7 @@ class ActionItemGroup implements Serializable {
     public static Boolean existsSameNameInFolder( Long folderId, String name ) {
         def query
         ActionItem.withSession {session ->
-            session.setFlushMode( FlushMode.MANUAL );
+            session.setFlushMode( FlushMode.MANUAL )
             try {
                 query = session.getNamedQuery( 'ActionItemGroup.existsSameNameInFolder' )
                         .setString( 'name', name )

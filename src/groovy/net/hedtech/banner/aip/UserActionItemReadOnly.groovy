@@ -10,15 +10,17 @@ import org.hibernate.annotations.Type
 import javax.persistence.*
 
 @NamedQueries(value = [
-        @NamedQuery(name = "UserActionItemReadOnly.fetchUserActionItemROByPidm",
+        @NamedQuery(name = "UserActionItemReadOnly.fetchUserActionItemsROByPidmDate",
                 query = """FROM UserActionItemReadOnly a
-           WHERE a.pidm = :myPidm
-           """),
-        @NamedQuery(name = "UserActionItemReadOnly.fetchBlockingUserActionItemROByPidm",
-                query = """FROM UserActionItemReadOnly a
-                   WHERE a.pidm = :myPidm
-                   AND a.isBlocking is true
-                   """)
+                    WHERE a.pidm = :myPidm
+                    AND CURRENT_DATE BETWEEN a.displayStartDate AND a.displayEndDate
+                    ORDER BY a.actionItemGroupName,  a.actionItemSequenceNumber
+                    """),
+        @NamedQuery(name = "UserActionItemReadOnly.checkIfUserActionItemsPresentByPidmAndCurrentDate",
+                query = """select count (id) FROM UserActionItemReadOnly a
+                            WHERE a.pidm = :myPidm
+                            AND CURRENT_DATE BETWEEN a.displayStartDate AND a.displayEndDate
+                            """)
 ])
 
 @Entity
@@ -181,31 +183,29 @@ class UserActionItemReadOnly implements Serializable {
     Long version
 
     /**
-     *
+     * Lists user specific action items
      * @param pidm
      * @return
      */
-    static def fetchUserActionItemsROByPidm( Long pidm ) {
+    static def fetchUserActionItemsROByPidmDate( Long pidm ) {
         UserActionItemReadOnly.withSession {session ->
-            session.getNamedQuery( 'UserActionItemReadOnly.fetchUserActionItemROByPidm' )
-                    .setLong(
-                    'myPidm', pidm )
+            session.getNamedQuery( 'UserActionItemReadOnly.fetchUserActionItemsROByPidmDate' )
+                    .setLong( 'myPidm', pidm )
                     .list()
         }
     }
 
     /**
-     *
+     * Check if Lists of user specific action items present
      * @param pidm
      * @return
      */
-    static def fetchBlockingUserActionItemsROByPidm( Long pidm ) {
+    static def checkIfActionItemPresent( Long pidm ) {
         UserActionItemReadOnly.withSession {session ->
-            session.getNamedQuery( 'UserActionItemReadOnly' +
-                                           '.fetchBlockingUserActionItemROByPidm' )
-                    .setLong(
-                    'myPidm', pidm )
-                    .list()
+            session.getNamedQuery( 'UserActionItemReadOnly.checkIfUserActionItemsPresentByPidmAndCurrentDate' )
+                    .setLong( 'myPidm', pidm )
+                    .uniqueResult() > 0
         }
     }
+
 }

@@ -14,14 +14,14 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Before
-    public void setUp() {
+    void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
     }
 
 
     @After
-    public void tearDown() {
+    void tearDown() {
         super.tearDown()
     }
 
@@ -76,11 +76,11 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         actionItemGroupNewList.folderId = actionItemGroup.folderId
         actionItemGroupNewList.description = actionItemGroup.description
         actionItemGroupNewList.postingInd = actionItemGroup.postingInd
-        actionItemGroupNewList.status = actionItemGroup.status
-        actionItemGroupNewList.userId = actionItemGroup.userId
-        actionItemGroupNewList.activityDate = actionItemGroup.activityDate
-        actionItemGroupNewList.version = actionItemGroup.version
+        actionItemGroupNewList.lastModifiedBy = actionItemGroup.lastModifiedBy
+        actionItemGroupNewList.lastModified = actionItemGroup.lastModified
         actionItemGroupNewList.dataOrigin = actionItemGroup.dataOrigin
+        actionItemGroupNewList.version = actionItemGroup.version
+        actionItemGroupNewList.status = actionItemGroup.status
 
         def result = actionItemGroupNewList.equals( actionItemGroup )
         assertTrue result
@@ -105,8 +105,6 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         actionItemGroupNewList.description = actionItemGroup.description
         actionItemGroupNewList.postingInd = actionItemGroup.postingInd
         actionItemGroupNewList.status = actionItemGroup.status
-        actionItemGroupNewList.userId = actionItemGroup.userId
-        actionItemGroupNewList.activityDate = actionItemGroup.activityDate
         actionItemGroupNewList.version = actionItemGroup.version
         actionItemGroupNewList.dataOrigin = actionItemGroup.dataOrigin
 
@@ -141,8 +139,6 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         actionItemGroupNewList.description = actionItemGroup.description
         actionItemGroupNewList.postingInd = actionItemGroup.postingInd
         actionItemGroupNewList.status = actionItemGroup.status
-        actionItemGroupNewList.userId = actionItemGroup.userId
-        actionItemGroupNewList.activityDate = actionItemGroup.activityDate
         actionItemGroupNewList.version = actionItemGroup.version
         actionItemGroupNewList.dataOrigin = actionItemGroup.dataOrigin
 
@@ -164,8 +160,6 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         actionItemGroupNewList.description = actionItemGroup.description
         actionItemGroupNewList.postingInd = actionItemGroup.postingInd
         actionItemGroupNewList.status = "pendingstatusoverthe30characterlimit"
-        actionItemGroupNewList.userId = actionItemGroup.userId
-        actionItemGroupNewList.activityDate = actionItemGroup.activityDate
         actionItemGroupNewList.version = actionItemGroup.version
         actionItemGroupNewList.dataOrigin = actionItemGroup.dataOrigin
 

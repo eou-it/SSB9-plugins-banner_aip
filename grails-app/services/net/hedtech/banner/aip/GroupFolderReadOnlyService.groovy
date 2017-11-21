@@ -3,8 +3,8 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.service.ServiceBase
 import net.hedtech.banner.i18n.MessageHelper
+import net.hedtech.banner.service.ServiceBase
 
 /**
  * Service class for GroupFolder ( read only ) Domain
@@ -19,33 +19,44 @@ class GroupFolderReadOnlyService extends ServiceBase {
         GroupFolderReadOnly.fetchGroupFolders()
     }
 
-
     /**
      * Gets Action Item Group by Id
      * @param actionItemGroupId
      * @return
      */
     def getActionItemGroupById( Long actionItemGroupId ) {
-        GroupFolderReadOnly.fetchGroupFoldersById( actionItemGroupId )
+        GroupFolderReadOnly groupRO = GroupFolderReadOnly.fetchGroupFolderById( actionItemGroupId )
+        [
+                groupId          : groupRO.groupId,
+                groupTitle       : groupRO.groupTitle,
+                groupName        : groupRO.groupName,
+                groupStatus      : MessageHelper.message( "aip.status.${groupRO.groupStatus}" ),
+                folderId         : groupRO.folderId,
+                folderName       : groupRO.folderName,
+                folderDesc       : groupRO.folderDesc,
+                groupUserId      : groupRO.groupUserId,
+                groupDesc        : groupRO.groupDesc,
+                groupActivityDate: groupRO.groupActivityDate,
+                groupVersion     : groupRO.groupVersion
+        ]
     }
 
     /**Lists Group Folder count
-     *
+     * @param params
      * @return
      */
-    def listGroupFolderROCount() {
-        GroupFolderReadOnly.fetchGroupFolderROCount()
+    def listGroupFolderROCount( params ) {
+        GroupFolderReadOnly.fetchGroupFolderROCount( params )
     }
 
     /**
      * Lists Group Folders
      * @param params
+     * @param paginationParams
      * @return
      */
-    def listGroupFolderPageSort( Map params ) {
-        def results = GroupFolderReadOnly.fetchWithPagingAndSortParams(
-                [params: [name: params?.filterName]],
-                [sortColumn: params?.sortColumn, sortAscending: params?.sortAscending, max: params?.max, offset: params?.offset] )
+    def listGroupFolderPageSort( Map params, paginationParams ) {
+        def results = GroupFolderReadOnly.fetchWithPagingAndSortParams( params, paginationParams )
         results = results.collect {
             [id               : it.groupId,
              groupId          : it.groupId,
@@ -61,10 +72,10 @@ class GroupFolderReadOnlyService extends ServiceBase {
              groupActivityDate: it.groupActivityDate
             ]
         }
-        def resultCount = listGroupFolderROCount()
+        def resultCount = listGroupFolderROCount( params )
         def resultMap = [
                 result: results,
-                length: resultCount[0]
+                length: resultCount,
         ]
 
         resultMap

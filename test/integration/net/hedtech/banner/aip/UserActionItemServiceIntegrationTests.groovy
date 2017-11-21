@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -14,20 +14,18 @@ import org.junit.Test
 
 class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
-    def actionItemService
-
     def userActionItemService
 
 
     @Before
-    public void setUp() {
+    void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
     }
 
 
     @After
-    public void tearDown() {
+    void tearDown() {
         super.tearDown()
     }
 
@@ -53,14 +51,24 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         assertEquals( actionItemId, userActionItemId.id )
     }
 
+
+    @Test
+    void testPreCreateInvalidData() {
+        Map userActionItem = [actionItemId: -1, pidm: 1, status: 'P', displayEndDate: new Date(), displayStartDate: new Date(), groupId: 1, creatorId: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA']
+        try {
+            userActionItemService.preCreate( [domainModel: userActionItem] )
+        } catch (ApplicationException ae) {
+            assertApplicationException( ae, '@@r1:BadDataError@@' )
+        }
+    }
+
+
     @Test
     void testRejectDuplicateDateOverlap() {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
         List<UserActionItem> existingUserActionItems = userActionItemService.listActionItemsByPidm( actionItemPidm )
-
-        // existing date range (at time of writing this test) is 2/9/2016 - 12/9/2017 . Increment start by one day
         def existingUserActionItem = existingUserActionItems[0]
-        def origSize = existingUserActionItems.size(  )
+        def origSize = existingUserActionItems.size()
         UserActionItem userActionItem = new UserActionItem()
         userActionItem.pidm = actionItemPidm
         userActionItem.actionItemId = existingUserActionItem.actionItemId
@@ -68,15 +76,13 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         userActionItem.displayStartDate = existingUserActionItem.displayStartDate + 1
         userActionItem.displayEndDate = existingUserActionItem.displayEndDate
         userActionItem.groupId = existingUserActionItem.groupId
-        userActionItem.userId = existingUserActionItem.userId
-        userActionItem.activityDate = new Date()
         userActionItem.creatorId = existingUserActionItem.creatorId
         userActionItem.createDate = new Date()
         userActionItem.dataOrigin = existingUserActionItem.dataOrigin
         def message = shouldFail( ApplicationException ) {
             userActionItemService.create( userActionItem )
         }
-        assertEquals( "@@r1:AlreadyExistsCondition@@", message)
+        assertEquals( "@@r1:AlreadyExistsCondition@@", message )
 
         List<UserActionItem> newUserActionItems = userActionItemService.listActionItemsByPidm( actionItemPidm )
         assertEquals( origSize, newUserActionItems.size() )
@@ -87,22 +93,18 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
     void testAcceptDuplicateNoDateOverlap() {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
         List<UserActionItem> existingUserActionItems = userActionItemService.listActionItemsByPidm( actionItemPidm )
-
-        // existing date range (at time of writing this test) is 2/9/2016 - 12/9/2017 .
         // make start and end well past this range
-        def startDate = new Date().copyWith( year: 2024, month: Calendar.APRIL, dayOfMonth: 3)
-        def endDate = new Date().copyWith( year: 2024, month: Calendar.JULY, dayOfMonth: 3)
+        def startDate = new Date().copyWith( year: 2024, month: Calendar.APRIL, dayOfMonth: 3 )
+        def endDate = new Date().copyWith( year: 2024, month: Calendar.JULY, dayOfMonth: 3 )
         def existingUserActionItem = existingUserActionItems[0]
         def origSize = existingUserActionItems.size()
         UserActionItem userActionItem = new UserActionItem()
         userActionItem.pidm = actionItemPidm
         userActionItem.actionItemId = existingUserActionItem.actionItemId
-        userActionItem.status = 1
+        userActionItem.status = ActionItemStatus.fetchDefaultActionItemStatus().id
         userActionItem.displayStartDate = startDate
         userActionItem.displayEndDate = endDate
         userActionItem.groupId = existingUserActionItem.groupId
-        userActionItem.userId = existingUserActionItem.userId
-        userActionItem.activityDate = new Date()
         userActionItem.creatorId = existingUserActionItem.creatorId
         userActionItem.createDate = new Date()
         userActionItem.dataOrigin = existingUserActionItem.dataOrigin

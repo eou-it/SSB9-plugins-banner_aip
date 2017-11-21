@@ -10,11 +10,11 @@ import groovy.transform.ToString
 @EqualsAndHashCode
 @ToString
 class ActionItemPostRequest implements Serializable {
-    String name
+    String postingName
     Long populationId
     String referenceId
-    Long postGroupId
-    Boolean recalculateOnPost
+    Long postingActionItemGroupId
+    Boolean populationRegenerateIndicator
     Date scheduledStartDate
     Date displayStartDate
     Date displayEndDate

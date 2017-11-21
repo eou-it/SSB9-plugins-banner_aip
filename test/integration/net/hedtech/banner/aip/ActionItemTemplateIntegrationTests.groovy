@@ -2,12 +2,8 @@ package net.hedtech.banner.aip
 
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-
-import javax.persistence.Column
-import javax.persistence.Version
 
 class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase {
 
@@ -15,14 +11,14 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Before
-    public void setUp() {
+    void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
     }
 
 
     @After
-    public void tearDown() {
+    void tearDown() {
         super.tearDown()
     }
 
@@ -63,10 +59,10 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase {
                 title: actionItemTemplate.title,
                 pageId: actionItemTemplate.pageId,
                 sourceInd: actionItemTemplate.sourceInd,
-                userId: actionItemTemplate.userId,
+                lastModifiedBy: actionItemTemplate.lastModifiedBy,
                 systemRequired: actionItemTemplate.systemRequired,
                 activeInd: actionItemTemplate.activeInd,
-                activityDate: actionItemTemplate.activityDate,
+                lastModified: actionItemTemplate.lastModified,
                 dataOrigin: actionItemTemplate.dataOrigin,
                 vpdiCode: actionItemTemplate.vpdiCode
         )
@@ -98,10 +94,10 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase {
 
         actionItemTemplateNew.title = null
         actionItemTemplateNew.sourceInd = actionItemTemplate.sourceInd
-        actionItemTemplateNew.userId = actionItemTemplate.userId
+        actionItemTemplateNew.lastModifiedBy = actionItemTemplate.lastModifiedBy
         actionItemTemplateNew.systemRequired = actionItemTemplate.systemRequired
         actionItemTemplateNew.activeInd = actionItemTemplate.activeInd
-        actionItemTemplateNew.activityDate = actionItemTemplate.activityDate
+        actionItemTemplateNew.lastModified = actionItemTemplate.lastModified
         actionItemTemplateNew.dataOrigin = actionItemTemplate.dataOrigin
         actionItemTemplateNew.vpdiCode = actionItemTemplate.vpdiCode
 
@@ -118,10 +114,10 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase {
 
         actionItemTemplateNew.title = actionItemTemplate.title
         actionItemTemplateNew.sourceInd = null
-        actionItemTemplateNew.userId = actionItemTemplate.userId
+        actionItemTemplateNew.lastModifiedBy = actionItemTemplate.lastModifiedBy
         actionItemTemplateNew.systemRequired = actionItemTemplate.systemRequired
         actionItemTemplateNew.activeInd = actionItemTemplate.activeInd
-        actionItemTemplateNew.activityDate = actionItemTemplate.activityDate
+        actionItemTemplateNew.lastModified = actionItemTemplate.lastModified
         actionItemTemplateNew.dataOrigin = actionItemTemplate.dataOrigin
         actionItemTemplateNew.vpdiCode = actionItemTemplate.vpdiCode
 
@@ -138,10 +134,10 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase {
 
         actionItemTemplateNew.title = actionItemTemplate.title
         actionItemTemplateNew.sourceInd = actionItemTemplate.sourceInd
-        actionItemTemplateNew.userId = actionItemTemplate.userId
+        actionItemTemplateNew.lastModifiedBy = actionItemTemplate.lastModifiedBy
         actionItemTemplateNew.systemRequired = null
         actionItemTemplateNew.activeInd = actionItemTemplate.activeInd
-        actionItemTemplateNew.activityDate = actionItemTemplate.activityDate
+        actionItemTemplateNew.lastModified = actionItemTemplate.lastModified
         actionItemTemplateNew.dataOrigin = actionItemTemplate.dataOrigin
         actionItemTemplateNew.vpdiCode = actionItemTemplate.vpdiCode
 
@@ -158,10 +154,10 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase {
 
         actionItemTemplateNew.title = actionItemTemplate.title
         actionItemTemplateNew.sourceInd = actionItemTemplate.sourceInd
-        actionItemTemplateNew.userId = actionItemTemplate.userId
+        actionItemTemplateNew.lastModifiedBy = actionItemTemplate.lastModifiedBy
         actionItemTemplateNew.systemRequired = actionItemTemplate.systemRequired
         actionItemTemplateNew.activeInd = null
-        actionItemTemplateNew.activityDate = actionItemTemplate.activityDate
+        actionItemTemplateNew.lastModified = actionItemTemplate.lastModified
         actionItemTemplateNew.dataOrigin = actionItemTemplate.dataOrigin
         actionItemTemplateNew.vpdiCode = actionItemTemplate.vpdiCode
 

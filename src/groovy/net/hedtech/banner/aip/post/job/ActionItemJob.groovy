@@ -1,13 +1,12 @@
 /*******************************************************************************
-Copyright 2017 Ellucian Company L.P. and its affiliates.
-*******************************************************************************/
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
+ *******************************************************************************/
 package net.hedtech.banner.aip.post.job
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTask
-import net.hedtech.banner.service.DatabaseModifiesState
 
 import javax.persistence.*
 
@@ -18,21 +17,11 @@ import javax.persistence.*
 @ToString
 @EqualsAndHashCode
 @Table(name = "GCBAJOB")
-@DatabaseModifiesState
 @NamedQueries(value = [
         @NamedQuery(name = "ActionItemJob.fetchByStatus",
                 query = """ FROM ActionItemJob job
                             WHERE job.status = :status_
                             ORDER BY job.id ASC """
-        ),
-        @NamedQuery(name = "ActionItemJob.fetchByJobId",
-                query = """ FROM ActionItemJob job                            
-                            WHERE job.id = :jobId_ """
-        ),
-        @NamedQuery(name = "ActionItemJob.fetchByStatusAndJobId",
-                query = """ FROM ActionItemJob job
-                            WHERE job.status = :status_
-                            AND job.id = :jobId_ """
         ),
         @NamedQuery(name = "ActionItemJob.fetchByStatusAndReferenceId",
                 query = """ FROM ActionItemJob job
@@ -51,7 +40,6 @@ class ActionItemJob implements AsynchronousTask {
     @SequenceGenerator(name = "GCBAJOB_SEQ_GEN", allocationSize = 1, sequenceName = "GCBAJOB_SURROGATE_ID_SEQUENCE")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GCBAJOB_SEQ_GEN")
     Long id
-
 
     /**
      * SEND REFERENCE ID: The reference id of the group send item that initiated this communication.
@@ -92,13 +80,13 @@ class ActionItemJob implements AsynchronousTask {
     @Column(name = "GCBAJOB_DATA_ORIGIN")
     String dataOrigin
 
-    @Column(name="GCBAJOB_CREATION_DATE", nullable = false)
+    @Column(name = "GCBAJOB_CREATION_DATE")
     @Temporal(TemporalType.TIMESTAMP)
-    Date creationDateTime;
+    Date creationDateTime
 
-    @Column(name="GCBAJOB_ERROR_TEXT")
+    @Column(name = "GCBAJOB_ERROR_TEXT")
     @Lob
-    String errorText;
+    String errorText
 
     /**
      * Error Code: The error code for the error scenario that failed the ActionItem Job
@@ -108,75 +96,55 @@ class ActionItemJob implements AsynchronousTask {
     ActionItemErrorCode errorCode
 
     static constraints = {
-        lastModified(nullable: true)
-        lastModifiedBy(nullable: true, maxSize: 30)
-        dataOrigin(nullable: true, maxSize: 30)
-        referenceId(nullable: false, maxSize: 255)
-        status(nullable: false, maxSize: 30)
-        errorText(nullable: true)
-        errorCode(nullable: true)
+        lastModified( nullable: true )
+        lastModifiedBy( nullable: true, maxSize: 30 )
+        dataOrigin( nullable: true, maxSize: 30 )
+        referenceId( nullable: false, maxSize: 255 )
+        status( nullable: false, maxSize: 30 )
+        creationDateTime( nullable: false )
+        errorText( nullable: true )
+        errorCode( nullable: true )
     }
 
     // Read Only fields that should be protected against update
-    public static readonlyProperties = [ 'id' ]
+    public static readonlyProperties = ['id']
 
 
     ActionItemJobStatus getStatus() {
         return status
     }
 
-    void setStatus( ActionItemJobStatus status) {
+
+    void setStatus( ActionItemJobStatus status ) {
         this.status = status
     }
 
-    public static List fetchPending( Integer max = Integer.MAX_VALUE ) {
-        def results
-        ActionItemJob.withSession { session ->
-            results = session.getNamedQuery( 'ActionItemJob.fetchByStatus' )
+    /**
+     * Lists Pending Jobs
+     * @param max
+     * @return
+     */
+    static List fetchPending( Integer max = Integer.MAX_VALUE ) {
+        ActionItemJob.withSession {session ->
+            session.getNamedQuery( 'ActionItemJob.fetchByStatus' )
                     .setParameter( 'status_', ActionItemJobStatus.PENDING )
                     .setFirstResult( 0 )
                     .setMaxResults( max )
                     .list()
         }
-        return results
     }
 
-    public static List fetchCompleted() {
-        def results
-        ActionItemJob.withSession { session ->
-            results = session.getNamedQuery( 'ActionItemJob.fetchByStatus' )
-                .setParameter( 'status_', ActionItemJobStatus.COMPLETED )
-                .setFirstResult( 0 )
-                .setMaxResults( Integer.MAX_VALUE )
-                .list()
-        }
-        return results
-    }
-
-
-    public static List fetchPendingByJobId( Long jobId ) {
-        def results
-        ActionItemJob.withSession { session ->
-            results = session.getNamedQuery( 'ActionItemJob.fetchByStatusAndJobId' )
-                    .setParameter( 'status_', ActionItemJobStatus.PENDING )
-                    .setParameter( 'jobId_', jobId )
+    /**
+     * Lists Completed jobs
+     * @return
+     */
+    static List fetchCompleted() {
+        ActionItemJob.withSession {session ->
+            session.getNamedQuery( 'ActionItemJob.fetchByStatus' )
+                    .setParameter( 'status_', ActionItemJobStatus.COMPLETED )
                     .setFirstResult( 0 )
                     .setMaxResults( Integer.MAX_VALUE )
-                    ?.list()
+                    .list()
         }
-        return results
     }
-
-    public static List fetchByJobId( Long jobId ) {
-        def results
-        ActionItemJob.withSession { session ->
-            results = session.getNamedQuery( 'ActionItemJob.fetchByJobId' )
-                    .setParameter( 'jobId_', jobId )
-                    .setFirstResult( 0 )
-                    .setMaxResults( Integer.MAX_VALUE )
-                    ?.list()
-        }
-        return results
-    }
-
 }

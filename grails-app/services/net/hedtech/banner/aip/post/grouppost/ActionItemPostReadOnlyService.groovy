@@ -19,23 +19,30 @@ class ActionItemPostReadOnlyService extends ServiceBase {
     def listActionItemPostJobList( params, paginationParams ) {
         params.searchParam = params.searchParam ? ('%' + params.searchParam.toUpperCase() + '%') : ('%')
         def results = ActionItemPostReadOnly.fetchJobs( params, paginationParams )
-        results.each {ActionItemPostReadOnly it ->
-            it.postingCurrentState = MessageHelper.message( 'aip.action.item.post.job.state.' + ActionItemPostExecutionState.getStateEnum( it.postingCurrentState ) )
+        results = results.collect {ActionItemPostReadOnly it ->
+            [
+                    id                     : it.postingId,
+                    postingId              : it.postingId,
+                    postingCurrentState    : it.postingCurrentState,
+                    jobState               : MessageHelper.message( 'aip.action.item.post.job.state.' + ActionItemPostExecutionState.getStateEnum( it.postingCurrentState ) ),
+                    postingName            : it.postingName,
+                    postingDisplayStartDate: it.postingDisplayStartDate,
+                    postingStartedDate     : it.postingStartedDate,
+                    groupFolderName        : it.groupFolderName,
+                    postingPopulation      : it.postingPopulation,
+                    groupName              : it.groupName,
+                    postingCreatorId       : it.postingCreatorId,
+                    lastModified           : it.lastModified,
+                    lastModifiedBy         : it.lastModifiedBy,
+                    version                : it.version,
+
+
+            ]
         }
         def resultCount = fetchJobsCount( params )
         def resultMap = [
                 result: results,
                 length: resultCount,
-                header: [
-                        [name: "jobId", title: "actionItemPostId", options: [visible: false]],
-                        [name: "jobStatus", title: MessageHelper.message( "aip.admin.actionItem.post.grid.job.status" ), options: [visible: true], width: 0],
-                        [name: "jobName", title: MessageHelper.message( "aip.admin.actionItem.post.grid.job.name" ), options: [visible: true], width: 0],
-                        [name: "postingStartScheduleDate", title: MessageHelper.message( "aip.admin.actionItem.post.grid.job.start-schedule.date" ), options: [visible: true], width: 0],
-                        [name: "groupFolder", title: MessageHelper.message( "aip.admin.actionItem.post.grid.job.group.folder" ), options: [visible: true], width: 0],
-                        [name: "population", title: MessageHelper.message( "aip.admin.actionItem.post.grid.job.population" ), options: [visible: true], width: 0],
-                        [name: "groupName", title: MessageHelper.message( "aip.admin.actionItem.post.grid.job.group.name" ), options: [visible: true], width: 0],
-                        [name: "submittedBy", title: MessageHelper.message( "aip.admin.actionItem.post.grid.job.submittedBy" ), options: [visible: true], width: 0]
-                ]
         ]
         resultMap
     }

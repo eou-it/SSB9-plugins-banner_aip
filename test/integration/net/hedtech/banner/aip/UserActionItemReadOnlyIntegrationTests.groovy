@@ -28,15 +28,22 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testFetchUserActionItemByROPidm() {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemsROByPidm( actionItemPidm )
+        List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemsROByPidmDate( actionItemPidm )
         assertEquals( 10, userActionItems.size() )
+    }
+
+
+    @Test
+    void checkIfActionItemPresent() {
+        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
+        assert UserActionItemReadOnly.checkIfActionItemPresent( actionItemPidm ) == true
     }
 
 
     @Test
     void testFetchUserActionItemByROPidmNoReuslts() {
         def actionItemPidm = PersonUtility.getPerson( "STUADV425" ).pidm
-        List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemsROByPidm( actionItemPidm )
+        List<UserActionItemReadOnly> userActionItems = UserActionItemReadOnly.fetchUserActionItemsROByPidmDate( actionItemPidm )
         assertEquals( 0, userActionItems.size() )
         //println userActionItems
     }
@@ -45,7 +52,7 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testUserActionItemROToString() {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItemReadOnly> userActionItemsRO = UserActionItemReadOnly.fetchUserActionItemsROByPidm( actionItemPidm )
+        List<UserActionItemReadOnly> userActionItemsRO = UserActionItemReadOnly.fetchUserActionItemsROByPidmDate( actionItemPidm )
         assertNotNull( userActionItemsRO.toString() )
         assertFalse userActionItemsRO.isEmpty()
     }
@@ -54,7 +61,7 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testUserActionItemROHashCode() {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItemReadOnly> userActionItemsRO = UserActionItemReadOnly.fetchUserActionItemsROByPidm( actionItemPidm )
+        List<UserActionItemReadOnly> userActionItemsRO = UserActionItemReadOnly.fetchUserActionItemsROByPidmDate( actionItemPidm )
 
         def result = userActionItemsRO.hashCode()
         assertNotNull result
@@ -70,7 +77,7 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     void testUserActionItemROEquals() {
 
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItemReadOnly> userActionItemsRO = UserActionItemReadOnly.fetchUserActionItemsROByPidm( actionItemPidm )
+        List<UserActionItemReadOnly> userActionItemsRO = UserActionItemReadOnly.fetchUserActionItemsROByPidmDate( actionItemPidm )
 
 
         def userActionItemListRO = userActionItemsRO[0]

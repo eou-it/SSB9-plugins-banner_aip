@@ -68,7 +68,7 @@ enum ActionItemPostExecutionState implements Serializable {
                 return ds
             }
         }
-        'undefined'
+        throw new IllegalArgumentException( "executionState not found:" + executionState )
     }
 
 

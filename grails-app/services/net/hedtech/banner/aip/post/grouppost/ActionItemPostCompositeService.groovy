@@ -13,7 +13,12 @@ import net.hedtech.banner.aip.post.exceptions.ActionItemExceptionFactory
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.exceptions.NotFoundException
-import net.hedtech.banner.general.communication.population.*
+import net.hedtech.banner.general.communication.population.CommunicationPopulation
+import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculation
+import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculationStatus
+import net.hedtech.banner.general.communication.population.CommunicationPopulationQueryAssociation
+import net.hedtech.banner.general.communication.population.CommunicationPopulationVersion
+import net.hedtech.banner.general.communication.population.CommunicationPopulationVersionQueryAssociation
 import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.general.scheduler.SchedulerJobReceipt
@@ -44,6 +49,7 @@ class ActionItemPostCompositeService {
     def schedulerJobService
 
     def sessionFactory
+    def actionItemPostWorkService
 
     def springSecurityService
 
@@ -51,12 +57,14 @@ class ActionItemPostCompositeService {
 
     def actionItemGroupService
 
+    def actionItemPostSelectionDetailReadOnlyService
+
     /**
      * Initiate the posting of a actionItems to a set of prospect recipients
      * @param requestMap the post to initiate
      */
     def sendAsynchronousPostItem( requestMap ) {
-        LoggerUtility.debug( LOGGER, "Method sendAsynchronousGroupActionItem reached." );
+        LoggerUtility.debug( LOGGER, "Method sendAsynchronousGroupActionItem reached." )
         actionItemPostService.preCreateValidation( requestMap )
         def user = springSecurityService.getAuthentication()?.user
         def success = false
@@ -83,9 +91,9 @@ class ActionItemPostCompositeService {
         ActionItemPost groupSendSaved = actionItemPostService.create( groupSend )
         // Create the details records.
         requestMap.actionItemIds.each {
-            addPostingDetail( it, groupSendSaved.id, user )
+            addPostingDetail( it, groupSendSaved.id )
             if (requestMap.postNow) {
-                markActionItemPosted( it, user )
+                markActionItemPosted( it )
             }
         }
         if (requestMap.postNow) {
@@ -96,7 +104,7 @@ class ActionItemPostCompositeService {
                 assert (groupSendSaved.populationCalculationId != null)
             }
             groupSendSaved = schedulePostImmediately( groupSendSaved, user.oracleUserName )
-        } else if (requestMap.scheduled) {
+        } else if (requestMap.scheduledStartDate) {
             groupSendSaved = schedulePost( groupSendSaved, user.oracleUserName )
         }
         success = true
@@ -112,25 +120,22 @@ class ActionItemPostCompositeService {
      * @param user
      * @return
      */
-    private ActionItemPost getActionPostInstance( requestMap, user ) {
+    ActionItemPost getActionPostInstance( requestMap, user ) {
         new ActionItemPost(
                 populationListId: requestMap.populationId,
-                postingActionItemGroupId: requestMap.postGroupId,
-                postingName: requestMap.name,
+                postingActionItemGroupId: requestMap.postingActionItemGroupId,
+                postingName: requestMap.postingName,
                 postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
                 postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
-                postingScheduleDateTime: requestMap.scheduled ? actionItemProcessingCommonService.convertToLocaleBasedDate(
-                        requestMap.scheduledStartDate ) : null,
-                //postingDisplayStartDate: requestMap.displayStartDate,
-                //postingDisplayEndDate: requestMap.displayEndDate,
-                //postingScheduleDateTime: null, //TODO ENABLE if needed for test
+                //postingScheduleDateTime: requestMap.scheduledStartDate ? actionItemProcessingCommonService.convertToLocaleBasedDate(
+                //        requestMap.scheduledStartDate ) : null,
+                postingScheduleDateTime: requestMap.scheduledStartDate,
                 postingCreationDateTime: new Date(),
                 populationRegenerateIndicator: false,
                 postingDeleteIndicator: false,
                 postingCreatorId: user.oracleUserName,
                 postingCurrentState: requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New),
-                lastModified: new Date(),
-                lastModifiedBy: user.username )
+                )
     }
 
     /**
@@ -140,10 +145,8 @@ class ActionItemPostCompositeService {
      * @param user
      * @return
      */
-    private addPostingDetail( actionItemId, postingId, user ) {
+    private addPostingDetail( actionItemId, postingId ) {
         ActionItemPostDetail groupDetail = new ActionItemPostDetail(
-                lastModifiedBy: user.username,
-                lastModified: new Date(),
                 actionItemPostId: postingId,
                 actionItemId: actionItemId
         )
@@ -156,10 +159,8 @@ class ActionItemPostCompositeService {
      * @param user
      * @return
      */
-    private markActionItemPosted( actionItemId, user ) {
+    private markActionItemPosted( actionItemId ) {
         ActionItem actionItem = actionItemService.get( actionItemId )
-        actionItem.activityDate = new Date()
-        actionItem.userId = user.username
         actionItem.postedIndicator = AIPConstants.YES_IND
         actionItemService.update( actionItem )
     }
@@ -170,10 +171,8 @@ class ActionItemPostCompositeService {
      * @param user
      * @return
      */
-    private markActionItemGroupPosted( actionItemGroupId, user ) {
+    private markActionItemGroupPosted( actionItemGroupId ) {
         ActionItemGroup actionItemGroup = actionItemGroupService.get( actionItemGroupId )
-        actionItemGroup.activityDate = new Date()
-        actionItemGroup.userId = user.username
         actionItemGroup.postingInd = AIPConstants.YES_IND
         actionItemGroupService.update( actionItemGroup )
     }
@@ -236,8 +235,8 @@ class ActionItemPostCompositeService {
         }
 
         //if group send is scheduled
-        if (groupSend.postingJobId != null) {
-            schedulerJobService.deleteScheduledJob( groupSend.postingJobId, groupSend.postingGroupId )
+        if (groupSend.aSyncJobId != null) {
+            schedulerJobService.deleteScheduledJob( groupSend.aSyncJobId, groupSend.aSyncGroupId )
         } else {
             //if Group send is not scheduled then remove job and recipient data
             deleteActionItemJobsByGroupSendId( groupSendId )
@@ -276,15 +275,15 @@ class ActionItemPostCompositeService {
         groupSend.markStopped()
         groupSend = savePost( groupSend )
 
-        if (groupSend.postingJobId != null) {
-            this.schedulerJobService.deleteScheduledJob( groupSend.postingJobId, groupSend.postingGroupId )
+        if (groupSend.aSyncJobId != null) {
+            this.schedulerJobService.deleteScheduledJob( groupSend.aSyncJobId, groupSend.aSyncGroupId )
         }
 
         // fetch any post jobs for this group send and marked as stopped
         stopPendingActionItemJobs( groupSend.id )
         stopPendingPostItems( groupSend.id )
 
-        return groupSend
+        groupSend
     }
 
     /**
@@ -296,30 +295,30 @@ class ActionItemPostCompositeService {
         LoggerUtility.debug( LOGGER, "Completing group send with id = " + groupSendId + "." )
         ActionItemPost aGroupSend = (ActionItemPost) actionItemPostService.get( groupSendId )
         aGroupSend.markComplete()
-        return savePost( aGroupSend )
+        savePost( aGroupSend )
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
-    // Scheduling service callback job methods
+    // Scheduling service callback job methods (leave public)
     //////////////////////////////////////////////////////////////////////////////////////
 
-    ActionItemPost calculatePopulationVersionForPostFired( SchedulerJobContext jobContext ) {
+    public ActionItemPost calculatePopulationVersionForPostFired( SchedulerJobContext jobContext ) {
         calculatePopulationVersionForGroupSend( jobContext.parameters )
     }
 
 
-    ActionItemPost calculatePopulationVersionForPostFailed( SchedulerErrorContext errorContext ) {
-        return scheduledPostCallbackFailed( errorContext )
+    public ActionItemPost calculatePopulationVersionForPostFailed( SchedulerErrorContext errorContext ) {
+        scheduledPostCallbackFailed( errorContext )
     }
 
 
-    ActionItemPost generatePostItemsFired( SchedulerJobContext jobContext ) {
-        return generatePostItems( jobContext.parameters )
+    public ActionItemPost generatePostItemsFired( SchedulerJobContext jobContext ) {
+        generatePostItems( jobContext.parameters )
     }
 
 
-    ActionItemPost generatePostItemsFailed( SchedulerErrorContext errorContext ) {
-        return scheduledPostCallbackFailed( errorContext )
+    public ActionItemPost generatePostItemsFailed( SchedulerErrorContext errorContext ) {
+        scheduledPostCallbackFailed( errorContext )
     }
 
 
@@ -337,7 +336,7 @@ class ActionItemPostCompositeService {
         }
         assert populationVersion.id
         groupSend.populationVersionId = populationVersion.id
-        return populationVersion
+        populationVersion
     }
 
 
@@ -357,7 +356,7 @@ class ActionItemPostCompositeService {
             groupSend.postingErrorCode = ActionItemErrorCode.UNKNOWN_ERROR
         }
         groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
-        return groupSend
+        groupSend
     }
 
     /**
@@ -372,7 +371,8 @@ class ActionItemPostCompositeService {
         if (!groupSend) {
             throw new ApplicationException( "groupSend", new NotFoundException() )
         }
-
+        // TODO: this doesn't seem to be using the versioning mechanism properly. Just creates new
+        // TODO: not sure if this will work when we implement recurring
         if (!groupSend.postingCurrentState.isTerminal()) {
             try {
                 boolean shouldUpdateGroupSend = false
@@ -408,7 +408,7 @@ class ActionItemPostCompositeService {
                 groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
             }
         }
-        return groupSend
+        groupSend
     }
 
     /**
@@ -433,13 +433,13 @@ class ActionItemPostCompositeService {
                 groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
             }
         }
-        return groupSend
+        groupSend
     }
 
 
     private ActionItemPost schedulePostImmediately( ActionItemPost groupSend, String bannerUser ) {
-        SchedulerJobContext jobContext = new SchedulerJobContext( groupSend.postingJobId != null ? groupSend.postingJobId : UUID.randomUUID().toString
-                () )
+        SchedulerJobContext jobContext = new SchedulerJobContext(
+                groupSend.aSyncJobId != null ? groupSend.aSyncJobId : UUID.randomUUID().toString() )
                 .setBannerUser( bannerUser )
                 .setMepCode( groupSend.vpdiCode )
                 .setJobHandle( "actionItemPostCompositeService", "generatePostItemsFired" )
@@ -449,7 +449,7 @@ class ActionItemPostCompositeService {
         SchedulerJobReceipt jobReceipt = schedulerJobService.scheduleNowServiceMethod( jobContext )
         groupSend.markQueued( jobReceipt.jobId, jobReceipt.groupId )
         groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
-        return groupSend
+        groupSend
     }
 
 
@@ -459,7 +459,8 @@ class ActionItemPostCompositeService {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService.class, "invalidScheduledDate" )
         }
 
-        SchedulerJobContext jobContext = new SchedulerJobContext( groupSend.postingJobId )
+        SchedulerJobContext jobContext = new SchedulerJobContext(
+                groupSend.aSyncJobId != null ? groupSend.aSyncJobId : UUID.randomUUID().toString() )
                 .setBannerUser( bannerUser )
                 .setMepCode( groupSend.vpdiCode )
                 .setScheduledStartDate( groupSend.postingScheduleDateTime )
@@ -476,23 +477,20 @@ class ActionItemPostCompositeService {
         SchedulerJobReceipt jobReceipt = schedulerJobService.scheduleServiceMethod( jobContext )
         groupSend.markScheduled( jobReceipt.jobId, jobReceipt.groupId )
         groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
-        return groupSend
+        groupSend
     }
 
 
     private ActionItemPost generatePostItemsImpl( ActionItemPost groupSend ) {
-        // We'll created the group send items synchronously for now until we have support for scheduling.
-        // The individual group send items will still be processed asynchronously via the framework.
         createPostItems( groupSend )
         groupSend.markProcessing()
         groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
-        return groupSend
+        groupSend
     }
 
 
     private ActionItemPost savePost( ActionItemPost groupSend ) {
-        //TODO: Figure out why ServiceBase.update is not working with this domain.
-        return groupSend.save( flush: true ) //update( groupSend )
+        actionItemPostService.update( groupSend )
     }
 
     /**
@@ -520,9 +518,8 @@ class ActionItemPostCompositeService {
 
 
     private void stopPendingActionItemJobs( Long groupSendId ) {
-        def Sql sql
+        Sql sql
         try {
-            Connection connection = (Connection) sessionFactory.getCurrentSession().connection()
             sql = new Sql( (Connection) sessionFactory.getCurrentSession().connection() )
             sql.executeUpdate( "update GCBAJOB set GCBAJOB_STATUS='STOPPED', GCBAJOB_ACTIVITY_DATE = SYSDATE where " +
                                        "GCBAJOB_STATUS in ('PENDING', 'DISPATCHED') and GCBAJOB_REFERENCE_ID in " +
@@ -540,7 +537,6 @@ class ActionItemPostCompositeService {
     private void stopPendingPostItems( Long groupSendId ) {
         Sql sql
         try {
-            Connection connection = (Connection) sessionFactory.getCurrentSession().connection()
             sql = new Sql( (Connection) sessionFactory.getCurrentSession().connection() )
             sql.executeUpdate( "update GCRAIIM set GCRAIIM_CURRENT_STATE='Stopped', GCRAIIM_ACTIVITY_DATE = SYSDATE, GCRAIIM_STOP_DATE = SYSDATE " +
                                        "where " +
@@ -553,10 +549,33 @@ class ActionItemPostCompositeService {
             sql?.close()
         }
     }
+    /**
+     *
+     * @param groupSend
+     */
+    void createPostItems( ActionItemPost groupSend ) {
+        LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id )
+        List<ActionItemPostSelectionDetailReadOnly> list = actionItemPostSelectionDetailReadOnlyService.fetchSelectionIds( groupSend.id )
+        list?.each {ActionItemPostSelectionDetailReadOnly it ->
+            def currentTime = new Date().toTimestamp()
+            ActionItemPostWork actionItemPostWork = new ActionItemPostWork(
+                    actionItemGroupSend: groupSend,
+                    recipientPidm: it.actionItemPostSelectionPidm,
+                    creationDateTime: currentTime,
+                    currentExecutionState: ActionItemPostWorkExecutionState.Ready,
+                    referenceId: sysGuId,
+                    startedDate: currentTime,
+                    lastModifiedBy: it.postingUserId
+            )
+            actionItemPostWorkService.create( actionItemPostWork )
+        }
+        LoggerUtility.debug( LOGGER, "Created " + list?.size() + " group send item records for group send with id = " + groupSend.id )
+    }
 
-    // TODO: Taken and modified from BCM. Use Objects or a function in the DB instead of big insert?
-    private void createPostItems( ActionItemPost groupSend ) {
-        LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id );
+    // TODO: Taken and modified from BCM. Use Hibernate Batch Update or a function in the DB instead of big insert?
+    // TODO Check if createPostItemsModified can replace this.
+    private void createPostItemsDeleteMe( ActionItemPost groupSend ) {
+        LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id )
         def sql
         try {
             def ctx = ServletContextHolder.servletContext.getAttribute( GrailsApplicationAttributes.APPLICATION_CONTEXT )
@@ -571,36 +590,36 @@ class ActionItemPostCompositeService {
                             current_time  : new Date().toTimestamp()
                     ],
                     """
-            INSERT INTO gcraiim (gcraiim_gcbapst_id, gcraiim_pidm, gcraiim_creationdatetime
-                                            ,gcraiim_current_state, gcraiim_reference_id, gcraiim_user_id, gcraiim_activity_date, 
-                                            gcraiim_started_date)
-                    select
-                        gcbapst_surrogate_id,
-                        gcrlent_pidm,
-                        :current_time,
-                        :state,
-                        sys_guid(),
-                        gcbapst_user_id,
-                        :current_time,
-                        :current_time
-                    from (
-                        select gcrlent_pidm, gcbapst_surrogate_id, gcbapst_user_id
-                            from gcrslis, gcrlent, gcbapst, gcrpopc
-                            where
-                            gcbapst_surrogate_id = :group_send_key
-                            and gcrpopc_surrogate_id = gcbapst_popcalc_id
-                            and gcrslis_surrogate_id = gcrpopc_slis_id
-                            and gcrlent_slis_id = gcrslis_surrogate_id
-                        union
-                        select gcrlent_pidm, gcbapst_surrogate_id, gcbapst_user_id
-                            from gcrslis, gcrlent, gcbapst, gcrpopv
-                            where
-                            gcbapst_surrogate_id = :group_send_key
-                            and gcrpopv_surrogate_id = gcbapst_popversion_id
-                            and gcrslis_surrogate_id = gcrpopv_include_list_id
-                            and gcrlent_slis_id = gcrslis_surrogate_id
-                    )
-            """ )
+                INSERT INTO gcraiim (gcraiim_gcbapst_id, gcraiim_pidm, gcraiim_creationdatetime
+                                                ,gcraiim_current_state, gcraiim_reference_id, gcraiim_user_id, gcraiim_activity_date, 
+                                                gcraiim_started_date)
+                        select
+                            gcbapst_surrogate_id,
+                            gcrlent_pidm,
+                            :current_time,
+                            :state,
+                            sys_guid(),
+                            gcbapst_user_id,
+                            :current_time,
+                            :current_time
+                        from (
+                            select gcrlent_pidm, gcbapst_surrogate_id, gcbapst_user_id
+                                from gcrslis, gcrlent, gcbapst, gcrpopc
+                                where
+                                gcbapst_surrogate_id = :group_send_key
+                                and gcrpopc_surrogate_id = gcbapst_popcalc_id
+                                and gcrslis_surrogate_id = gcrpopc_slis_id
+                                and gcrlent_slis_id = gcrslis_surrogate_id
+                            union
+                            select gcrlent_pidm, gcbapst_surrogate_id, gcbapst_user_id
+                                from gcrslis, gcrlent, gcbapst, gcrpopv
+                                where
+                                gcbapst_surrogate_id = :group_send_key
+                                and gcrpopv_surrogate_id = gcbapst_popversion_id
+                                and gcrslis_surrogate_id = gcrpopv_include_list_id
+                                and gcrlent_slis_id = gcrslis_surrogate_id
+                        )
+                """ )
 
             LoggerUtility.debug( LOGGER, "Created " + sql.updateCount + " group send item records for group send with id = " + groupSend.id )
         } catch (SQLException ae) {
@@ -614,5 +633,13 @@ class ActionItemPostCompositeService {
         } finally {
             sql?.close()
         }
+    }
+
+    /**
+     * Get system GU id
+     * @return
+     */
+    String getSysGuId() {
+        sessionFactory.currentSession.createSQLQuery( ' select RAWTOHEX(sys_guid()) from dual' ).uniqueResult()
     }
 }

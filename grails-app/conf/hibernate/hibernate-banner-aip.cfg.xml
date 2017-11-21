@@ -32,13 +32,11 @@ Copyright 2017 Ellucian Company L.P. and its affiliates.
         <mapping class="net.hedtech.banner.aip.ActionItemGroupAssignReadOnly"/>
         <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPost"/>
         <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPostDetail"/>
-        <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPostDetailReadOnly"/>
         <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPostReadOnly"/>
         <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPostWork"/>
         <mapping class="net.hedtech.banner.aip.post.job.ActionItemJob"/>
         <mapping class="net.hedtech.banner.aip.post.job.ActionItemJobStatus"/>
-
-
+        <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPostSelectionDetailReadOnly"/>
         <mapping class="net.hedtech.banner.general.communication.folder.CommunicationFolder"/>
     </session-factory>
 </hibernate-configuration>

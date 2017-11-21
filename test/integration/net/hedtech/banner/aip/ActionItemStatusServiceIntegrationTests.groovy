@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -54,5 +54,21 @@ class ActionItemStatusServiceIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testListActionItemStatusCount() {
         assert 0 < actionItemStatusService.listActionItemStatusCount()
+    }
+
+
+    @Test
+    void checkIfNameAlreadyPresent() {
+        List<ActionItemStatus> actionItemStatusList = actionItemStatusService.listActionItemStatuses()
+        assertTrue actionItemStatusService.checkIfNameAlreadyPresent( actionItemStatusList[0].actionItemStatus )
+    }
+
+
+    @Test
+    void checkIfNameAlreadyPresentCaseTest() {
+        assertTrue actionItemStatusService.checkIfNameAlreadyPresent( 'Completed' )
+        assertTrue actionItemStatusService.checkIfNameAlreadyPresent( 'completed' )
+        assertTrue actionItemStatusService.checkIfNameAlreadyPresent( 'COMPLETED' )
+        assertTrue actionItemStatusService.checkIfNameAlreadyPresent( 'CompLeTeD' )
     }
 }

@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -16,13 +16,13 @@ class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase 
     def actionItemContentService
 
     @Before
-    public void setUp() {
+    void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
     }
 
     @After
-    public void tearDown() {
+    void tearDown() {
         super.tearDown()
     }
 
@@ -36,25 +36,6 @@ class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase 
         assertEquals( aiReadOnly.folderDesc, actionItemRO.folderDesc )
         assertEquals( aiReadOnly.folderName, actionItemRO.folderName )
     }
-
-    @Test
-    void testFetchActionItemByROFolderNoResults() {
-        def folderId = 0
-
-        List<ActionItemReadOnly> actionItemsRO = actionItemReadOnlyService.listActionItemROByFolder( folderId )
-        assertEquals( 0, actionItemsRO.size() )
-    }
-
-
-    @Test
-    void testFetchActionItemByROFolderService() {
-        List<ActionItemReadOnly> actionItemROList = actionItemReadOnlyService.listActionItemRO()
-        def folderId = actionItemROList[0].folderId
-
-        List<ActionItemReadOnly> actionItemsRO = actionItemReadOnlyService.listActionItemROByFolder(folderId)
-        assert 0 < actionItemsRO.size()
-    }
-
 
     @Test
     void testFetchActionItemROPageSortService() {

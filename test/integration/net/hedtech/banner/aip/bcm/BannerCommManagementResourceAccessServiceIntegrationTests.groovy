@@ -34,4 +34,12 @@ class BannerCommManagementResourceAccessServiceIntegrationTests extends BaseInte
         def result = bannerCommManagementResourceAccessService.getBCMLocation()
         assertNotNull( result )
     }
+
+
+    @Test
+    void getBCMLocationNoData() {
+        sessionFactory.currentSession.createSQLQuery( """UPDATE GUROCFG set GUROCFG_VALUE = null WHERE GUROCFG_NAME='BCMLOCATION' AND GUROCFG_GUBAPPL_APP_ID = 'GENERAL_SS' """ ).executeUpdate()
+        def result = bannerCommManagementResourceAccessService.getBCMLocation()
+        assert result == ''
+    }
 }

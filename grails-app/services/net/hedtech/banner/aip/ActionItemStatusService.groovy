@@ -33,4 +33,12 @@ class ActionItemStatusService extends ServiceBase {
     def listActionItemStatusCount() {
         ActionItemStatus.fetchActionItemStatusCount()
     }
+
+    /**
+     * @param actionItemStatus
+     * @return
+     */
+    def checkIfNameAlreadyPresent( actionItemStatus ) {
+        ActionItemStatus.checkIfNameAlreadyPresent( actionItemStatus )
+    }
 }

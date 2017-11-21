@@ -17,17 +17,17 @@ class ActionItemPostService extends ServiceBase {
      * Validation before creation of Posting
      * @param dataMap
      */
-    def preCreateValidation( dataMap ) {
+    def  preCreateValidation( dataMap ) {
         if (!dataMap) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.insufficient.request', [] ) )
         }
-        if (!dataMap.name) {
+        if (!dataMap.postingName) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.posting.job.name', [] ) )
         }
-        if (isDuplicateJobName( dataMap.name )) {
+        if (isDuplicateJobName( dataMap.postingName )) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.job.name.already.defined', [] ) )
         }
-        if (!dataMap.postGroupId) {
+        if (!dataMap.postingActionItemGroupId) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.group', [] ) )
         }
         if (!dataMap.actionItemIds) {
@@ -45,14 +45,16 @@ class ActionItemPostService extends ServiceBase {
         if (!dataMap.displayEndDate) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.display.end.date', [] ) )
         }
-        if (!dataMap.postNow && !dataMap.scheduled) {
+        if (!dataMap.postNow && !dataMap.scheduledStartDate) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.schedule', [] ) )
         }
-        if (dataMap.scheduled) {
-            if (!dataMap.scheduledStartDate) {
-                throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.schedule.start.date', [] ) )
-            }
-        }
+        // TODO: intent? ended up with duplicate case. Not sure if something got lost
+        //if (dataMap.scheduledStartDate) {
+        //    if (!dataMap.scheduledStartDate) {
+        //        throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException(
+        //                'preCreate.validation.no.schedule.start.date', [] ) )
+        //    }
+        //}
 
     }
 
@@ -64,10 +66,4 @@ class ActionItemPostService extends ServiceBase {
     def isDuplicateJobName( postingName ) {
         ActionItemPost.checkIfJobNameAlreadyExists( postingName )
     }
-
-
-    List findRunning() {
-        return ActionItemPost.findRunning()
-    }
-
 }

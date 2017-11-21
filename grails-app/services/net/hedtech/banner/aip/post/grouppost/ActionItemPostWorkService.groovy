@@ -13,8 +13,8 @@ class ActionItemPostWorkService extends ServiceBase {
     def preCreate( domainModelOrMap ) {
         ActionItemPostWork groupSendItem = (domainModelOrMap instanceof Map ? domainModelOrMap?.domainModel : domainModelOrMap) as
                 ActionItemPostWork
-        if (groupSendItem.getCreationDateTime() == null) {
-            groupSendItem.setCreationDateTime( new Date() )
+        if (!groupSendItem.creationDateTime) {
+            groupSendItem.creationDateTime = new Date()
         }
     }
 }

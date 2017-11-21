@@ -80,6 +80,10 @@ class ActionItemPostReadOnly implements Serializable {
     @Column(name = "GCBAPST_SCHEDULED_DATETIME")
     Date postingScheduleDeleteTime
 
+    @Column(name = "GCBAPST_STARTED_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
+    Date postingStartedDate
+
     /**
      * POSTING CREATOR ID: The ID of user who created the Action item posting.
      */
@@ -109,7 +113,7 @@ class ActionItemPostReadOnly implements Serializable {
      * POSTING JOB ID: The job ID of the scheduled job.
      */
     @Column(name = "GCBAPST_JOB_ID")
-    String postingJobId
+    String aSyncJobId
 
     /**
      * POPULATION CALCULATION ID: The id of the specific population calculation resolved to feed the Action Item post.
@@ -130,10 +134,10 @@ class ActionItemPostReadOnly implements Serializable {
     String postingErrorText
 
     /**
-     * POSTING GROUP ID: The group ID of Action Item post.
+     * POSTING GROUP ID: The group ID of post.
      */
     @Column(name = "GCBAPST_GROUP_ID")
-    String postingGroupId
+    String aSyncGroupId
 
     /**
      * POSTING PARAMETER VALUES: The map of parameter name and values for a specific Action Item post.
@@ -146,6 +150,12 @@ class ActionItemPostReadOnly implements Serializable {
      */
     @Column(name = "ACTION_GROUP_GCRFLDR_ID")
     Long groupFolderId
+
+    /**
+     * GROUP FOLDER NAME: folder Name selected for the Action Item Group.
+     */
+    @Column(name = "ACTION_GROUP_GCRFLDR_NAME")
+    String groupFolderName
 
     /**
      * GROUP NAME: Name for the action Item Group for Group management control.

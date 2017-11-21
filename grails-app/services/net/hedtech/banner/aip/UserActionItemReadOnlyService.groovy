@@ -1,24 +1,31 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
 import net.hedtech.banner.service.ServiceBase
 
+/**
+ * Service class for UserActionItemReadOnly domain
+ */
 class UserActionItemReadOnlyService extends ServiceBase {
 
-    def listActionItems() {
-        return UserActionItemReadOnly.fetchUserActionItemsROByPidm( actionItemPidm )
-        //return itemByPidm.encodeAsHTML()
+    /**
+     * Lists user specific action items
+     * @param pidm
+     * @return
+     */
+    def listActionItemByPidmWithinDate( Long pidm ) {
+        return UserActionItemReadOnly.fetchUserActionItemsROByPidmDate( pidm )
     }
 
-    def listActionItemsByPidm(Long actionItemPidm) {
-        return UserActionItemReadOnly.fetchUserActionItemsROByPidm( actionItemPidm )
-       //return itemByPidm.encodeAsHTML()
+    /**
+     * Check if Lists of user specific action items present
+     * @param pidm
+     * @return
+     */
+    def checkIfActionItemPresent( Long pidm ) {
+        return UserActionItemReadOnly.checkIfActionItemPresent( pidm )
     }
 
-
-    def listBlockingActionItemsByPidm( Long actionItemPidm ) {
-        return UserActionItemReadOnly.fetchBlockingUserActionItemsROByPidm( actionItemPidm )
-    }
 }

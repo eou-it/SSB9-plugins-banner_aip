@@ -13,36 +13,38 @@ enum ActionItemPostWorkExecutionState implements Serializable {
     Complete(true),
     Partial(true),
     Stopped(true),
-    Failed(true);
+    Failed(true)
 
-    boolean terminal;
+    boolean terminal
 
 
     ActionItemPostWorkExecutionState( boolean terminal ) {
-        this.terminal = terminal;
+        this.terminal = terminal
     }
 
     Set<ActionItemPostWorkExecutionState> set() {
-    	return EnumSet.range( Ready, Failed );
+    	EnumSet.range( Ready, Failed )
     }
 
     String toString() {
-        return this.name();
+        this.name(  )
     }
 
     static ActionItemPostWorkExecutionState valueOf( int ordinal) {
         for(ActionItemPostWorkExecutionState ds: values()) {
-            if (ds.ordinal() == ordinal) return ds;
+            if (ds.ordinal() == ordinal){
+                ds
+            }
         }
-        throw new IllegalArgumentException( "ordinal out of range:" + ordinal );
+        throw new IllegalArgumentException( "ordinal out of range:" + ordinal )
     }
 
     boolean isTerminal() {
-        return terminal;
+        terminal
     }
 
     boolean isRunning() {
-        return !terminal;
+        !terminal
     }
 
 }

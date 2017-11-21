@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -16,6 +16,16 @@ import javax.persistence.*
                 query = """
            FROM ActionItemStatus a
           """),
+        @NamedQuery(name = "ActionItemStatus.fetchDefaultActionItemStatus",
+                query = """
+                   FROM ActionItemStatus a
+                   WHERE a.actionItemStatusDefault = :myY
+                  """),
+        @NamedQuery(name = "ActionItemStatus.checkIfNameAlreadyPresent",
+                query = """ SELECT COUNT(actionItemStatus)
+                           FROM ActionItemStatus a
+                           WHERE UPPER(a.actionItemStatus) = UPPER( :actionItemStatus)
+                          """),
         @NamedQuery(name = "ActionItemStatus.fetchActionItemStatusById",
                 query = """
            FROM ActionItemStatus a
@@ -79,44 +89,44 @@ class ActionItemStatus implements Serializable {
      * User action item status was last updated by
      */
     @Column(name = "GCVASTS_USER_ID")
-    String actionItemStatusUserId
+    String lastModifiedBy
 
     /**
      * Last activity date for the action item sttus
      */
     @Column(name = "GCVASTS_ACTIVITY_DATE")
-    Date actionItemStatusActivityDate
+    Date lastModified
 
     /**
      * Version of the action item
      */
     @Version
     @Column(name = "GCVASTS_VERSION")
-    Long actionItemStatusVersion
+    Long version
 
     /**
      * Data Origin column for GCVASTS
      */
     @Column(name = "GCVASTS_DATA_ORIGIN")
-    String actionItemStatusDataOrigin
+    String dataOrigin
 
     static constraints = {
-        actionItemStatus( blank: false, nullable: false, maxSize: 30, unique: true )
+        actionItemStatus( blank: false, nullable: false, maxSize: 30 ) //unique: true produces stacktrace during create
         actionItemStatusActive( blank: false, nullable: false, maxSize: 1 )
-        actionItemStatusActivityDate( blank: false, nullable: false )
+        lastModified( nullable: true )
         actionItemStatusBlockedProcess( blank: false, nullable: false, maxSize: 1 )
         actionItemStatusDefault( blank: true, nullable: true, maxSize: 1 )
         actionItemStatusSystemRequired( blank: false, nullable: false, maxSize: 1 )
-        actionItemStatusUserId( blank: false, nullable: false, maxSize: 30 )
-        actionItemStatusVersion( nullable: true )
-        actionItemStatusDataOrigin( nullable: true, maxSize: 30 )
+        lastModifiedBy( blank: false, nullable: true, maxSize: 30 )
+        version( nullable: true )
+        dataOrigin( nullable: true, maxSize: 30 )
     }
 
     /**
      *
      * @return
      */
-    public static def fetchActionItemStatuses() {
+    static def fetchActionItemStatuses() {
         ActionItemStatus.withSession {session ->
             List<ActionItemStatus> actionItemStatus = session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatuses' ).list()
             return actionItemStatus
@@ -128,7 +138,17 @@ class ActionItemStatus implements Serializable {
      * @param myId
      * @return
      */
-    public static def fetchActionItemStatusById( Long myId ) {
+    static ActionItemStatus fetchDefaultActionItemStatus() {
+        ActionItemStatus.withSession {session ->
+            session.getNamedQuery( 'ActionItemStatus.fetchDefaultActionItemStatus' ).setString( 'myY', 'Y' )?.uniqueResult()
+        }
+    }
+    /**
+     *
+     * @param myId
+     * @return
+     */
+    static def fetchActionItemStatusById( Long myId ) {
         ActionItemStatus.withSession {session ->
             session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatusById' ).setLong( 'myId', myId )?.list()[0]
         }
@@ -138,9 +158,22 @@ class ActionItemStatus implements Serializable {
      *
      * @return
      */
-    public static def fetchActionItemStatusCount() {
+    static def fetchActionItemStatusCount() {
         ActionItemStatus.withSession {session ->
             session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatusCount' ).uniqueResult()
+        }
+    }
+
+    /**
+     *
+     * @param actionItemStatus
+     * @return
+     */
+    static def checkIfNameAlreadyPresent( actionItemStatus ) {
+        ActionItemStatus.withSession {session ->
+            session.getNamedQuery( 'ActionItemStatus.checkIfNameAlreadyPresent' )
+                    .setString( 'actionItemStatus', actionItemStatus )
+                    .uniqueResult() > 0
         }
     }
 
@@ -150,7 +183,7 @@ class ActionItemStatus implements Serializable {
      * @param pagingAndSortParams
      * @return
      */
-    public static fetchWithPagingAndSortParams( filterData, pagingAndSortParams ) {
+    static fetchWithPagingAndSortParams( filterData, pagingAndSortParams ) {
         def queryCriteria = ActionItemStatus.createCriteria()
         def results = queryCriteria.list( max: pagingAndSortParams.max, offset: pagingAndSortParams.offset ) {
             ilike( "actionItemStatus", CommunicationCommonUtility.getScrubbedInput( filterData?.params?.name ) )

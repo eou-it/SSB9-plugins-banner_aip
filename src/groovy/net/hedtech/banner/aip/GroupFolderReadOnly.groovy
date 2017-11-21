@@ -18,13 +18,13 @@ import javax.persistence.*
                 query = """
            FROM GroupFolderReadOnly a
           """),
-        @NamedQuery(name = "GroupFolderReadOnly.fetchGroupFoldersById",
+        @NamedQuery(name = "GroupFolderReadOnly.fetchGroupFolderById",
                 query = """
            FROM GroupFolderReadOnly a
            WHERE a.id = :myId
           """),
         @NamedQuery(name = "GroupFolderReadOnly.fetchGroupFolderROCount",
-                query = """SELECT COUNT(a.groupId) FROM GroupFolderReadOnly a
+                query = """SELECT COUNT(a.groupId) FROM GroupFolderReadOnly a WHERE UPPER(a.groupTitle) like upper(:groupTitle) 
             """
         )
 ])
@@ -138,9 +138,9 @@ class GroupFolderReadOnly implements Serializable {
      * @param id
      * @return
      */
-    static def fetchGroupFoldersById( Long id ) {
+    static GroupFolderReadOnly fetchGroupFolderById( Long id ) {
         GroupFolderReadOnly.withSession {session ->
-            session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFoldersById' ).setLong( 'myId', id ).list()
+            session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolderById' ).setLong( 'myId', id )?.uniqueResult()
         }
     }
 
@@ -148,26 +148,26 @@ class GroupFolderReadOnly implements Serializable {
      *
      * @return
      */
-    static def fetchGroupFolderROCount() {
+    static def fetchGroupFolderROCount( params ) {
         GroupFolderReadOnly.withSession {session ->
-            session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolderROCount' ).list()
+            session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolderROCount' )
+                    .setString( 'groupTitle', CommunicationCommonUtility.getScrubbedInput( params.name ) )
+                    .uniqueResult()
         }
     }
 
     /**
-     *
      * @param filterData
      * @param pagingAndSortParams
      * @return
      */
     static fetchWithPagingAndSortParams( filterData, pagingAndSortParams ) {
-        def searchStatus = filterData?.params?.status
         def queryCriteria = GroupFolderReadOnly.createCriteria()
         def results = queryCriteria.list( max: pagingAndSortParams.max, offset: pagingAndSortParams.offset ) {
-            ilike( "groupTitle", CommunicationCommonUtility.getScrubbedInput( filterData?.params?.name ) )
+            ilike( "groupName", CommunicationCommonUtility.getScrubbedInput( filterData.name ) )
             order( (pagingAndSortParams.sortAscending ? Order.asc( pagingAndSortParams?.sortColumn ) : Order.desc( pagingAndSortParams?.sortColumn )).ignoreCase() )
-            if (!pagingAndSortParams?.sortColumn.equals( "groupTitle" )) {
-                order( Order.asc( 'groupTitle' ).ignoreCase() )
+            if (!pagingAndSortParams?.sortColumn.equals( "groupName" )) {
+                order( Order.asc( 'groupName' ).ignoreCase() )
             }
         }
         results

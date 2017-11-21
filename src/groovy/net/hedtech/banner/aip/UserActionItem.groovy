@@ -21,7 +21,7 @@ import javax.persistence.*
            WHERE a.pidm = :myPidm
           """),
         @NamedQuery(name = "UserActionItem.isExistingInDateRangeForPidmAndActionItemId",
-                query = """
+                query = """ SELECT count(a.pidm)
                    FROM UserActionItem a
                    WHERE a.pidm = :myPidm
                    AND a.actionItemId = :myActionItemId
@@ -96,13 +96,13 @@ class UserActionItem implements Serializable {
      * User action item pertains to
      */
     @Column(name = "GCRAACT_USER_ID")
-    String userId
+    String lastModifiedBy
 
     /**
      * Last activity date for the action item
      */
     @Column(name = "GCRAACT_ACTIVITY_DATE")
-    Date activityDate
+    Date lastModified
 
     /**
      * UserID that created the action item
@@ -133,12 +133,12 @@ class UserActionItem implements Serializable {
         actionItemId( nullable: false, maxSize: 19 )
         pidm( nullable: false, maxSize: 9 )
         status( nullable: false, maxSize: 30 )
-        userId( nullable: false, maxSize: 30 )
+        lastModifiedBy( nullable: true, maxSize: 30 )
         userResponseDate( nullable: true )
         displayStartDate( nullable: false )
         displayEndDate( nullable: false )
         groupId( nullable: false )
-        activityDate( nullable: false )
+        lastModified( nullable: true )
         creatorId( nullable: true, maxSize: 30 )
         createDate( nullable: true )
         dataOrigin( nullable: true, maxSize: 30 )
@@ -151,8 +151,7 @@ class UserActionItem implements Serializable {
      */
     static def fetchUserActionItemById( Long id ) {
         UserActionItem.withSession {session ->
-            UserActionItem userActionItem = session.getNamedQuery( 'UserActionItem.fetchUserActionItemById' ).setLong( 'myId', id ).list()[0]
-            return userActionItem
+            session.getNamedQuery( 'UserActionItem.fetchUserActionItemById' ).setLong( 'myId', id ).list()[0]
         }
     }
 
@@ -163,8 +162,7 @@ class UserActionItem implements Serializable {
      */
     static def fetchUserActionItemsByPidm( Long pidm ) {
         UserActionItem.withSession {session ->
-            List userActionItem = session.getNamedQuery( 'UserActionItem.fetchUserActionItemByPidm' ).setLong( 'myPidm', pidm ).list()
-            return userActionItem
+            session.getNamedQuery( 'UserActionItem.fetchUserActionItemByPidm' ).setLong( 'myPidm', pidm ).list()
         }
     }
 
@@ -174,14 +172,13 @@ class UserActionItem implements Serializable {
      * @return boolean Does an UserActionItem for this pidm and and ActionItem with overlapping display dates already exist
      */
     static boolean isExistingInDateRangeForPidmAndActionItemId( UserActionItem itemToTest ) {
-        UserActionItem.withSession { session ->
-            boolean userActionItem = session.getNamedQuery(
+        UserActionItem.withSession {session ->
+            session.getNamedQuery(
                     'UserActionItem.isExistingInDateRangeForPidmAndActionItemId' ).setLong( 'myPidm', itemToTest.pidm )
                     .setLong( 'myActionItemId', itemToTest.actionItemId )
                     .setDate( 'myDisplayStartDate', itemToTest.displayStartDate )
                     .setDate( 'myDisplayEndDate', itemToTest.displayEndDate )
-                    ?.list()?.size() > 0
-            return userActionItem
+                    .uniqueResult() > 0
         }
     }
 }

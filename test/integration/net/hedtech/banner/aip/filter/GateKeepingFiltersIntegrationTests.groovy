@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip.filter
 
@@ -15,9 +15,6 @@ import org.springframework.mock.web.MockHttpServletResponse
 
 /**
  * GateKeepingFiltersIntegrationTests.
- *
- * Date: 8/26/2016
- * Time: 4:44 PM
  */
 class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
 

@@ -9,7 +9,6 @@ import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.i18n.MessageHelper
 import org.apache.log4j.Logger
-import org.springframework.security.core.context.SecurityContextHolder
 
 class ActionItemStatusCompositeService {
     private static final def LOGGER = Logger.getLogger( this.class )
@@ -29,19 +28,19 @@ class ActionItemStatusCompositeService {
         def resultCount = actionItemStatusService.listActionItemStatusCount()
         results = results?.collect {ActionItemStatus it ->
             def deleteMessage = checkIfDeleteable( it )
-            def person = PersonUtility.getPerson( it.actionItemStatusUserId )
+            def person = PersonUtility.getPerson( it.lastModifiedBy )
             [
                     id                            : it.id,
-                    version                       : it.actionItemStatusVersion,
+                    version                       : it.version,
                     actionItemStatus              : it.actionItemStatus,
                     actionItemStatusActive        : it.actionItemStatusActive,
-                    actionItemStatusActivityDate  : it.actionItemStatusActivityDate,
+                    actionItemStatusActivityDate  : it.lastModified,
                     actionItemStatusBlockedProcess: it.actionItemStatusBlockedProcess,
-                    actionItemStatusDataOrigin    : it.actionItemStatusDataOrigin,
+                    actionItemStatusDataOrigin    : it.dataOrigin,
                     actionItemStatusDefault       : it.actionItemStatusDefault,
                     actionItemStatusSystemRequired: it.actionItemStatusSystemRequired,
                     actionItemStatusUserId        :
-                            person ? PersonUtility.getPerson( person.pidm as int )?.fullName : it.actionItemStatusUserId,
+                            person ? PersonUtility.getPerson( person.pidm as int )?.fullName : it.lastModifiedBy,
                     deletable                     : deleteMessage.canBeDeleted,
                     deleteRestrictionReason       : deleteMessage.message]
         }
@@ -53,8 +52,8 @@ class ActionItemStatusCompositeService {
                         [name: "actionItemStatus", title: MessageHelper.message( "aip.common.status" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
                         [name: "actionItemBlockedProcess", title: MessageHelper.message( "aip.common.block.process" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
                         [name: "actionItemSystemRequired", title: MessageHelper.message( "aip.common.system.required" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
-                        [name: "actionItemStatusUserId", title: MessageHelper.message( "aip.common.last.updated.by" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
-                        [name: "actionItemStatusActivityDate", title: MessageHelper.message( "aip.common.activity.date" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0]
+                        [name: "lastModifiedBy", title: MessageHelper.message( "aip.common.last.updated.by" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0],
+                        [name: "lastModified", title: MessageHelper.message( "aip.common.activity.date" ), options: [visible: true, isSortable: true, ascending: params.sortAscending], width: 0]
                 ]
         ]
     }
@@ -124,27 +123,19 @@ class ActionItemStatusCompositeService {
         if (!user) {
             throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'user.id.not.valid', [] ) )
         }
-        def aipUser = PersonUtility.getPerson( user.pidm )
+        if (actionItemStatusService.checkIfNameAlreadyPresent( title )) {
+            throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'actionItemStatus.status.unique', [] ) )
+        }
         ActionItemStatus status = new ActionItemStatus(
                 actionItemStatus: title,
                 actionItemStatusActive: 'Y',
                 actionItemStatusBlockedProcess: 'N',
-                actionItemStatusActivityDate: new Date(),
-                actionItemStatusUserId: aipUser.bannerId,
-                actionItemStatusSystemRequired: "N",
-                actionItemStatusVersion: null,
-                actionItemStatusDataOrigin: null
+                actionItemStatusSystemRequired: "N"
         )
         ActionItemStatus newStatus
         def success = false
-        def message
-
-        try {
-            newStatus = actionItemStatusService.create( status );
-            success = true
-        } catch (ApplicationException e) {
-            throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'actionItemStatus.status.unique', [] ) )
-        }
+        newStatus = actionItemStatusService.create( status )
+        success = true
         [
                 success: success,
                 status : newStatus

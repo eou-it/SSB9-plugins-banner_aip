@@ -166,15 +166,6 @@ class ActionItemGroupAssignReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_GROUP_POSTED_IND")
     Boolean groupPostedIndicator
 
-
-    public String toString() {
-        """ActionItemGroupAssignRO[id=$id, sequenceNumber=$sequenceNumber, actionItemId=$actionItemId, 
-                "actionItemFolderId=$actionItemFolderId, actionItemName=$actionItemName, actionItemTitle=$actionItemTitle,
-                "actionItemStatus=$actionItemStatus, ctionItemPostingIndicator=$actionItemPostingIndicator,
-                "actionItemDescription=$actionItemDescription, creator=$creator, createDate=$createDate,
-                "actionItemGroupId=$actionItemGroupId, actionGroupFolderId=$actionGroupFolderId, groupName=$groupName,
-                "groupTitle=$groupTitle, groupStatus=$groupStatus, groupPostedIndicator=$groupPostedIndicator]"""
-    }
     /**
      *
      * @param myId

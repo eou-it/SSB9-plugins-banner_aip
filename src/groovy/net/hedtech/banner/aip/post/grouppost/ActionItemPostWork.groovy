@@ -90,16 +90,16 @@ class ActionItemPostWork implements AsynchronousTask {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "GCRAIIM_GCBAPST_ID", referencedColumnName = "GCBAPST_SURROGATE_ID")
-    ActionItemPost actionItemGroupSend;
+    ActionItemPost actionItemGroupSend
 
     /** The target of the send item */
 
     @Column(name = "GCRAIIM_PIDM")
-    Long recipientPidm;
+    Long recipientPidm
 
     @Column(name = "GCRAIIM_CURRENT_STATE")
     @Enumerated(EnumType.STRING)
-    ActionItemPostWorkExecutionState currentExecutionState;
+    ActionItemPostWorkExecutionState currentExecutionState
 
     @Column(name = "GCRAIIM_INSERT_COUNT")
     Long insertedCount
@@ -109,15 +109,15 @@ class ActionItemPostWork implements AsynchronousTask {
 
     @Column(name = "GCRAIIM_ERROR_TEXT")
     @Lob
-    String errorText;
+    String errorText
 
     @Column(name = "GCRAIIM_STARTED_DATE")
     @Temporal(TemporalType.TIMESTAMP)
-    Date startedDate;
+    Date startedDate
 
     @Column(name = "GCRAIIM_STOP_DATE")
     @Temporal(TemporalType.TIMESTAMP)
-    Date stopDate;
+    Date stopDate
 
     /** Correlation ID linking the request to the recipient data to the job to the final item. **/
 
@@ -126,7 +126,7 @@ class ActionItemPostWork implements AsynchronousTask {
 
     @Column(name = "GCRAIIM_CREATIONDATETIME")
     @Temporal(TemporalType.TIMESTAMP)
-    Date creationDateTime;
+    Date creationDateTime
 
     /**
      * Error Code: The error code for the error scenario that failed the Action Item Job
@@ -137,11 +137,14 @@ class ActionItemPostWork implements AsynchronousTask {
     ActionItemErrorCode errorCode
 
     static constraints = {
+        recipientPidm( nullable: false )
+        currentExecutionState( nullable: false )
         lastModified( nullable: true )
         lastModifiedBy( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 30 )
         insertedCount( nullable: true )
         insertedItemIds( nullable: true )
+        startedDate( nullable: true )
         stopDate( nullable: true )
         errorText( nullable: true )
         mepCode( nullable: true )
@@ -149,54 +152,46 @@ class ActionItemPostWork implements AsynchronousTask {
     }
 
 
-    public static List fetchByExecutionState( ActionItemPostWorkExecutionState executionState, Integer max = Integer.MAX_VALUE ) {
-        def results
-        ActionItemPostWork.withSession { session ->
-            results = session.getNamedQuery( 'ActionItemPostWork.fetchByExecutionState' )
+    static List fetchByExecutionState( ActionItemPostWorkExecutionState executionState, Integer max = Integer.MAX_VALUE ) {
+        ActionItemPostWork.withSession {session ->
+            session.getNamedQuery( 'ActionItemPostWork.fetchByExecutionState' )
                     .setParameter( 'executionState', executionState )
                     .setFirstResult( 0 )
                     .setMaxResults( max )
-                    ?.list()
+                    .list()
         }
-        return results
     }
 
 
-    public static List fetchByGroupSend( ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
-        def results
-        ActionItemPostWork.withSession { session ->
-            results = session.getNamedQuery( 'ActionItemPostWork.fetchByGroupSend' )
+    static List fetchByGroupSend( ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
+        ActionItemPostWork.withSession {session ->
+            session.getNamedQuery( 'ActionItemPostWork.fetchByGroupSend' )
                     .setParameter( 'groupSend', groupSend )
                     .setFirstResult( 0 )
                     .setMaxResults( max )
-                    ?.list()
+                    .list()
         }
-        return results
     }
 
 
-    public static List fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState executionState, ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
-        def results
-        ActionItemPostWork.withSession { session ->
-            results = session.getNamedQuery( 'ActionItemPostWork.fetchByExecutionStateAndGroupSend' )
+    static List fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState executionState, ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
+        ActionItemPostWork.withSession {session ->
+            session.getNamedQuery( 'ActionItemPostWork.fetchByExecutionStateAndGroupSend' )
                     .setParameter( 'executionState', executionState )
                     .setParameter( 'groupSend', groupSend )
                     .setFirstResult( 0 )
                     .setMaxResults( max )
-                    ?.list()
+                    .list()
         }
-        return results
     }
 
 
-    public static def fetchRunningGroupSendItemCount( ActionItemPost groupSend ) {
-        def result
-        ActionItemPostWork.withSession { session ->
-            result = session.getNamedQuery( 'ActionItemPostWork.countByExecutionStateAndGroupSend' )
+    static def fetchRunningGroupSendItemCount( ActionItemPost groupSend ) {
+        ActionItemPostWork.withSession {session ->
+            session.getNamedQuery( 'ActionItemPostWork.countByExecutionStateAndGroupSend' )
                     .setParameter( 'executionState', ActionItemPostWorkExecutionState.Ready )
                     .setParameter( 'groupSend', groupSend )
-                    ?.uniqueResult()
+                    .uniqueResult()
         }
-        return result
     }
 }

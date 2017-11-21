@@ -9,26 +9,11 @@ import org.hibernate.FlushMode
 
 import javax.persistence.*
 
-
 @NamedQueries(value = [
-        @NamedQuery(name = "ActionItemGroupAssign.fetchActionItemGroupAssign",
-                query = """
-           FROM ActionItemGroupAssign a
-          """),
-        @NamedQuery(name = "ActionItemGroupAssign.fetchById",
-                query = """
-            FROM ActionItemGroupAssign a 
-            WHERE a.id = :myId 
-        """),
         @NamedQuery(name = "ActionItemGroupAssign.fetchByGroupId",
                 query = """
             FROM ActionItemGroupAssign a
             WHERE a.groupId = :myId
-        """),
-        @NamedQuery(name = "ActionItemGroupAssign.fetchByActionId",
-                query = """
-            FROM ActionItemGroupAssign a
-            WHERE a.actionItemId = :myId
         """),
         @NamedQuery(name = "ActionItemGroupAssign.fetchByActionItemGroup",
                 query = """
@@ -83,13 +68,13 @@ class ActionItemGroupAssign implements Serializable {
      */
 
     @Column(name = "GCRAGRA_ACTIVITY_DATE")
-    Date activityDate
+    Date lastModified
 
     /**
      * User ID of the person who inserted or last updated
      */
     @Column(name = "GCRAGRA_USER_ID")
-    String userId
+    String lastModifiedBy
 
     /**
      * Version
@@ -106,51 +91,24 @@ class ActionItemGroupAssign implements Serializable {
 
     static constraints = {
         groupId( blank: false, nullable: false, maxSize: 19 )
-        actionItemId( blank: false, nullable: false, maxSize: 19)
-        seqNo(blank: false, nullable: false, maxSize: 19)
-        userId( blank: false, nullable: false, maxSize: 30 )
-        activityDate( blank: false, nullable: false )
+        actionItemId( blank: false, nullable: false, maxSize: 19 )
+        seqNo( blank: false, nullable: false, maxSize: 19 )
+        lastModifiedBy( nullable: true, maxSize: 30 )
+        lastModified( nullable: true )
         dataOrigin( nullable: true, maxSize: 19 )
     }
 
 
-    static def fetchActionItemGroupAssign() {
-        ActionItem.withSession {session ->
-            session.getNamedQuery( 'ActionItemGroupAssign.fetchActionItemGroupAssign' ).list()
+    static def fetchByGroupId( Long myId ) {
+        ActionItemGroupAssign.withSession {session ->
+            session.getNamedQuery( 'ActionItemGroupAssign.fetchByGroupId' ).setLong( 'myId', myId )?.list()
         }
     }
 
-    /**
-     *
-     * @param myId
-     * @return
-     */
-    // ReadOnly View?
-    static def fetchById( Long myId ) {
-        ActionItemGroupAssign.withSession {session ->
-            def actionItemGroupAssign = session.getNamedQuery( 'ActionItemGroupAssign.fetchById' ).setLong( 'myId', myId )?.list()[0]
-            return actionItemGroupAssign
-        }
-    }
 
-    static def fetchByGroupId ( Long myId) {
+    static def fetchByActionItemIdAndGroupId( Long actionItemId, Long groupId ) {
         ActionItemGroupAssign.withSession {session ->
-            def actionItemGroupAssign = session.getNamedQuery('ActionItemGroupAssign.fetchByGroupId').setLong('myId', myId)?.list()
-            return actionItemGroupAssign
-        }
-    }
-
-    static def fetchByActionItemId( Long myId ) {
-        ActionItemGroupAssign.withSession {session ->
-            List actionItemGroupAssign = session.getNamedQuery( 'ActionItemGroupAssign.fetchByActionId').setLong( 'myId', myId)?.list()
-            return actionItemGroupAssign
-        }
-    }
-
-    static def fetchByActionItemIdAndGroupId (Long actionItemId, Long groupId) {
-        ActionItemGroupAssign.withSession {session ->
-            def actionItemGroupAssign = session.getNamedQuery( 'ActionItemGroupAssign.fetchByActionItemGroup').setLong('actionItemId', actionItemId).setLong('groupId', groupId)?.list()[0]
-            return actionItemGroupAssign
+            session.getNamedQuery( 'ActionItemGroupAssign.fetchByActionItemGroup' ).setLong( 'actionItemId', actionItemId ).setLong( 'groupId', groupId )?.list()[0]
         }
     }
 
@@ -162,7 +120,7 @@ class ActionItemGroupAssign implements Serializable {
     static Boolean existsSameSeqNoInActionItem( Long groupId ) {
         def count
         ActionItem.withSession {session ->
-            session.setFlushMode( FlushMode.MANUAL );
+            session.setFlushMode( FlushMode.MANUAL )
             try {
                 count = session.getNamedQuery( 'ActionItemGroupAssign.existsSameSeqNoInActionItem' )
                         .setLong( 'groupId', groupId )

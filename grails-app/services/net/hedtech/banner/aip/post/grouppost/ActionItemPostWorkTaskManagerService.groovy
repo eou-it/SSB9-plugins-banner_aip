@@ -3,14 +3,14 @@
  *********************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import net.hedtech.banner.aip.common.LoggerUtility
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTask
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskManager
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskMonitorRecord
 import net.hedtech.banner.general.communication.groupsend.automation.StringHelper
 import org.apache.commons.lang.NotImplementedException
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
+import org.apache.log4j.Logger
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 
@@ -19,50 +19,50 @@ import org.springframework.transaction.annotation.Transactional
  * methods for manipulating group send item tasks.
  */
 class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
-    private final Log log = LogFactory.getLog(this.getClass());
+    private static final LOGGER = Logger.getLogger( this.class )
 
     def actionItemPostWorkProcessorService
+    def actionItemPostWorkService
 
     /**
      * Used for testing purposes only.  If this is not null when a job is being
      * processed, that processing will throw this exception.
      */
-    private Exception simulatedFailureException;
+    private Exception simulatedFailureException
 
 
     public Class<ActionItemPostWork> getJobType() {
-        return ActionItemPostWork.class;
+        ActionItemPostWork.class
     }
 
-    public AsynchronousTask create( AsynchronousTask job) throws ApplicationException {
-        throw new NotImplementedException();
+
+    public AsynchronousTask create( AsynchronousTask job ) throws ApplicationException {
+        throw new NotImplementedException()
     }
+
 
     public void init() {
-        log.debug( "${this.getClass().getSimpleName()} initialized." );
+        LoggerUtility.debug( LOGGER, "${this.getClass().getSimpleName()} initialized." )
     }
 
     /**
      * Deletes an existing ActionItem job from the persistent store.
      * @param job the ActionItem job to remove
      */
-    @Transactional(rollbackFor = Throwable.class )
-    public void delete( AsynchronousTask jobItem )  throws ApplicationException {
+    @Transactional(rollbackFor = Throwable.class)
+    public void delete( AsynchronousTask jobItem ) throws ApplicationException {
         ActionItemPostWork groupSendItem = jobItem as ActionItemPostWork
-        ActionItemPostWorkService.delete( groupSendItem );
-        if (log.isDebugEnabled()) {
-            log.debug( "GroupSendItemManagerImpl deleted group send item " + groupSendItem.getId() );
-        }
+        actionItemPostWorkService.delete( groupSendItem )
+        LoggerUtility.debug( LOGGER, "GroupSendItemManagerImpl deleted group send item " + groupSendItem.getId() )
     }
-
 
     /**
      * Returns jobs that have failed.
-     * @return List<ActionItemJob> the failed jobs
+     * @return List < ActionItemJob >  the failed jobs
      */
-    @Transactional(readOnly=true, rollbackFor = Throwable.class )
+    @Transactional(readOnly = true, rollbackFor = Throwable.class)
     public List getFailedJobs() {
-        throw new NotImplementedException();
+        throw new NotImplementedException()
     }
 
     // This method is called often from a polling thread, so it is imperative that
@@ -72,33 +72,26 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
      * @param max maximum number of jobs to return.
      * @return
      */
-    @Transactional(readOnly=true, rollbackFor = Throwable.class )
+    @Transactional(readOnly = true, rollbackFor = Throwable.class)
     public List<ActionItemPostWork> getPendingJobs( int max ) throws ApplicationException {
-        log.debug( "Getting pending jobs" )
+        LoggerUtility.debug( LOGGER, "Getting pending jobs" )
         List<ActionItemPostWork> result = ActionItemPostWork.fetchByExecutionState( ActionItemPostWorkExecutionState.Ready, max )
-        log.debug( "Found " + result.size() + " jobs." )
-        return result;
+        LoggerUtility.debug( LOGGER, "Found " + result.size() + " jobs." )
+        result
     }
+
 
     public boolean acquire( AsynchronousTask task ) throws ApplicationException {
-        if (log.isInfoEnabled()) {
-            ActionItemPostWork groupSendItem = task as ActionItemPostWork
-            log.info( "Acquired group send item id = " + groupSendItem.getId() + ", pidm = " + groupSendItem.recipientPidm + "." )
-        }
-        return true;
+        ActionItemPostWork groupSendItem = task as ActionItemPostWork
+        LoggerUtility.info( LOGGER, "Acquired group send item id = " + groupSendItem.getId() + ", pidm = " + groupSendItem.recipientPidm + "." )
+        true
     }
 
 
-    /* (non-Javadoc)
-     * @see com.sungardhe.common.services.commsupport.jobs.JobManager#markComplete(com.sungardhe.common.services.commsupport.jobs.Job)
-     */
     public void markComplete( AsynchronousTask task ) throws ApplicationException {
-        if (log.isInfoEnabled()) {
-            ActionItemPostWork groupSendItem = task as ActionItemPostWork
-            log.info( "Marking completed group send item id = " + groupSendItem.getId() + ", pidm = " + groupSendItem.recipientPidm + "." )
-        }
+        ActionItemPostWork groupSendItem = task as ActionItemPostWork
+        LoggerUtility.info( LOGGER, "Marking completed group send item id = " + groupSendItem.getId() + ", pidm = " + groupSendItem.recipientPidm + "." )
     }
-
 
     /**
      * Performs work for the specified job.
@@ -106,49 +99,37 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
      *         able to obtain an exclusive lock on the job and process it.  If false, the job was either
      *         already processed, or locked by another thread, and the call returned without doing any work
      */
-    @Transactional(propagation=Propagation.REQUIRES_NEW, rollbackFor = Throwable.class )
-    public void process( AsynchronousTask task) throws ApplicationException {
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Throwable.class)
+    public void process( AsynchronousTask task ) throws ApplicationException {
         ActionItemPostWork actionItemWorkTask = task as ActionItemPostWork
-        if (log.isInfoEnabled()) {
-            log.info( "Processing group send item id = " + actionItemWorkTask.getId() + ", pidm = " + actionItemWorkTask.recipientPidm + "." )
-        }
-
+        LoggerUtility.info( LOGGER, "Processing group send item id = " + actionItemWorkTask.getId() + ", pidm = " + actionItemWorkTask.recipientPidm + "." )
         try {
             if (simulatedFailureException != null) {
-                throw simulatedFailureException;
+                throw simulatedFailureException
             }
-
-            actionItemPostWorkProcessorService.performPostItem( actionItemWorkTask );
-
+            actionItemPostWorkProcessorService.performPostItem( actionItemWorkTask )
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug( "GroupSendItemManagerImpl.process caught exception " + e.getMessage(), e );
-            }
-
+            LoggerUtility.debug( LOGGER, "GroupSendItemManagerImpl.process caught exception " + e.getMessage(), e )
             // we MUST re-throw as the thread which invoked this method must
             // mark the job as failed by using another thread (as the
             // thread associated with this thread will likely be rolled back)
             if (e instanceof ApplicationException) {
-                throw (ApplicationException) e;
+                throw (ApplicationException) e
             } else {
-                throw new RuntimeException( e );
+                throw new RuntimeException( e )
             }
         }
     }
-
 
     /**
      * Marks a job as having failed.
      * @param job the job that failed
      * @param cause the cause of the failure
      */
-    @Transactional(propagation=Propagation.REQUIRES_NEW, rollbackFor = Throwable.class )
     public void markFailed( AsynchronousTask task, String errorCode, Throwable cause ) throws ApplicationException {
         ActionItemPostWork groupSendItem = (ActionItemPostWork) task
-        actionItemPostWorkProcessorService.failGroupSendItem( groupSendItem.getId(), errorCode, StringHelper.stackTraceToString( cause ) );
-        if (log.isDebugEnabled()) {
-            log.debug( "GroupSendItemManager.markFailed(task=" + groupSendItem.getId() + ") has marked the task as failed " );
-        }
+        actionItemPostWorkProcessorService.failGroupSendItem( groupSendItem.getId(), errorCode, StringHelper.stackTraceToString( cause ) )
+        LoggerUtility.debug( LOGGER, "GroupSendItemManager.markFailed(task=" + groupSendItem.getId() + ") has marked the task as failed " )
     }
 
 
@@ -163,7 +144,7 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
         // Not implemented for CR1. The purpose of this service method is for debug monitoring active thread
         // processing.
         */
-        return null
+        null
     }
 
     /**
@@ -173,7 +154,7 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
      * @param cause the exception to throw when processing a job
      */
     public void setSimulatedFailureException( Exception cause ) {
-        this.simulatedFailureException = cause;
+        this.simulatedFailureException = cause
     }
 
 }

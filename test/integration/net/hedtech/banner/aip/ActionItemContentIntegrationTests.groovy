@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -13,14 +13,14 @@ import org.junit.Test
 class ActionItemContentIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
-    public void setUp() {
+    void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
     }
 
 
     @After
-    public void tearDown() {
+    void tearDown() {
         super.tearDown()
     }
 
@@ -71,11 +71,10 @@ class ActionItemContentIntegrationTests extends BaseIntegrationTestCase {
         actionItemNewDetail.actionItemId = actionItemContent.actionItemId
         actionItemNewDetail.text = actionItemContent.text
         actionItemNewDetail.actionItemTemplateId = actionItemContent.actionItemTemplateId
-        actionItemNewDetail.lastModifiedby = actionItemContent.lastModifiedby
         actionItemNewDetail.lastModified = actionItemContent.lastModified
-        actionItemNewDetail.version = actionItemContent.version
+        actionItemNewDetail.lastModifiedBy = actionItemContent.lastModifiedBy
         actionItemNewDetail.dataOrigin = actionItemContent.dataOrigin
-        actionItemNewDetail.actionItemTemplateId = actionItemContent.actionItemTemplateId
+        actionItemNewDetail.version = actionItemContent.version
 
         def result = actionItemNewDetail.equals( actionItemContent )
         assertTrue result

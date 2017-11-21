@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -59,7 +59,7 @@ class ActionItemTemplate implements Serializable{
      *
      */
     @Column(name = "GCBPBTR_USER_ID")
-    String userId
+    String lastModifiedBy
 
     /**
      *
@@ -77,7 +77,7 @@ class ActionItemTemplate implements Serializable{
      *
      */
     @Column(name = "GCBPBTR_ACTIVITY_DATE")
-    Date activityDate
+    Date lastModified
 
     /**
      *
@@ -101,33 +101,19 @@ class ActionItemTemplate implements Serializable{
     static constraints = {
         title(blank: false, nullable: false)
         sourceInd(blank: false, nullable: false)
-        userId(blank: false, nullable: false)
         systemRequired(blank: false, nullable: false)
         activeInd(nullable: false)
-        activityDate(blank: false, nullable: false)
-        dataOrigin(nullable: false)
     }
 
     /**
      *
      * @return
      */
-    public static def fetchActionItemTemplates() {
+    static def fetchActionItemTemplates() {
         ActionItemTemplate.withSession {session ->
             List actionItemTemplates = session.getNamedQuery('ActionItemTemplate.fetchActionItemTemplates').list()
             return actionItemTemplates
         }
     }
 
-    /**
-     *
-     * @param myId
-     * @return
-     */
-    public static def fetchActionItemTemplateById( Long myId ) {
-        ActionItemTemplate.withSession {session ->
-            List actionItemTemplates = session.getNamedQuery('ActionItemTemplate.fetchActionItemTemplateById').setLong('myId', myId)?.list()
-            return actionItemTemplates
-        }
-    }
 }

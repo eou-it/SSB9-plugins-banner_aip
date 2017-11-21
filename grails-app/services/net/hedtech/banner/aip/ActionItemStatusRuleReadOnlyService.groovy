@@ -1,21 +1,24 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
 import net.hedtech.banner.service.ServiceBase
 
+/**
+ * Service for Action Item Status Rules Readonly
+ */
 class ActionItemStatusRuleReadOnlyService extends ServiceBase{
 
     def listActionItemStatusRulesRO() {
-        return ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesRO()
+        ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesRO()
     }
 
     def getActionItemStatusRuleROById( Long actionItemStatusRuleId) {
-        return ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleROById(actionItemStatusRuleId)
+        ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleROById(actionItemStatusRuleId)
     }
 
     def getActionItemStatusRulesROByActionItemId(Long actionItemId) {
-        return ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesROByActionItemId(actionItemId)
+        ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesROByActionItemId(actionItemId)
     }
 }

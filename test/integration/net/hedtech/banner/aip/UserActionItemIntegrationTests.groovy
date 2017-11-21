@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2016 Ellucian Company L.P. and its affiliates.
+ Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -14,14 +14,14 @@ import org.junit.Test
 class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
-    public void setUp() {
+    void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
     }
 
 
     @After
-    public void tearDown() {
+    void tearDown() {
         super.tearDown()
     }
 
@@ -70,6 +70,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.displayEndDate = new Date() + 1
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
+        itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
         println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
         assertFalse( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
     }
@@ -87,6 +88,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.displayEndDate = new Date() + 10
         itemToTestAgainst.actionItemId = actionItem.id
         itemToTestAgainst.groupId = actionItemGroup.id
+        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
 
         itemToTestAgainst.save( failOnError:true, flush: true )
 
@@ -96,6 +98,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.displayEndDate = new Date() + 7
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
+        itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
         println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
         assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
     }
@@ -113,6 +116,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.displayEndDate = new Date() + 7
         itemToTestAgainst.actionItemId = actionItem.id
         itemToTestAgainst.groupId = actionItemGroup.id
+        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
 
         itemToTestAgainst.save( failOnError:true, flush: true )
 
@@ -122,6 +126,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.displayEndDate = new Date() + 10
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
+        itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
         println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
         assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
     }
@@ -139,6 +144,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.displayEndDate = new Date() + 15
         itemToTestAgainst.actionItemId = actionItem.id
         itemToTestAgainst.groupId = actionItemGroup.id
+        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
 
         itemToTestAgainst.save( failOnError:true, flush: true )
 
@@ -148,6 +154,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.displayEndDate = new Date() + 10
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
+        itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
         println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
         assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
     }
@@ -164,6 +171,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.displayEndDate = new Date() + 10
         itemToTestAgainst.actionItemId = actionItem.id
         itemToTestAgainst.groupId = actionItemGroup.id
+        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
 
         itemToTestAgainst.save( failOnError:true, flush: true )
 
@@ -190,6 +198,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.displayEndDate = new Date() + 15
         itemToTestAgainst.actionItemId = actionItem.id
         itemToTestAgainst.groupId = actionItemGroup.id
+        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
 
         itemToTestAgainst.save( failOnError:true, flush: true )
 
@@ -215,6 +224,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.displayEndDate = new Date() + 5
         itemToTestAgainst.actionItemId = actionItem.id
         itemToTestAgainst.groupId = actionItemGroup.id
+        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
 
         itemToTestAgainst.save( failOnError:true, flush: true )
 
@@ -266,10 +276,10 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         userActionItemNewList.displayStartDate = userActionItem.displayStartDate
         userActionItemNewList.displayEndDate = userActionItem.displayEndDate
         userActionItemNewList.groupId = userActionItem.groupId
-        userActionItemNewList.userId = userActionItem.userId
-        userActionItemNewList.activityDate = userActionItem.activityDate
         userActionItemNewList.creatorId = userActionItem.creatorId
         userActionItemNewList.createDate = userActionItem.createDate
+        userActionItemNewList.lastModifiedBy = userActionItem.lastModifiedBy
+        userActionItemNewList.lastModified = userActionItem.lastModified
         userActionItemNewList.version = userActionItem.version
         userActionItemNewList.dataOrigin = userActionItem.dataOrigin
 
@@ -289,13 +299,11 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         def userActionItemNew = new UserActionItem()
                 userActionItemNew.actionItemId = 1
                 userActionItemNew.pidm = 1
-                userActionItemNew.status = 1
+                userActionItemNew.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
                 userActionItemNew.userResponseDate = null
                 userActionItemNew.displayStartDate = null
                 userActionItemNew.displayEndDate = null
                 userActionItemNew.groupId = 1
-                userActionItemNew.userId = "GRAILS"
-                userActionItemNew.activityDate = new Date ()
                 userActionItemNew.creatorId = "GRAILS"
                 userActionItemNew.createDate = new Date ()
                 userActionItemNew.dataOrigin = "GRAILS"

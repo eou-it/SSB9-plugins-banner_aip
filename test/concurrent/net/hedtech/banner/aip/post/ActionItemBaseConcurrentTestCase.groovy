@@ -35,16 +35,33 @@ import static org.junit.Assert.*
 class ActionItemBaseConcurrentTestCase extends Assert {
     static transactional = false // set to false so that everything "autocommits" i.e. doesn't rollback at the end of the test
 
+    public static final String TEST_USER = 'BCMADMIN'
+
+    //public static final String TEST_ORACLE_ID = 'BANSECR' // TODO look this up from TEST_USER
+    public static final String TEST_ORACLE_ID = 'BCMADMIN' // TODO look this up from TEST_USER
+    public static final String TEST_USER2 = 'CSRADM002'
+
+    public static final String TEST_ORACLE_ID2 = 'CSRAOR002' // TODO look this up from TEST_USER
+
+
     def actionItemPostMonitor
+
     def actionItemPostWorkProcessingEngine
+
     def actionItemJobProcessingEngine
 
     ActionItemGroupService actionItemGroupService
+
     ActionItemPostCompositeService actionItemPostCompositeService
+
     ActionItemPostService actionItemPostService
+
     ActionItemPostWorkService actionItemPostWorkService
+
     CommunicationPopulationQueryCompositeService communicationPopulationQueryCompositeService
+
     CommunicationPopulationCompositeService communicationPopulationCompositeService
+
     CommunicationFolderService communicationFolderService
 
     protected CommunicationFolder defaultFolder
@@ -78,9 +95,10 @@ class ActionItemBaseConcurrentTestCase extends Assert {
         setUpDefaultFolder()
     }
 
+
     @After
     public void tearDown() {
-        //deleteAll()
+        deleteAll()
         defaultTearDown()
     }
 
@@ -103,7 +121,7 @@ class ActionItemBaseConcurrentTestCase extends Assert {
             // the formContext wasn't set explicitly, but we should be able to set it automatically since we know the controller
             def controllerName = controller?.class.simpleName.replaceAll( /Controller/, '' )
             Map formControllerMap = getFormControllerMap() // note: getFormControllerMap() circumvents a current grails bug
-            def associatedFormsList = formControllerMap[ controllerName?.toLowerCase() ]
+            def associatedFormsList = formControllerMap[controllerName?.toLowerCase()]
             formContext = associatedFormsList
             FormContext.set( associatedFormsList )
         } else {
@@ -112,9 +130,9 @@ class ActionItemBaseConcurrentTestCase extends Assert {
 
         if (controller) {
             controller.class.metaClass.getParams = { -> params }
-            controller.class.metaClass.getFlash = { -> flash  }
-            controller.class.metaClass.redirect = { Map args -> redirectMap = args  }
-            controller.class.metaClass.render = { Map args -> renderMap = args  }
+            controller.class.metaClass.getFlash = { -> flash }
+            controller.class.metaClass.redirect = { Map args -> redirectMap = args }
+            controller.class.metaClass.render = { Map args -> renderMap = args }
         }
 
         loginIfNecessary()
@@ -129,9 +147,10 @@ class ActionItemBaseConcurrentTestCase extends Assert {
         FormContext.clear()
     }
 
+
     public void assertTrueWithRetry( Closure booleanClosure, Object arguments, long maxAttempts, int pauseBetweenAttemptsInSeconds = 5 ) {
         boolean result = false
-        for (int i=0; i<maxAttempts; i++ ) {
+        for (int i = 0; i < maxAttempts; i++) {
             result = booleanClosure.call( arguments )
             if (result) {
                 break
@@ -142,58 +161,48 @@ class ActionItemBaseConcurrentTestCase extends Assert {
         assertTrue( result )
     }
 
+
     protected void deleteAll() {
         def sql
         try {
             sessionFactory.currentSession.with { session ->
-                sql = new Sql(session.connection())
+                sql = new Sql( session.connection() )
                 def tx = session.beginTransaction()
-                sql.executeUpdate("Delete from GCRQRTZ_SIMPLE_TRIGGERS")
-                sql.executeUpdate("Delete from GCRQRTZ_TRIGGERS")
-                sql.executeUpdate("Delete from GCRQRTZ_JOB_DETAILS")
-                sql.executeUpdate("Delete from GCRQRTZ_LOCKS")
-                sql.executeUpdate("Delete from GCRQRTZ_SCHEDULER_STATE")
-                /*
-                sql.executeUpdate("Delete from GCRLETM")
-                sql.executeUpdate("Delete from GCRMITM")
-                sql.executeUpdate("Delete from GCREITM")
-                sql.executeUpdate("Delete from GCRCITM")
-                sql.executeUpdate("Delete from GCRMINT")
-                sql.executeUpdate("Delete from GCBCJOB")
-                sql.executeUpdate("Delete from GCRFVAL")
-                sql.executeUpdate("Delete from GCBRDAT")
-                sql.executeUpdate("Delete from GCRGSIM")
-                sql.executeUpdate("Delete from GCBGSND")
-                sql.executeUpdate("Delete from GCRTPFL")
-                sql.executeUpdate("Delete from GCBEMTL")
-                sql.executeUpdate("Delete from GCBMNTL")
-                sql.executeUpdate("Delete from GCBLTPL")
-                sql.executeUpdate("Delete from GCBTMPL")
-                sql.executeUpdate("Delete from GCRFLPM")
-                sql.executeUpdate("Delete from GCRCFLD")
-                */
-                sql.executeUpdate("Delete from GCRLENT")
-                sql.executeUpdate("Delete from GCRPQID")
-                sql.executeUpdate("Delete from GCRPVID")
-                sql.executeUpdate("Delete from GCRPOPC")
-                sql.executeUpdate("Delete from GCRPOPV")
-                sql.executeUpdate("Delete from GCRSLIS")
-                sql.executeUpdate("Delete from GCBPOPL")
-                sql.executeUpdate("Delete from GCRQRYV")
-                sql.executeUpdate("Delete from GCBQURY")
-                /*
-                sql.executeUpdate("Delete from GCRITPE")
-                sql.executeUpdate("Delete from GCRPARM")
-                sql.executeUpdate("DELETE FROM gcrfldr WHERE NOT EXISTS (SELECT a.gcbactm_gcrfldr_id FROM gcbactm a WHERE a.gcbactm_gcrfldr_id = gcrfldr_surrogate_id)")
-                sql.executeUpdate("Delete from GCRORAN")
-                sql.executeUpdate("Delete from GCBSPRP")
-                sql.executeUpdate( "Delete from GCRMBAC" )
-                */
+                sql.executeUpdate( "Delete from GCRQRTZ_SIMPLE_TRIGGERS" )
+                sql.executeUpdate( "Delete from GCRQRTZ_TRIGGERS" )
+                sql.executeUpdate( "Delete from GCRQRTZ_JOB_DETAILS" )
+                sql.executeUpdate( "Delete from GCRQRTZ_LOCKS" )
+                sql.executeUpdate( "Delete from GCRQRTZ_SCHEDULER_STATE" )
+                sql.executeUpdate( "Delete from GCRLENT where GCRLENT_USER_ID = ?",[TEST_ORACLE_ID])
+                sql.executeUpdate( "Delete from GCRPQID where GCRPQID_USER_ID = ?",[TEST_USER])
+                sql.executeUpdate( "Delete from GCRPVID where GCRPVID_USER_ID = ?",[TEST_USER])
+                sql.executeUpdate( "Delete from GCRPOPC" )
+                sql.executeUpdate( "Delete from GCRPOPV where GCRPOPV_USER_ID = ?",[TEST_USER])
+                sql.executeUpdate( "Delete from GCRSLIS where GCRSLIS_USER_ID = ?",[TEST_ORACLE_ID])
+                sql.executeUpdate( "Delete from GCBPOPL where GCBPOPL_USER_ID = ?",[TEST_USER])
+                sql.executeUpdate( "Delete from GCRQRYV where GCRQRYV_USER_ID = ?",[TEST_USER])
+                sql.executeUpdate( "Delete from GCBQURY where GCBQURY_USER_ID = ?",[TEST_USER])
+                sql.executeUpdate( "DELETE FROM gcrfldr WHERE gcrfldr_name = \'ActionItemPostCompositeServiceTests\'" )
                 sql.executeUpdate( "Delete from GCRAIIM" )
-                sql.executeUpdate( "Delete from GCRAPST" )
-                sql.executeUpdate( "Delete from GCBAPST" )
+                sql.executeUpdate( "Delete from GCRAPST where GCRAPST_USER_ID = ?",[TEST_USER])
+                sql.executeUpdate( "Delete from GCBAPST where GCBAPST_CREATOR_ID = ?",[TEST_ORACLE_ID])
                 sql.executeUpdate( "Delete from GCBAJOB" )
-                sql.executeUpdate( "Delete from GCRAACT where GCRAACT_CREATOR_ID = \'BCMADMIN\'" )
+                sql.executeUpdate( "Delete from GCRAACT where GCRAACT_CREATOR_ID = ?",[TEST_ORACLE_ID])
+                sql.executeUpdate( "Delete from GCRLENT where GCRLENT_USER_ID = ?",[TEST_ORACLE_ID2])
+                sql.executeUpdate( "Delete from GCRPQID where GCRPQID_USER_ID = ?",[TEST_USER2])
+                sql.executeUpdate( "Delete from GCRPVID where GCRPVID_USER_ID = ?",[TEST_USER2])
+                sql.executeUpdate( "Delete from GCRPOPC" )
+                sql.executeUpdate( "Delete from GCRPOPV where GCRPOPV_USER_ID = ?",[TEST_USER2])
+                sql.executeUpdate( "Delete from GCRSLIS where GCRSLIS_USER_ID = ?",[TEST_ORACLE_ID2])
+                sql.executeUpdate( "Delete from GCBPOPL where GCBPOPL_USER_ID = ?",[TEST_USER2])
+                sql.executeUpdate( "Delete from GCRQRYV where GCRQRYV_USER_ID = ?",[TEST_USER2])
+                sql.executeUpdate( "Delete from GCBQURY where GCBQURY_USER_ID = ?",[TEST_USER2])
+                sql.executeUpdate( "DELETE FROM gcrfldr WHERE gcrfldr_name = \'ActionItemPostCompositeServiceTests\'" )
+                sql.executeUpdate( "Delete from GCRAIIM" )
+                sql.executeUpdate( "Delete from GCRAPST where GCRAPST_USER_ID = ?",[TEST_USER2])
+                sql.executeUpdate( "Delete from GCBAPST where GCBAPST_CREATOR_ID = ?",[TEST_ORACLE_ID2])
+                sql.executeUpdate( "Delete from GCBAJOB" )
+                sql.executeUpdate( "Delete from GCRAACT where GCRAACT_CREATOR_ID = ?",[TEST_ORACLE_ID2])
                 tx.commit()
             }
         } finally {
@@ -227,7 +236,6 @@ class ActionItemBaseConcurrentTestCase extends Assert {
         }
     }
 
-
     /**
      * Convenience method to login a user. You may pass in a username and password,
      * or omit and accept the default 'grails_user' and 'u_pick_it'.
@@ -237,7 +245,6 @@ class ActionItemBaseConcurrentTestCase extends Assert {
         SecurityContextHolder.getContext().setAuthentication( auth )
     }
 
-
     /**
      * Convenience method to logout a user. This simply clears the authentication
      * object from the Spring security context holder.
@@ -246,38 +253,38 @@ class ActionItemBaseConcurrentTestCase extends Assert {
         def sql
         try {
             sql = new Sql( sessionFactory.getCurrentSession().connection() )
-            sql.executeUpdate( 'commit')
+            sql.executeUpdate( 'commit' )
         } finally {
             sql?.close() // note that the test will close the connection, since it's our current session's connection
         }
         SecurityContextHolder.getContext().setAuthentication( null )
     }
 
-
     /**
      * Convenience closure to save a domain object and log the errors if not successful.
      * Usage: save( myEntityInstance )
      **/
+
     protected Closure save = { domainObj ->
         try {
             assertNotNull domainObj
-            domainObj.save( failOnError:true, flush: true )
+            domainObj.save( failOnError: true, flush: true )
         } catch (e) {
             def ae = new ApplicationException( domainObj.class, e )
             fail "Could not save $domainObj due to ${ae}"
         }
     }
 
-
     /**
      * Convenience closure to validate a domain object and log the errors if not successful.
      * Usage: validate( myEntityInstance )
      **/
+
     protected Closure validate = { domainObject, failOnError = true ->
         assertNotNull domainObject
         domainObject.validate()
 
-        if (domainObject.hasErrors() && failOnError ) {
+        if (domainObject.hasErrors() && failOnError) {
             String message = ""
 
             domainObject.errors.allErrors.each {
@@ -292,7 +299,7 @@ class ActionItemBaseConcurrentTestCase extends Assert {
         def sql
         try {
             sql = new Sql( sessionFactory.getCurrentSession().connection() )
-            sql.executeUpdate( updateStatement, [ id ] )
+            sql.executeUpdate( updateStatement, [id] )
         } finally {
             sql?.close() // note that the test will close the connection, since it's our current session's connection
         }
@@ -306,7 +313,6 @@ class ActionItemBaseConcurrentTestCase extends Assert {
         new Date( cal.getTime().getTime() )
     }
 
-
     /**
      * Asserts that a FieldError exists for the expectedField, and that other FieldError attributes are as expected.
      * The FieldError may be asserted against the following properties.  The expectedField property.
@@ -316,7 +322,7 @@ class ActionItemBaseConcurrentTestCase extends Assert {
      *
      * @param errors the list of FieldError objects that should contain the expected FieldError properties
      * @param expected a Map of expected field error properties, where only expectedField is required
-     **/
+     * */
     protected void assertFieldErrorContent( List errors, Map expected ) {
 
         def fieldErrors = errors.findAll { it.field == expected.fieldName }
@@ -367,18 +373,16 @@ class ActionItemBaseConcurrentTestCase extends Assert {
             if (!ae.sqlException.toString().contains( resourceCodeOrExceptedMessage )) {
                 fail( "This should of returned a SQLException with a message '$resourceCodeOrExceptedMessage'." )
             }
-        }
-        else if (ae.wrappedException?.message) {
+        } else if (ae.wrappedException?.message) {
 
             def messageEvaluator
-            if (ae.type == "MultiModelValidationException" ) {
+            if (ae.type == "MultiModelValidationException") {
                 messageEvaluator = {
                     ae.wrappedException.modelValidationErrorsMaps.collect {
-                        it.errors.getAllErrors().collect{ err -> err.codes }
+                        it.errors.getAllErrors().collect { err -> err.codes }
                     }.flatten().toString().contains( resourceCodeOrExceptedMessage )
                 }
-            }
-            else {
+            } else {
                 // Default evaluation
                 // Typically we would be more explicit, but we have gotten into the habit of doing a regex to evaluate the
                 // wrapped exception with the 'resourceCode' varying from including '@@r1:' but excluding potential parameter information that
@@ -390,16 +394,14 @@ class ActionItemBaseConcurrentTestCase extends Assert {
 
             if (messageEvaluator()) {
                 // this is ok, we found the correct error message
-            }
-            else {
+            } else {
                 if (message == null) {
                     message = "Did not find expected error code $resourceCodeOrExceptedMessage.  Found '${ae.wrappedException}' instead."
                 }
 
                 fail( message )
             }
-        }
-        else {
+        } else {
             throw new Exception( "Unable to assert application exception" )
         }
     }
@@ -417,14 +419,12 @@ class ActionItemBaseConcurrentTestCase extends Assert {
         getValidationTagLib().messageImpl( attrs )
     }
 
-
     /**
      * Convience method to return a localized string based off of an error.
      **/
     protected String getErrorMessage( error ) {
-        return messageSource.getMessage( error, Locale.getDefault()  )
+        return messageSource.getMessage( error, Locale.getDefault() )
     }
-
 
     /**
      * Convenience method to assert an expected error is found, and that it's localized message matches the supplied matchString.
@@ -435,7 +435,6 @@ class ActionItemBaseConcurrentTestCase extends Assert {
         assertTrue "Did not find expected field error ${getErrorMessage( model.errors.getFieldError( prop ) )}",
                 getErrorMessage( model.errors.getFieldError( prop ) ) ==~ matchString
     }
-
 
     /**
      * Convenience method to assert that there are no errors upon validation.  This will fail with the
@@ -450,7 +449,7 @@ class ActionItemBaseConcurrentTestCase extends Assert {
         def sql
         def result
         try {
-            sql = new Sql(sessionFactory.getCurrentSession().connection())
+            sql = new Sql( sessionFactory.getCurrentSession().connection() )
             result = sql.firstRow( "select count(*) as rowcount from GCBAPST where GCBAPST_SURROGATE_ID = ${groupSendId}" )
         } finally {
             sql?.close() // note that the test will close the connection, since it's our current session's connection
@@ -463,7 +462,7 @@ class ActionItemBaseConcurrentTestCase extends Assert {
         def sql
         def result
         try {
-            sql = new Sql(sessionFactory.getCurrentSession().connection())
+            sql = new Sql( sessionFactory.getCurrentSession().connection() )
             result = sql.firstRow( "select count(*) as rowcount from GCRAIIM where GCRAIIM_GCBAPST_ID = ${groupSendId}" )
 //            println( result.rowcount )
         } finally {
@@ -472,24 +471,26 @@ class ActionItemBaseConcurrentTestCase extends Assert {
         return result.rowcount
     }
 
-    protected void restartMonitor(){
-        actionItemPostMonitor.shutdown(  )
+
+    protected void restartMonitor() {
+        actionItemPostMonitor.shutdown()
         println "-------------------CRR Restarting Monitor-----------------------"
-        TimeUnit.SECONDS.sleep( 30 );
-        actionItemPostMonitor.startMonitoring(  )
+        TimeUnit.SECONDS.sleep( 30 )
+        actionItemPostMonitor.startMonitoring()
     }
+
 
     protected boolean sleepUntilPostItemsComplete( ActionItemPost groupSend, int maxSleepTime ) {
         boolean answer = false
-        final int interval = 2;                 // test every second
-        int count = maxSleepTime / interval;    // calculate max loop count
+        final int interval = 2                 // test every second
+        int count = maxSleepTime / interval    // calculate max loop count
         while (count > 0) {
-            count--;
-            TimeUnit.SECONDS.sleep( interval );
+            count--
+            TimeUnit.SECONDS.sleep( interval )
             int readyCount = ActionItemPostWork.fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState.Ready, groupSend )?.size()
             if (readyCount == 0) {
                 answer = true
-                break;
+                break
             }
         }
         return answer
@@ -497,39 +498,39 @@ class ActionItemBaseConcurrentTestCase extends Assert {
 
 
     protected void sleepUntilActionItemJobsComplete( int maxSleepTime ) {
-        final int interval = 2;                 // test every second
-        int count = maxSleepTime / interval;    // calculate max loop count
+        final int interval = 2                 // test every second
+        int count = maxSleepTime / interval    // calculate max loop count
         while (count > 0) {
-            count--;
-            TimeUnit.SECONDS.sleep( interval );
+            count--
+            TimeUnit.SECONDS.sleep( interval )
 
             int countPending = ActionItemJob.fetchPending().size()
 
             if (countPending == 0) {
-                break;
+                break
             }
         }
     }
 
 
     protected void sleepUntilPostComplete( ActionItemPost groupSend, int maxSleepTime ) {
-        final int interval = 2;                 // test every second
-        int count = maxSleepTime / interval;    // calculate max loop count
+        final int interval = 2                 // test every second
+        int count = maxSleepTime / interval    // calculate max loop count
         while (count > 0) {
-            count--;
-            TimeUnit.SECONDS.sleep( interval );
+            count--
+            TimeUnit.SECONDS.sleep( interval )
 
             sessionFactory.currentSession.flush()
             sessionFactory.currentSession.clear()
 
             groupSend = ActionItemPost.get( groupSend.id )
 
-            if ( groupSend.postingCurrentState.equals( ActionItemPostExecutionState.Complete ) ) {
-                break;
+            if (groupSend.postingCurrentState.equals( ActionItemPostExecutionState.Complete )) {
+                break
             }
         }
 
-        assertEquals( ActionItemPostExecutionState.Complete, groupSend.getPostingCurrentState(  ) )
+        assertEquals( ActionItemPostExecutionState.Complete, groupSend.getPostingCurrentState() )
     }
 
     /**
@@ -541,7 +542,7 @@ class ActionItemBaseConcurrentTestCase extends Assert {
         if (log.isDebugEnabled()) log.debug( "Completing group send with id = " + groupSendId + "." )
 
         int retries = 2
-        while(retries > 0) {
+        while (retries > 0) {
             retries--
             try {
                 return actionItemPostCompositeService.completePost( groupSendId )
@@ -552,6 +553,7 @@ class ActionItemBaseConcurrentTestCase extends Assert {
             }
         }
     }
+
 
     protected def newPopulationQuery( String queryName, int maxRows = 5 ) {
         def populationQuery = new CommunicationPopulationQuery(
@@ -566,13 +568,12 @@ class ActionItemBaseConcurrentTestCase extends Assert {
     }
 
 
-    protected void assertLength(int length, def array) {
-        assertEquals(length, array?.size());
+    protected void assertLength( int length, def array ) {
+        assertEquals( length, array?.size() )
     }
 
 
     private getFormControllerMap() {
         ConfigurationUtils.getConfiguration()?.formControllerMap
     }
-
 }

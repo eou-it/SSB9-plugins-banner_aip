@@ -7,21 +7,22 @@ import org.junit.Before
 import org.junit.Test
 
 
-class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegrationTestCase{
+class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemPostWorkProcessorService
 
+
     @Before
-        public void setUp() {
-            formContext = ['GUAGMNU']
-            super.setUp()
-        }
+    public void setUp() {
+        formContext = ['GUAGMNU']
+        super.setUp()
+    }
 
 
-        @After
-        public void tearDown() {
-            super.tearDown()
-        }
+    @After
+    public void tearDown() {
+        super.tearDown()
+    }
 
     // TODO: try posting to bad pidm
     // TODO: try posting to date range overlap
@@ -32,23 +33,22 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
     // TODO: try posting to date range overlap
     @Test
     // FIXME: not working
-        void testPerformGroupSendItem() {
+    void testPerformGroupSendItem() {
         ActionItemPostWork actionItemPostWork = new ActionItemPostWork()
         actionItemPostWork.referenceId = 'somestringfortestinglswefhihvciewranc'
         actionItemPostWork.currentExecutionState = ActionItemPostWorkExecutionState.Ready
-        ActionItemPost aip = newAIP(  )
+        actionItemPostWork.creationDateTime = new Date()
+        ActionItemPost aip = newAIP()
         aip.postingCurrentState = ActionItemPostExecutionState.New
         aip.save()
         actionItemPostWork.actionItemGroupSend = aip
         actionItemPostWork.save()
-        println actionItemPostWork
-        actionItemPostWorkProcessorService.performPostItem( actionItemPostWork );
+        actionItemPostWorkProcessorService.performPostItem( actionItemPostWork )
     }
 
 
     private def newAIP() {
-        def aigs = new ActionItemPost(
-                //id: 1L,
+        new ActionItemPost(
                 populationListId: 1L,
                 populationVersionId: 1L,
                 postingName: "some name",
@@ -62,18 +62,12 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
                 postingCurrentState: ActionItemPostExecutionState.New,
                 postingStartedDate: null,
                 postingStopDate: null,
-                postingJobId: "la43j45h546k56g6f6r77a7kjfn",
+                aSyncJobId: "la43j45h546k56g6f6r77a7kjfn",
                 populationCalculationId: 1L,
                 postingErrorCode: ActionItemErrorCode.DATA_FIELD_SQL_ERROR,
                 postingErrorText: null,
-                postingGroupId: null,
-                postingParameterValues: null,
-                lastModified: new Date(),
-                lastModifiedBy: 'testUser',
-                version: 1L,
-                dataOrigin: 'BANNER',
-                vpdiCode: null
+                aSyncGroupId: null,
+                postingParameterValues: null
         )
-        return aigs
     }
 }
