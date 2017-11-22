@@ -21,6 +21,11 @@ import javax.persistence.*
             WHERE a.actionItemId = :actionItemId
             AND a.groupId = :groupId
         """),
+        @NamedQuery(name = "ActionItemGroupAssign.checkIfAssignedGroupPresentForSpecifiedActionItem",
+                       query = """ SELECT COUNT (actionItemId)
+                   FROM ActionItemGroupAssign a
+                   WHERE a.actionItemId = :actionItemId
+               """),
         @NamedQuery(name = "ActionItemGroupAssign.existsSameSeqNoInActionItem",
                 query = """ select a.actionItemId, a.seqNo, COUNT(*) FROM ActionItemGroupAssign a
                     WHERE a.groupId = :groupId
@@ -98,17 +103,39 @@ class ActionItemGroupAssign implements Serializable {
         dataOrigin( nullable: true, maxSize: 19 )
     }
 
-
+    /**
+     *
+     * @param myId
+     * @return
+     */
     static def fetchByGroupId( Long myId ) {
         ActionItemGroupAssign.withSession {session ->
             session.getNamedQuery( 'ActionItemGroupAssign.fetchByGroupId' ).setLong( 'myId', myId )?.list()
         }
     }
 
-
+    /**
+     *
+     * @param actionItemId
+     * @param groupId
+     * @return
+     */
     static def fetchByActionItemIdAndGroupId( Long actionItemId, Long groupId ) {
         ActionItemGroupAssign.withSession {session ->
             session.getNamedQuery( 'ActionItemGroupAssign.fetchByActionItemGroup' ).setLong( 'actionItemId', actionItemId ).setLong( 'groupId', groupId )?.list()[0]
+        }
+    }
+
+    /**
+     *
+     * @param actionItemId
+     * @return
+     */
+    static def checkIfAssignedGroupPresentForSpecifiedActionItem( Long actionItemId ) {
+        ActionItemGroupAssign.withSession {session ->
+            session.getNamedQuery( 'ActionItemGroupAssign.checkIfAssignedGroupPresentForSpecifiedActionItem' )
+                    .setLong( 'actionItemId', actionItemId )
+                    .uniqueResult() > 0
         }
     }
 
