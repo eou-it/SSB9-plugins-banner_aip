@@ -97,11 +97,11 @@ class ActionItemPostWorkServiceIntegrationTests extends BaseIntegrationTestCase 
                 postingCurrentState: ActionItemPostExecutionState.New,
                 postingStartedDate: null,
                 postingStopDate: null,
-                postingJobId: "la43j45h546k56g6f6r77a7kjfn",
+                aSyncJobId: "la43j45h546k56g6f6r77a7kjfn",
                 populationCalculationId: 1L,
                 postingErrorCode: ActionItemErrorCode.DATA_FIELD_SQL_ERROR,
                 postingErrorText: null,
-                postingGroupId: null,
+                aSyncGroupId: null,
                 postingParameterValues: null
         )
     }

@@ -21,13 +21,13 @@ class ActionItemPostService extends ServiceBase {
         if (!dataMap) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.insufficient.request', [] ) )
         }
-        if (!dataMap.name) {
+        if (!dataMap.postingName) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.posting.job.name', [] ) )
         }
-        if (isDuplicateJobName( dataMap.name )) {
+        if (isDuplicateJobName( dataMap.postingName )) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.job.name.already.defined', [] ) )
         }
-        if (!dataMap.postGroupId) {
+        if (!dataMap.postingActionItemGroupId) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.group', [] ) )
         }
         if (!dataMap.actionItemIds) {

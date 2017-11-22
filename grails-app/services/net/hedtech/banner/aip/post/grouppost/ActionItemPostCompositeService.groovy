@@ -123,8 +123,8 @@ class ActionItemPostCompositeService {
     ActionItemPost getActionPostInstance( requestMap, user ) {
         new ActionItemPost(
                 populationListId: requestMap.populationId,
-                postingActionItemGroupId: requestMap.postGroupId,
-                postingName: requestMap.name,
+                postingActionItemGroupId: requestMap.postingActionItemGroupId,
+                postingName: requestMap.postingName,
                 postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
                 postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
                 //postingScheduleDateTime: requestMap.scheduledStartDate ? actionItemProcessingCommonService.convertToLocaleBasedDate(
@@ -235,8 +235,8 @@ class ActionItemPostCompositeService {
         }
 
         //if group send is scheduled
-        if (groupSend.postingJobId != null) {
-            schedulerJobService.deleteScheduledJob( groupSend.postingJobId, groupSend.postingGroupId )
+        if (groupSend.aSyncJobId != null) {
+            schedulerJobService.deleteScheduledJob( groupSend.aSyncJobId, groupSend.aSyncGroupId )
         } else {
             //if Group send is not scheduled then remove job and recipient data
             deleteActionItemJobsByGroupSendId( groupSendId )
@@ -275,8 +275,8 @@ class ActionItemPostCompositeService {
         groupSend.markStopped()
         groupSend = savePost( groupSend )
 
-        if (groupSend.postingJobId != null) {
-            this.schedulerJobService.deleteScheduledJob( groupSend.postingJobId, groupSend.postingGroupId )
+        if (groupSend.aSyncJobId != null) {
+            this.schedulerJobService.deleteScheduledJob( groupSend.aSyncJobId, groupSend.aSyncGroupId )
         }
 
         // fetch any post jobs for this group send and marked as stopped

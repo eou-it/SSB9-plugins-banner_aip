@@ -113,7 +113,7 @@ class ActionItemPostReadOnly implements Serializable {
      * POSTING JOB ID: The job ID of the scheduled job.
      */
     @Column(name = "GCBAPST_JOB_ID")
-    String postingJobId
+    String aSyncJobId
 
     /**
      * POPULATION CALCULATION ID: The id of the specific population calculation resolved to feed the Action Item post.
@@ -134,10 +134,10 @@ class ActionItemPostReadOnly implements Serializable {
     String postingErrorText
 
     /**
-     * POSTING GROUP ID: The group ID of Action Item post.
+     * POSTING GROUP ID: The group ID of post.
      */
     @Column(name = "GCBAPST_GROUP_ID")
-    String postingGroupId
+    String aSyncGroupId
 
     /**
      * POSTING PARAMETER VALUES: The map of parameter name and values for a specific Action Item post.

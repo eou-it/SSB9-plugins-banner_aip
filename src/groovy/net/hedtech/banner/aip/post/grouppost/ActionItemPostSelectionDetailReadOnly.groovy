@@ -49,7 +49,7 @@ class ActionItemPostSelectionDetailReadOnly implements Serializable {
      *
      * @return
      */
-    def static fetchSelectionIds( postingId ) {
+    static List<ActionItemPostSelectionDetailReadOnly> fetchSelectionIds( postingId ) {
         ActionItemPostSelectionDetailReadOnly.withSession {session ->
             session.getNamedQuery( 'ActionItemPostSelectionDetailReadOnly.fetchSelectionIds' )
                     .setLong( 'postingId', postingId )

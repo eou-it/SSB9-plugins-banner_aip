@@ -15,7 +15,7 @@ class ActionItemPostSelectionDetailReadOnlyService extends ServiceBase {
      * @param postingId
      * @return
      */
-    def fetchSelectionIds( postingId ) {
+    List<ActionItemPostSelectionDetailReadOnly> fetchSelectionIds( postingId ) {
         ActionItemPostSelectionDetailReadOnly.fetchSelectionIds( postingId )
     }
 }

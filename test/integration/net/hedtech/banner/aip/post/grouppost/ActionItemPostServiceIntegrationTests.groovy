@@ -7,6 +7,7 @@ import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
+import net.hedtech.banner.general.communication.population.CommunicationPopulationListView
 import net.hedtech.banner.general.communication.population.query.CommunicationPopulationQuery
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
@@ -82,11 +83,12 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void preCreateValidationDuplicateJobName() {
         loginSSB( 'CSRADM001', '111111' )
-        def population = actionItemProcessingCommonService.fetchPopulationListForSend( '%p', [max: 10, offset: 0] )
+        def population = CommunicationPopulationListView.findAllByPopulationFolderName('AIPstudent');
         def actionItemGroups = ActionItemGroup.findAll()
         def actionItemGroup = actionItemGroups[0]
-        def requestMap = [populationId                 : population.id[0],
-                          name                         : "some name",
+        def requestMap = [populationListId             : population[0]?.id,
+                          postingName                  : "some name",
+                          postingActionItemGroupId     : actionItemGroup.id,
                           postingDisplayStartDate      : new Date(),
                           postingDisplayEndDate        : new Date(),
                           postingCreatorId             : 'me',
@@ -95,11 +97,11 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
                           postingCurrentState          : ActionItemPostExecutionState.New,
                           postingStartedDate           : null,
                           postingStopDate              : null,
-                          postingJobId                 : "la43j45h546k56g6f6r77a7kjfn",
+                          aSyncJobId                   : "la43j45h546k56g6f6r77a7kjfn",
                           populationCalculationId      : 1L,
                           postingErrorCode             : ActionItemErrorCode.DATA_FIELD_SQL_ERROR,
                           postingErrorText             : null,
-                          postGroupId                  : actionItemGroup.id,
+                          aSyncGroupId                 : 'asdfas',
                           postingParameterValues       : null,
                           postNow                      : true,
                           lastModified                 : new Date(),
@@ -107,12 +109,12 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
                           lastModifiedBy               : 'testUser',
                           dataOrigin                   : 'BANNER']
         def obj = new ActionItemPost(
-                populationListId: requestMap.populationId,
-                postingActionItemGroupId: requestMap.postGroupId,
-                postingName: requestMap.name,
+                populationListId: requestMap.populationListId,
+                postingActionItemGroupId: requestMap.postingActionItemGroupId,
+                postingName: requestMap.postingName,
                 postingDisplayStartDate: new Date(),
                 postingDisplayEndDate: new Date(),
-                postingScheduleDateTime: requestMap.scheduledStartDate ? new Date() : null,
+                postingScheduleDateTime: requestMap.postingScheduledStartDate ? new Date() : null,
                 postingCreationDateTime: new Date(),
                 populationRegenerateIndicator: false,
                 postingDeleteIndicator: false,
@@ -133,10 +135,10 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void preCreateValidationNoGroup() {
-        def map = [populationId       : 1L,
-                   populationVersionId: 1L,
-                   name               : "some name",
-                   postGroupId        : null,
+        def map = [populationId            : 1L,
+                   populationVersionId     : 1L,
+                   postingName             : "some name",
+                   postingActionItemGroupId: null,
         ]
         try {
             actionItemPostService.preCreateValidation( map )
@@ -148,11 +150,11 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void preCreateValidationNoActionItemIds() {
-        def map = [populationId       : 1L,
-                   populationVersionId: 1L,
-                   name               : "some name",
-                   postGroupId        : 1,
-                   actionItemIds      : []
+        def map = [populationId            : 1L,
+                   populationVersionId     : 1L,
+                   postingName             : "some name",
+                   postingActionItemGroupId: 1,
+                   actionItemIds           : []
 
         ]
         try {
@@ -165,12 +167,12 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void preCreateValidationNoPopulationName() {
-        def map = [populationId       : 1L,
-                   populationVersionId: 1L,
-                   name               : "some name",
-                   postGroupId        : 1,
-                   actionItemIds      : [1, 2],
-                   populationId       : null
+        def map = [populationId            : 1L,
+                   populationVersionId     : 1L,
+                   postingName             : "some name",
+                   postingActionItemGroupId: 1,
+                   actionItemIds           : [1, 2],
+                   populationId            : null
 
         ]
         try {
@@ -183,13 +185,13 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void preCreateValidationNoDisplayStartDate() {
-        def map = [populationId       : 1L,
-                   populationVersionId: 1L,
-                   name               : "some name",
-                   postGroupId        : 1,
-                   actionItemIds      : [1, 2],
-                   populationId       : 2,
-                   displayStartDate   : null
+        def map = [populationId            : 1L,
+                   populationVersionId     : 1L,
+                   postingName             : "some name",
+                   postingActionItemGroupId: 1,
+                   actionItemIds           : [1, 2],
+                   populationId            : 2,
+                   displayStartDate        : null
 
         ]
         try {
@@ -202,15 +204,14 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void preCreateValidationNoDisplayEndDate() {
-        def map = [populationId       : 1L,
-                   populationVersionId: 1L,
-                   name               : "some name",
-                   postGroupId        : 1,
-                   actionItemIds      : [1, 2],
-                   populationId       : 2,
-                   displayStartDate   : new Date(),
-                   displayEndDate     : null
-
+        def map = [populationId            : 1L,
+                   populationVersionId     : 1L,
+                   postingName             : "some name",
+                   postingActionItemGroupId: 1,
+                   actionItemIds           : [1, 2],
+                   populationId            : 2,
+                   displayStartDate        : new Date(),
+                   displayEndDate          : null
 
         ]
         try {
@@ -223,14 +224,14 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void preCreateValidationNoSchedule() {
-        def map = [populationId       : 1L,
-                   populationVersionId: 1L,
-                   name               : "some name",
-                   postGroupId        : 1,
-                   actionItemIds      : [1, 2],
-                   populationId       : 2,
-                   displayStartDate   : new Date(),
-                   displayEndDate     : new Date(),
+        def map = [populationId            : 1L,
+                   populationVersionId     : 1L,
+                   postingName             : "some name",
+                   postingActionItemGroupId: 1,
+                   actionItemIds           : [1, 2],
+                   populationId            : 2,
+                   displayStartDate        : new Date(),
+                   displayEndDate          : new Date(),
         ]
         try {
             actionItemPostService.preCreateValidation( map )
@@ -242,15 +243,15 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void preCreateValidationPassed() {
-        def map = [populationId       : 1L,
-                   populationVersionId: 1L,
-                   name               : "some name",
-                   postGroupId        : 1,
-                   actionItemIds      : [1, 2],
-                   populationId       : 2,
-                   displayStartDate   : new Date(),
-                   displayEndDate     : new Date(),
-                   postNow            : true
+        def map = [populationId            : 1L,
+                   populationVersionId     : 1L,
+                   postingName             : "some name",
+                   postingActionItemGroupId: 1,
+                   actionItemIds           : [1, 2],
+                   populationId            : 2,
+                   displayStartDate        : new Date(),
+                   displayEndDate          : new Date(),
+                   postNow                 : true
         ]
         actionItemPostService.preCreateValidation( map )
         assert 1 == 1
