@@ -45,10 +45,10 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
         List<UserActionItem> userActionItems = userActionItemService.listActionItemsByPidm( actionItemPidm )
         // select the first id of an action from that id list
-        def actionItemId = userActionItems[0].id
+        def userActionItemsId = userActionItems[0].id
         //get action item by id for that user
-        UserActionItem userActionItemId = userActionItemService.getActionItemById( actionItemId )
-        assertEquals( actionItemId, userActionItemId.id )
+        UserActionItem userActionItemId = userActionItemService.getActionItemById( userActionItemsId )
+        assertEquals( userActionItemsId, userActionItemId.id )
     }
 
 

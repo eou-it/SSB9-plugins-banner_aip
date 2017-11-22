@@ -18,6 +18,8 @@ class ActionItemCompositeService {
     static transactional = true
     def actionItemService
     def springSecurityService
+    def actionItemReadOnlyCompositeService
+    def actionItemContentService
 
     /**
      * Adds Action Item
@@ -33,8 +35,8 @@ class ActionItemCompositeService {
         def aipUser = AipControllerUtils.getPersonForAip( [studentId: map.studentId], user.pidm )
         ActionItem ai = new ActionItem(
                 folderId: map.folderId,
-                status: map.status ? AIPConstants.STATUS_MAP.get( map.status ): null,
-                postedIndicator:'N',
+                status: map.status ? AIPConstants.STATUS_MAP.get( map.status ) : null,
+                postedIndicator: 'N',
                 title: map.title,
                 name: map.name,
                 creatorId: user.username,
@@ -58,5 +60,39 @@ class ActionItemCompositeService {
                 newActionItem: savedActionItem
         ]
     }
+
+    /**
+     * Deletes Action items
+     *
+     * @param actionItemId
+     * @return
+     */
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
+    def deleteActionItem( actionItemId ) {
+        def success = false
+        def message
+        def checkDeletable = actionItemReadOnlyCompositeService.checkIfActionItemDeletable( actionItemId )
+        if (!checkDeletable.deletable) {
+            return [success: success,
+                    message: checkDeletable.message]
+        }
+        ActionItemContent actionItemContent = actionItemContentService.listActionItemContentById( actionItemId )
+        if (actionItemContent) {
+            actionItemContentService.delete( actionItemContent )
+        }
+        try {
+            ActionItem actionItem = actionItemService.get( actionItemId )
+            actionItemService.delete( actionItem )
+            success = true
+        } catch (ApplicationException e) {
+            success = false
+            message = e.message
+        }
+        [
+                success: success,
+                message: message
+        ]
+    }
+
 }
 
