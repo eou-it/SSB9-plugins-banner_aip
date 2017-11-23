@@ -21,6 +21,7 @@ class ActionItemGroupCompositeService {
 
     def actionItemGroupService
     def actionItemGroupAssignService
+    def groupFolderReadOnlyService
     def actionItemGroupAssignReadOnlyService
 
     /**
@@ -54,7 +55,7 @@ class ActionItemGroupCompositeService {
         [
                 success: success,
                 message: message,
-                group  : groupNew
+                group  : success ? groupFolderReadOnlyService.getActionItemGroupById( groupNew.id.toInteger() ) : null
         ]
 
 
