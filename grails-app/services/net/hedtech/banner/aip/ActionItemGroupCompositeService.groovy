@@ -8,6 +8,7 @@ import grails.validation.ValidationException
 import net.hedtech.banner.MessageUtility
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.exceptions.ApplicationException
+import net.hedtech.banner.i18n.MessageHelper
 import org.springframework.transaction.annotation.Propagation
 
 import java.text.MessageFormat
@@ -19,7 +20,6 @@ import java.text.MessageFormat
 class ActionItemGroupCompositeService {
 
     def actionItemGroupService
-    def groupFolderReadOnlyService
     def actionItemGroupAssignService
     def actionItemGroupAssignReadOnlyService
 
@@ -58,6 +58,36 @@ class ActionItemGroupCompositeService {
         ]
 
 
+    }
+
+    /**
+     * Delete an existing group
+     * @param map
+     * @return
+     */
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
+    def deleteGroup( map ) {
+        def success = false
+        def message
+        try {
+            ActionItemGroup group = actionItemGroupService.get( map.groupId )
+            if (group.postingInd == AIPConstants.YES_IND) {
+                return [success: success, message: MessageHelper.message( 'group.not.deletable.mark.as.posted' )]
+            }
+            List<ActionItemGroupAssign> actionItemGroupAssignList = actionItemGroupAssignService.fetchByGroupId( group.id )
+            actionItemGroupAssignList.each {
+                actionItemGroupAssignService.delete( it )
+            }
+            actionItemGroupService.delete( group )
+            success = true
+        } catch (ApplicationException e) {
+            success = false
+            message = e.message
+        }
+        [
+                success: success,
+                message: message
+        ]
     }
 
 

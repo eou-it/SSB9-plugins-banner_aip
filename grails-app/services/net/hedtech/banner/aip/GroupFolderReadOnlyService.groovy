@@ -3,6 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.i18n.MessageHelper
 import net.hedtech.banner.service.ServiceBase
 
@@ -57,7 +58,7 @@ class GroupFolderReadOnlyService extends ServiceBase {
      */
     def listGroupFolderPageSort( Map params, paginationParams ) {
         def results = GroupFolderReadOnly.fetchWithPagingAndSortParams( params, paginationParams )
-        results = results.collect {
+        results = results.collect {GroupFolderReadOnly it ->
             [id               : it.groupId,
              groupId          : it.groupId,
              groupTitle       : it.groupTitle,
@@ -69,7 +70,9 @@ class GroupFolderReadOnlyService extends ServiceBase {
              folderId         : it.folderId,
              folderName       : it.folderName,
              groupUserId      : it.groupUserId,
-             groupActivityDate: it.groupActivityDate
+             groupActivityDate: it.groupActivityDate,
+             deletable        : it.postedInd == AIPConstants.NO_IND,
+             cantDeleteMessage: it.postedInd == AIPConstants.YES_IND ? MessageHelper.message( 'group.not.deletable.mark.as.posted' ) : null
             ]
         }
         def resultCount = listGroupFolderROCount( params )
