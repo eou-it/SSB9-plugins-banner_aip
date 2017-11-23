@@ -19,6 +19,7 @@ class ActionItemCompositeService {
     def actionItemService
     def springSecurityService
     def actionItemReadOnlyCompositeService
+    def actionItemStatusRuleService
     def actionItemContentService
 
     /**
@@ -71,7 +72,7 @@ class ActionItemCompositeService {
     def deleteActionItem( actionItemId ) {
         def success = false
         def message
-        def postingInd=actionItemService.getActionItemById( actionItemId ).postedIndicator
+        def postingInd = actionItemService.getActionItemById( actionItemId ).postedIndicator
         def checkDeletable = actionItemReadOnlyCompositeService.checkIfActionItemDeletable( actionItemId, postingInd )
         if (!checkDeletable.deletable) {
             return [success: success,
@@ -80,6 +81,10 @@ class ActionItemCompositeService {
         ActionItemContent actionItemContent = actionItemContentService.listActionItemContentById( actionItemId )
         if (actionItemContent) {
             actionItemContentService.delete( actionItemContent )
+        }
+        List<ActionItemStatusRule> list = actionItemStatusRuleService.getActionItemStatusRuleByActionItemId( actionItemId )
+        list.each {
+            actionItemStatusRuleService.delete( it )
         }
         try {
             ActionItem actionItem = actionItemService.get( actionItemId )
