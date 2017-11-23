@@ -80,6 +80,7 @@ class ActionItemGroupCompositeService {
             }
             actionItemGroupService.delete( group )
             success = true
+            message = MessageHelper.message( "action.group.delete.success" )
         } catch (ApplicationException e) {
             success = false
             message = e.message
