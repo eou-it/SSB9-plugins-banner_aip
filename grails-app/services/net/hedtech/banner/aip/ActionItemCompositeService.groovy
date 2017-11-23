@@ -90,6 +90,7 @@ class ActionItemCompositeService {
             ActionItem actionItem = actionItemService.get( actionItemId )
             actionItemService.delete( actionItem )
             success = true
+            message = MessageHelper.message('action.item.delete.success')
         } catch (ApplicationException e) {
             success = false
             message = e.message
