@@ -37,7 +37,10 @@ import javax.persistence.*
                             WHERE gsi.actionItemGroupSend = :groupSend
                             and gsi.currentExecutionState = :executionState
                             ORDER by gsi.creationDateTime asc"""
-        )
+        ),
+        @NamedQuery(name = "ActionItemPostWork.updateStateToStop",
+                query = """UPDATE ActionItemPostWork aiw SET aiw.currentExecutionState = :updateExecutionState,
+                                  aiw.lastModified = current_date, stopDate=current_date  WHERE  aiw.currentExecutionState = :executionState and aiw.actionItemGroupSend = :groupSend""")
 ])
 
 class ActionItemPostWork implements AsynchronousTask {
@@ -151,7 +154,12 @@ class ActionItemPostWork implements AsynchronousTask {
         errorCode( nullable: true )
     }
 
-
+    /**
+     *
+     * @param executionState
+     * @param max
+     * @return
+     */
     static List fetchByExecutionState( ActionItemPostWorkExecutionState executionState, Integer max = Integer.MAX_VALUE ) {
         ActionItemPostWork.withSession {session ->
             session.getNamedQuery( 'ActionItemPostWork.fetchByExecutionState' )
@@ -162,7 +170,12 @@ class ActionItemPostWork implements AsynchronousTask {
         }
     }
 
-
+    /**
+     *
+     * @param groupSend
+     * @param max
+     * @return
+     */
     static List fetchByGroupSend( ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
         ActionItemPostWork.withSession {session ->
             session.getNamedQuery( 'ActionItemPostWork.fetchByGroupSend' )
@@ -173,7 +186,13 @@ class ActionItemPostWork implements AsynchronousTask {
         }
     }
 
-
+    /**
+     *
+     * @param executionState
+     * @param groupSend
+     * @param max
+     * @return
+     */
     static List fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState executionState, ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
         ActionItemPostWork.withSession {session ->
             session.getNamedQuery( 'ActionItemPostWork.fetchByExecutionStateAndGroupSend' )
@@ -185,13 +204,32 @@ class ActionItemPostWork implements AsynchronousTask {
         }
     }
 
-
+    /**
+     *
+     * @param groupSend
+     * @return
+     */
     static def fetchRunningGroupSendItemCount( ActionItemPost groupSend ) {
         ActionItemPostWork.withSession {session ->
             session.getNamedQuery( 'ActionItemPostWork.countByExecutionStateAndGroupSend' )
                     .setParameter( 'executionState', ActionItemPostWorkExecutionState.Ready )
                     .setParameter( 'groupSend', groupSend )
                     .uniqueResult()
+        }
+    }
+
+    /**
+     *
+     * @param groupSend
+     * @return
+     */
+    static def updateStateToStop( ActionItemPost groupSend ) {
+        ActionItemPostWork.withSession {session ->
+            session.getNamedQuery( 'ActionItemPostWork.updateStateToStop' )
+                    .setParameter( 'executionState', ActionItemPostWorkExecutionState.Ready )
+                    .setParameter( 'updateExecutionState', ActionItemPostWorkExecutionState.Stopped )
+                    .setParameter( 'groupSend', groupSend )
+                    .executeUpdate()
         }
     }
 }

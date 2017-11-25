@@ -10,11 +10,25 @@ import net.hedtech.banner.service.ServiceBase
  */
 class ActionItemPostWorkService extends ServiceBase {
 
+    /**
+     *
+     * @param domainModelOrMap
+     * @return
+     */
     def preCreate( domainModelOrMap ) {
         ActionItemPostWork groupSendItem = (domainModelOrMap instanceof Map ? domainModelOrMap?.domainModel : domainModelOrMap) as
                 ActionItemPostWork
         if (!groupSendItem.creationDateTime) {
             groupSendItem.creationDateTime = new Date()
         }
+    }
+
+    /**
+     *
+     * @param groupSend
+     * @return
+     */
+    def updateStateToStop( ActionItemPost groupSend ) {
+        ActionItemPostWork.updateStateToStop( groupSend )
     }
 }
