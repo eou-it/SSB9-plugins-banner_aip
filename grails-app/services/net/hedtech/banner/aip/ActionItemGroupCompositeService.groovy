@@ -21,7 +21,6 @@ class ActionItemGroupCompositeService {
     def actionItemGroupService
     def groupFolderReadOnlyService
     def actionItemGroupAssignService
-    def groupFolderReadOnlyService
     def actionItemGroupAssignReadOnlyService
 
     /**
@@ -37,7 +36,7 @@ class ActionItemGroupCompositeService {
                 name: map.groupName,
                 folderId: map.folderId,
                 description: map.groupDesc,
-                postingInd: 'N',
+                postingInd: AIPConstants.NO_IND,
                 status: map.groupStatus ? (AIPConstants.STATUS_MAP.get( map.groupStatus )) : null,
                 )
         def groupNew
