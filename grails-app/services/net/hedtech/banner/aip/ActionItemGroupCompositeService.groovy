@@ -36,7 +36,7 @@ class ActionItemGroupCompositeService {
                 name: map.groupName,
                 folderId: map.folderId,
                 description: map.groupDesc,
-                postingInd: 'N',
+                postingInd: AIPConstants.NO_IND,
                 status: map.groupStatus ? (AIPConstants.STATUS_MAP.get( map.groupStatus )) : null,
                 )
         def groupNew
@@ -54,7 +54,7 @@ class ActionItemGroupCompositeService {
         [
                 success: success,
                 message: message,
-                group  : groupNew
+                group  : success ? groupFolderReadOnlyService.getActionItemGroupById( groupNew.id.toInteger() ) : null
         ]
 
 

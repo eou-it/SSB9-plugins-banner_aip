@@ -68,9 +68,15 @@ class ActionItemPostWorkServiceIntegrationTests extends BaseIntegrationTestCase 
         actionItemPostService.create( aip )
         actionItemPostWork.actionItemGroupSend = aip
         actionItemPostWork.creationDateTime = null
-        ActionItemPostWork savedOne = actionItemPostWorkService.create( actionItemPostWork)
+        ActionItemPostWork savedOne = actionItemPostWorkService.create( actionItemPostWork )
         assert savedOne.id != null
         assert savedOne.referenceId == 'somestringfortestinglswefhihvciewranc'
+    }
+
+
+    @Test
+    void testUpdateStateToStop() {
+        actionItemPostWorkService.updateStateToStop( ActionItemPost.findById(2) )
     }
 
 

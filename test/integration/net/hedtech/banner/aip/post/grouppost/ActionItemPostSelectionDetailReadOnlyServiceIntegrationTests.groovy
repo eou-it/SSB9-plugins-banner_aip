@@ -10,77 +10,56 @@ import net.hedtech.banner.general.communication.population.CommunicationPopulati
 import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculation
 import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculationStatus
 import net.hedtech.banner.general.communication.population.query.CommunicationPopulationQuery
-import net.hedtech.banner.general.communication.population.query.CommunicationPopulationQueryVersion
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.context.SecurityContextHolder
 
 import java.util.concurrent.TimeUnit
 
-
 class ActionItemPostSelectionDetailReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase {
     def actionItemPostSelectionDetailReadOnlyService
-    def communicationPopulationCompositeService
-    def communicationPopulationQueryCompositeService
     def communicationFolderService
+    def actionItemPostService
+
 
     @Before
     void setUp() {
         formContext = ['GUAGMNU', 'SELFSERVICE']
         //formContext = ['GUAGMNU']
         super.setUp()
+        loginSSB( 'CSRADM001', '111111' )
     }
 
 
     @After
     void tearDown() {
         super.tearDown()
+        logout()
     }
 
 
     @Test
     void testFetchSelectionIds() {
-
-        def auth = selfServiceBannerAuthenticationProvider.authenticate( new UsernamePasswordAuthenticationToken( 'BCMADMIN', '111111' ) )
-        SecurityContextHolder.getContext().setAuthentication( auth )
-
-        CommunicationPopulationQuery populationQuery = communicationPopulationQueryCompositeService.createPopulationQuery( newPopulationQuery(
-                "testPopForFetchSelectionIdsTest" ) )
-        CommunicationPopulationQueryVersion queryVersion = communicationPopulationQueryCompositeService.publishPopulationQuery( populationQuery )
-        populationQuery = queryVersion.query
-
-        CommunicationPopulation population = communicationPopulationCompositeService.createPopulationFromQuery( populationQuery,
-                "testPopulationForFetchSelectionIdsTest" )
-
-        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy(
-                population.id, 'BCMADMIN' )
-
-
+        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'Quinley Student Population' )[0]
+        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( population.id, 'CSRAOR001' )
         def isAvailable = {
             def theCalculation = CommunicationPopulationCalculation.get( it )
             println "in wait calc: " + theCalculation
             theCalculation.refresh()
             return theCalculation.status == CommunicationPopulationCalculationStatus.AVAILABLE
         }
-
         // Not getting to available. disabling for now
         //assertTrueWithRetry( isAvailable, populationCalculation.id, 15, 5 )
         assertTrueWithRetry( isAvailable, populationCalculation.id, 1, 5 )
-
-        ActionItemPost aip = newAIP()
-        aip.save()
-        // lookup. save should have worked. Use "stopped" to avoid job getting processed?
-        List<ActionItemPost> aipToUse = ActionItemPost.findAll()
-
-        def result = actionItemPostSelectionDetailReadOnlyService.fetchSelectionIds( aipToUse[0]?.id )
+        ActionItemPost aip = newAIP( populationCalculation.id )
+        aip = actionItemPostService.create( aip )
+        def result = actionItemPostSelectionDetailReadOnlyService.fetchSelectionIds( aip.id )
         assert result.size() > 0
     }
 
 
-    private def newAIP() {
+    private def newAIP( populationCalculationId ) {
         new ActionItemPost(
                 populationListId: 1L,
                 populationVersionId: 1L,
@@ -98,7 +77,7 @@ class ActionItemPostSelectionDetailReadOnlyServiceIntegrationTests extends BaseI
                 postingStartedDate: null,
                 postingStopDate: null,
                 aSyncJobId: "la43j45h546k56g6f6r77a7kjfn",
-                populationCalculationId: 1L,
+                populationCalculationId: populationCalculationId,
                 postingErrorCode: ActionItemErrorCode.DATA_FIELD_SQL_ERROR,
                 postingErrorText: null,
                 aSyncGroupId: null,
@@ -137,7 +116,7 @@ class ActionItemPostSelectionDetailReadOnlyServiceIntegrationTests extends BaseI
     private def newPopulationQuery( String queryName, int maxRows = 5 ) {
         def populationQuery = new CommunicationPopulationQuery(
                 // Required fields
-                folder: setUpDefaultFolder(  ),
+                folder: setUpDefaultFolder(),
                 name: queryName,
                 description: "test description",
                 queryString: "select spriden_pidm from spriden where rownum <= ${maxRows} and spriden_change_ind is null"

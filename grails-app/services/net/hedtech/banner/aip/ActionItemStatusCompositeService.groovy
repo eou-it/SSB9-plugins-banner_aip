@@ -128,9 +128,9 @@ class ActionItemStatusCompositeService {
         }
         ActionItemStatus status = new ActionItemStatus(
                 actionItemStatus: title,
-                actionItemStatusActive: 'Y',
-                actionItemStatusBlockedProcess: 'N',
-                actionItemStatusSystemRequired: "N"
+                actionItemStatusActive: AIPConstants.YES_IND,
+                actionItemStatusBlockedProcess: AIPConstants.NO_IND,
+                actionItemStatusSystemRequired: AIPConstants.NO_IND
         )
         ActionItemStatus newStatus
         def success = false
