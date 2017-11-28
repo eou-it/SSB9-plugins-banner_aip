@@ -332,6 +332,120 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
     }
 
 
+    @Test
+    void sendAsynchronousPostItem() {
+        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'Quinley Student Population' )[0]
+        SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
+        CommunicationPopulationListView populationListView = actionItemProcessingCommonService.fetchPopulationListForSend( 'p', [max: 10, offset: 0] )[0]
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+        def actionItemGroup = actionItemGroups[0]
+        List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
+        def requestMap = [:]
+        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
+        requestMap.populationId = populationListView.id
+        requestMap.referenceId = UUID.randomUUID().toString()
+        requestMap.postingActionItemGroupId = actionItemGroup.id
+        requestMap.postNow = true
+        requestMap.recalculateOnPost = false
+        requestMap.displayStartDate = testingDateFormat.format( new Date() )
+        requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
+        requestMap.scheduledStartDate = new Date() + 1
+        requestMap.actionItemIds = actionItemIds
+        def result = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
+        assert result.success == true
+        assert result.savedJob != null
+        ActionItemPost post = result.savedJob
+        assert post.id != null
+        assert post.postingErrorText == null
+        assert post.lastModifiedBy == 'CSRADM001'
+
+    }
+
+
+    @Test
+    void sendAsynchronousPostItemInvalidScheduledDate() {
+        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'Quinley Student Population' )[0]
+        SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
+        CommunicationPopulationListView populationListView = actionItemProcessingCommonService.fetchPopulationListForSend( 'p', [max: 10, offset: 0] )[0]
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+        def actionItemGroup = actionItemGroups[0]
+        List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
+        def requestMap = [:]
+        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
+        requestMap.populationId = populationListView.id
+        requestMap.referenceId = UUID.randomUUID().toString()
+        requestMap.postingActionItemGroupId = actionItemGroup.id
+        requestMap.scheduled = true
+        requestMap.recalculateOnPost = false
+        requestMap.displayStartDate = testingDateFormat.format( new Date() )
+        requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
+        requestMap.scheduledStartDate = new Date() - 1
+        requestMap.actionItemIds = actionItemIds
+        try {
+            actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
+        } catch (ApplicationException e) {
+            assertApplicationException( e, 'preCreate.validation.display.absolete.schedule.date' )
+        }
+
+    }
+
+
+    @Test
+    void sendAsynchronousPostItemInvalidDisplayStartDate() {
+        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'Quinley Student Population' )[0]
+        SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
+        CommunicationPopulationListView populationListView = actionItemProcessingCommonService.fetchPopulationListForSend( 'p', [max: 10, offset: 0] )[0]
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+        def actionItemGroup = actionItemGroups[0]
+        List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
+        def requestMap = [:]
+        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
+        requestMap.populationId = populationListView.id
+        requestMap.referenceId = UUID.randomUUID().toString()
+        requestMap.postingActionItemGroupId = actionItemGroup.id
+        requestMap.postNow = true
+        requestMap.recalculateOnPost = false
+        requestMap.displayStartDate = testingDateFormat.format( new Date() - 1 )
+        requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
+        requestMap.scheduledStartDate = new Date()
+        requestMap.actionItemIds = actionItemIds
+        try {
+            actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
+        } catch (ApplicationException e) {
+            assertApplicationException( e, 'preCreate.validation.absolete.display.start.date' )
+        }
+
+    }
+
+
+    @Test
+    void sendAsynchronousPostItemInvalidDisplayEndDate() {
+        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'Quinley Student Population' )[0]
+        SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
+        CommunicationPopulationListView populationListView = actionItemProcessingCommonService.fetchPopulationListForSend( 'p', [max: 10, offset: 0] )[0]
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+        def actionItemGroup = actionItemGroups[0]
+        List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
+        def requestMap = [:]
+        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
+        requestMap.populationId = populationListView.id
+        requestMap.referenceId = UUID.randomUUID().toString()
+        requestMap.postingActionItemGroupId = actionItemGroup.id
+        requestMap.postNow = true
+        requestMap.recalculateOnPost = false
+        requestMap.displayStartDate = testingDateFormat.format( new Date() )
+        requestMap.displayEndDate = testingDateFormat.format( new Date() - 1 )
+        requestMap.scheduledStartDate = new Date() - 1
+        requestMap.actionItemIds = actionItemIds
+        try {
+            actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
+        } catch (ApplicationException e) {
+            assertApplicationException( e, 'preCreate.validation.display.start.date.more.than.display.end.date' )
+        }
+
+    }
+
+
     private def newAIP() {
         getInstance()
     }
