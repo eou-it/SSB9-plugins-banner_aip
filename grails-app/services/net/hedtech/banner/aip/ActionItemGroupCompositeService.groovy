@@ -22,6 +22,7 @@ class ActionItemGroupCompositeService {
     def actionItemGroupService
     def actionItemGroupAssignService
     def actionItemGroupAssignReadOnlyService
+    def groupFolderReadOnlyService
 
     /**
      * Creates a new group
