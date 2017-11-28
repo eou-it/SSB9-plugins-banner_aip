@@ -263,7 +263,7 @@ class ActionItemPostCompositeService {
         }
 
         groupSend.markStopped()
-        groupSend = savePost( groupSend )
+        groupSend = actionItemPostService.update( groupSend )
 
         if (groupSend.aSyncJobId != null) {
             this.schedulerJobService.deleteScheduledJob( groupSend.aSyncJobId, groupSend.aSyncGroupId )
@@ -284,7 +284,7 @@ class ActionItemPostCompositeService {
         LoggerUtility.debug( LOGGER, "Completing group send with id = " + groupSendId + "." )
         ActionItemPost aGroupSend = (ActionItemPost) actionItemPostService.get( groupSendId )
         aGroupSend.markComplete()
-        savePost( aGroupSend )
+        actionItemPostService.update( aGroupSend )
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -404,7 +404,7 @@ class ActionItemPostCompositeService {
      * This method is called by the scheduler to create the group send items and move the state of
      * the group send to processing.
      */
-    private ActionItemPost generatePostItems( Map parameters ) {
+    ActionItemPost generatePostItems( Map parameters ) {
         Long groupSendId = parameters.get( "groupSendId" ) as Long
         assert (groupSendId)
         LoggerUtility.debug( LOGGER, "Calling generateGroupSendItems for groupSendId = ${groupSendId}." )
@@ -426,7 +426,7 @@ class ActionItemPostCompositeService {
     }
 
 
-    private ActionItemPost schedulePostImmediately( ActionItemPost groupSend, String bannerUser ) {
+    ActionItemPost schedulePostImmediately( ActionItemPost groupSend, String bannerUser ) {
         SchedulerJobContext jobContext = new SchedulerJobContext(
                 groupSend.aSyncJobId != null ? groupSend.aSyncJobId : UUID.randomUUID().toString() )
                 .setBannerUser( bannerUser )
@@ -437,17 +437,21 @@ class ActionItemPostCompositeService {
 
         SchedulerJobReceipt jobReceipt = schedulerJobService.scheduleNowServiceMethod( jobContext )
         groupSend.markQueued( jobReceipt.jobId, jobReceipt.groupId )
-        groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
-        groupSend
+        actionItemPostService.update( groupSend )
     }
 
-
-    private ActionItemPost schedulePost( ActionItemPost groupSend, String bannerUser ) {
+    /**
+     * Schedules the action item posting
+     * @param groupSend
+     * @param bannerUser
+     * @param doPost
+     * @return
+     */
+    ActionItemPost schedulePost( ActionItemPost groupSend, String bannerUser, boolean doPost = true ) {
         Date now = new Date( System.currentTimeMillis() )
         if (now.after( groupSend.postingScheduleDateTime )) {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService.class, "invalidScheduledDate" )
         }
-
         SchedulerJobContext jobContext = new SchedulerJobContext(
                 groupSend.aSyncJobId != null ? groupSend.aSyncJobId : UUID.randomUUID().toString() )
                 .setBannerUser( bannerUser )
@@ -465,20 +469,17 @@ class ActionItemPostCompositeService {
 
         SchedulerJobReceipt jobReceipt = schedulerJobService.scheduleServiceMethod( jobContext )
         groupSend.markScheduled( jobReceipt.jobId, jobReceipt.groupId )
-        groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
-        groupSend
+        actionItemPostService.update( groupSend )
     }
 
-
-    private ActionItemPost generatePostItemsImpl( ActionItemPost groupSend ) {
+    /**
+     *
+     * @param groupSend
+     * @return
+     */
+    ActionItemPost generatePostItemsImpl( ActionItemPost groupSend ) {
         createPostItems( groupSend )
         groupSend.markProcessing()
-        groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
-        groupSend
-    }
-
-
-    private ActionItemPost savePost( ActionItemPost groupSend ) {
         actionItemPostService.update( groupSend )
     }
 

@@ -206,7 +206,7 @@ class ActionItemPost implements Serializable {
 
     static constraints = {
         version( nullable: true, maxSize: 19 )
-        postingCreationDateTime(nullable: false)
+        postingCreationDateTime( nullable: false )
         populationListId( nullable: false, maxSize: 19 )
         postingActionItemGroupId( nullable: false, maxSize: 19 )
         postingName( nullable: false, maxSize: 2048 )
@@ -298,8 +298,7 @@ class ActionItemPost implements Serializable {
         return query
     }
 
-
-    static List fetchCompleted() {
+    /*static List fetchCompleted() {//TODO Need to remove if not used
         def results
         ActionItemPostWork.withSession {session ->
             results = session.getNamedQuery( 'ActionItemPost.fetchCompleted' )
@@ -317,7 +316,7 @@ class ActionItemPost implements Serializable {
             }
             eq( 'populationCalculationId', populationCalculationId )
         }[0]
-    }
+    }*/
 
     /**
      * Checks if posting name is already present

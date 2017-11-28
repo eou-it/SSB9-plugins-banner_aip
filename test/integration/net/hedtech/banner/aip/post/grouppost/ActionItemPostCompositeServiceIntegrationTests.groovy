@@ -7,6 +7,7 @@ import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.ActionItemGroupAssign
 import net.hedtech.banner.aip.post.job.ActionItemJob
 import net.hedtech.banner.aip.post.job.ActionItemJobStatus
+import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.population.CommunicationPopulation
 import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculation
 import net.hedtech.banner.general.communication.population.CommunicationPopulationListView
@@ -142,6 +143,84 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
     }
 
 
+    @Test
+    void generatePostItemsImpl() {
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+        def actionItemGroup = actionItemGroups[0]
+        List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
+        actionItemIds.each {
+            ActionItemPostDetail groupDetail = new ActionItemPostDetail(
+                    actionItemPostId: aip.id,
+                    actionItemId: it
+            )
+            actionItemPostDetailService.create( groupDetail )
+        }
+        actionItemPostCompositeService.generatePostItemsImpl( aip )
+        assert aip.postingCurrentState == ActionItemPostExecutionState.Processing
+    }
+
+
+    @Test
+    void schedulePost() {
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+        def actionItemGroup = actionItemGroups[0]
+        List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
+        actionItemIds.each {
+            ActionItemPostDetail groupDetail = new ActionItemPostDetail(
+                    actionItemPostId: aip.id,
+                    actionItemId: it
+            )
+            actionItemPostDetailService.create( groupDetail )
+        }
+        actionItemPostCompositeService.schedulePost( aip, 'CSRAOR001' )
+        assert aip.postingCurrentState == ActionItemPostExecutionState.Scheduled
+    }
+
+
+    @Test
+    void schedulePostImmediately() {
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+        def actionItemGroup = actionItemGroups[0]
+        List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
+        actionItemIds.each {
+            ActionItemPostDetail groupDetail = new ActionItemPostDetail(
+                    actionItemPostId: aip.id,
+                    actionItemId: it
+            )
+            actionItemPostDetailService.create( groupDetail )
+        }
+        actionItemPostCompositeService.schedulePostImmediately( aip, 'CSRAOR001' )
+        assert aip.postingCurrentState == ActionItemPostExecutionState.Queued
+    }
+
+
+    @Test
+    void generatePostItems() {
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        actionItemPostCompositeService.generatePostItems( [groupSendId: aip.id] )
+        assert aip.postingCurrentState == ActionItemPostExecutionState.Processing
+    }
+
+
+    @Test
+    void generatePostItemsPostingNotFound() {
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        try {
+            actionItemPostCompositeService.generatePostItems( [groupSendId: -99] )
+        }catch (ApplicationException e ){
+            assertApplicationException( e, 'NotFoundException:[id=null, entityClassName=null]' )
+        }
+    }
+
+
     private def newAIP() {
         getInstance()
     }
@@ -164,7 +243,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.recalculateOnPost = false
         requestMap.displayStartDate = testingDateFormat.format( new Date() )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
-        requestMap.scheduledStartDate = new Date()
+        requestMap.scheduledStartDate = new Date() + 1
         requestMap.actionItemIds = actionItemIds
         def actionItemPost = actionItemPostCompositeService.getActionPostInstance( requestMap, springSecurityService.getAuthentication()?.user )
         actionItemPost.populationCalculationId = populationCalculation.id
