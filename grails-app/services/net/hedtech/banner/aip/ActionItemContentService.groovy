@@ -7,13 +7,20 @@ import net.hedtech.banner.service.ServiceBase
 import org.springframework.transaction.annotation.Transactional
 
 
-
+/**
+ * Service class for Action Item Content
+ */
 class ActionItemContentService extends ServiceBase {
 
     boolean transactional = true
 
+    /**
+     *
+     * @param actionItemId
+     * @return
+     */
     @Transactional(readOnly = true)
     def listActionItemContentById( Long actionItemId) {
-        return ActionItemContent.fetchActionItemContentById( actionItemId )
+        ActionItemContent.fetchActionItemContentById( actionItemId )
     }
 }

@@ -18,6 +18,9 @@ class ActionItemCompositeService {
     static transactional = true
     def actionItemService
     def springSecurityService
+    def actionItemReadOnlyCompositeService
+    def actionItemStatusRuleService
+    def actionItemContentService
 
     /**
      * Adds Action Item
@@ -58,5 +61,45 @@ class ActionItemCompositeService {
                 newActionItem: savedActionItem
         ]
     }
+
+    /**
+     * Deletes Action items
+     *
+     * @param actionItemId
+     * @return
+     */
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
+    def deleteActionItem( actionItemId ) {
+        def success = false
+        def message
+        def postingInd = actionItemService.getActionItemById( actionItemId ).postedIndicator
+        def checkDeletable = actionItemReadOnlyCompositeService.checkIfActionItemDeletable( actionItemId, postingInd )
+        if (!checkDeletable.deletable) {
+            return [success: success,
+                    message: checkDeletable.message]
+        }
+        ActionItemContent actionItemContent = actionItemContentService.listActionItemContentById( actionItemId )
+        if (actionItemContent) {
+            actionItemContentService.delete( actionItemContent )
+        }
+        List<ActionItemStatusRule> list = actionItemStatusRuleService.getActionItemStatusRuleByActionItemId( actionItemId )
+        list.each {
+            actionItemStatusRuleService.delete( it )
+        }
+        try {
+            ActionItem actionItem = actionItemService.get( actionItemId )
+            actionItemService.delete( actionItem )
+            success = true
+            message = MessageHelper.message('action.item.delete.success')
+        } catch (ApplicationException e) {
+            success = false
+            message = e.message
+        }
+        [
+                success: success,
+                message: message
+        ]
+    }
+
 }
 

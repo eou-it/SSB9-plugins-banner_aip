@@ -11,14 +11,16 @@ import net.hedtech.banner.service.ServiceBase
  */
 class UserActionItemService extends ServiceBase {
     static final String BAD_DATA_ERROR = '@@r1:BadDataError@@' // generic unable to insert
-    static final String ALREADY_EXISTS_CONDITION = '@@r1:AlreadyExistsCondition@@' // violated insert rule (expected condition)
+    static final String ALREADY_EXISTS_CONDITION = '@@r1:AlreadyExistsCondition@@'
+    // violated insert rule (expected condition)
+
     /**
      *
-     * @param actionItemId
+     * @param userActionItemsId
      * @return
      */
-    def getActionItemById( Long actionItemId ) {
-        UserActionItem.fetchUserActionItemById( actionItemId )
+    def getActionItemById( Long userActionItemsId ) {
+        UserActionItem.fetchUserActionItemById( userActionItemsId )
     }
 
     /**
