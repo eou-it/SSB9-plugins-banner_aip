@@ -34,25 +34,27 @@ class ActionItemCompositeService {
         def success = false
         def message
         def aipUser = AipControllerUtils.getPersonForAip( [studentId: map.studentId], user.pidm )
-        ActionItem ai = new ActionItem(
-                folderId: map.folderId,
-                status: map.status ? AIPConstants.STATUS_MAP.get( map.status ) : null,
-                postedIndicator: AIPConstants.NO_IND,
-                title: map.title,
-                name: map.name,
-                creatorId: user.username,
-                userId: aipUser.bannerId,
-                description: map.description,
-                activityDate: new Date()
-        )
-        try {
-            savedActionItem = actionItemService.create( ai )
-            success = true
-        } catch (ApplicationException e) {
-            if (ActionItemService.FOLDER_VALIDATION_ERROR.equals( e.getMessage() )) {
-                message = MessageHelper.message( e.getDefaultMessage(), MessageFormat.format( "{0,number,#}", ai.folderId ) )
-            } else {
-                message = MessageHelper.message( e.getDefaultMessage() )
+        if (aipUser) {
+            ActionItem ai = new ActionItem(
+                    folderId: map.folderId,
+                    status: map.status ? AIPConstants.STATUS_MAP.get( map.status ) : null,
+                    postedIndicator: AIPConstants.NO_IND,
+                    title: map.title,
+                    name: map.name,
+                    creatorId: user.username,
+                    userId: aipUser.bannerId,
+                    description: map.description,
+                    activityDate: new Date()
+            )
+            try {
+                savedActionItem = actionItemService.create( ai )
+                success = true
+            } catch (ApplicationException e) {
+                if (ActionItemService.FOLDER_VALIDATION_ERROR.equals( e.getMessage() )) {
+                    message = MessageHelper.message( e.getDefaultMessage(), MessageFormat.format( "{0,number,#}", ai.folderId ) )
+                } else {
+                    message = MessageHelper.message( e.getDefaultMessage() )
+                }
             }
         }
         [
