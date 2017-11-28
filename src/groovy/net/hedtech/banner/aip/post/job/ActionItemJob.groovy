@@ -6,6 +6,7 @@ package net.hedtech.banner.aip.post.job
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import net.hedtech.banner.aip.post.ActionItemErrorCode
+import net.hedtech.banner.aip.post.grouppost.ActionItemPostWorkExecutionState
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTask
 
 import javax.persistence.*
@@ -22,6 +23,13 @@ import javax.persistence.*
                 query = """ FROM ActionItemJob job
                             WHERE job.status = :status_
                             ORDER BY job.id ASC """
+        ),
+        @NamedQuery(name = "ActionItemJob.stopPendingAndDispatchedJobs",
+                query = """UPDATE ActionItemJob aij SET aij.status = :updateExecutionState,
+                                   aij.lastModified = current_date 
+                                   WHERE  aij.status IN (:checkExecutionState)
+                                          and aij.referenceId in (select aiw.referenceId from ActionItemPostWork aiw 
+                                          WHERE aiw.actionItemGroupSend.id = :groupSendId and aiw.currentExecutionState = :checkPostWorkExecutionState)"""
         ),
         @NamedQuery(name = "ActionItemJob.fetchByStatusAndReferenceId",
                 query = """ FROM ActionItemJob job
@@ -145,6 +153,22 @@ class ActionItemJob implements AsynchronousTask {
                     .setFirstResult( 0 )
                     .setMaxResults( Integer.MAX_VALUE )
                     .list()
+        }
+    }
+
+    /**
+     *
+     * @param groupSendId
+     * @return
+     */
+    static def stopPendingAndDispatchedJobs( Long groupSendId ) {
+        ActionItemJob.withSession {session ->
+            session.getNamedQuery( 'ActionItemJob.stopPendingAndDispatchedJobs' )
+                    .setLong( 'groupSendId', groupSendId )
+                    .setParameter( 'updateExecutionState', ActionItemJobStatus.STOPPED )
+                    .setParameter( 'checkPostWorkExecutionState', ActionItemPostWorkExecutionState.Complete )
+                    .setParameterList( 'checkExecutionState', [ActionItemJobStatus.PENDING, ActionItemJobStatus.DISPATCHED] )
+                    .executeUpdate()
         }
     }
 }

@@ -54,4 +54,16 @@ class ActionItemJobService extends ServiceBase {
         }
     }
 
+
+    /**
+       *
+       * @param groupSendId
+       * @return
+       */
+      static def stopPendingAndDispatchedJobs( Long groupSendId ) {
+         def x = ActionItemJob.stopPendingAndDispatchedJobs(groupSendId)
+          println 'X' + x
+
+      }
+
 }
