@@ -117,16 +117,6 @@ class ActionItemJob implements AsynchronousTask {
     // Read Only fields that should be protected against update
     public static readonlyProperties = ['id']
 
-
-    ActionItemJobStatus getStatus() {
-        return status
-    }
-
-
-    void setStatus( ActionItemJobStatus status ) {
-        this.status = status
-    }
-
     /**
      * Lists Pending Jobs
      * @param max
