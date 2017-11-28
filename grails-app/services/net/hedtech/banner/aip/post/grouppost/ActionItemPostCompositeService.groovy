@@ -429,7 +429,7 @@ class ActionItemPostCompositeService {
 
     private ActionItemPost schedulePostImmediately( ActionItemPost groupSend, String bannerUser ) {
         SchedulerJobContext jobContext = new SchedulerJobContext(
-                groupSend.postingJobId != null ? groupSend.postingJobId : UUID.randomUUID().toString() )
+                groupSend.aSyncJobId != null ? groupSend.aSyncJobId : UUID.randomUUID().toString() )
                 .setBannerUser( bannerUser )
                 .setMepCode( groupSend.vpdiCode )
                 .setJobHandle( "actionItemPostCompositeService", "generatePostItemsFired" )
@@ -450,7 +450,7 @@ class ActionItemPostCompositeService {
         }
 
         SchedulerJobContext jobContext = new SchedulerJobContext(
-                groupSend.postingJobId != null ? groupSend.postingJobId : UUID.randomUUID().toString() )
+                groupSend.aSyncJobId != null ? groupSend.aSyncJobId : UUID.randomUUID().toString() )
                 .setBannerUser( bannerUser )
                 .setMepCode( groupSend.vpdiCode )
                 .setScheduledStartDate( groupSend.postingScheduleDateTime )
