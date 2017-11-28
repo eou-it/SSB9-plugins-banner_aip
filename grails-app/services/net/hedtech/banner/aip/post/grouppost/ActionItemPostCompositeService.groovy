@@ -271,7 +271,7 @@ class ActionItemPostCompositeService {
         }
 
         // fetch any post jobs for this group send and marked as stopped
-        stopPendingAndDispatchedJobs(groupSend.id)
+        stopPendingAndDispatchedJobs( groupSend.id )
         actionItemPostWorkService.updateStateToStop( groupSend )
         groupSend
     }
@@ -488,8 +488,9 @@ class ActionItemPostCompositeService {
      *
      * @param groupSendId the long id of the group send.
      */
-    private void deleteActionItemJobsByGroupSendId( Long groupSendId ) {
-        LoggerUtility.debug( LOGGER, "Attempting to delete all actionItem jobs referenced by group send id = ${groupSendId}." )
+    void deleteActionItemJobsByGroupSendId( Long groupSendId ) {
+        actionItemJobService.deleteJobForAPostingId( groupSendId )
+        /*LoggerUtility.debug( LOGGER, "Attempting to delete all actionItem jobs referenced by group send id = ${groupSendId}." )
         Sql sql = new Sql( sessionFactory.getCurrentSession().connection() )
         try {
             int rows = sql.executeUpdate( "DELETE FROM gcbajob a WHERE EXISTS (SELECT b.gcraiim_surrogate_id FROM gcraiim b, gcbapst c WHERE a" +
@@ -503,12 +504,12 @@ class ActionItemPostCompositeService {
             throw e
         } finally {
             sql?.close()
-        }
+        }*/
     }
 
 
     void stopPendingAndDispatchedJobs( Long groupSendId ) {
-        actionItemJobService.stopPendingAndDispatchedJobs(groupSendId)
+        actionItemJobService.stopPendingAndDispatchedJobs( groupSendId )
     }
 
     /**

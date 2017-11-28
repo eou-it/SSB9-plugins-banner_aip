@@ -31,6 +31,10 @@ import javax.persistence.*
                                           and aij.referenceId in (select aiw.referenceId from ActionItemPostWork aiw 
                                           WHERE aiw.actionItemGroupSend.id = :groupSendId and aiw.currentExecutionState = :checkPostWorkExecutionState)"""
         ),
+        @NamedQuery(name = "ActionItemJob.deleteJobForAPostingId",
+                query = """DELETE FROM ActionItemJob aij WHERE  EXISTS  (select aiw.id from ActionItemPostWork aiw, ActionItemPost  aip
+                                                  WHERE aij.referenceId = aiw.referenceId and aiw.actionItemGroupSend.id = aip.id and aip.id = :groupSendId)"""
+        ),
         @NamedQuery(name = "ActionItemJob.fetchByStatusAndReferenceId",
                 query = """ FROM ActionItemJob job
                             WHERE job.status = :status_
@@ -161,4 +165,17 @@ class ActionItemJob implements AsynchronousTask {
                     .executeUpdate()
         }
     }
+
+    /**
+         *
+         * @param groupSendId
+         * @return
+         */
+        static def deleteJobForAPostingId( Long groupSendId ) {
+            ActionItemJob.withSession {session ->
+                session.getNamedQuery( 'ActionItemJob.deleteJobForAPostingId' )
+                        .setLong( 'groupSendId', groupSendId )
+                        .executeUpdate()
+            }
+        }
 }

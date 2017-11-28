@@ -59,9 +59,18 @@ class ActionItemJobService extends ServiceBase {
      * @param groupSendId
      * @return
      */
-    static void stopPendingAndDispatchedJobs( Long groupSendId ) {
+    void stopPendingAndDispatchedJobs( Long groupSendId ) {
         def count = ActionItemJob.stopPendingAndDispatchedJobs( groupSendId )
         LoggerUtility.debug( LOGGER, 'Number of updates ' + count )
     }
 
+    /**
+     *
+     * @param groupSendId
+     * @return
+     */
+    void deleteJobForAPostingId( Long groupSendId ) {
+        def count = ActionItemJob.deleteJobForAPostingId( groupSendId )
+        LoggerUtility.debug( LOGGER, 'Number of delete ' + count )
+    }
 }

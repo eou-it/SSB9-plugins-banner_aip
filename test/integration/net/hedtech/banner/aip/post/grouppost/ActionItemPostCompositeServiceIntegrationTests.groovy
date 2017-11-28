@@ -102,6 +102,46 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
     }
 
 
+    @Test
+    void deleteJobs() {
+        def oldCount = actionItemJobService.list( [max: Integer.MAX_VALUE] ).size()
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
+        def actionItemGroup = actionItemGroups[0]
+        List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
+        actionItemIds.each {
+            ActionItemPostDetail groupDetail = new ActionItemPostDetail(
+                    actionItemPostId: aip.id,
+                    actionItemId: it
+            )
+            actionItemPostDetailService.create( groupDetail )
+        }
+        actionItemPostCompositeService.createPostItems( aip )
+        List<ActionItemPostWork> list = ActionItemPostWork.findAllByActionItemGroupSend( aip )
+        list.each {
+            it.currentExecutionState = ActionItemPostWorkExecutionState.Complete
+            actionItemPostWorkService.update( it )
+        }
+        def refList = []
+        list = ActionItemPostWork.findAllByActionItemGroupSend( aip )
+        list.each {
+            //println 'ActionItemPostWork ' + it
+            assert it.currentExecutionState == ActionItemPostWorkExecutionState.Complete
+            refList.push( it.referenceId )
+            ActionItemJob actionItemJob = new ActionItemJob( referenceId: it.referenceId, status: ActionItemJobStatus.PENDING, creationDateTime: new Date() )
+            actionItemJob = actionItemJobService.create( actionItemJob )
+            assert actionItemJob.referenceId == it.referenceId
+            assert actionItemJob.status == ActionItemJobStatus.PENDING
+            assert actionItemJob.id != null
+            println 'actionItemJob ' + actionItemJob
+        }
+        actionItemPostCompositeService.deleteActionItemJobsByGroupSendId( aip.id )
+        def newCountPostDelete = actionItemJobService.list( [max: Integer.MAX_VALUE] ).size()
+        assert newCountPostDelete == oldCount
+    }
+
+
     private def newAIP() {
         getInstance()
     }
@@ -130,4 +170,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         actionItemPost.populationCalculationId = populationCalculation.id
         actionItemPost
     }
+
+
 }
