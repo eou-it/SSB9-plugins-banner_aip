@@ -14,6 +14,7 @@ class ActionItemGroupCompositeServiceIntegrationTests extends BaseIntegrationTes
 
     def actionItemGroupCompositeService
     def actionItemService
+    def actionItemGroupService
 
 
     @Before
@@ -97,6 +98,51 @@ class ActionItemGroupCompositeServiceIntegrationTests extends BaseIntegrationTes
         actionItemGroupCompositeService.updateActionItemGroupAssignment( map )
         list = ActionItemGroupAssign.findAllByGroupId( ActionItemGroup.findByName( 'Enrollment' ).id )
         assert list.size() == 1
+    }
+
+
+    @Test
+    void deleteActionItemGroup() {
+        Map map = [
+                groupTitle : 'groupTitle',
+                groupName  : 'groupName',
+                folderId   : CommunicationFolder.findByName( 'Student' ).id,
+                groupDesc  : 'groupDesc',
+                postingInd : 'N',
+                groupStatus: 'Draft',
+        ]
+        def result = actionItemGroupCompositeService.createGroup( map )
+        assert result.success == true
+        assert result.message == null
+        assert result.group.groupStatus == 'Draft'
+        assert result.group.groupTitle == 'groupTitle'
+        result = actionItemGroupCompositeService.deleteGroup( [groupId: result.group.groupId] )
+        assert result.message == 'Delete successful.'
+        assert result.success == true
+    }
+
+
+    @Test
+    void deleteActionItemGroupFailedCase() {
+        Map map = [
+                groupTitle : 'groupTitle',
+                groupName  : 'groupName',
+                folderId   : CommunicationFolder.findByName( 'Student' ).id,
+                groupDesc  : 'groupDesc',
+                postingInd : 'N',
+                groupStatus: 'Draft',
+        ]
+        def result = actionItemGroupCompositeService.createGroup( map )
+        assert result.success == true
+        assert result.message == null
+        assert result.group.groupStatus == 'Draft'
+        assert result.group.groupTitle == 'groupTitle'
+        ActionItemGroup group = ActionItemGroup.get( result.group.groupId )
+        group.postingInd = 'Y'
+        actionItemGroupService.update( group )
+        result = actionItemGroupCompositeService.deleteGroup( [groupId: result.group.groupId] )
+        assert result.message == 'The group is associated with assigned action items or a submitted Post Action Items job and cannot be deleted.'
+        assert result.success == false
     }
 
 }

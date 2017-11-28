@@ -13,6 +13,7 @@ import org.junit.Test
 class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemCompositeService
+    def actionItemService
 
 
     @Before
@@ -54,5 +55,31 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         assert result.success == false
         assert result.newActionItem == null
         assert result.message == 'Save failed. The Name can not be null or empty.'
+    }
+
+
+    @Test
+    void deleteActionItem() {
+        def result = actionItemCompositeService.addActionItem( [folderId: CommunicationFolder.findByName( 'Student' ).id, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
+        assert result.success == true
+        assert result.newActionItem.description == 'description'
+        ActionItem ai = result.newActionItem
+        result = actionItemCompositeService.deleteActionItem( ai.id )
+        assert result.message == 'Delete successful'
+        assert result.success == true
+    }
+
+
+    @Test
+    void deleteActionItemFailedCase() {
+        def result = actionItemCompositeService.addActionItem( [folderId: CommunicationFolder.findByName( 'Student' ).id, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
+        assert result.success == true
+        assert result.newActionItem.description == 'description'
+        ActionItem ai = result.newActionItem
+        ai.postedIndicator = 'Y'
+        actionItemService.update( ai )
+        result = actionItemCompositeService.deleteActionItem( ai.id )
+        assert result.message == 'Cannot be deleted. Action item has been posted.'
+        assert result.success == false
     }
 }
