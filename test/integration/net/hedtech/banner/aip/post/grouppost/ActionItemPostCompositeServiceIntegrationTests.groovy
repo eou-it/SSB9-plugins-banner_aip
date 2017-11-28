@@ -5,12 +5,15 @@ package net.hedtech.banner.aip.post.grouppost
 
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.ActionItemGroupAssign
+import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.aip.post.job.ActionItemJob
 import net.hedtech.banner.aip.post.job.ActionItemJobStatus
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.population.CommunicationPopulation
 import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculation
 import net.hedtech.banner.general.communication.population.CommunicationPopulationListView
+import net.hedtech.banner.general.scheduler.SchedulerErrorContext
+import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
@@ -182,6 +185,19 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
 
     @Test
+    void schedulePostValidateInvalidDate() {
+        ActionItemPost aip = newAIP()
+        aip.postingScheduleDateTime = new Date() - 2
+        aip = actionItemPostService.create( aip )
+        try {
+            actionItemPostCompositeService.schedulePost( aip, 'CSRAOR001' )
+        } catch (ApplicationException e) {
+            assertApplicationException( e, 'invalidScheduledDate' )
+        }
+    }
+
+
+    @Test
     void schedulePostImmediately() {
         ActionItemPost aip = newAIP()
         aip = actionItemPostService.create( aip )
@@ -211,13 +227,108 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     @Test
     void generatePostItemsPostingNotFound() {
-        ActionItemPost aip = newAIP()
-        aip = actionItemPostService.create( aip )
         try {
             actionItemPostCompositeService.generatePostItems( [groupSendId: -99] )
-        }catch (ApplicationException e ){
+        } catch (ApplicationException e) {
             assertApplicationException( e, 'NotFoundException:[id=null, entityClassName=null]' )
         }
+    }
+
+
+    @Test
+    void calculatePopulationVersionForGroupSendGroupSendNotFound() {
+        try {
+            actionItemPostCompositeService.calculatePopulationVersionForGroupSend( [groupSendId: -99] )
+        } catch (ApplicationException e) {
+            assertApplicationException( e, 'NotFoundException:[id=null, entityClassName=null]' )
+        }
+    }
+
+
+    @Test
+    void scheduledPostCallbackFailedGroupSendNotFound() {
+        try {
+            SchedulerJobContext jobContext = new SchedulerJobContext( 'test' )
+            jobContext.setParameter( 'groupSendId', -99 )
+            SchedulerErrorContext context = new SchedulerErrorContext()
+            context.jobContext = jobContext
+            actionItemPostCompositeService.scheduledPostCallbackFailed( context )
+        } catch (ApplicationException e) {
+            assertApplicationException( e, 'NotFoundException:[id=null, entityClassName=null]' )
+        }
+    }
+
+
+    @Test
+    void calculatePopulationVersionForGroupSend() {
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        actionItemPostCompositeService.calculatePopulationVersionForGroupSend( [groupSendId: aip.id] )
+        assert aip.postingCurrentState == ActionItemPostExecutionState.Processing
+    }
+
+
+    @Test
+    void scheduledPostCallbackFailed() {
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        SchedulerJobContext jobContext = new SchedulerJobContext( 'test' )
+        jobContext.setParameter( 'groupSendId', aip.id )
+        SchedulerErrorContext context = new SchedulerErrorContext()
+        context.jobContext = jobContext
+        context.cause = null
+        actionItemPostCompositeService.scheduledPostCallbackFailed( context )
+        assert aip.postingCurrentState == ActionItemPostExecutionState.Error
+        assert aip.postingErrorCode == ActionItemErrorCode.UNKNOWN_ERROR
+    }
+
+
+    @Test
+    void scheduledPostCallbackFailedWithCause() {
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        SchedulerJobContext jobContext = new SchedulerJobContext( 'test' )
+        jobContext.setParameter( 'groupSendId', aip.id )
+        SchedulerErrorContext context = new SchedulerErrorContext()
+        context.jobContext = jobContext
+        context.cause = new Exception( 'test' )
+        actionItemPostCompositeService.scheduledPostCallbackFailed( context )
+        assert aip.postingCurrentState == ActionItemPostExecutionState.Error
+        assert aip.postingErrorText == new Exception( 'test' ).message
+        assert aip.postingErrorCode == ActionItemErrorCode.UNKNOWN_ERROR
+    }
+
+
+    @Test
+    void assignPopulationVersion() {
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        assert actionItemPostCompositeService.assignPopulationVersion( aip ) != null
+    }
+
+
+    @Test
+    void completePost() {
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        assert actionItemPostCompositeService.completePost( aip.id ).postingCurrentState == ActionItemPostExecutionState.Complete
+    }
+
+
+    @Test
+    void stopPost() {
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        assert actionItemPostCompositeService.stopPost( aip.id ).postingCurrentState == ActionItemPostExecutionState.Stopped
+    }
+
+
+    @Test
+    void deletePost() {
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        actionItemPostCompositeService.deletePost( aip.id )
+        assert ActionItemPost.get( aip.id ) == null
     }
 
 

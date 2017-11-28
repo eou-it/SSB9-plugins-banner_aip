@@ -311,7 +311,7 @@ class ActionItemPostCompositeService {
     }
 
 
-    private CommunicationPopulationVersion assignPopulationVersion( ActionItemPost groupSend ) {
+    CommunicationPopulationVersion assignPopulationVersion( ActionItemPost groupSend ) {
         CommunicationPopulation population = communicationPopulationCompositeService.fetchPopulation( groupSend.populationListId )
         CommunicationPopulationVersion populationVersion
         if (population.changesPending) {
@@ -329,7 +329,7 @@ class ActionItemPostCompositeService {
     }
 
 
-    private ActionItemPost scheduledPostCallbackFailed( SchedulerErrorContext errorContext ) {
+    ActionItemPost scheduledPostCallbackFailed( SchedulerErrorContext errorContext ) {
         Long groupSendId = errorContext.jobContext.getParameter( "groupSendId" ) as Long
         LoggerUtility.debug( LOGGER, "${errorContext.jobContext.errorHandle} called for groupSendId = ${groupSendId} with message = ${errorContext?.cause?.message}" )
         ActionItemPost groupSend = ActionItemPost.get( groupSendId )
@@ -352,7 +352,7 @@ class ActionItemPostCompositeService {
      * This method is called by the scheduler to regenerate a population list specifically for the group send
      * and change the state of the group send to next state.
      */
-    private ActionItemPost calculatePopulationVersionForGroupSend( Map parameters ) {
+    ActionItemPost calculatePopulationVersionForGroupSend( Map parameters ) {
         Long groupSendId = parameters.get( "groupSendId" ) as Long
         assert (groupSendId)
         LoggerUtility.debug( LOGGER, "Calling calculatePopulationVersionForPost for groupSendId = ${groupSendId}." )
