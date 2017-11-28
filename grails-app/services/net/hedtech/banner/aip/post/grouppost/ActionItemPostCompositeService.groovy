@@ -3,7 +3,6 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
-import groovy.sql.Sql
 import net.hedtech.banner.aip.ActionItem
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.common.AIPConstants
@@ -490,21 +489,6 @@ class ActionItemPostCompositeService {
      */
     void deleteActionItemJobsByGroupSendId( Long groupSendId ) {
         actionItemJobService.deleteJobForAPostingId( groupSendId )
-        /*LoggerUtility.debug( LOGGER, "Attempting to delete all actionItem jobs referenced by group send id = ${groupSendId}." )
-        Sql sql = new Sql( sessionFactory.getCurrentSession().connection() )
-        try {
-            int rows = sql.executeUpdate( "DELETE FROM gcbajob a WHERE EXISTS (SELECT b.gcraiim_surrogate_id FROM gcraiim b, gcbapst c WHERE a" +
-                                                  ".gcbajob_aiim_reference_id = b.gcraiim_reference_id AND b.gcraiim_gcbapst_id = c.gcbapst_surrogate_id AND c" +
-                                                  ".gcbapst_surrogate_id" +
-                                                  " = ?)",
-                                          [groupSendId] )
-            LoggerUtility.debug( LOGGER, "Deleting ${rows} actionItem jobs referenced by group send id = ${groupSendId}." )
-        } catch (Exception e) {
-            LOGGER.error( e )
-            throw e
-        } finally {
-            sql?.close()
-        }*/
     }
 
 
