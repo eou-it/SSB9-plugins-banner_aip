@@ -13,22 +13,12 @@ import net.hedtech.banner.aip.post.exceptions.ActionItemExceptionFactory
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.exceptions.NotFoundException
-import net.hedtech.banner.general.communication.population.CommunicationPopulation
-import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculation
-import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculationStatus
-import net.hedtech.banner.general.communication.population.CommunicationPopulationQueryAssociation
-import net.hedtech.banner.general.communication.population.CommunicationPopulationVersion
-import net.hedtech.banner.general.communication.population.CommunicationPopulationVersionQueryAssociation
+import net.hedtech.banner.general.communication.population.*
 import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.general.scheduler.SchedulerJobReceipt
 import org.apache.log4j.Logger
-import org.codehaus.groovy.grails.web.context.ServletContextHolder
-import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
 import org.springframework.transaction.annotation.Transactional
-
-import java.sql.Connection
-import java.sql.SQLException
 
 /**
  * ActionItemPost Composite Service is responsible for initiating and processing group posts.
@@ -58,6 +48,7 @@ class ActionItemPostCompositeService {
     def actionItemGroupService
 
     def actionItemPostSelectionDetailReadOnlyService
+    def actionItemJobService
 
     /**
      * Initiate the posting of a actionItems to a set of prospect recipients
@@ -280,7 +271,7 @@ class ActionItemPostCompositeService {
         }
 
         // fetch any post jobs for this group send and marked as stopped
-        stopPendingActionItemJobs( groupSend.id )
+        stopPendingAndDispatchedJobs(groupSend.id)
         actionItemPostWorkService.updateStateToStop( groupSend )
         groupSend
     }
@@ -516,20 +507,8 @@ class ActionItemPostCompositeService {
     }
 
 
-    private void stopPendingActionItemJobs( Long groupSendId ) {
-        Sql sql
-        try {
-            sql = new Sql( (Connection) sessionFactory.getCurrentSession().connection() )
-            sql.executeUpdate( "update GCBAJOB set GCBAJOB_STATUS='STOPPED', GCBAJOB_ACTIVITY_DATE = SYSDATE where " +
-                                       "GCBAJOB_STATUS in ('PENDING', 'DISPATCHED') and GCBAJOB_REFERENCE_ID in " +
-                                       "(select GCRAIIM_REFERENCE_ID from GCRAIIM where GCRAIIM_GCBAPST_ID = ${groupSendId} and GCRAIIM_CURRENT_STATE = 'Complete')" )
-        } catch (SQLException e) {
-            throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService, e )
-        } catch (Exception e) {
-            throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService, e )
-        } finally {
-            sql?.close()
-        }
+    void stopPendingAndDispatchedJobs( Long groupSendId ) {
+        actionItemJobService.stopPendingAndDispatchedJobs(groupSendId)
     }
 
     /**
