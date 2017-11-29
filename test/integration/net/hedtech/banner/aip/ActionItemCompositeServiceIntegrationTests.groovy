@@ -14,6 +14,8 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
 
     def actionItemCompositeService
     def actionItemService
+    def actionItemContentService
+    def actionItemStatusRuleService
 
 
     @Before
@@ -81,5 +83,26 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         result = actionItemCompositeService.deleteActionItem( ai.id )
         assert result.message == 'Cannot be deleted. Action item has been posted.'
         assert result.success == false
+    }
+
+
+    @Test
+    void deleteActionItemWithActionItemContent() {
+        def result = actionItemCompositeService.addActionItem( [folderId: CommunicationFolder.findByName( 'Student' ).id, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
+        assert result.success == true
+        assert result.newActionItem.description == 'description'
+        ActionItem ai = result.newActionItem
+        actionItemContentService.create( new ActionItemContent(
+                actionItemId: ai.id,
+                actionItemTemplateId: (ActionItemTemplate.findAll()[0]).id,
+                text: 'Text'
+        ) )
+        actionItemStatusRuleService.create( new ActionItemStatusRule(
+                actionItemId: ai.id,
+                seqOrder: 1,
+                labelText: 'Text'
+        ) )
+        result = actionItemCompositeService.deleteActionItem( ai.id )
+        assert result.success == true
     }
 }

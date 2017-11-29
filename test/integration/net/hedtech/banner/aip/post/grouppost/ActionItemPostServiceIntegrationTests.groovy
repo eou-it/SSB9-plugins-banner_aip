@@ -17,7 +17,6 @@ import org.junit.Test
 class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemPostService
-    def actionItemProcessingCommonService
     def communicationFolderService
 
 

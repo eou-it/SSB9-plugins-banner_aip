@@ -5,7 +5,6 @@ package net.hedtech.banner.aip.bcm
 
 import grails.transaction.Transactional
 import org.apache.log4j.Logger
-import org.hibernate.HibernateException
 
 import java.sql.Clob
 

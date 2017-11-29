@@ -5,7 +5,6 @@ package net.hedtech.banner.aip.post.job
 
 import net.hedtech.banner.aip.common.LoggerUtility
 import net.hedtech.banner.aip.post.ActionItemErrorCode
-import net.hedtech.banner.aip.post.grouppost.ActionItemPostWork
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTask
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskManager
@@ -13,7 +12,6 @@ import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskMonitorRecor
 import net.hedtech.banner.general.communication.groupsend.automation.StringHelper
 import org.apache.commons.lang.NotImplementedException
 import org.apache.log4j.Logger
-import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 
 /**

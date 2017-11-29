@@ -114,7 +114,7 @@ class ActionItemPostWorkTaskManagerServiceIntegrationTests extends BaseIntegrati
         actionItemPostService.create( aip )
         actionItemPostWork.actionItemGroupSend = aip
         actionItemPostWork = actionItemPostWorkService.create( actionItemPostWork )
-        //actionItemPostWorkTaskManagerService.process( actionItemPostWork )//TODO Need to complete this
+        actionItemPostWorkTaskManagerService.process( actionItemPostWork )
 
     }
 

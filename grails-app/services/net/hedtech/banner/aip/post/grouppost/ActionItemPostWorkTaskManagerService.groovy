@@ -11,7 +11,6 @@ import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskMonitorRecor
 import net.hedtech.banner.general.communication.groupsend.automation.StringHelper
 import org.apache.commons.lang.NotImplementedException
 import org.apache.log4j.Logger
-import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 
 /**
@@ -99,7 +98,6 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
      *         able to obtain an exclusive lock on the job and process it.  If false, the job was either
      *         already processed, or locked by another thread, and the call returned without doing any work
      */
-    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Throwable.class)
     public void process( AsynchronousTask task ) throws ApplicationException {
         ActionItemPostWork actionItemWorkTask = task as ActionItemPostWork
         LoggerUtility.info( LOGGER, "Processing group send item id = " + actionItemWorkTask.getId() + ", pidm = " + actionItemWorkTask.recipientPidm + "." )

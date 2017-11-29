@@ -284,6 +284,61 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
 
     @Test
+    void calculatePopulationVersionForPostFailed() {
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        SchedulerJobContext jobContext = new SchedulerJobContext( 'test' )
+        jobContext.setParameter( 'groupSendId', aip.id )
+        SchedulerErrorContext context = new SchedulerErrorContext()
+        context.jobContext = jobContext
+        context.cause = null
+        actionItemPostCompositeService.calculatePopulationVersionForPostFailed( context )
+        assert aip.postingCurrentState == ActionItemPostExecutionState.Error
+        assert aip.postingErrorCode == ActionItemErrorCode.UNKNOWN_ERROR
+    }
+
+
+    @Test
+    void generatePostItemsFired() {
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        SchedulerJobContext jobContext = new SchedulerJobContext( 'test' )
+        jobContext.setParameter( 'groupSendId', aip.id )
+        actionItemPostCompositeService.generatePostItemsFired( jobContext )
+        assert aip.postingCurrentState == ActionItemPostExecutionState.Processing
+    }
+
+
+    @Test
+    void generatePostItemsFailed() {
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        SchedulerJobContext jobContext = new SchedulerJobContext( 'test' )
+        jobContext.setParameter( 'groupSendId', aip.id )
+        SchedulerErrorContext context = new SchedulerErrorContext()
+        context.jobContext = jobContext
+        context.cause = new Exception( 'test' )
+        actionItemPostCompositeService.generatePostItemsFailed( context )
+        assert aip.postingCurrentState == ActionItemPostExecutionState.Error
+        assert aip.postingErrorText == new Exception( 'test' ).message
+        assert aip.postingErrorCode == ActionItemErrorCode.UNKNOWN_ERROR
+    }
+
+
+    @Test
+    void calculatePopulationVersionForPostFired() {
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        SchedulerJobContext jobContext = new SchedulerJobContext( 'test' )
+        jobContext.setParameter( 'groupSendId', aip.id )
+        SchedulerErrorContext context = new SchedulerErrorContext()
+        context.jobContext = jobContext
+        actionItemPostCompositeService.calculatePopulationVersionForPostFired( jobContext )
+        assert aip.postingCurrentState == ActionItemPostExecutionState.Processing
+    }
+
+
+    @Test
     void scheduledPostCallbackFailedWithCause() {
         ActionItemPost aip = newAIP()
         aip = actionItemPostService.create( aip )
@@ -324,11 +379,48 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
 
     @Test
+    void stopPostTerminalState() {
+        ActionItemPost aip = newAIP()
+        aip.postingCurrentState = ActionItemPostExecutionState.Error
+        aip = actionItemPostService.create( aip )
+        try {
+            actionItemPostCompositeService.stopPost( aip.id )
+        } catch (ApplicationException e) {
+            assertApplicationException( e, 'cannotStopConcludedPost' )
+        }
+    }
+
+
+    @Test
     void deletePost() {
         ActionItemPost aip = newAIP()
         aip = actionItemPostService.create( aip )
         actionItemPostCompositeService.deletePost( aip.id )
         assert ActionItemPost.get( aip.id ) == null
+    }
+
+
+    @Test
+    void deletePostNoPendingExecutionState() {
+        try {
+            ActionItemPost aip = newAIP()
+            aip.postingCurrentState = ActionItemPostExecutionState.Calculating
+            aip = actionItemPostService.create( aip )
+            actionItemPostCompositeService.deletePost( aip.id )
+        } catch (ApplicationException e) {
+            assertApplicationException( e, 'cannotDeleteRunningPost' )
+        }
+
+    }
+
+
+    @Test
+    void deletePostInvaidGroupSend() {
+        try {
+            actionItemPostCompositeService.deletePost( -99 )
+        } catch (ApplicationException e) {
+            assertApplicationException( e, 'NotFoundException:[id=-99, entityClassName=ActionItemPost]' )
+        }
     }
 
 
