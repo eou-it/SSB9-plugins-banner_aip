@@ -10,14 +10,15 @@ grails.project.test.reports.dir = "target/test-reports"
 // When deploying a war it is important to exclude the Oracle database drivers.  Not doing so will
 // result in the all-too-familiar exception:
 // "Cannot cast object 'oracle.jdbc.driver.T4CConnection@6469adc7'... to class 'oracle.jdbc.OracleConnection'
-grails.war.resources = { stagingDir ->
-    delete(file: "${stagingDir}/WEB-INF/lib/ojdbc6.jar")
+grails.war.resources = {stagingDir ->
+    delete( file: "${stagingDir}/WEB-INF/lib/ojdbc6.jar" )
 }
-grails.plugin.location.'i18n_core'            ="../i18n_core.git"
-grails.plugin.location.'banner_ui_ss'            ="../banner_ui_ss.git"
-grails.plugin.location.'banner-general-person'="../banner_general_person.git"
-grails.plugin.location.'banner-general-common'="../banner_general_common.git"
-grails.plugin.location.'banner-general-utility'="../banner_general_utility.git"
+grails.plugin.location.'i18n_core' = "../i18n_core.git"
+grails.plugin.location.'banner_ui_ss' = "../banner_ui_ss.git"
+grails.plugin.location.'banner-general-person' = "../banner_general_person.git"
+grails.plugin.location.'banner-general-common' = "../banner_general_common.git"
+grails.plugin.location.'banner-general-utility' = "../banner_general_utility.git"
+grails.plugin.location.'banner-sspb' = "../banner-sspb.git"
 
 grails.project.dependency.resolver = "maven" // or maven
 
@@ -45,6 +46,6 @@ grails.project.dependency.resolution = {
 }
 
 // CodeNarc rulesets
-codenarc.ruleSetFiles="rulesets/banner.groovy"
-codenarc.reportName="target/CodeNarcReport.html"
-codenarc.propertiesFile="grails-app/conf/codenarc.properties"
+codenarc.ruleSetFiles = "rulesets/banner.groovy"
+codenarc.reportName = "target/CodeNarcReport.html"
+codenarc.propertiesFile = "grails-app/conf/codenarc.properties"
