@@ -105,4 +105,12 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         result = actionItemCompositeService.deleteActionItem( ai.id )
         assert result.success == true
     }
+
+
+    @Test
+    void getActionItemsListForSelect() {
+        def result = actionItemCompositeService.getActionItemsListForSelect()
+        assert result.size() > 0
+        assertTrue data.find {it.actionItemName == 'Meet with Advisor'}.actionItemName == 'Meet with Advisor'
+    }
 }

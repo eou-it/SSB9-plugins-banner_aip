@@ -94,7 +94,7 @@ class ActionItemGroupCompositeService {
 
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
-    def updateActionItemGroupAssignment( map ) {
+    def updateGroupAssignment( map ) {
         def groupId = map.groupId
         def inputGroupAssignments = map.assignment
         def groupAssignment = actionItemGroupAssignService.fetchByGroupId( groupId )
@@ -150,5 +150,42 @@ class ActionItemGroupCompositeService {
             }
         }
         updatedActionItemGroupAssignment
+    }
+
+    /**
+     * Update Action item Group Assignment
+     * @return
+     */
+    def updateActionItemGroupAssignment( map ) {
+        def result
+        try {
+            List<ActionItemGroupAssignReadOnly> assignActionItem = updateGroupAssignment( map )
+            def resultMap
+            if (assignActionItem) {
+                resultMap = assignActionItem?.collect {it ->
+                    [
+                            id                  : it.id,
+                            actionItemId        : it.actionItemId,
+                            sequenceNumber      : it.sequenceNumber,
+                            actionItemName      : it.actionItemName,
+                            actionItemStatus    : it.actionItemStatus ? MessageHelper.message( "aip.status.${it.actionItemStatus.trim()}" ) : null,
+                            actionItemFolderName: it.actionItemFolderName,
+                            actionItemTitle     : it.actionItemTitle,
+                            actionItemFolderId  : it.actionItemFolderId
+                    ]
+                }
+            }
+            result = [
+                    success              : true,
+                    actionItemGroupAssign: resultMap
+            ]
+        } catch (ApplicationException ae) {
+            result = [
+                    success              : false,
+                    message              : MessageUtility.message( ae.getDefaultMessage() ),
+                    actionItemGroupAssign: ""
+            ]
+        }
+        result
     }
 }

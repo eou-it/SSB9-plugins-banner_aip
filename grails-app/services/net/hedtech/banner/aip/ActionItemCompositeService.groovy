@@ -6,6 +6,7 @@ package net.hedtech.banner.aip
 import grails.transaction.Transactional
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.exceptions.ApplicationException
+import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.i18n.MessageHelper
 import org.springframework.transaction.annotation.Propagation
 
@@ -92,7 +93,7 @@ class ActionItemCompositeService {
             ActionItem actionItem = actionItemService.get( actionItemId )
             actionItemService.delete( actionItem )
             success = true
-            message = MessageHelper.message('action.item.delete.success')
+            message = MessageHelper.message( 'action.item.delete.success' )
         } catch (ApplicationException e) {
             success = false
             message = e.message
@@ -101,6 +102,35 @@ class ActionItemCompositeService {
                 success: success,
                 message: message
         ]
+    }
+
+    /**
+     *
+     * @return
+     */
+    def getActionItemsListForSelect() {
+        List<ActionItem> results = actionItemService.list()
+        List folderIds = results?.collect {it.folderId}.unique()
+        List<CommunicationFolder> folderList = CommunicationFolder.findAll()?.findAll() {CommunicationFolder it ->
+            it.id in folderIds
+        }
+        Map folderMap = folderList?.collectEntries {CommunicationFolder it ->
+            [it.id, it]
+        }
+        def resultMap = results?.collect {actionItem ->
+            CommunicationFolder folder = folderMap.get( actionItem.folderId )
+            [
+                    actionItemId    : actionItem.id,
+                    actionItemName  : actionItem.name,
+                    actionItemTitle : actionItem.title,
+                    folderId        : actionItem.folderId,
+                    folderName      : folder.name,
+                    folderDesc      : folder.description,
+                    actionItemStatus: actionItem.status ? MessageHelper.message( "aip.status.${actionItem.status.trim()}" ) : null
+
+            ]
+        }
+        resultMap
     }
 
 }
