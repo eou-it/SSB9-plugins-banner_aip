@@ -12,7 +12,8 @@
 package net.hedtech.banner.aip.filter
 
 import net.hedtech.banner.security.BannerUser
-import org.apache.log4j.Logger
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.web.servlet.GrailsUrlPathHelper
 import org.springframework.security.core.context.SecurityContextHolder
 
@@ -20,7 +21,7 @@ import javax.servlet.http.HttpSession
 
 
 class GateKeepingFilters {
-    private final log = Logger.getLogger( GateKeepingFilters.class )
+    private final Log log = LogFactory.getLog(this.getClass())
     public static final String BLOCKREGISTERFORCOURSES = '/ssb/term/termSelection?mode=registration'
     private static final String SLASH = "/"
 
@@ -40,10 +41,9 @@ class GateKeepingFilters {
                 // only want to look at type 'document'? not stylesheet, script, gif, font, ? ?
                 // at this point he getRequestURI returns the forwared dispatcher URL */aip/myplace.dispatch
                 String path = getServletPath( request )
-                println path
+                log.info( "take a look at: " + request.getRequestURI() )
                 //if (!ApiUtils.isApiRequest() && !request.xhr) {
-                if (isBlockingUrl(path)) { // checks path against list from DB
-                    println "take a look at: " + request.getRequestURI(  )
+                if (isBlockingUrl( path )) { // checks path against list from DB
                     HttpSession session = request.getSession()
                     if (springSecurityService.isLoggedIn() && path != null) {
                         if (path.equals( BLOCKREGISTERFORCOURSES )) {
@@ -52,17 +52,15 @@ class GateKeepingFilters {
 
                             // FIXME: pull in registration info (urls and session variable) from tables
                             // TODO: may need to look at session variable to see if student in Registration
-                            //println "session parms: " + session.getAttributeNames() // do we add our reason to this?
-                            println "roleCode: " + session.getAttribute( 'selectedRole' )?.persona?.code
+                            log.info( "roleCode: " + session.getAttribute( 'selectedRole' )?.persona?.code)
                             if ('STUDENT'.equals( session.getAttribute( 'selectedRole' )?.persona?.code )) {
                                 def isBlocked = false
                                 try {
                                     isBlocked = userBlockedProcessReadOnlyService.getBlockedProcessesByPidmAndActionItemId( userPidm, 11 )
-                                    println "isBlocked: " + isBlocked + " for: " + userPidm
-                                    println isBlocked ? true : false
+                                    log.info( "isBlocked: " + isBlocked + " for: " + userPidm )
                                 } catch (Throwable t) {
-                                    println "isBlocked: crap. service call failed"
-                                    println t
+                                    log.info( "isBlocked: service call failed. Keep an eye on this as working. Was happening at one point" )
+                                    log.info( t )
                                 }
 
                                 if (isBlocked) {
