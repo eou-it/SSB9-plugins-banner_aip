@@ -47,4 +47,21 @@ class ActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegration
         assertEquals( actualLength, totalCount )
     }
 
+
+    @Test
+    void openActionItem() {
+        def result = actionItemReadOnlyCompositeService.openActionItem( [actionItemId: "${ActionItem.findByName( 'All staff: Prepare for winter snow' )}"] )
+        assert result.success == true
+        assert result.errors == null
+        assert result.actionItem != null
+    }
+
+
+    @Test
+    void openActionItemFailedCase() {
+        def result = actionItemReadOnlyCompositeService.openActionItem( [actionItemId: "-99"] )
+        assert result.success == false
+        assert result.actionItem == null
+    }
+
 }
