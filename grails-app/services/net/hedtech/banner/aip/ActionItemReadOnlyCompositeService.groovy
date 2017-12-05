@@ -115,7 +115,8 @@ class ActionItemReadOnlyCompositeService extends ServiceBase {
                             actionItemPageName     : actionItem.actionItemPageName,
                             actionItemContentId    : actionItem.actionItemContentId,
                             actionItemContentDate  : actionItem.actionItemContentDate,
-                            actionItemContent      : actionItem.actionItemContent
+                            actionItemContent      : actionItem.actionItemContent,
+                            actionItemPostedStatus : actionItem.actionItemPostedStatus
                     ]
             ]
         }
