@@ -85,10 +85,10 @@ class ActionItemReadOnlyCompositeService extends ServiceBase {
      * Open Action Item
      * @return
      */
-    def openActionItem( params ) {
+    def openActionItem( actionItemId ) {
         def success = false
         def errors = []
-        ActionItemReadOnly actionItem = actionItemReadOnlyService.getActionItemROById( params.actionItemId.toInteger() )
+        ActionItemReadOnly actionItem = actionItemReadOnlyService.getActionItemROById( actionItemId.toInteger() )
         if (actionItem) {
             return [
                     success   : true,

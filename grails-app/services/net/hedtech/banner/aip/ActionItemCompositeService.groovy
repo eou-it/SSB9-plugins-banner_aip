@@ -22,6 +22,7 @@ class ActionItemCompositeService {
     def actionItemReadOnlyCompositeService
     def actionItemStatusRuleService
     def actionItemContentService
+    def actionItemReadOnlyService
 
     /**
      * Adds Action Item
@@ -133,5 +134,33 @@ class ActionItemCompositeService {
         resultMap
     }
 
+    /**
+     *
+     * @param map
+     * @return
+     */
+    def updateActionItemDetailWithTemplate( map ) {
+        def templateId = map.templateId.toInteger()
+        def actionItemId = map.actionItemId.toInteger()
+        def actionItemDetailText = map.actionItemContent
+        def success = false
+        ActionItemContent aic = actionItemContentService.listActionItemContentById( actionItemId )
+        if (!aic) {
+            aic = new ActionItemContent()
+        }
+        aic.actionItemId = actionItemId
+        aic.actionItemTemplateId = templateId
+        aic.text = actionItemDetailText
+
+        ActionItemContent newAic = actionItemContentService.createOrUpdate( aic )
+        def errors = []
+        ActionItemReadOnly actionItemRO = actionItemReadOnlyService.getActionItemROById( newAic.actionItemId )
+        success = true
+        [
+                success   : success,
+                errors    : errors,
+                actionItem: actionItemRO,
+        ]
+    }
 }
 

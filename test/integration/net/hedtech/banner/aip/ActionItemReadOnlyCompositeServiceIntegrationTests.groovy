@@ -50,16 +50,16 @@ class ActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegration
 
     @Test
     void openActionItem() {
-        def result = actionItemReadOnlyCompositeService.openActionItem( [actionItemId: "${ActionItem.findByName( 'All staff: Prepare for winter snow' )}"] )
+        def result = actionItemReadOnlyCompositeService.openActionItem( ActionItem.findByName( 'All staff: Prepare for winter snow' ).id )
         assert result.success == true
-        assert result.errors == null
+        assert result.errors == []
         assert result.actionItem != null
     }
 
 
     @Test
     void openActionItemFailedCase() {
-        def result = actionItemReadOnlyCompositeService.openActionItem( [actionItemId: "-99"] )
+        def result = actionItemReadOnlyCompositeService.openActionItem( -99 )
         assert result.success == false
         assert result.actionItem == null
     }

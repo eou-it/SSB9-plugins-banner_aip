@@ -67,7 +67,7 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         assert result.newActionItem.description == 'description'
         ActionItem ai = result.newActionItem
         result = actionItemCompositeService.deleteActionItem( ai.id )
-        assert result.message == 'Delete successful'
+        assert result.message == 'The action item with its corresponding records have been deleted'
         assert result.success == true
     }
 
@@ -81,7 +81,7 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         ai.postedIndicator = 'Y'
         actionItemService.update( ai )
         result = actionItemCompositeService.deleteActionItem( ai.id )
-        assert result.message == 'Cannot be deleted. Action item has been posted.'
+        assert result.message == 'The action item cannot be deleted because it has been posted to users.'
         assert result.success == false
     }
 
@@ -111,6 +111,19 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
     void getActionItemsListForSelect() {
         def result = actionItemCompositeService.getActionItemsListForSelect()
         assert result.size() > 0
-        assertTrue data.find {it.actionItemName == 'Meet with Advisor'}.actionItemName == 'Meet with Advisor'
+        assertTrue result.find {it.actionItemName == 'Meet with Advisor'}.actionItemName == 'Meet with Advisor'
+    }
+
+
+    @Test
+    void updateActionItemDetailWithTemplate() {
+        def map = [templateId          : ActionItemTemplate.findByTitle( 'Master Template' ).id,
+                   actionItemId        : ActionItem.findByName( 'All staff: Prepare for winter snow' ).id,
+                   actionItemDetailText: 'text']
+        def result = actionItemCompositeService.updateActionItemDetailWithTemplate( map )
+        assert result.success == true
+        assert result.errors == []
+        assert result.actionItem.actionItemName == 'All staff: Prepare for winter snow'
+
     }
 }
