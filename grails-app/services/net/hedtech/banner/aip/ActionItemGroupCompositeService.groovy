@@ -162,7 +162,7 @@ class ActionItemGroupCompositeService {
             List<ActionItemGroupAssignReadOnly> assignActionItem = updateGroupAssignment( map )
             def resultMap
             if (assignActionItem) {
-                resultMap = assignActionItem?.collect {it ->
+                resultMap = assignActionItem.collect {it ->
                     [
                             id                  : it.id,
                             actionItemId        : it.actionItemId,

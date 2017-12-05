@@ -76,7 +76,7 @@ class ActionItemCompositeService {
     def deleteActionItem( actionItemId ) {
         def success = false
         def message
-        def postingInd = actionItemService.getActionItemById( actionItemId ).postedIndicator
+        def postingInd = actionItemService.getActionItemById( actionItemId )?.postedIndicator
         def checkDeletable = actionItemReadOnlyCompositeService.checkIfActionItemDeletable( actionItemId, postingInd )
         if (!checkDeletable.deletable) {
             return [success: success,
