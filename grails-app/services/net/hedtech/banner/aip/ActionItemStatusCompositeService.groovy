@@ -142,7 +142,11 @@ class ActionItemStatusCompositeService {
         ]
     }
 
-
+    /**
+     * Updates action item status rules
+     * @param jsonObj
+     * @return
+     */
     def updateActionItemStatusRule( jsonObj ) {
         def success = false
         def message
