@@ -142,7 +142,7 @@ class ActionItemGroupCompositeServiceIntegrationTests extends BaseIntegrationTes
 
     @Test
     void deleteActionItemGroupHaveAssignedItems() {
-        def result = actionItemGroupCompositeService.deleteGroup( [groupId: ActionItemGroup.findByName( 'Enrollment' )] )
+        def result = actionItemGroupCompositeService.deleteGroup( [groupId: ActionItemGroup.findByName( 'Enrollment' ).id] )
         assert result.message == 'Delete successful.'
         assert result.success == true
     }

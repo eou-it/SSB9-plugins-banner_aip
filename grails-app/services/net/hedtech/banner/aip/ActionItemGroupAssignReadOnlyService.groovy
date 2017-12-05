@@ -16,15 +16,16 @@ class ActionItemGroupAssignReadOnlyService {
         def assignedActionItems = ActionItemGroupAssignReadOnly.fetchActionItemGroupAssignROByGroupId( groupId )
         assignedActionItems?.collect {it ->
             [
-                    id                   : it.id,
-                    actionItemId         : it.actionItemId,
-                    sequenceNumber       : it.sequenceNumber,
-                    actionItemName       : it.actionItemName,
-                    actionItemStatus     : it.actionItemStatus ? MessageHelper.message( "aip.status.${it.actionItemStatus.trim()}" ) : null,
-                    actionItemFolderName : it.actionItemFolderName,
-                    actionItemTitle      : it.actionItemTitle,
-                    actionItemDescription: it.actionItemDescription,
-                    actionItemFolderId   : it.actionItemFolderId
+                    id                        : it.id,
+                    actionItemId              : it.actionItemId,
+                    sequenceNumber            : it.sequenceNumber,
+                    actionItemName            : it.actionItemName,
+                    actionItemStatus          : it.actionItemStatus ? MessageHelper.message( "aip.status.${it.actionItemStatus.trim()}" ) : null,
+                    actionItemFolderName      : it.actionItemFolderName,
+                    actionItemTitle           : it.actionItemTitle,
+                    actionItemDescription     : it.actionItemDescription,
+                    actionItemFolderId        : it.actionItemFolderId,
+                    actionItemPostingIndicator: it.actionItemPostingIndicator
             ]
         }
     }
