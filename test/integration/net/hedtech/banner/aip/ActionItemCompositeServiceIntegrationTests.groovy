@@ -4,6 +4,7 @@
 
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
@@ -105,4 +106,41 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         result = actionItemCompositeService.deleteActionItem( ai.id )
         assert result.success == true
     }
+
+
+    @Test
+    void validateEditActionItemContent() {
+        def result = actionItemCompositeService.validateEditActionItemContent( -999 )
+        assert result.editable == false
+        assert result.message == 'Action Item not present'
+    }
+
+
+    @Test
+    void validateEditActionItemContentMarkedPosted() {
+        def result = actionItemCompositeService.addActionItem( [folderId: CommunicationFolder.findByName( 'Student' ).id, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
+        assert result.success == true
+        assert result.newActionItem.description == 'description'
+        ActionItem ai = result.newActionItem
+        ai.postedIndicator = 'Y'
+        actionItemService.update( ai )
+        result = actionItemCompositeService.validateEditActionItemContent( ai.id )
+        assert result.editable == false
+        assert result.message == 'Cannot be modified. Action Items is posted.'
+    }
+
+
+    @Test
+    void validateEditActionItemContentPostingNo() {
+        def result = actionItemCompositeService.addActionItem( [folderId: CommunicationFolder.findByName( 'Student' ).id, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
+        assert result.success == true
+        assert result.newActionItem.description == 'description'
+        ActionItem ai = result.newActionItem
+        actionItemService.update( ai )
+        result = actionItemCompositeService.validateEditActionItemContent( ai.id )
+        assert result.editable == true
+        assert result.message == null
+    }
+
+
 }

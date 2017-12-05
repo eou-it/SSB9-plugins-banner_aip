@@ -6,6 +6,7 @@ package net.hedtech.banner.aip
 import grails.transaction.Transactional
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.exceptions.ApplicationException
+import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.i18n.MessageHelper
 import org.springframework.transaction.annotation.Propagation
 
@@ -92,7 +93,7 @@ class ActionItemCompositeService {
             ActionItem actionItem = actionItemService.get( actionItemId )
             actionItemService.delete( actionItem )
             success = true
-            message = MessageHelper.message('action.item.delete.success')
+            message = MessageHelper.message( 'action.item.delete.success' )
         } catch (ApplicationException e) {
             success = false
             message = e.message
@@ -101,6 +102,25 @@ class ActionItemCompositeService {
                 success: success,
                 message: message
         ]
+    }
+
+    /**
+     * Validate if action item is editable or not
+     * @param actionItemId
+     */
+    def validateEditActionItemContent( actionItemId ) {
+        def result = [editable: true, message: null]
+        try {
+            ActionItem actionItem = actionItemService.get( actionItemId )
+            if (actionItem.postedIndicator == AIPConstants.YES_IND) {
+                result.editable = false
+                result.message = MessageHelper.message( 'action.item.content.cannot.be.edited' )
+            }
+        } catch (ApplicationException ae) {
+            result.editable = false
+            result.message = MessageHelper.message( 'action.item.not.present' )
+        }
+        result
     }
 
 }
