@@ -15,6 +15,7 @@ class ActionItemStatusCompositeService {
     def actionItemStatusService
     def actionItemStatusRuleService
     def springSecurityService
+    def actionItemCompositeService
 
     /**
      * Lists Action Item status
@@ -151,6 +152,14 @@ class ActionItemStatusCompositeService {
         def success = false
         def message
         def inputRules = jsonObj.rules
+        def result = actionItemCompositeService.validateEditActionItemContent( jsonObj.actionItemId )
+        if (!result.editable) {
+            def model = [
+                    success: false,
+                    errors : result.message
+            ]
+            return model
+        }
         List<ActionItemStatusRule> currentRules = actionItemStatusRuleService.getActionItemStatusRuleByActionItemId( jsonObj.actionItemId )
         List<Long> newRuleIdList = inputRules.statusRuleId.toList()
         List<Long> existingRuleIdList = currentRules.id.toList()

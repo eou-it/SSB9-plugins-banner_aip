@@ -94,7 +94,7 @@ class ActionItemCompositeService {
             ActionItem actionItem = actionItemService.get( actionItemId )
             actionItemService.delete( actionItem )
             success = true
-            message = MessageHelper.message('action.item.delete.success')
+            message = MessageHelper.message( 'action.item.delete.success' )
         } catch (ApplicationException e) {
             success = false
             message = e.message
@@ -144,6 +144,14 @@ class ActionItemCompositeService {
         def actionItemId = map.actionItemId.toInteger()
         def actionItemDetailText = map.actionItemContent
         def success = false
+        def result = validateEditActionItemContent( actionItemId )
+        if (!result.editable) {
+            def model = [
+                    success: false,
+                    errors : result.message
+            ]
+            return model
+        }
         ActionItemContent aic = actionItemContentService.listActionItemContentById( actionItemId )
         if (!aic) {
             aic = new ActionItemContent()
