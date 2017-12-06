@@ -30,7 +30,16 @@ class ActionItemGroupAssignReadOnlyServiceIntegrationTests extends BaseIntegrati
     @Test
     void testListBlockedProcessById() {
         ActionItemGroupAssignReadOnly domain = ActionItemGroupAssignReadOnly.findByGroupName( 'Enrollment' )
-        def activeActionItems = actionItemGroupAssignReadOnlyService.fetchActiveActionItemByGroupId( domain.actionItemGroupId)
+        def activeActionItems = actionItemGroupAssignReadOnlyService.fetchActiveActionItemByGroupId( domain.actionItemGroupId )
+        assert activeActionItems.size() > 0
+
+    }
+
+
+    @Test
+    void getAssignedActionItemsInGroup() {
+        ActionItemGroupAssignReadOnly domain = ActionItemGroupAssignReadOnly.findByGroupName( 'Enrollment' )
+        def activeActionItems = actionItemGroupAssignReadOnlyService.getAssignedActionItemsInGroup( domain.actionItemGroupId )
         assert activeActionItems.size() > 0
 
     }

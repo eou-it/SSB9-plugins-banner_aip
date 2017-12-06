@@ -109,6 +109,27 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
 
 
     @Test
+    void getActionItemsListForSelect() {
+        def result = actionItemCompositeService.getActionItemsListForSelect()
+        assert result.size() > 0
+        assertTrue result.find {it.actionItemName == 'Meet with Advisor'}.actionItemName == 'Meet with Advisor'
+    }
+
+
+    @Test
+    void updateActionItemDetailWithTemplate() {
+        def map = [templateId          : ActionItemTemplate.findByTitle( 'Master Template' ).id,
+                   actionItemId        : ActionItem.findByName( 'All staff: Prepare for winter snow' ).id,
+                   actionItemDetailText: 'text']
+        def result = actionItemCompositeService.updateActionItemDetailWithTemplate( map )
+        assert result.success == true
+        assert result.errors == []
+        assert result.actionItem.actionItemName == 'All staff: Prepare for winter snow'
+
+    }
+
+
+    @Test
     void validateEditActionItemContent() {
         def result = actionItemCompositeService.validateEditActionItemContent( -999 )
         assert result.editable == false

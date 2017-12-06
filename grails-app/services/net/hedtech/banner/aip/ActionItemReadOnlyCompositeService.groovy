@@ -81,5 +81,47 @@ class ActionItemReadOnlyCompositeService extends ServiceBase {
         ]
         resultMap
     }
-
+    /**
+     * Open Action Item
+     * @return
+     */
+    def openActionItem( actionItemId ) {
+        def success = false
+        def errors = []
+        ActionItemReadOnly actionItem = actionItemReadOnlyService.getActionItemROById( actionItemId.toInteger() )
+        if (actionItem) {
+            return [
+                    success   : true,
+                    errors    : errors,
+                    actionItem: [
+                            actionItemId           : actionItem.actionItemId,
+                            actionItemName         : actionItem.actionItemName,
+                            actionItemTitle        : actionItem.actionItemTitle,
+                            actionItemDesc         : actionItem.actionItemDesc,
+                            folderId               : actionItem.folderId,
+                            folderName             : actionItem.folderName,
+                            folderDesc             : actionItem.folderDesc,
+                            actionItemStatus       : MessageHelper.message( "aip.status.${actionItem.actionItemStatus}" ),
+                            actionItemActivityDate : actionItem.actionItemActivityDate,
+                            actionItemUserId       : actionItem.actionItemUserId,
+                            actionItemContentUserId: actionItem.actionItemContentUserId,
+                            actionItemCreatorId    : actionItem.actionItemCreatorId,
+                            actionItemCreateDate   : actionItem.actionItemCreateDate,
+                            actionItemCompositeDate: actionItem.actionItemCompositeDate,
+                            actionItemLastUserId   : actionItem.actionItemLastUserId,
+                            actionItemVersion      : actionItem.actionItemVersion,
+                            actionItemTemplateId   : actionItem.actionItemTemplateId,
+                            actionItemTemplateName : actionItem.actionItemTemplateName,
+                            actionItemPageName     : actionItem.actionItemPageName,
+                            actionItemContentId    : actionItem.actionItemContentId,
+                            actionItemContentDate  : actionItem.actionItemContentDate,
+                            actionItemContent      : actionItem.actionItemContent,
+                            actionItemPostedStatus : actionItem.actionItemPostedStatus
+                    ]
+            ]
+        }
+        [success   : success,
+         errors    : errors,
+         actionItem: null]
+    }
 }

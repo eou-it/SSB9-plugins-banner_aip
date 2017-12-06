@@ -81,10 +81,9 @@ class ActionItemGroupCompositeServiceIntegrationTests extends BaseIntegrationTes
 
 
     @Test
-    void updateActionItemGroupAssignment() {
+    void updateGroupAssignment() {
         ActionItemGroupAssign actionItemGroupAssign = ActionItemGroupAssign.findByGroupId( ActionItemGroup.findByName( 'Enrollment' ).id )
         def list = ActionItemGroupAssign.findAllByGroupId( ActionItemGroup.findByName( 'Enrollment' ).id )
-        def initialSize = list.size()
         def folderId = CommunicationFolder.findByName( 'Student' ).id
         ActionItem ai = new ActionItem()
         ai.folderId = folderId
@@ -95,9 +94,28 @@ class ActionItemGroupCompositeServiceIntegrationTests extends BaseIntegrationTes
         ai.postedIndicator = 'N'
         ActionItem createdItem = actionItemService.create( ai )
         Map map = [groupId: actionItemGroupAssign.groupId, assignment: [[actionItemId: createdItem.id, seq: 10]]]
-        actionItemGroupCompositeService.updateActionItemGroupAssignment( map )
+        actionItemGroupCompositeService.updateGroupAssignment( map )
         list = ActionItemGroupAssign.findAllByGroupId( ActionItemGroup.findByName( 'Enrollment' ).id )
         assert list.size() == 1
+    }
+
+
+    @Test
+    void updateActionItemGroupAssignment() {
+        ActionItemGroupAssign actionItemGroupAssign = ActionItemGroupAssign.findByGroupId( ActionItemGroup.findByName( 'Enrollment' ).id )
+        def list = ActionItemGroupAssign.findAllByGroupId( ActionItemGroup.findByName( 'Enrollment' ).id )
+        def folderId = CommunicationFolder.findByName( 'Student' ).id
+        ActionItem ai = new ActionItem()
+        ai.folderId = folderId
+        ai.status = 'D'
+        ai.name = 'Test Action Item. unique 98d7efh'
+        ai.title = 'Test Action Item. unique 98d7efh'
+        ai.description = 'this is some action item'
+        ai.postedIndicator = 'N'
+        ActionItem createdItem = actionItemService.create( ai )
+        Map map = [groupId: actionItemGroupAssign.groupId, assignment: [[actionItemId: createdItem.id, seq: 10]]]
+        def result = actionItemGroupCompositeService.updateActionItemGroupAssignment( map )
+        assert result.success == true
     }
 
 
@@ -119,6 +137,22 @@ class ActionItemGroupCompositeServiceIntegrationTests extends BaseIntegrationTes
         result = actionItemGroupCompositeService.deleteGroup( [groupId: result.group.groupId] )
         assert result.message == 'Delete successful.'
         assert result.success == true
+    }
+
+
+    @Test
+    void deleteActionItemGroupHaveAssignedItems() {
+        def result = actionItemGroupCompositeService.deleteGroup( [groupId: ActionItemGroup.findByName( 'Enrollment' ).id] )
+        assert result.message == 'The group is associated with assigned action items or a submitted Post Action Items job and cannot be deleted.'
+        assert result.success == false
+    }
+
+
+    @Test
+    void deleteActionItemGroupFailesCase() {
+        def result = actionItemGroupCompositeService.deleteGroup( [groupId: -99] )
+        assert result.message != null
+        assert result.success == false
     }
 
 

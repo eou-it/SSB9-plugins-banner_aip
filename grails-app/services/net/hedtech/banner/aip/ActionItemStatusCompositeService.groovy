@@ -15,6 +15,7 @@ class ActionItemStatusCompositeService {
     def actionItemStatusService
     def actionItemStatusRuleService
     def springSecurityService
+    def actionItemCompositeService
 
     /**
      * Lists Action Item status
@@ -139,6 +140,79 @@ class ActionItemStatusCompositeService {
         [
                 success: success,
                 status : newStatus
+        ]
+    }
+
+    /**
+     * Updates action item status rules
+     * @param jsonObj
+     * @return
+     */
+    def updateActionItemStatusRule( jsonObj ) {
+        def success = false
+        def message
+        def inputRules = jsonObj.rules
+        def result = actionItemCompositeService.validateEditActionItemContent( jsonObj.actionItemId )
+        if (!result.editable) {
+            def model = [
+                    success: false,
+                    errors : result.message
+            ]
+            return model
+        }
+        List<ActionItemStatusRule> currentRules = actionItemStatusRuleService.getActionItemStatusRuleByActionItemId( jsonObj.actionItemId )
+        List<Long> newRuleIdList = inputRules.statusRuleId.toList()
+        List<Long> existingRuleIdList = currentRules.id.toList()
+        def deleteRules = existingRuleIdList.minus( newRuleIdList )
+
+        //delete those that have been removed
+        actionItemStatusRuleService.delete( deleteRules )
+
+        //create or update rules
+        try {
+            List<ActionItemStatusRule> ruleList = []
+            inputRules.each {rule ->
+                def statusRule
+                def statusId
+                if (rule.status.id) {
+                    statusId = rule.status.id
+                } else if (rule.status.actionItemStatusId) {
+                    statusId = rule.status.actionItemStatusId
+                } else {
+                    message = MessageHelper.message( "actionItemStatusRule.statusId.nullable.error" )
+                    throw new ApplicationException( message )
+                }
+
+                if (rule.statusRuleId) {
+                    statusRule = ActionItemStatusRule.get( rule.statusRuleId )
+                    statusRule.seqOrder = rule.statusRuleSeqOrder.toInteger()
+                    statusRule.labelText = rule.statusRuleLabelText
+                    statusRule.actionItemStatusId = statusId
+                    statusRule.actionItemId = jsonObj.actionItemId
+                    statusRule.version = rule.status.version
+                } else {
+                    statusRule = new ActionItemStatusRule(
+                            seqOrder: rule.statusRuleSeqOrder,
+                            labelText: rule.statusRuleLabelText,
+                            actionItemId: jsonObj.actionItemId,
+                            actionItemStatusId: statusId
+                    )
+                }
+                ruleList.push( statusRule )
+            }
+            ruleList.each {rule ->
+                actionItemStatusRuleService.createOrUpdate( rule ) //list of domain objects to be updated or created
+            }
+            success = true
+        } catch (ApplicationException e) {
+            LOGGER.error( e.getMessage() )
+        }
+        List<ActionItemStatusRule> updatedActionItemStatusRules =
+                actionItemStatusRuleService.getActionItemStatusRuleByActionItemId( jsonObj.actionItemId )
+        [
+                success: success,
+                message: message,
+                rules  : updatedActionItemStatusRules
         ]
     }
 }

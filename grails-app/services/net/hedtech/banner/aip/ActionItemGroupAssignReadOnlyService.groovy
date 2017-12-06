@@ -3,10 +3,31 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.i18n.MessageHelper
+
 class ActionItemGroupAssignReadOnlyService {
 
+    /**
+     * Gets Assigned Action Items In the Group
+     * @param groupId
+     * @return
+     */
     def getAssignedActionItemsInGroup( Long groupId ) {
-        ActionItemGroupAssignReadOnly.fetchActionItemGroupAssignROByGroupId( groupId )
+        def assignedActionItems = ActionItemGroupAssignReadOnly.fetchActionItemGroupAssignROByGroupId( groupId )
+        assignedActionItems?.collect {it ->
+            [
+                    id                        : it.id,
+                    actionItemId              : it.actionItemId,
+                    sequenceNumber            : it.sequenceNumber,
+                    actionItemName            : it.actionItemName,
+                    actionItemStatus          : it.actionItemStatus ? MessageHelper.message( "aip.status.${it.actionItemStatus.trim()}" ) : null,
+                    actionItemFolderName      : it.actionItemFolderName,
+                    actionItemTitle           : it.actionItemTitle,
+                    actionItemDescription     : it.actionItemDescription,
+                    actionItemFolderId        : it.actionItemFolderId,
+                    actionItemPostingIndicator: it.actionItemPostingIndicator
+            ]
+        }
     }
 
     /**
