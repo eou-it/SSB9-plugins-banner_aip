@@ -17,7 +17,7 @@ import javax.persistence.*
         @NamedQuery(name = "ActionItemBlockedProcess.fetchActionItemBlockProcessById",
                 query = """
            FROM ActionItemBlockedProcess a
-           WHERE a.blockId = :myId
+           WHERE a.id = :myId
           """),
         @NamedQuery(name = "ActionItemBlockedProcess.fetchActionItemBlockProcessByActionId",
                 query = """
@@ -43,7 +43,7 @@ class ActionItemBlockedProcess implements Serializable {
     @Column(name = "GCRABLK_SURROGATE_ID")
     @SequenceGenerator(name = "GCRABLK_SEQ_GEN", allocationSize = 1, sequenceName = "GCRABLK_SURROGATE_ID_SEQUENCE")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GCRABLK_SEQ_GEN")
-    Long blockId
+    Long id
 
     /**
      * ID of the action item being blocked
@@ -92,9 +92,8 @@ class ActionItemBlockedProcess implements Serializable {
         blockActionItemId( blank: false, nullable: false, maxSize: 19 )
         blockConfigName( blank: false, nullable: false, maxSize: 50 )
         blockConfigType( blank: false, nullable: false, maxSize: 30 )
-        lastModifiedBy( blank: false, nullable: true, maxSize: 30 )
+        lastModifiedBy( nullable: true, maxSize: 30 )
         lastModified( nullable: true )
-        version( nullable: true )
         dataOrigin( nullable: true, maxSize: 30 )
     }
 
