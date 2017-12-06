@@ -4,6 +4,7 @@
 
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
@@ -67,7 +68,7 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         assert result.newActionItem.description == 'description'
         ActionItem ai = result.newActionItem
         result = actionItemCompositeService.deleteActionItem( ai.id )
-        assert result.message == 'The action item with its corresponding records have been deleted'
+        assert result.message == 'Delete successful'
         assert result.success == true
     }
 
@@ -81,7 +82,7 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         ai.postedIndicator = 'Y'
         actionItemService.update( ai )
         result = actionItemCompositeService.deleteActionItem( ai.id )
-        assert result.message == 'The action item cannot be deleted because it has been posted to users.'
+        assert result.message == 'Cannot be deleted. Action item has been posted.'
         assert result.success == false
     }
 
@@ -126,4 +127,41 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         assert result.actionItem.actionItemName == 'All staff: Prepare for winter snow'
 
     }
+
+
+    @Test
+    void validateEditActionItemContent() {
+        def result = actionItemCompositeService.validateEditActionItemContent( -999 )
+        assert result.editable == false
+        assert result.message == 'Action Item not present'
+    }
+
+
+    @Test
+    void validateEditActionItemContentMarkedPosted() {
+        def result = actionItemCompositeService.addActionItem( [folderId: CommunicationFolder.findByName( 'Student' ).id, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
+        assert result.success == true
+        assert result.newActionItem.description == 'description'
+        ActionItem ai = result.newActionItem
+        ai.postedIndicator = 'Y'
+        actionItemService.update( ai )
+        result = actionItemCompositeService.validateEditActionItemContent( ai.id )
+        assert result.editable == false
+        assert result.message == 'Cannot be modified. Action Items is posted.'
+    }
+
+
+    @Test
+    void validateEditActionItemContentPostingNo() {
+        def result = actionItemCompositeService.addActionItem( [folderId: CommunicationFolder.findByName( 'Student' ).id, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
+        assert result.success == true
+        assert result.newActionItem.description == 'description'
+        ActionItem ai = result.newActionItem
+        actionItemService.update( ai )
+        result = actionItemCompositeService.validateEditActionItemContent( ai.id )
+        assert result.editable == true
+        assert result.message == null
+    }
+
+
 }
