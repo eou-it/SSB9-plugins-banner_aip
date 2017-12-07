@@ -29,20 +29,28 @@ class ActionItemGroupCompositeService {
      * @param map
      * @return
      */
-    def createGroup( map ) {
+    def createOrUpdateGroup( map ) {
         def success = false
         def message
-        def group = new ActionItemGroup(
-                title: map.groupTitle,
-                name: map.groupName,
-                folderId: map.folderId,
-                description: map.groupDesc,
-                postingInd: AIPConstants.NO_IND,
-                status: map.groupStatus ? (AIPConstants.STATUS_MAP.get( map.groupStatus )) : null,
-                )
+        def group
+        if (map.edit && map.group.groupId) {
+            group = actionItemGroupService.getActionItemGroupById(map.group.groupId.longValue())
+            group.description = map.group.groupDesc
+            group.title = map.group.groupTitle
+            group.status = AIPConstants.STATUS_MAP.get(map.group.groupStatus)
+        } else {
+            group = new ActionItemGroup(
+                    title: map.group.groupTitle,
+                    name: map.group.groupName,
+                    folderId: map.group.folderId,
+                    description: map.group.groupDesc,
+                    postingInd: AIPConstants.NO_IND,
+                    status: map.group.groupStatus ? (AIPConstants.STATUS_MAP.get(map.group.groupStatus)) : null,
+            )
+        }
         def groupNew
         try {
-            groupNew = actionItemGroupService.create( group )
+            groupNew = actionItemGroupService.createOrUpdate( group )
             success = true
         } catch (ApplicationException e) {
             if (ActionItemGroupService.FOLDER_VALIDATION_ERROR.equals( e.getMessage() )) {
