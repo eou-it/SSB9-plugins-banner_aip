@@ -159,6 +159,9 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
                      statusRuleSeqOrder : 0]
         def ruleList = [rules]
         Map params1 = [rules: ruleList, actionItemId: ActionItem.findByName( 'Personal Information' ).id]
+        ActionItem aim = ActionItem.findByName( 'Personal Information' )
+        aim.postedIndicator = 'N'
+        actionItemService.update( aim )
         def data = actionItemStatusCompositeService.updateActionItemStatusRule( params1 )
         assertTrue data.success
         assert data.message == null

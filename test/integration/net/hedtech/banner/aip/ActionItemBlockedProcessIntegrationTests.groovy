@@ -4,12 +4,10 @@
 
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.ActionItemBlockedProcess
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-
 
 class ActionItemBlockedProcessIntegrationTests extends BaseIntegrationTestCase {
 
@@ -40,7 +38,7 @@ class ActionItemBlockedProcessIntegrationTests extends BaseIntegrationTestCase {
     void testListBlockedProcessById() {
 
         List<ActionItemBlockedProcess> actionItemBlockedProcessList = ActionItemBlockedProcess.fetchActionItemBlockedProcessList()
-        List<ActionItemBlockedProcess> actionItemBlockedProcessById = ActionItemBlockedProcess.fetchActionItemBlockProcessById( actionItemBlockedProcessList.blockId[0] )
+        List<ActionItemBlockedProcess> actionItemBlockedProcessById = ActionItemBlockedProcess.fetchActionItemBlockProcessById( actionItemBlockedProcessList.id[0] )
 
         assertEquals( actionItemBlockedProcessList.blockActionItemId[0], actionItemBlockedProcessById.blockActionItemId[0] )
         assertEquals( actionItemBlockedProcessList.blockConfigName[0], actionItemBlockedProcessById.blockConfigName[0] )

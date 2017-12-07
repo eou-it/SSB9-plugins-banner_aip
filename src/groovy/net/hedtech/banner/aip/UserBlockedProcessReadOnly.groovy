@@ -82,9 +82,7 @@ class UserBlockedProcessReadOnly implements Serializable{
      * @return
      */
     static def fetchBlockingProcessesROByPidmAndActionItemId( Long pidm, Long aid ) {
-        println "in lookup"
         UserBlockedProcessReadOnly.withSession {session ->
-            println "session: " + session
             session.getNamedQuery( 'UserBlockedProcessReadOnly.fetchIsBlockedROsByPidmAndId' )
                     .setLong('myPidm', pidm ).setLong('aid', aid )?.list()[0]
         }

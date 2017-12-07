@@ -68,7 +68,7 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         assert result.newActionItem.description == 'description'
         ActionItem ai = result.newActionItem
         result = actionItemCompositeService.deleteActionItem( ai.id )
-        assert result.message == 'Delete successful'
+        assert result.message == 'The action item with its corresponding records have been deleted'
         assert result.success == true
     }
 
@@ -82,7 +82,7 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         ai.postedIndicator = 'Y'
         actionItemService.update( ai )
         result = actionItemCompositeService.deleteActionItem( ai.id )
-        assert result.message == 'Cannot be deleted. Action item has been posted.'
+        assert result.message == 'The action item cannot be deleted because it has been posted to users.'
         assert result.success == false
     }
 
@@ -121,6 +121,9 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         def map = [templateId          : ActionItemTemplate.findByTitle( 'Master Template' ).id,
                    actionItemId        : ActionItem.findByName( 'All staff: Prepare for winter snow' ).id,
                    actionItemDetailText: 'text']
+        ActionItem aim = ActionItem.findByName( 'All staff: Prepare for winter snow' )
+        aim.postedIndicator = 'N'
+        actionItemService.update( aim )
         def result = actionItemCompositeService.updateActionItemDetailWithTemplate( map )
         assert result.success == true
         assert result.errors == []
@@ -147,7 +150,7 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         actionItemService.update( ai )
         result = actionItemCompositeService.validateEditActionItemContent( ai.id )
         assert result.editable == false
-        assert result.message == 'Cannot be modified. Action Items is posted.'
+        assert result.message == 'Cannot be modified. Action Item is posted.'
     }
 
 
