@@ -4,12 +4,10 @@
 
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.ActionItemBlockedProcess
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-
 
 class ActionItemBlockedProcessIntegrationTests extends BaseIntegrationTestCase {
 
@@ -35,15 +33,16 @@ class ActionItemBlockedProcessIntegrationTests extends BaseIntegrationTestCase {
 
     }
 
+
     @Test
     void testListBlockedProcessById() {
 
         List<ActionItemBlockedProcess> actionItemBlockedProcessList = ActionItemBlockedProcess.fetchActionItemBlockedProcessList()
-        List<ActionItemBlockedProcess> actionItemBlockedProcessById = ActionItemBlockedProcess.fetchActionItemBlockProcessById( actionItemBlockedProcessList.blockId[0] )
+        List<ActionItemBlockedProcess> actionItemBlockedProcessById = ActionItemBlockedProcess.fetchActionItemBlockProcessById( actionItemBlockedProcessList.id[0] )
 
         assertEquals( actionItemBlockedProcessList.blockActionItemId[0], actionItemBlockedProcessById.blockActionItemId[0] )
         assertEquals( actionItemBlockedProcessList.blockConfigName[0], actionItemBlockedProcessById.blockConfigName[0] )
-        assertEquals( actionItemBlockedProcessList.blockId[0], actionItemBlockedProcessById.blockId[0] )
+        assertEquals( actionItemBlockedProcessList.id[0], actionItemBlockedProcessById.id[0] )
         assertEquals( actionItemBlockedProcessList.blockConfigType[0], actionItemBlockedProcessById.blockConfigType[0] )
 
     }
@@ -58,7 +57,7 @@ class ActionItemBlockedProcessIntegrationTests extends BaseIntegrationTestCase {
 
         assertEquals( actionItemBlockedProcessList.blockActionItemId[0], actionItemBlockedProcessByActionId.blockActionItemId[0] )
         assertEquals( actionItemBlockedProcessList.blockConfigName[0], actionItemBlockedProcessByActionId.blockConfigName[0] )
-        assertEquals( actionItemBlockedProcessList.blockId[0], actionItemBlockedProcessByActionId.blockId[0] )
+        assertEquals( actionItemBlockedProcessList.id[0], actionItemBlockedProcessByActionId.id[0] )
         assertEquals( actionItemBlockedProcessList.blockConfigType[0], actionItemBlockedProcessByActionId.blockConfigType[0] )
 
     }

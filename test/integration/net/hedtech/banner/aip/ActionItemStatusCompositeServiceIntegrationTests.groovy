@@ -11,7 +11,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-
 class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemStatusCompositeService
@@ -98,7 +97,7 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
         assertEquals actionItemStatus.actionItemStatusActive, 'Y'
         assertEquals actionItemStatus.actionItemStatusBlockedProcess, 'N'
         assertEquals actionItemStatus.actionItemStatusSystemRequired, 'N'
-        assertTrue( ActionItemStatus.fetchActionItemStatuses().any { it == actionItemStatus } )
+        assertTrue( ActionItemStatus.fetchActionItemStatuses().any {it == actionItemStatus} )
     }
 
 
@@ -149,5 +148,23 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
         def actionItemStatus = actionItemStatusCompositeService.listActionItemsPageSort( params1 ).result[0]
         def res = actionItemStatusCompositeService.removeStatus( actionItemStatus.id )
         assert res.message == 'The record is system required and cannot be deleted.'
+    }
+
+
+    @Test
+    void updateActionItemStatusRule() {
+        Map rules = [statusName         : "",
+                     status             : ActionItemStatus.findByActionItemStatus( 'Completed' ),
+                     statusRuleLabelText: "sas",
+                     statusRuleSeqOrder : 0]
+        def ruleList = [rules]
+        Map params1 = [rules: ruleList, actionItemId: ActionItem.findByName( 'Personal Information' ).id]
+        ActionItem aim = ActionItem.findByName( 'Personal Information' )
+        aim.postedIndicator = 'N'
+        actionItemService.update( aim )
+        def data = actionItemStatusCompositeService.updateActionItemStatusRule( params1 )
+        assertTrue data.success
+        assert data.message == null
+        assert data.rules.size() > 0
     }
 }
