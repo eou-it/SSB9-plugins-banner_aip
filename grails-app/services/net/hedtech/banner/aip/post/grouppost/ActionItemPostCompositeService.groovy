@@ -17,8 +17,6 @@ import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.general.scheduler.SchedulerJobReceipt
 import org.apache.log4j.Logger
-import org.codehaus.groovy.grails.web.context.ServletContextHolder
-import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
 import org.springframework.transaction.annotation.Transactional
 
 /**
@@ -505,7 +503,7 @@ class ActionItemPostCompositeService {
      */
     void createPostItems( ActionItemPost groupSend ) {
         LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id )
-        def session = ServletContextHolder.servletContext.getAttribute( GrailsApplicationAttributes.APPLICATION_CONTEXT ).sessionFactory.currentSession
+        def session = sessionFactory.currentSession
         List<ActionItemPostSelectionDetailReadOnly> list = session.getNamedQuery( 'ActionItemPostSelectionDetailReadOnly.fetchSelectionIds' )
                 .setLong( 'postingId', groupSend.id )
                 .list()
