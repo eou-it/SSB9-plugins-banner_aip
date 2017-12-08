@@ -33,14 +33,18 @@ class ActionItemGroupCompositeServiceIntegrationTests extends BaseIntegrationTes
     @Test
     void testCreateGroupSuccess() {
         Map map = [
-                groupTitle : 'groupTitle',
-                groupName  : 'groupName',
-                folderId   : CommunicationFolder.findByName( 'Student' ).id,
-                groupDesc  : 'groupDesc',
-                postingInd : 'N',
-                groupStatus: 'Draft',
+                group: [
+                    groupTitle : 'groupTitle',
+                    groupName  : 'groupName',
+                    folderId   : CommunicationFolder.findByName( 'Student' ).id,
+                    groupDesc  : 'groupDesc',
+                    postingInd : 'N',
+                    groupStatus: 'Draft'
+                        ],
+                edit: false,
+                duplicate: false
         ]
-        def result = actionItemGroupCompositeService.createGroup( map )
+        def result = actionItemGroupCompositeService.createOrUpdateGroup( map )
         assert result.success == true
         assert result.message == null
         assert result.group.groupStatus == 'Draft'
@@ -51,14 +55,18 @@ class ActionItemGroupCompositeServiceIntegrationTests extends BaseIntegrationTes
     @Test
     void testCreateGroupFailed() {
         Map map = [
-                groupTitle : 'groupTitle',
-                groupName  : null,
-                folderId   : CommunicationFolder.findByName( 'Student' ).id,
-                groupDesc  : 'groupDesc',
-                postingInd : 'N',
-                groupStatus: 'Draft',
+                group: [
+                    groupTitle : 'groupTitle',
+                    groupName  : null,
+                    folderId   : CommunicationFolder.findByName( 'Student' ).id,
+                    groupDesc  : 'groupDesc',
+                    postingInd : 'N',
+                    groupStatus: 'Draft'
+                        ],
+                edit: false,
+                duplicate: false;
         ]
-        def result = actionItemGroupCompositeService.createGroup( map )
+        def result = actionItemGroupCompositeService.createOrUpdateGroup( map )
         assert result.success == false
         assert result.message == 'Save failed. The Name can not be null or empty.'
     }
@@ -67,14 +75,18 @@ class ActionItemGroupCompositeServiceIntegrationTests extends BaseIntegrationTes
     @Test
     void testCreateGroupFailedDuplicate() {
         Map map = [
-                groupTitle : 'groupTitle',
-                groupName  : 'groupName',
-                folderId   : -1,
-                groupDesc  : 'groupDesc',
-                postingInd : 'N',
-                groupStatus: 'Draft',
+                group: [
+                    groupTitle : 'groupTitle',
+                    groupName  : 'groupName',
+                    folderId   : -1,
+                    groupDesc  : 'groupDesc',
+                    postingInd : 'N',
+                    groupStatus: 'Draft'
+                        ],
+                edit: false,
+                duplicate: false
         ]
-        def result = actionItemGroupCompositeService.createGroup( map )
+        def result = actionItemGroupCompositeService.createOrUpdateGroup( map )
         assert result.success == false
         assert result.message == 'Save failed. The Folder with Id -1 does not exist.'
     }
@@ -122,14 +134,18 @@ class ActionItemGroupCompositeServiceIntegrationTests extends BaseIntegrationTes
     @Test
     void deleteActionItemGroup() {
         Map map = [
-                groupTitle : 'groupTitle',
-                groupName  : 'groupName',
-                folderId   : CommunicationFolder.findByName( 'Student' ).id,
-                groupDesc  : 'groupDesc',
-                postingInd : 'N',
-                groupStatus: 'Draft',
+                group: [
+                    groupTitle : 'groupTitle',
+                    groupName  : 'groupName',
+                    folderId   : CommunicationFolder.findByName( 'Student' ).id,
+                    groupDesc  : 'groupDesc',
+                    postingInd : 'N',
+                    groupStatus: 'Draft'
+                        ],
+                edit: false,
+                duplicate: false
         ]
-        def result = actionItemGroupCompositeService.createGroup( map )
+        def result = actionItemGroupCompositeService.createOrUpdateGroup( map )
         assert result.success == true
         assert result.message == null
         assert result.group.groupStatus == 'Draft'
@@ -159,14 +175,18 @@ class ActionItemGroupCompositeServiceIntegrationTests extends BaseIntegrationTes
     @Test
     void deleteActionItemGroupFailedCase() {
         Map map = [
-                groupTitle : 'groupTitle',
-                groupName  : 'groupName',
-                folderId   : CommunicationFolder.findByName( 'Student' ).id,
-                groupDesc  : 'groupDesc',
-                postingInd : 'N',
-                groupStatus: 'Draft',
+                group: [
+                    groupTitle : 'groupTitle',
+                    groupName  : 'groupName',
+                    folderId   : CommunicationFolder.findByName( 'Student' ).id,
+                    groupDesc  : 'groupDesc',
+                    postingInd : 'N',
+                    groupStatus: 'Draft'
+                        ],
+                edit: false,
+                duplicate: false
         ]
-        def result = actionItemGroupCompositeService.createGroup( map )
+        def result = actionItemGroupCompositeService.createOrUpdateGroup( map )
         assert result.success == true
         assert result.message == null
         assert result.group.groupStatus == 'Draft'
