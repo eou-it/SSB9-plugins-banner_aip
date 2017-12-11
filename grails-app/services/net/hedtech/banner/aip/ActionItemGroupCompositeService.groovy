@@ -25,7 +25,7 @@ class ActionItemGroupCompositeService {
     def groupFolderReadOnlyService
 
     /**
-     * Creates a new group
+     * Creates a new group or update existing
      * @param map
      * @return
      */
@@ -33,7 +33,7 @@ class ActionItemGroupCompositeService {
         def success = false
         def message
         def group
-        if (map.edit && map.group.groupId) {
+        if (map.group.groupId) {
             group = actionItemGroupService.getActionItemGroupById(map.group.groupId.longValue())
             group.description = map.group.groupDesc
             group.title = map.group.groupTitle

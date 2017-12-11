@@ -47,6 +47,16 @@ class ActionItemGroupService extends ServiceBase {
     }
 
     /**
+     * Check group already posted
+     * @param actionItemGroupId
+     * @return true/false
+     */
+    def checkGroupPosted( Long actionItemGroupId ) {
+        def group = ActionItemGroup.fetchActionItemGroupById( actionItemGroupId )
+        return group.postingInd == 'Y'
+    }
+
+    /**
      * Validation before create
      * @param domainModelOrMap
      */
