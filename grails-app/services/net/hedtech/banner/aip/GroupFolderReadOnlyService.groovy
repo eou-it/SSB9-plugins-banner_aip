@@ -39,7 +39,8 @@ class GroupFolderReadOnlyService extends ServiceBase {
                     groupUserId      : groupRO.groupUserId,
                     groupDesc        : groupRO.groupDesc,
                     groupActivityDate: groupRO.groupActivityDate,
-                    groupVersion     : groupRO.groupVersion
+                    groupVersion     : groupRO.groupVersion,
+                    postedInd        : groupRO.postedInd
             ]
         }
     }
