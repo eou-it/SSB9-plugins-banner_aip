@@ -64,7 +64,7 @@ class ActionItemGroupCompositeServiceIntegrationTests extends BaseIntegrationTes
                     groupStatus: 'Draft'
                         ],
                 edit: false,
-                duplicate: false;
+                duplicate: false
         ]
         def result = actionItemGroupCompositeService.createOrUpdateGroup( map )
         assert result.success == false

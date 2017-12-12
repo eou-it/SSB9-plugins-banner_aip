@@ -66,6 +66,31 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
 
 
     @Test
+    void updateActionItemDupicateFolder() {
+        def result = actionItemCompositeService.addActionItem( [folderId: CommunicationFolder.findByName( 'Student' ).id, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
+        assert result.success == true
+        assert result.newActionItem.description == 'description'
+        assert result.message == null
+        ActionItem actionItem1 = result.newActionItem
+
+        result = actionItemCompositeService.addActionItem( [folderId: CommunicationFolder.findByName( 'Registration' ).id, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
+        assert result.success == true
+        assert result.newActionItem.description == 'description'
+        assert result.message == null
+        ActionItem actionItem2 = result.newActionItem
+        Map editParam = [actionItemId: actionItem1.id,
+                         folderId    : CommunicationFolder.findByName( 'Registration' ).id,
+                         status      : 'Active',
+                         title       : 'title',
+                         name        : 'name',
+                         description : 'description1']
+        result = actionItemCompositeService.editActionItem( editParam )
+        assert result.success == false
+        assert result.message == 'Save failed. The Action Item Name and Folder must be unique.'
+    }
+
+
+    @Test
     void updateActionItemNameChange() {
         def result = actionItemCompositeService.addActionItem( [folderId: CommunicationFolder.findByName( 'Student' ).id, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
         assert result.success == true
