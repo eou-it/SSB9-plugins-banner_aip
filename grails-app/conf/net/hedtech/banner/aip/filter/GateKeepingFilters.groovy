@@ -15,11 +15,8 @@ import net.hedtech.banner.aip.UserBlockedProcessReadOnly
 import net.hedtech.banner.security.BannerUser
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.web.context.ServletContextHolder
 import org.codehaus.groovy.grails.web.servlet.GrailsUrlPathHelper
-import org.springframework.context.ApplicationContext
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.web.context.support.WebApplicationContextUtils
 
 import javax.servlet.http.HttpSession
 
@@ -41,15 +38,11 @@ class GateKeepingFilters {
     def filters = {
         actionItemFilter( controller: "selfServiceMenu|login|logout|error|dateConverter", invert: true ) {
             before = {
-                //def servletCtx = ServletContextHolder.getServletContext()
-                //ApplicationContext applicationContext = WebApplicationContextUtils.
-                //        getRequiredWebApplicationContext( servletCtx )
-                //userBlockedProcessReadOnlyService = applicationContext.getBean( 'userBlockedProcessReadOnlyService' )
                 // FIXME: get urls from tables. Check and cache
                 // only want to look at type 'document'? not stylesheet, script, gif, font, ? ?
                 // at this point he getRequestURI returns the forwared dispatcher URL */aip/myplace.dispatch
                 String path = getServletPath( request )
-                log.info( "take a look at: " + request.getRequestURI() + " as user: " + userPidm)
+                log.info( "take a look at: " + request.getRequestURI() + " as user: " + userPidm )
                 //if (!ApiUtils.isApiRequest() && !request.xhr) {
                 if (isBlockingUrl( path )) { // checks path against list from DB
                     HttpSession session = request.getSession()
@@ -60,14 +53,17 @@ class GateKeepingFilters {
 
                             // FIXME: pull in registration info (urls and session variable) from tables
                             // TODO: may need to look at session variable to see if student in Registration
-                            log.info( "roleCode: " + session.getAttribute( 'selectedRole' )?.persona?.code)
+                            log.info( "roleCode: " + session.getAttribute( 'selectedRole' )?.persona?.code )
                             if ('STUDENT'.equals( session.getAttribute( 'selectedRole' )?.persona?.code )) {
                                 def isBlocked = false
                                 try {
-                                    isBlocked = UserBlockedProcessReadOnly.fetchBlockingProcessesROByPidmAndActionItemId( userPidm, 12 )
+                                    //isBlocked = UserBlockedProcessReadOnly.fetchBlockingProcessesROByPidm( userPidm)
+                                    isBlocked = UserBlockedProcessReadOnly.fetchProcessesROByPidm( userPidm) // this doesn't check the block
+                                    // indicator. just here for proof of concept
                                     log.info( "isBlocked: " + isBlocked + " for: " + userPidm )
                                 } catch (Throwable t) {
-                                    log.info( "isBlocked: service call failed. Keep an eye on this as working. session aware proxy" )
+                                    log.info( "isBlocked: service call failed. Keep an eye on this. Was failing intermittently. I think it is " +
+                                            "right now" )
                                     log.info( t )
                                 }
 
@@ -75,9 +71,9 @@ class GateKeepingFilters {
                                     String uri = request.getScheme() + "://" +   // "http" + "://
                                             request.getServerName()
                                     //response.addHeader("Access-Control-Allow-Origin", "*");
-                                    // FIXME: goto general app. Trying same port for dev environment
+                                    // FIXME: goto general app. We need to be able to look up the location
                                     // FIXME: make this configurable
-                                    redirect( url: uri + ":8080/BannerGeneralSsb/ssb/aip/informedList" )
+                                    redirect( url: "http://csr-daily-1.ellucian.com:8080/BannerGeneralSsb/ssb/aip/informedList#/informedList" )
                                     //    redirect( url: uri + ":8090/StudentRegistrationSsb/ssb/registrationHistory/registrationHistory" )
                                     return false
                                 }
@@ -89,6 +85,7 @@ class GateKeepingFilters {
             }
         }
     }
+
 // who am I?
     private def getUserPidm() {
         def user = SecurityContextHolder?.context?.authentication?.principal

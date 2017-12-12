@@ -9,13 +9,23 @@ import org.hibernate.annotations.Type
 
 import javax.persistence.*
 
+
 @NamedQueries(value = [
         @NamedQuery(name = "UserBlockedProcessReadOnly.fetchIsBlockedROsByPidmAndId",
                 query = """FROM UserBlockedProcessReadOnly a
                    WHERE a.pidm = :myPidm
                    AND a.actionItemId = :aid
                    AND a.isBlocking = true
-                   """)
+                   """),
+        @NamedQuery(name = "UserBlockedProcessReadOnly.fetchIsBlockedROsByPidm",
+                query = """FROM UserBlockedProcessReadOnly a
+                           WHERE a.pidm = :myPidm                           
+                           AND a.isBlocking = true
+                           """),
+        @NamedQuery(name = "UserBlockedProcessReadOnly.fetchROsByPidm",
+                query = """FROM UserBlockedProcessReadOnly a
+                                   WHERE a.pidm = :myPidm                                                              
+                                   """)
 ])
 @Entity
 @Table(name = "GVQ_GCRABLK")
@@ -85,6 +95,34 @@ class UserBlockedProcessReadOnly implements Serializable{
         UserBlockedProcessReadOnly.withSession {session ->
             session.getNamedQuery( 'UserBlockedProcessReadOnly.fetchIsBlockedROsByPidmAndId' )
                     .setLong('myPidm', pidm ).setLong('aid', aid )?.list()[0]
+        }
+    }
+
+    /**
+     *
+     * @param pidm
+     * @param aid
+     * @return
+     */
+    static def fetchBlockingProcessesROByPidm( Long pidm ) {
+        UserBlockedProcessReadOnly.withSession { session ->
+            session.getNamedQuery( 'UserBlockedProcessReadOnly.fetchIsBlockedROsByPidm' )
+                    .setLong( 'myPidm', pidm )?.list()[0]
+        }
+    }
+
+
+    /**
+     *
+     * @param pidm
+     * @param aid
+     * @return
+     */
+    // Probably not needed. using in proof of concept
+    static def fetchProcessesROByPidm( Long pidm ) {
+        UserBlockedProcessReadOnly.withSession { session ->
+            session.getNamedQuery( 'UserBlockedProcessReadOnly.fetchROsByPidm' )
+                    .setLong( 'myPidm', pidm )?.list()[0]
         }
     }
 }
