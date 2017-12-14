@@ -3,6 +3,7 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import groovy.sql.Sql
 import net.hedtech.banner.aip.ActionItem
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.common.AIPConstants
@@ -17,7 +18,10 @@ import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.general.scheduler.SchedulerJobReceipt
 import org.apache.log4j.Logger
+import org.codehaus.groovy.grails.web.context.ServletContextHolder
+import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
 import org.springframework.transaction.annotation.Transactional
+import java.sql.SQLException
 
 /**
  * ActionItemPost Composite Service is responsible for initiating and processing group posts.
@@ -503,21 +507,59 @@ class ActionItemPostCompositeService {
      */
     void createPostItems( ActionItemPost groupSend ) {
         LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id )
-        def session = sessionFactory.currentSession
-        List<ActionItemPostSelectionDetailReadOnly> list = session.getNamedQuery( 'ActionItemPostSelectionDetailReadOnly.fetchSelectionIds' )
-                .setLong( 'postingId', groupSend.id )
-                .list()
-        list?.each {ActionItemPostSelectionDetailReadOnly it ->
-            session.createSQLQuery( """ INSERT INTO gcraiim (gcraiim_gcbapst_id, gcraiim_pidm, gcraiim_creationdatetime
-                                                            ,gcraiim_current_state, gcraiim_reference_id, gcraiim_user_id, gcraiim_activity_date, 
-                                                            gcraiim_started_date) values (${groupSend.id}, ${
-                it.actionItemPostSelectionPidm
-            }, sysdate, '${ActionItemPostWorkExecutionState.Ready.toString()}' ,'$sysGuId', '${
-                it.postingUserId
-            }', sysdate, sysdate ) """ )
-                    .executeUpdate()
+        def sql
+        try {
+            def ctx = ServletContextHolder.servletContext.getAttribute( GrailsApplicationAttributes.APPLICATION_CONTEXT )
+            def sessionFactory = ctx.sessionFactory
+            def session = sessionFactory.currentSession
+            sql = new Sql( session.connection() )
+
+            sql.execute(
+                    [
+                            state         : ActionItemPostWorkExecutionState.Ready.toString(),
+                            group_send_key: groupSend.id,
+                            current_time  : new Date().toTimestamp()
+                    ],
+                    """
+                INSERT INTO gcraiim (gcraiim_gcbapst_id, gcraiim_pidm, gcraiim_creationdatetime
+                                                ,gcraiim_current_state, gcraiim_reference_id, gcraiim_user_id, gcraiim_activity_date, 
+                                                gcraiim_started_date)
+                        select
+                            gcbapst_surrogate_id,
+                            gcrlent_pidm,
+                            :current_time,
+                            :state,
+                            sys_guid(),
+                            gcbapst_user_id,
+                            :current_time,
+                            :current_time
+                        from (
+                            select gcrlent_pidm, gcbapst_surrogate_id, gcbapst_user_id
+                                from gcrslis, gcrlent, gcbapst, gcrpopc
+                                where
+                                gcbapst_surrogate_id = :group_send_key
+                                and gcrpopc_surrogate_id = gcbapst_popcalc_id
+                                and gcrslis_surrogate_id = gcrpopc_slis_id
+                                and gcrlent_slis_id = gcrslis_surrogate_id
+                            union
+                            select gcrlent_pidm, gcbapst_surrogate_id, gcbapst_user_id
+                                from gcrslis, gcrlent, gcbapst, gcrpopv
+                                where
+                                gcbapst_surrogate_id = :group_send_key
+                                and gcrpopv_surrogate_id = gcbapst_popversion_id
+                                and gcrslis_surrogate_id = gcrpopv_include_list_id
+                                and gcrlent_slis_id = gcrslis_surrogate_id
+                        )
+                """ )
+
+            LoggerUtility.debug( LOGGER, "Created " + sql.updateCount + " group send item records for group send with id = " + groupSend.id )
+        } catch (SQLException ae) {
+            LoggerUtility.debug( LOGGER, "SqlException in INSERT INTO gcraiim ${ae}" )
+            LoggerUtility.debug( LOGGER, ae.stackTrace )
+            throw ae
+        } finally {
+            sql?.close()
         }
-        LoggerUtility.debug( LOGGER, "Created " + list?.size() + " group send item records for group send with id = " + groupSend.id )
     }
 
     /**
