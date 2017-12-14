@@ -287,6 +287,7 @@ class ActionItemPostCompositeService {
     ActionItemPost completePost( Long groupSendId ) {
         LoggerUtility.debug( LOGGER, "Completing group send with id = " + groupSendId + "." )
         ActionItemPost aGroupSend = (ActionItemPost) actionItemPostService.get( groupSendId )
+        println "mark complete"
         aGroupSend.markComplete()
         actionItemPostService.update( aGroupSend )
     }
@@ -513,6 +514,8 @@ class ActionItemPostCompositeService {
             def sessionFactory = ctx.sessionFactory
             def session = sessionFactory.currentSession
             sql = new Sql( session.connection() )
+
+            println
 
             sql.execute(
                     [

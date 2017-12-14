@@ -81,7 +81,7 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void preCreateValidationDuplicateJobName() {
-        loginSSB( 'CSRADM001', '111111' )
+        loginSSB( 'AIPADM001', '111111' )
         def population = CommunicationPopulationListView.findAllByPopulationFolderName('AIPstudent');
         def actionItemGroups = ActionItemGroup.findAll()
         def actionItemGroup = actionItemGroups[0]
