@@ -44,6 +44,91 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
 
 
     @Test
+    void updateActionItem() {
+        def result = actionItemCompositeService.addActionItem( [folderId: CommunicationFolder.findByName( 'Student' ).id, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
+        assert result.success == true
+        assert result.newActionItem.description == 'description'
+        assert result.message == null
+
+        Map editParam = [actionItemId: result.newActionItem.id,
+                         folderId    : CommunicationFolder.findByName( 'Student' ).id,
+                         status      : 'Active',
+                         title       : 'title',
+                         name        : 'name',
+                         description : 'description1']
+        result = actionItemCompositeService.editActionItem( editParam )
+        assert result.success == true
+        assert result.updatedActionItem.description == 'description1'
+        assert result.updatedActionItem.name == 'name'
+        assert result.updatedActionItem.status == 'A'
+        assert result.message == null
+    }
+
+
+    @Test
+    void updateActionItemDupicateFolder() {
+        def result = actionItemCompositeService.addActionItem( [folderId: CommunicationFolder.findByName( 'Student' ).id, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
+        assert result.success == true
+        assert result.newActionItem.description == 'description'
+        assert result.message == null
+        ActionItem actionItem1 = result.newActionItem
+
+        result = actionItemCompositeService.addActionItem( [folderId: CommunicationFolder.findByName( 'Registration' ).id, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
+        assert result.success == true
+        assert result.newActionItem.description == 'description'
+        assert result.message == null
+        ActionItem actionItem2 = result.newActionItem
+        Map editParam = [actionItemId: actionItem1.id,
+                         folderId    : CommunicationFolder.findByName( 'Registration' ).id,
+                         status      : 'Active',
+                         title       : 'title',
+                         name        : 'name',
+                         description : 'description1']
+        result = actionItemCompositeService.editActionItem( editParam )
+        assert result.success == false
+        assert result.message == 'Save failed. The Action Item Name and Folder must be unique.'
+    }
+
+
+    @Test
+    void updateActionItemNameChange() {
+        def result = actionItemCompositeService.addActionItem( [folderId: CommunicationFolder.findByName( 'Student' ).id, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
+        assert result.success == true
+        assert result.newActionItem.description == 'description'
+        assert result.message == null
+
+        Map editParam = [actionItemId: result.newActionItem.id,
+                         folderId    : CommunicationFolder.findByName( 'Student' ).id,
+                         status      : 'Complete',
+                         title       : 'title',
+                         name        : 'name2',
+                         description : 'description1']
+        result = actionItemCompositeService.editActionItem( editParam )
+        assert result.success == false
+        assert result.message == 'Action Item name cannot be updated.'
+    }
+
+
+    @Test
+    void updateActionItemFolderValidation() {
+        def result = actionItemCompositeService.addActionItem( [folderId: CommunicationFolder.findByName( 'Student' ).id, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
+        assert result.success == true
+        assert result.newActionItem.description == 'description'
+        assert result.message == null
+
+        Map editParam = [actionItemId: result.newActionItem.id,
+                         folderId    : null,
+                         status      : 'Complete',
+                         title       : 'title',
+                         name        : 'name',
+                         description : 'description1']
+        result = actionItemCompositeService.editActionItem( editParam )
+        assert result.success == false
+        assert result.message == 'Save failed. The Folder Id can not be null or empty.'
+    }
+
+
+    @Test
     void addActionItemFailedFolderValidation() {
         def result = actionItemCompositeService.addActionItem( [folderId: null, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
         assert result.success == false
@@ -150,7 +235,7 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         actionItemService.update( ai )
         result = actionItemCompositeService.validateEditActionItemContent( ai.id )
         assert result.editable == false
-        assert result.message == 'Cannot be modified. Action Item is posted.'
+        assert result.message == 'Cannot be updated. Action Item is posted.'
     }
 
 

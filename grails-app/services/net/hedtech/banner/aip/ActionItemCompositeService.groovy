@@ -44,10 +44,8 @@ class ActionItemCompositeService {
                     title: map.title,
                     name: map.name,
                     creatorId: user.username,
-                    userId: aipUser.bannerId,
                     description: map.description,
-                    activityDate: new Date()
-            )
+                    )
             try {
                 savedActionItem = actionItemService.create( ai )
                 success = true
@@ -66,6 +64,43 @@ class ActionItemCompositeService {
         ]
     }
 
+    /**
+     * Edit Action item
+     * @param map
+     * @return
+     */
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
+    def editActionItem( map ) {
+        ActionItem ai
+        def success = false
+        def message
+        try {
+            ai = actionItemService.get( map.actionItemId )
+            def oldFolderId = ai.folderId
+            if (map.name != ai.name) {
+                message = MessageHelper.message( 'action.item.name.cannot.be.modified' )
+            } else {
+                ai.folderId = map.folderId
+                ai.status = map.status ? AIPConstants.STATUS_MAP.get( map.status ) : null
+                ai.title = map.title
+                ai.description = map.description
+                actionItemService.validateUpdate( ai, oldFolderId )
+                actionItemService.update( ai )
+                success = true
+            }
+        } catch (ApplicationException e) {
+            if (ActionItemService.FOLDER_VALIDATION_ERROR.equals( e.getMessage() )) {
+                message = MessageHelper.message( e.getDefaultMessage(), MessageFormat.format( "{0,number,#}", ai.folderId ) )
+            } else {
+                message = MessageHelper.message( e.getDefaultMessage() )
+            }
+        }
+        [
+                success          : success,
+                message          : message,
+                updatedActionItem: ai
+        ]
+    }
     /**
      * Deletes Action items
      *

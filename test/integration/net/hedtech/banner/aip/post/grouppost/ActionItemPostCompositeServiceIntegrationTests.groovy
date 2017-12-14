@@ -30,12 +30,13 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
     def actionItemPostDetailService
     def actionItemJobService
 
+    private static final String USERNAME = 'AIPADM001'
 
     @Before
     void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
-        loginSSB( 'CSRADM001', '111111' )
+        loginSSB( USERNAME, '111111' )
     }
 
 
@@ -179,7 +180,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
             )
             actionItemPostDetailService.create( groupDetail )
         }
-        actionItemPostCompositeService.schedulePost( aip, 'CSRAOR001' )
+        actionItemPostCompositeService.schedulePost( aip, USERNAME )
         assert aip.postingCurrentState == ActionItemPostExecutionState.Scheduled
     }
 
@@ -190,7 +191,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         aip.postingScheduleDateTime = new Date() - 2
         aip = actionItemPostService.create( aip )
         try {
-            actionItemPostCompositeService.schedulePost( aip, 'CSRAOR001' )
+            actionItemPostCompositeService.schedulePost( aip, USERNAME )
         } catch (ApplicationException e) {
             assertApplicationException( e, 'invalidScheduledDate' )
         }
@@ -211,7 +212,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
             )
             actionItemPostDetailService.create( groupDetail )
         }
-        actionItemPostCompositeService.schedulePostImmediately( aip, 'CSRAOR001' )
+        actionItemPostCompositeService.schedulePostImmediately( aip, USERNAME )
         assert aip.postingCurrentState == ActionItemPostExecutionState.Queued
     }
 
@@ -449,7 +450,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         ActionItemPost post = result.savedJob
         assert post.id != null
         assert post.postingErrorText == null
-        assert post.lastModifiedBy == 'CSRADM001'
+        assert post.lastModifiedBy == USERNAME
 
     }
 
@@ -545,9 +546,11 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     private getInstance() {
         CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'Quinley Student Population' )[0]
-        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( population.id, 'CSRAOR001' )
+        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy(
+                population.id, USERNAME )
         SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
-        CommunicationPopulationListView populationListView = actionItemProcessingCommonService.fetchPopulationListForSend( 'p', [max: 10, offset: 0] )[0]
+        CommunicationPopulationListView populationListView = actionItemProcessingCommonService.fetchPopulationListForSend( 'p', [max: 10, offset:
+                0] )[0]
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
         def actionItemGroup = actionItemGroups[0]
         List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}

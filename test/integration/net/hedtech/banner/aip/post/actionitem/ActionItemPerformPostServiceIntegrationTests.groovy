@@ -31,12 +31,13 @@ class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCa
     def userActionItemService
     def actionItemPostDetailService
 
+    private static final String USERNAME = 'AIPADM001'
 
     @Before
     void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
-        loginSSB( 'CSRADM001', '111111' )
+        loginSSB( USERNAME, '111111' )
     }
 
 
@@ -71,7 +72,8 @@ class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCa
 
     private getInstance() {
         CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'Quinley Student Population' )[0]
-        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( population.id, 'CSRAOR001' )
+        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy(
+                population.id, USERNAME )
         SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
         CommunicationPopulationListView populationListView = actionItemProcessingCommonService.fetchPopulationListForSend( 'p', [max: 10, offset: 0] )[0]
         def requestMap = [:]

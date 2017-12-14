@@ -65,4 +65,29 @@ class ActionItemService extends ServiceBase {
             throw new ApplicationException( ActionItem, UNIQUE_NAME_FOLDER_ERROR, 'actionItem.name.unique.error' )
         }
     }
+
+
+    void validateUpdate( ai, oldFolderId ) {
+        if (!ai.validate()) {
+            def errorCodes = ai.errors.allErrors.codes[0]
+            if (errorCodes.contains( 'actionItem.name.nullable' )) {
+                throw new ApplicationException( ActionItem, NO_NAME_ERROR, 'actionItem.name.nullable.error' )
+            } else if (errorCodes.contains( 'actionItem.title.nullable' )) {
+                throw new ApplicationException( ActionItem, NO_TITLE_ERROR, 'actionItem.title.nullable.error' )
+            } else if (errorCodes.contains( 'actionItem.folderId.nullable' )) {
+                throw new ApplicationException( ActionItem, NO_FOLDER_ERROR, 'actionItem.folderId.nullable.error' )
+            } else if (errorCodes.contains( 'actionItem.status.nullable' )) {
+                throw new ApplicationException( ActionItem, NO_STATUS_ERROR, 'actionItem.status.nullable.error' )
+            } else if (errorCodes.contains( 'maxSize.exceeded' )) {
+                throw new ApplicationException( ActionItem, MAX_SIZE_ERROR, 'actionItem.max.size.error' )
+            }
+            throw new ApplicationException( ActionItem, OTHER_VALIDATION_ERROR, 'actionItem.operation.not.permitted' )
+        }
+        if (!CommunicationFolder.get( ai.folderId )) {
+            throw new ApplicationException( ActionItem, FOLDER_VALIDATION_ERROR, 'actionItem.folder.validation.error' )
+        }
+        if (oldFolderId != ai.folderId && ActionItem.existsSameNameInFolder( ai.folderId, ai.name )) {
+            throw new ApplicationException( ActionItem, UNIQUE_NAME_FOLDER_ERROR, 'actionItem.name.unique.error' )
+        }
+    }
 }
