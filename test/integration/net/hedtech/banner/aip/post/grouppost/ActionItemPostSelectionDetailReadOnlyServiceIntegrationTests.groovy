@@ -41,7 +41,7 @@ class ActionItemPostSelectionDetailReadOnlyServiceIntegrationTests extends BaseI
 
     @Test
     void testFetchSelectionIds() {
-        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'Quinley Student Population' )[0]
+        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'AIP Student Population 1' )[0]
         CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( population.id, 'AIPADM001' )
         def isAvailable = {
             def theCalculation = CommunicationPopulationCalculation.get( it )
