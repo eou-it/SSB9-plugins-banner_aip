@@ -71,7 +71,7 @@ class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCa
 
 
     private getInstance() {
-        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'Quinley Student Population' )[0]
+        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'AIP Student Population 1' )[0]
         CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy(
                 population.id, USERNAME )
         SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
