@@ -14,5 +14,14 @@ import groovy.transform.ToString
 class AipTimezone implements Serializable {
     String stringOffset;
     int offset;
+    String displayName
     String timezoneId;
+
+    /**
+     *
+     * @return
+     */
+    String getDisplayName() {
+        stringOffset + ' ' + timezoneId
+    }
 }
