@@ -11,6 +11,7 @@ import net.hedtech.banner.aip.post.job.ActionItemJobStatus
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.population.CommunicationPopulation
 import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculation
+import net.hedtech.banner.general.communication.population.CommunicationPopulationVersion
 import net.hedtech.banner.general.communication.population.CommunicationPopulationListView
 import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
@@ -546,8 +547,8 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     private getInstance() {
         CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'AIP Student Population 1' )[0]
-        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy(
-                population.id, USERNAME )
+        CommunicationPopulationVersion populationVersion = CommunicationPopulationVersion.findLatestByPopulationId( population.id )
+
         SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
         CommunicationPopulationListView populationListView = actionItemProcessingCommonService.fetchPopulationListForSend( 'p', [max: 10, offset:
                 0] )[0]
@@ -566,7 +567,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.scheduledStartDate = new Date() + 1
         requestMap.actionItemIds = actionItemIds
         def actionItemPost = actionItemPostCompositeService.getActionPostInstance( requestMap, springSecurityService.getAuthentication()?.user )
-        actionItemPost.populationCalculationId = populationCalculation.id
+        actionItemPost.populationCalculationId = populationVersion.id
         actionItemPost
     }
 
