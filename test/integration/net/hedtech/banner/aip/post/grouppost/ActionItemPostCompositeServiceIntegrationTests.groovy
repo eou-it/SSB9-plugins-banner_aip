@@ -477,7 +477,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         try {
             actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
         } catch (ApplicationException e) {
-            assertApplicationException( e, 'preCreate.validation.display.absolete.schedule.date' )
+            assertApplicationException( e, 'preCreate.validation.display.obsolete.schedule.date' )
         }
 
     }
@@ -505,7 +505,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         try {
             actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
         } catch (ApplicationException e) {
-            assertApplicationException( e, 'preCreate.validation.absolete.display.start.date' )
+            assertApplicationException( e, 'preCreate.validation.obsolete.display.start.date' )
         }
 
     }

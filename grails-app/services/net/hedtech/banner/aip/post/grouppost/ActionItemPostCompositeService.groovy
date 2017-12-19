@@ -47,10 +47,7 @@ class ActionItemPostCompositeService {
     def actionItemService
 
     def actionItemGroupService
-
-    def actionItemPostSelectionDetailReadOnlyService
     def actionItemJobService
-
     /**
      * Initiate the posting of a actionItems to a set of prospect recipients
      * @param requestMap the post to initiate
@@ -107,21 +104,26 @@ class ActionItemPostCompositeService {
     }
 
     /**
-     * Creates new Instanace of Action Item Post
+     * Creates new Instance of Action Item Post
      * @param requestMap
      * @param user
      * @return
      */
     ActionItemPost getActionPostInstance( requestMap, user ) {
+        Date scheduledStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.scheduledStartDate )
+        String scheduledStartTime = requestMap.scheduledStartTime
+        String timezoneStringOffset = requestMap.timezoneStringOffset
+        Calendar scheduledStartDateCalendar = null;
+        if (scheduledStartDate&& scheduledStartTime) {
+            scheduledStartDateCalendar = actionItemProcessingCommonService.getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset );
+        }
         new ActionItemPost(
                 populationListId: requestMap.populationId,
                 postingActionItemGroupId: requestMap.postingActionItemGroupId,
                 postingName: requestMap.postingName,
                 postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
                 postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
-                //postingScheduleDateTime: requestMap.scheduledStartDate ? actionItemProcessingCommonService.convertToLocaleBasedDate(
-                //        requestMap.scheduledStartDate ) : null,
-                postingScheduleDateTime: requestMap.scheduledStartDate,
+                postingScheduleDateTime: scheduledStartDateCalendar ? scheduledStartDateCalendar.getTime() : null,
                 postingCreationDateTime: new Date(),
                 populationRegenerateIndicator: false,
                 postingDeleteIndicator: false,
@@ -177,7 +179,7 @@ class ActionItemPostCompositeService {
     private def validateDates( ActionItemPost groupSend, isScheduled ) {
         Date currentDate = actionItemProcessingCommonService.getLocaleBasedCurrentDate()
         if (currentDate.compareTo( groupSend.postingDisplayStartDate ) > 0) {
-            throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.absolete.display.start.date', [] ) )
+            throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.obsolete.display.start.date', [] ) )
         }
         if (groupSend.postingDisplayStartDate.compareTo( groupSend.postingDisplayEndDate ) > 0) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.display.start.date.more.than.display.end.date', [] ) )
@@ -185,7 +187,7 @@ class ActionItemPostCompositeService {
         if (isScheduled) {
             Date now = new Date( System.currentTimeMillis() )
             if (now.after( groupSend.postingScheduleDateTime )) {
-                throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService.class, "preCreate.validation.display.absolete.schedule.date" )
+                throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService.class, "preCreate.validation.display.obsolete.schedule.date" )
             }
         }
     }
