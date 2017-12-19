@@ -6,7 +6,6 @@ package net.hedtech.banner.aip.common
 
 import com.ibm.icu.util.Calendar
 import com.ibm.icu.util.ULocale
-import grails.converters.JSON
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
@@ -159,7 +158,8 @@ class ActionItemProcessingCommonService {
      * @return
      */
     def fetchCurrentDateInLocaleFormat() {
-        ['date': dateConverterService.parseGregorianToDefaultCalendar( LocalizeUtil.formatDate( new Date() ) ), 'dateFormat': LocalizeUtil.dateFormat]
+        [date: dateConverterService.parseGregorianToDefaultCalendar( LocalizeUtil.formatDate( new Date() ) ),
+         dateFormat: LocalizeUtil.dateFormat]
     }
 
     /**
@@ -167,8 +167,8 @@ class ActionItemProcessingCommonService {
      * @return
      */
     def is12HourClock() {
-        def use12HourClock = MessageHelper.message( 'default.action.item.port.timepicker.12hourclock' ) == "1"
-        ['use12HourClock': use12HourClock]
+        def use12HourClock = MessageHelper.message( 'default.action.item.port.timepicker.12hourclock' ) == '1'
+        [use12HourClock: use12HourClock]
     }
 
 }
