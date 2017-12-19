@@ -28,7 +28,7 @@ class ActionItemPostSelectionDetailReadOnlyServiceIntegrationTests extends BaseI
         formContext = ['GUAGMNU', 'SELFSERVICE']
         //formContext = ['GUAGMNU']
         super.setUp()
-        loginSSB( 'CSRADM001', '111111' )
+        loginSSB( 'AIPADM001', '111111' )
     }
 
 
@@ -41,8 +41,8 @@ class ActionItemPostSelectionDetailReadOnlyServiceIntegrationTests extends BaseI
 
     @Test
     void testFetchSelectionIds() {
-        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'Quinley Student Population' )[0]
-        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( population.id, 'CSRAOR001' )
+        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'AIP Student Population 1' )[0]
+        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( population.id, 'AIPADM001' )
         def isAvailable = {
             def theCalculation = CommunicationPopulationCalculation.get( it )
             println "in wait calc: " + theCalculation

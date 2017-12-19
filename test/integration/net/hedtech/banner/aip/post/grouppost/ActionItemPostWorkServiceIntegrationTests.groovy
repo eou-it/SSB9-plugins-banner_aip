@@ -21,7 +21,7 @@ class ActionItemPostWorkServiceIntegrationTests extends BaseIntegrationTestCase 
     void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
-        loginSSB( 'CSRADM001', '111111' )
+        loginSSB( 'AIPADM001', '111111' )
     }
 
 
