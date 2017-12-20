@@ -503,19 +503,19 @@ class ActionItemPostCompositeService {
      */
     void createPostItems( ActionItemPost groupSend ) {
         LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id )
-        List<ActionItemPostSelectionDetailReadOnly> list = actionItemPostSelectionDetailReadOnlyService.fetchSelectionIds( groupSend.id )
+        def session = sessionFactory.currentSession
+        List<ActionItemPostSelectionDetailReadOnly> list = session.getNamedQuery( 'ActionItemPostSelectionDetailReadOnly.fetchSelectionIds' )
+                .setLong( 'postingId', groupSend.id )
+                .list()
         list?.each {ActionItemPostSelectionDetailReadOnly it ->
-            def currentTime = new Date().toTimestamp()
-            ActionItemPostWork actionItemPostWork = new ActionItemPostWork(
-                    actionItemGroupSend: groupSend,
-                    recipientPidm: it.actionItemPostSelectionPidm,
-                    creationDateTime: currentTime,
-                    currentExecutionState: ActionItemPostWorkExecutionState.Ready,
-                    referenceId: sysGuId,
-                    startedDate: currentTime,
-                    lastModifiedBy: it.postingUserId
-            )
-            actionItemPostWorkService.create( actionItemPostWork )
+            session.createSQLQuery( """ INSERT INTO gcraiim (gcraiim_gcbapst_id, gcraiim_pidm, gcraiim_creationdatetime
+                                                                   ,gcraiim_current_state, gcraiim_reference_id, gcraiim_user_id, gcraiim_activity_date, 
+                                                                   gcraiim_started_date) values (${groupSend.id}, ${
+                it.actionItemPostSelectionPidm
+            }, sysdate, '${ActionItemPostWorkExecutionState.Ready.toString()}' ,'$sysGuId', '${
+                it.postingUserId
+            }', sysdate, sysdate ) """ )
+                    .executeUpdate()
         }
         LoggerUtility.debug( LOGGER, "Created " + list?.size() + " group send item records for group send with id = " + groupSend.id )
     }
