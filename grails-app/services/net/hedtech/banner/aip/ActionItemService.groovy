@@ -3,6 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.service.ServiceBase
@@ -66,7 +67,21 @@ class ActionItemService extends ServiceBase {
         }
     }
 
+    /**
+     * Check Action Item already posted
+     * @param actionItemId
+     * @return true/false
+     */
+    def checkActionItemPosted( Long actionItemId ) {
+        ActionItem actionItem = ActionItem.fetchActionItemById( actionItemId )
+        return actionItem.postedIndicator == AIPConstants.YES_IND
+    }
 
+    /**
+     *
+     * @param ai
+     * @param oldFolderId
+     */
     void validateUpdate( ai, oldFolderId ) {
         if (!ai.validate()) {
             def errorCodes = ai.errors.allErrors.codes[0]
