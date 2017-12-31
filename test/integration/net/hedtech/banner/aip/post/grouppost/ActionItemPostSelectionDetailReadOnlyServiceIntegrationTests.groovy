@@ -20,7 +20,9 @@ import java.util.concurrent.TimeUnit
 class ActionItemPostSelectionDetailReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase {
     def actionItemPostSelectionDetailReadOnlyService
     def communicationFolderService
+    def communicationPopulationCompositeService
     def actionItemPostService
+    def communicationPopulationQueryCompositeService
 
 
     @Before
@@ -41,8 +43,12 @@ class ActionItemPostSelectionDetailReadOnlyServiceIntegrationTests extends BaseI
 
     @Test
     void testFetchSelectionIds() {
-        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'AIP Student Population 1' )[0]
-        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( population.id, 'AIPADM001' )
+        CommunicationPopulationQuery populationQuery = communicationPopulationQueryCompositeService.createPopulationQuery( newPopulationQuery(
+                "testPopForSchedTest" ) )
+        CommunicationPopulation population = communicationPopulationCompositeService.createPopulationFromQuery( populationQuery,
+                                                                                                                "testPopulationForSchedTest" )
+        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy(
+                population.id, 'AIPADM001' )
         def isAvailable = {
             def theCalculation = CommunicationPopulationCalculation.get( it )
             println "in wait calc: " + theCalculation
