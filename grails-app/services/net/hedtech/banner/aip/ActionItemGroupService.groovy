@@ -82,7 +82,7 @@ class ActionItemGroupService extends ServiceBase {
             }
         }
         if (!CommunicationFolder.get( aig.folderId )) {
-            throw new ApplicationException( ActionItemGroup, FOLDER_VALIDATION_ERROR, 'actionItemGroup.folder.validation.error', [aig.folderId] )
+            throw new ApplicationException( ActionItemGroup, FOLDER_VALIDATION_ERROR, 'actionItemGroup.folder.validation.error', [aig.folderId].toArray(  ) )
         }
 
         if (ActionItemGroup.existsSameNameInFolder( aig.folderId, aig.name )) {

@@ -10,6 +10,7 @@ import net.hedtech.banner.general.communication.population.CommunicationPopulati
 import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculation
 import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculationStatus
 import net.hedtech.banner.general.communication.population.query.CommunicationPopulationQuery
+import net.hedtech.banner.general.communication.population.query.CommunicationPopulationQueryVersion
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
@@ -45,6 +46,8 @@ class ActionItemPostSelectionDetailReadOnlyServiceIntegrationTests extends BaseI
     void testFetchSelectionIds() {
         CommunicationPopulationQuery populationQuery = communicationPopulationQueryCompositeService.createPopulationQuery( newPopulationQuery(
                 "testPopForSchedTest" ) )
+        CommunicationPopulationQueryVersion queryVersion = communicationPopulationQueryCompositeService.publishPopulationQuery( populationQuery )
+        populationQuery = queryVersion.query
         CommunicationPopulation population = communicationPopulationCompositeService.createPopulationFromQuery( populationQuery,
                                                                                                                 "testPopulationForSchedTest" )
         CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy(
