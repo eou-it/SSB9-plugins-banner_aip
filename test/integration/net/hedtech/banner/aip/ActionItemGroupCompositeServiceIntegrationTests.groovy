@@ -88,7 +88,7 @@ class ActionItemGroupCompositeServiceIntegrationTests extends BaseIntegrationTes
         ]
         def result = actionItemGroupCompositeService.createOrUpdateGroup( map )
         assert result.success == false
-        assert result.message == 'Save failed. The Folder with Id -1 does not exist.'
+        assert result.message == 'Save failed. The Folder does not exist.'
     }
 
 
