@@ -3,6 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.service.ServiceBase
@@ -59,14 +60,28 @@ class ActionItemService extends ServiceBase {
         }
 
         if (!CommunicationFolder.get( ai.folderId )) {
-            throw new ApplicationException( ActionItem, FOLDER_VALIDATION_ERROR, 'actionItem.folder.validation.error' )
+            throw new ApplicationException( ActionItem, FOLDER_VALIDATION_ERROR, 'actionItem.folder.validation.error')
         }
         if (ActionItem.existsSameNameInFolder( ai.folderId, ai.name )) {
             throw new ApplicationException( ActionItem, UNIQUE_NAME_FOLDER_ERROR, 'actionItem.name.unique.error' )
         }
     }
 
+    /**
+     * Check Action Item already posted
+     * @param actionItemId
+     * @return true/false
+     */
+    def checkActionItemPosted( Long actionItemId ) {
+        ActionItem actionItem = ActionItem.fetchActionItemById( actionItemId )
+        return actionItem.postedIndicator == AIPConstants.YES_IND
+    }
 
+    /**
+     *
+     * @param ai
+     * @param oldFolderId
+     */
     void validateUpdate( ai, oldFolderId ) {
         if (!ai.validate()) {
             def errorCodes = ai.errors.allErrors.codes[0]
@@ -84,7 +99,7 @@ class ActionItemService extends ServiceBase {
             throw new ApplicationException( ActionItem, OTHER_VALIDATION_ERROR, 'actionItem.operation.not.permitted' )
         }
         if (!CommunicationFolder.get( ai.folderId )) {
-            throw new ApplicationException( ActionItem, FOLDER_VALIDATION_ERROR, 'actionItem.folder.validation.error' )
+            throw new ApplicationException( ActionItem, FOLDER_VALIDATION_ERROR, 'actionItem.folder.validation.error')
         }
         if (oldFolderId != ai.folderId && ActionItem.existsSameNameInFolder( ai.folderId, ai.name )) {
             throw new ApplicationException( ActionItem, UNIQUE_NAME_FOLDER_ERROR, 'actionItem.name.unique.error' )

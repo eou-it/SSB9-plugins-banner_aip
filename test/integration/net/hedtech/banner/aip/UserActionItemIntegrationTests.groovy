@@ -60,7 +60,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     // No date range to check (most common condition)
     @Test
     void testIsExistingInDateRangeByPidmAndACTMIdNoneFound() {
-        ActionItem actionItem = ActionItem.fetchActionItems(  )[0]
+        ActionItem actionItem = ActionItem.findByName('Registration Process Training')
         ActionItemGroup actionItemGroup= ActionItemGroup.fetchActionItemGroups(  )[0]
         def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
 
@@ -188,7 +188,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     // check that new ActionItem prior to existing date range returns false
     @Test
     void testIsExistingInDateRangeByPidmAndACTMIdPrior() {
-        ActionItem actionItem = ActionItem.fetchActionItems()[0]
+        ActionItem actionItem = ActionItem.findByName('Registration Process Training')
         ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
         def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
 
@@ -214,7 +214,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     // check that new ActionItem after existing date range returns false
     @Test
     void testIsExistingInDateRangeByPidmAndACTMIdAfter() {
-        ActionItem actionItem = ActionItem.fetchActionItems()[0]
+        ActionItem actionItem = ActionItem.findByName('Registration Process Training')
         ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
         def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
 

@@ -75,14 +75,10 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testUserActionItemROEquals() {
-
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
         List<UserActionItemReadOnly> userActionItemsRO = UserActionItemReadOnly.fetchUserActionItemsROByPidmDate( actionItemPidm )
-
-
         def userActionItemListRO = userActionItemsRO[0]
         def userActionItemRONewList = new UserActionItemReadOnly()
-
         userActionItemRONewList.id = userActionItemListRO.id
         userActionItemRONewList.title = userActionItemListRO.title
         userActionItemRONewList.name = userActionItemListRO.name

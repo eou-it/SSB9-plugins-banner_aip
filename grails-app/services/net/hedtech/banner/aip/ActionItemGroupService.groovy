@@ -3,6 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.service.ServiceBase
@@ -38,7 +39,7 @@ class ActionItemGroupService extends ServiceBase {
     }
 
     /**
-     * Fetch Action Item Group for specipied group Id
+     * Fetch Action Item Group for specified group Id
      * @param actionItemGroupId
      * @return
      */
@@ -53,7 +54,7 @@ class ActionItemGroupService extends ServiceBase {
      */
     def checkGroupPosted( Long actionItemGroupId ) {
         def group = ActionItemGroup.fetchActionItemGroupById( actionItemGroupId )
-        return group.postingInd == 'Y'
+        return group.postingInd == AIPConstants.YES_IND
     }
 
     /**
