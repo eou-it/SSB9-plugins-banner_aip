@@ -5,16 +5,12 @@ package net.hedtech.banner.aip.post.actionitem
 
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.ActionItemGroupAssign
-import net.hedtech.banner.aip.UserActionItem
 import net.hedtech.banner.aip.post.grouppost.ActionItemPost
 import net.hedtech.banner.aip.post.grouppost.ActionItemPostDetail
 import net.hedtech.banner.aip.post.grouppost.ActionItemPostWork
-import net.hedtech.banner.aip.post.job.ActionItemJob
-import net.hedtech.banner.aip.post.job.ActionItemJobStatus
 import net.hedtech.banner.general.communication.population.CommunicationPopulation
-import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculation
-import net.hedtech.banner.general.communication.population.CommunicationPopulationVersion
 import net.hedtech.banner.general.communication.population.CommunicationPopulationListView
+import net.hedtech.banner.general.communication.population.CommunicationPopulationVersion
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
@@ -67,7 +63,7 @@ class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCa
         println newAip
         actionItemPostCompositeService.createPostItems( newAip )
 
-        ActionItemPostWork actionItemPostWork2 = ActionItemPostWork.fetchByGroupSend(newAip, 1)
+        ActionItemPostWork actionItemPostWork2 = ActionItemPostWork.fetchByGroupSend(newAip, 1)[0]
 
         println "post 2"
         println actionItemPostWork2
@@ -76,8 +72,7 @@ class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCa
 
         println "post work"
         println actionItemPostWork
-        //actionItemPerformPostService.postActionItems( actionItemPostWork )
-        //assert userActionItemService.list( [max: Integer.MAX_VALUE] ).size() > 0
+        assert userActionItemService.list( [max: Integer.MAX_VALUE] ).size() > 0
 
     }
 
@@ -99,6 +94,7 @@ class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCa
         requestMap.scheduledStartDate = new Date()
         def actionItemPost = actionItemPostCompositeService.getActionPostInstance( requestMap, springSecurityService.getAuthentication()?.user )
         actionItemPost.populationCalculationId = populationVersion.id
+        actionItemPost.populationVersionId=populationVersion.id
         actionItemPost
     }
 }

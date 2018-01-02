@@ -8,7 +8,9 @@ import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.general.communication.population.CommunicationPopulation
 import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculation
+import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculationService
 import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculationStatus
+import net.hedtech.banner.general.communication.population.CommunicationPopulationVersion
 import net.hedtech.banner.general.communication.population.query.CommunicationPopulationQuery
 import net.hedtech.banner.general.communication.population.query.CommunicationPopulationQueryVersion
 import net.hedtech.banner.testing.BaseIntegrationTestCase
@@ -44,34 +46,19 @@ class ActionItemPostSelectionDetailReadOnlyServiceIntegrationTests extends BaseI
 
     @Test
     void testFetchSelectionIds() {
-        CommunicationPopulationQuery populationQuery = communicationPopulationQueryCompositeService.createPopulationQuery( newPopulationQuery(
-                "testPopForSchedTest" ) )
-        CommunicationPopulationQueryVersion queryVersion = communicationPopulationQueryCompositeService.publishPopulationQuery( populationQuery )
-        populationQuery = queryVersion.query
-        CommunicationPopulation population = communicationPopulationCompositeService.createPopulationFromQuery( populationQuery,
-                                                                                                                "testPopulationForSchedTest" )
-        CommunicationPopulationCalculation populationCalculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy(
-                population.id, 'AIPADM001' )
-        def isAvailable = {
-            def theCalculation = CommunicationPopulationCalculation.get( it )
-            println "in wait calc: " + theCalculation
-            theCalculation.refresh()
-            return theCalculation.status == CommunicationPopulationCalculationStatus.AVAILABLE
-        }
-        // Not getting to available. disabling for now
-        //assertTrueWithRetry( isAvailable, populationCalculation.id, 15, 5 )
-        assertTrueWithRetry( isAvailable, populationCalculation.id, 1, 5 )
-        ActionItemPost aip = newAIP( populationCalculation.id )
+        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'AIP Student Population 1' )[0]
+        CommunicationPopulationVersion populationVersion = CommunicationPopulationVersion.findByPopulationId( population.id )[0]
+        ActionItemPost aip = newAIP( populationVersion.id )
         aip = actionItemPostService.create( aip )
         def result = actionItemPostSelectionDetailReadOnlyService.fetchSelectionIds( aip.id )
         assert result.size() > 0
     }
 
 
-    private def newAIP( populationCalculationId ) {
+    private def newAIP( populationVersionId ) {
         new ActionItemPost(
                 populationListId: 1L,
-                populationVersionId: 1L,
+                populationVersionId: populationVersionId,
                 postingName: "some name",
                 postingActionItemGroupId: ActionItemGroup.findByName( 'Enrollment' ).id,
                 postingDeleteIndicator: false,
@@ -86,7 +73,7 @@ class ActionItemPostSelectionDetailReadOnlyServiceIntegrationTests extends BaseI
                 postingStartedDate: null,
                 postingStopDate: null,
                 aSyncJobId: "la43j45h546k56g6f6r77a7kjfn",
-                populationCalculationId: populationCalculationId,
+                populationCalculationId: 1L,
                 postingErrorCode: ActionItemErrorCode.DATA_FIELD_SQL_ERROR,
                 postingErrorText: null,
                 aSyncGroupId: null,
