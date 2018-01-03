@@ -48,7 +48,7 @@ class GroupFolderReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase
     @Test
     void testFetchGroupFolderROPageSortService() {
         def paginationParams1 = [sortColumn: "groupTitle", sortAscending: true, max: 10, offset: 0]
-        def paginationParams2 = [sortColumn: "groupTitle", sortAscending: true, max: 10, offset: 10]
+        def paginationParams2 = [sortColumn: "groupTitle", sortAscending: true, max: Integer.MAX_VALUE, offset: 10]
         def groupFolderROList1 = groupFolderReadOnlyService.listGroupFolderPageSort( [name: "%"], paginationParams1 )
         def groupFolderROList2 = groupFolderReadOnlyService.listGroupFolderPageSort( [name: "%"], paginationParams2 )
         def totalCount = groupFolderROList1.result.size() + groupFolderROList2.result.size()
