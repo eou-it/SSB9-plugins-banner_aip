@@ -34,10 +34,10 @@ class ActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegration
 
         Map params2 = [filterName: "%", sortColumn: "actionItemName", sortAscending: true, max: 10, offset: 10]
 
-        Map params3 = [filterName: "%", sortColumn: "actionItemName", sortAscending: true, max: Integer.MAX_VALUE, offset: 20]
 
         def actionItemROList1 = actionItemReadOnlyCompositeService.listActionItemsPageSort( params1 )
         def actionItemROList2 = actionItemReadOnlyCompositeService.listActionItemsPageSort( params2 )
+        Map params3 = [filterName: "%", sortColumn: "actionItemName", sortAscending: true, max: actionItemROList1.length, offset: 20]
         def actionItemROList3 = actionItemReadOnlyCompositeService.listActionItemsPageSort( params3 )
 
         def totalCount = actionItemROList1.result.size() + actionItemROList2.result.size() + actionItemROList3.result.size()
