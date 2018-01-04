@@ -7,12 +7,8 @@ import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.general.communication.population.CommunicationPopulation
-import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculation
-import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculationService
-import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculationStatus
 import net.hedtech.banner.general.communication.population.CommunicationPopulationVersion
 import net.hedtech.banner.general.communication.population.query.CommunicationPopulationQuery
-import net.hedtech.banner.general.communication.population.query.CommunicationPopulationQueryVersion
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
@@ -23,9 +19,7 @@ import java.util.concurrent.TimeUnit
 class ActionItemPostSelectionDetailReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase {
     def actionItemPostSelectionDetailReadOnlyService
     def communicationFolderService
-    def communicationPopulationCompositeService
     def actionItemPostService
-    def communicationPopulationQueryCompositeService
 
 
     @Before
