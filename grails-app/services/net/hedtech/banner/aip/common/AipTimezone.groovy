@@ -15,13 +15,6 @@ class AipTimezone implements Serializable {
     String stringOffset;
     int offset;
     String displayName
+    String displayNameWithoutOffset
     String timezoneId;
-
-    /**
-     *
-     * @return
-     */
-    String getDisplayName() {
-        stringOffset + ' ' + timezoneId
-    }
 }

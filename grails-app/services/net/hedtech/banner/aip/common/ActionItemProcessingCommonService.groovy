@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit
 class ActionItemProcessingCommonService {
     def dateConverterService
     def grailsApplication
+    def messageSource
 
     private static final def LOGGER = Logger.getLogger( this.getClass() )
 
@@ -118,7 +119,7 @@ class ActionItemProcessingCommonService {
      * @return
      */
     List<AipTimezone> populateAvailableTimezones() {
-        Set<String> keys = grailsApplication.mainContext.getBean( 'messageSource' ).getMergedProperties( LocaleContextHolder.getLocale() ).properties.keySet()
+        Set<String> keys = messageSource.getMergedProperties( LocaleContextHolder.getLocale() ).properties.keySet()
         Set<String> timezoneKeys = keys.findAll {key -> key.startsWith( 'timezone.' )}
         Set<String> intendedTimezoneIds = new HashSet<String>()
         timezoneKeys.each {
@@ -136,6 +137,8 @@ class ActionItemProcessingCommonService {
             commTimezone.setStringOffset( GMTResult )
             commTimezone.setOffset( tz.getOffset( new Date().getTime() ) )
             commTimezone.setTimezoneId( tz.getID() )
+            commTimezone.displayName( GMTResult + " " + messageSource.getMessage( "timezone." + it, null, LocaleContextHolder.getLocale() ) )
+            commTimezone.displayNameWithoutOffset( messageSource.getMessage( "timezone." + it, null, LocaleContextHolder.getLocale() ) );
             commTimezoneList.add( commTimezone )
         }
         commTimezoneList.sort {t1, t2 -> (t1.offset <=> t2.offset) ?: (t1.timezoneId <=> t2.timezoneId)}
