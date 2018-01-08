@@ -13,11 +13,13 @@ import net.hedtech.banner.general.communication.population.CommunicationPopulati
 import net.hedtech.banner.i18n.LocalizeUtil
 import net.hedtech.banner.i18n.MessageHelper
 import org.apache.log4j.Logger
+import org.springframework.context.i18n.LocaleContextHolder
 
 import java.util.concurrent.TimeUnit
 
 class ActionItemProcessingCommonService {
     def dateConverterService
+    def grailsApplication
 
     private static final def LOGGER = Logger.getLogger( this.getClass() )
 
@@ -116,7 +118,16 @@ class ActionItemProcessingCommonService {
      * @return
      */
     List<AipTimezone> populateAvailableTimezones() {
+        Set<String> keys = grailsApplication.mainContext.getBean( 'messageSource' ).getMergedProperties( LocaleContextHolder.getLocale() ).properties.keySet()
+        Set<String> timezoneKeys = keys.findAll {key -> key.startsWith( 'timezone.' )}
+        Set<String> intendedTimezoneIds = new HashSet<String>()
+        timezoneKeys.each {
+            intendedTimezoneIds.add( (String) it.tokenize( "." ).toArray()[1] )
+        }
         Set<String> timezoneIds = TimeZone.getAvailableIDs()
+        timezoneIds.retainAll() {
+            intendedTimezoneIds.contains( it )
+        }
         List<AipTimezone> commTimezoneList = new LinkedList<AipTimezone>()
         timezoneIds.each {
             TimeZone tz = TimeZone.getTimeZone( it )
@@ -158,7 +169,7 @@ class ActionItemProcessingCommonService {
      * @return
      */
     def fetchCurrentDateInLocaleFormat() {
-        [date: dateConverterService.parseGregorianToDefaultCalendar( LocalizeUtil.formatDate( new Date() ) ),
+        [date      : dateConverterService.parseGregorianToDefaultCalendar( LocalizeUtil.formatDate( new Date() ) ),
          dateFormat: LocalizeUtil.dateFormat]
     }
 
