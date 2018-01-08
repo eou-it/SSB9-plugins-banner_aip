@@ -79,13 +79,9 @@ class ActionItemPostCompositeService {
         // Create the details records.
         requestMap.actionItemIds.each {
             addPostingDetail( it, groupSendSaved.id )
-            if (requestMap.postNow) {
-                markActionItemPosted( it )
-            }
+            markActionItemPosted( it )
         }
-        if (requestMap.postNow) {
-            markActionItemGroupPosted( groupSendSaved.postingActionItemGroupId )
-        }
+        markActionItemGroupPosted( groupSendSaved.postingActionItemGroupId )
         if (requestMap.postNow) {
             if (hasQuery) {
                 assert (groupSendSaved.populationCalculationId != null)
@@ -112,7 +108,7 @@ class ActionItemPostCompositeService {
         String scheduledStartTime = requestMap.scheduledStartTime
         String timezoneStringOffset = requestMap.timezoneStringOffset
         Calendar scheduledStartDateCalendar = null;
-        if (scheduledStartDate&& scheduledStartTime) {
+        if (!requestMap.postNow && scheduledStartDate && scheduledStartTime) {
             scheduledStartDateCalendar = actionItemProcessingCommonService.getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset );
         }
         new ActionItemPost(

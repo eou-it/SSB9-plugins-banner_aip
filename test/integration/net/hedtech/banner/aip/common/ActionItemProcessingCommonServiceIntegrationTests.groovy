@@ -108,7 +108,7 @@ class ActionItemProcessingCommonServiceIntegrationTests extends BaseIntegrationT
         SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
         Date scheduledStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate( testingDateFormat.format( new Date() ) )
         def scheduledStartTime = "2230"
-        def timezoneStringOffset = "Etc/GMT+10"
+        def timezoneStringOffset = "Asia/Kolkata"
         def result = actionItemProcessingCommonService.getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset )
         assert result != null
     }

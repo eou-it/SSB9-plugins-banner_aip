@@ -5,15 +5,10 @@ package net.hedtech.banner.aip.post.engine
 
 import groovy.transform.Synchronized
 import net.hedtech.banner.aip.post.ActionItemErrorCode
-import net.hedtech.banner.aip.post.exceptions.ActionItemApplicationException
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.asynchronous.AsynchronousActionPoolThreadFactory
 import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
-import net.hedtech.banner.general.asynchronous.task.AsynchronousTask
-import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskHandler
-import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskManager
-import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskMonitorRecord
-import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskProcessingEngine
+import net.hedtech.banner.general.asynchronous.task.*
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.springframework.beans.factory.DisposableBean
@@ -548,7 +543,7 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
             try {
                 asynchronousBannerAuthenticationSpoofer.authenticateAndSetFormContextForExecute()
 //                  ThreadCallerContext.set( new TrustedCallerContext() )
-                if(cause instanceof ActionItemApplicationException) {
+                if(cause instanceof ApplicationException) {
                     jobManager.markFailed(job, cause.friendlyName, cause )
                 }
                 else

@@ -33,6 +33,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     private static final String USERNAME = 'AIPADM001'
 
+
     @Before
     void setUp() {
         formContext = ['GUAGMNU']
@@ -171,6 +172,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
     void schedulePost() {
         ActionItemPost aip = newAIP()
         aip = actionItemPostService.create( aip )
+        aip.postingScheduleDateTime = new Date() + 2
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
         def actionItemGroup = actionItemGroups[0]
         List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
@@ -474,6 +476,8 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.displayStartDate = testingDateFormat.format( new Date() )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date() - 1
+        requestMap.scheduledStartTime = "0900"
+        requestMap.timezoneStringOffset = "Asia/Kolkata"
         requestMap.actionItemIds = actionItemIds
         try {
             actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )

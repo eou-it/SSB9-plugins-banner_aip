@@ -26,7 +26,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
                     postingCurrentState    : it.postingCurrentState,
                     jobState               : MessageHelper.message( 'aip.action.item.post.job.state.' + ActionItemPostExecutionState.getStateEnum( it.postingCurrentState ) ),
                     postingName            : it.postingName,
-                    postingDisplayStartDate: it.postingDisplayStartDate,
+                    postingDisplayStartDate: it.postingScheduleDateTime ? it.postingScheduleDateTime : it.postingDisplayStartDate,
                     postingStartedDate     : it.postingStartedDate,
                     groupFolderName        : it.groupFolderName,
                     postingPopulation      : it.postingPopulation,
@@ -34,7 +34,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
                     postingCreatorId       : it.postingCreatorId,
                     lastModified           : it.lastModified,
                     lastModifiedBy         : it.lastModifiedBy,
-                    version                : it.version,
+                    version                : it.version
 
 
             ]

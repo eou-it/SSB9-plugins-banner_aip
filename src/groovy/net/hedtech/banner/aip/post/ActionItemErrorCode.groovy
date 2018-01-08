@@ -19,6 +19,6 @@ enum ActionItemErrorCode implements Serializable {
      * @return Set<ActionItemErrorCode> the set of ActionItemErrorCode
      */
     public Set<ActionItemErrorCode> set() {
-        return EnumSet.range( ActionItemErrorCode.INVALID_DATA_FIELD, ActionItemErrorCode.UNKNOWN_ERROR )
+        EnumSet.range( ActionItemErrorCode.INVALID_DATA_FIELD, ActionItemErrorCode.UNKNOWN_ERROR )
     }
 }
