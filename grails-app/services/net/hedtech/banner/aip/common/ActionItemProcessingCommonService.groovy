@@ -137,8 +137,8 @@ class ActionItemProcessingCommonService {
             commTimezone.setStringOffset( GMTResult )
             commTimezone.setOffset( tz.getOffset( new Date().getTime() ) )
             commTimezone.setTimezoneId( tz.getID() )
-            commTimezone.displayName( GMTResult + " " + messageSource.getMessage( "timezone." + it, null, LocaleContextHolder.getLocale() ) )
-            commTimezone.displayNameWithoutOffset( messageSource.getMessage( "timezone." + it, null, LocaleContextHolder.getLocale() ) );
+            commTimezone.displayName = GMTResult + " " + messageSource.getMessage( "timezone." + it, null, LocaleContextHolder.getLocale() )
+            commTimezone.displayNameWithoutOffset = messageSource.getMessage( "timezone." + it, null, LocaleContextHolder.getLocale() )
             commTimezoneList.add( commTimezone )
         }
         commTimezoneList.sort {t1, t2 -> (t1.offset <=> t2.offset) ?: (t1.timezoneId <=> t2.timezoneId)}
