@@ -74,6 +74,7 @@ class GroupFolderReadOnlyService extends ServiceBase {
              folderName       : it.folderName,
              groupUserId      : it.groupUserId,
              groupActivityDate: it.groupActivityDate,
+             postedInd        : it.postedInd,
              deletable        : it.postedInd == AIPConstants.NO_IND,
              cantDeleteMessage: it.postedInd == AIPConstants.YES_IND ? MessageHelper.message( 'group.not.deletable.mark.as.posted' ) : null
             ]
