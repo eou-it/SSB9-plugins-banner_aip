@@ -74,11 +74,11 @@ class ActionItemPostReadOnly implements Serializable {
     Date postingDisplayEndDate
 
     /**
-     * POSTING SCHEDULE DELETE TIME: Delete time of action item posting schedule.
+     * POSTING SCHEDULE DATE TIME: Delete time of action item posting schedule.
      */
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "GCBAPST_SCHEDULED_DATETIME")
-    Date postingScheduleDeleteTime
+    Date postingScheduleDateTime
 
     @Column(name = "GCBAPST_STARTED_DATE")
     @Temporal(TemporalType.TIMESTAMP)
@@ -91,11 +91,11 @@ class ActionItemPostReadOnly implements Serializable {
     String postingCreatorId
 
     /**
-     * POSTING SCHEDULE DATE TIME: The date and time the posting job is scheduled to be processed.
+     * POSTING CREATION DATE TIME: The date and time the posting job is scheduled to be processed.
      */
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "GCBAPST_CREATION_DATETIME")
-    Date postingScheduleDateTime
+    Date postingCreationDateTime
 /**
  * POPULATION REGENERATE INDICATOR: Indicates if the chosen population needs to be recalculated before posting. Values are (Y)es and (N)o
  */

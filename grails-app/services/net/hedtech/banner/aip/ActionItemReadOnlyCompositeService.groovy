@@ -65,6 +65,7 @@ class ActionItemReadOnlyCompositeService extends ServiceBase {
                             actionItemContentId    : actionItem.actionItemContentId,
                             actionItemContentDate  : actionItem.actionItemContentDate,
                             actionItemContent      : actionItem.actionItemContent,
+                            actionItemPostedStatus : actionItem.actionItemPostedStatus,
                             deletable              : deletableResult.deletable,
                             cantDeleteMessage      : deletableResult.message
                     ]

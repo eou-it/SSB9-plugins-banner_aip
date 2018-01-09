@@ -5,6 +5,7 @@
 package net.hedtech.banner.aip.common
 
 import net.hedtech.banner.exceptions.ApplicationException
+import net.hedtech.banner.i18n.LocalizeUtil
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
@@ -85,5 +86,37 @@ class ActionItemProcessingCommonServiceIntegrationTests extends BaseIntegrationT
                         "value": "Inactive"
                 ]
         ] == actionItemProcessingCommonService.listStatus()
+    }
+
+
+    @Test
+    void testIs12HourClock() {
+        def result = actionItemProcessingCommonService.is12HourClock()
+        assert result.use12HourClock == true
+    }
+
+
+    @Test
+    void fetchCurrentDateInLocaleFormat() {
+        def result = actionItemProcessingCommonService.fetchCurrentDateInLocaleFormat()
+        assert result.dateFormat == LocalizeUtil.dateFormat
+    }
+
+
+    @Test
+    void getRequestedTimezoneCalendar() {
+        SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
+        Date scheduledStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate( testingDateFormat.format( new Date() ) )
+        def scheduledStartTime = "2230"
+        def timezoneStringOffset = "Asia/Kolkata"
+        def result = actionItemProcessingCommonService.getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset )
+        assert result != null
+    }
+
+
+    @Test
+    void populateAvailableTimezones() {
+        def result = actionItemProcessingCommonService.populateAvailableTimezones()
+        assert result.size() > 0
     }
 }
