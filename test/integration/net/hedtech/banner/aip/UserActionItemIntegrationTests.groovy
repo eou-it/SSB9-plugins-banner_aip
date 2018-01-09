@@ -10,6 +10,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+import java.text.SimpleDateFormat
+
 
 class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
 
@@ -60,17 +62,17 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     // No date range to check (most common condition)
     @Test
     void testIsExistingInDateRangeByPidmAndACTMIdNoneFound() {
-        ActionItem actionItem = ActionItem.findByName('Registration Process Training')
-        ActionItemGroup actionItemGroup= ActionItemGroup.fetchActionItemGroups(  )[0]
+        ActionItem actionItem = ActionItem.findByName( 'Registration Process Training' )
+        ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
         def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
 
-        UserActionItem itemWeWantToTest = newActionItem(  )
+        UserActionItem itemWeWantToTest = newActionItem()
         itemWeWantToTest.pidm = pidmToTest
-        itemWeWantToTest.displayStartDate = new Date()
-        itemWeWantToTest.displayEndDate = new Date() + 1
+        itemWeWantToTest.displayStartDate = new SimpleDateFormat( "dd-MM-yyyy" ).parse( "01-01-2017" )
+        itemWeWantToTest.displayEndDate = new SimpleDateFormat( "dd-MM-yyyy" ).parse( "02-01-2017" )
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
-        itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
+        itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus().id
         println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
         assertFalse( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
     }
@@ -88,9 +90,9 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.displayEndDate = new Date() + 10
         itemToTestAgainst.actionItemId = actionItem.id
         itemToTestAgainst.groupId = actionItemGroup.id
-        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
+        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus().id
 
-        itemToTestAgainst.save( failOnError:true, flush: true )
+        itemToTestAgainst.save( failOnError: true, flush: true )
 
         UserActionItem itemWeWantToTest = newActionItem()
         itemWeWantToTest.pidm = pidmToTest
@@ -98,7 +100,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.displayEndDate = new Date() + 7
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
-        itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
+        itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus().id
         println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
         assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
     }
@@ -116,9 +118,9 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.displayEndDate = new Date() + 7
         itemToTestAgainst.actionItemId = actionItem.id
         itemToTestAgainst.groupId = actionItemGroup.id
-        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
+        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus().id
 
-        itemToTestAgainst.save( failOnError:true, flush: true )
+        itemToTestAgainst.save( failOnError: true, flush: true )
 
         UserActionItem itemWeWantToTest = newActionItem()
         itemWeWantToTest.pidm = pidmToTest
@@ -126,7 +128,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.displayEndDate = new Date() + 10
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
-        itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
+        itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus().id
         println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
         assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
     }
@@ -144,9 +146,9 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.displayEndDate = new Date() + 15
         itemToTestAgainst.actionItemId = actionItem.id
         itemToTestAgainst.groupId = actionItemGroup.id
-        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
+        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus().id
 
-        itemToTestAgainst.save( failOnError:true, flush: true )
+        itemToTestAgainst.save( failOnError: true, flush: true )
 
         UserActionItem itemWeWantToTest = newActionItem()
         itemWeWantToTest.pidm = pidmToTest
@@ -154,7 +156,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.displayEndDate = new Date() + 10
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
-        itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
+        itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus().id
         println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
         assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
     }
@@ -171,9 +173,9 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.displayEndDate = new Date() + 10
         itemToTestAgainst.actionItemId = actionItem.id
         itemToTestAgainst.groupId = actionItemGroup.id
-        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
+        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus().id
 
-        itemToTestAgainst.save( failOnError:true, flush: true )
+        itemToTestAgainst.save( failOnError: true, flush: true )
 
         UserActionItem itemWeWantToTest = newActionItem()
         itemWeWantToTest.pidm = pidmToTest
@@ -188,7 +190,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     // check that new ActionItem prior to existing date range returns false
     @Test
     void testIsExistingInDateRangeByPidmAndACTMIdPrior() {
-        ActionItem actionItem = ActionItem.findByName('Registration Process Training')
+        ActionItem actionItem = ActionItem.findByName( 'Registration Process Training' )
         ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
         def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
 
@@ -198,14 +200,14 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.displayEndDate = new Date() + 15
         itemToTestAgainst.actionItemId = actionItem.id
         itemToTestAgainst.groupId = actionItemGroup.id
-        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
+        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus().id
 
-        itemToTestAgainst.save( failOnError:true, flush: true )
+        itemToTestAgainst.save( failOnError: true, flush: true )
 
         UserActionItem itemWeWantToTest = newActionItem()
         itemWeWantToTest.pidm = pidmToTest
-        itemWeWantToTest.displayStartDate = new Date()
-        itemWeWantToTest.displayEndDate = new Date() + 5
+        itemWeWantToTest.displayStartDate = new SimpleDateFormat( "dd-MM-yyyy" ).parse( "01-01-2017" )
+        itemWeWantToTest.displayEndDate = new SimpleDateFormat( "dd-MM-yyyy" ).parse( "06-01-2017" )
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
         println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
@@ -214,7 +216,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     // check that new ActionItem after existing date range returns false
     @Test
     void testIsExistingInDateRangeByPidmAndACTMIdAfter() {
-        ActionItem actionItem = ActionItem.findByName('Registration Process Training')
+        ActionItem actionItem = ActionItem.findByName( 'Registration Process Training' )
         ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
         def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
 
@@ -224,14 +226,14 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.displayEndDate = new Date() + 5
         itemToTestAgainst.actionItemId = actionItem.id
         itemToTestAgainst.groupId = actionItemGroup.id
-        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
+        itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus().id
 
-        itemToTestAgainst.save( failOnError:true, flush: true )
+        itemToTestAgainst.save( failOnError: true, flush: true )
 
         UserActionItem itemWeWantToTest = newActionItem()
         itemWeWantToTest.pidm = pidmToTest
-        itemWeWantToTest.displayStartDate = new Date() + 10
-        itemWeWantToTest.displayEndDate = new Date() + 15
+        itemWeWantToTest.displayStartDate = new SimpleDateFormat( "dd-MM-yyyy" ).parse( "01-01-2017" )
+        itemWeWantToTest.displayEndDate = new SimpleDateFormat( "dd-MM-yyyy" ).parse( "15-01-2017" )
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
         println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
@@ -295,18 +297,19 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
 
     }
 
+
     private UserActionItem newActionItem() {
         def userActionItemNew = new UserActionItem()
-                userActionItemNew.actionItemId = 1
-                userActionItemNew.pidm = 1
-                userActionItemNew.status = ActionItemStatus.fetchDefaultActionItemStatus(  ).id
-                userActionItemNew.userResponseDate = null
-                userActionItemNew.displayStartDate = null
-                userActionItemNew.displayEndDate = null
-                userActionItemNew.groupId = 1
-                userActionItemNew.creatorId = "GRAILS"
-                userActionItemNew.createDate = new Date ()
-                userActionItemNew.dataOrigin = "GRAILS"
+        userActionItemNew.actionItemId = 1
+        userActionItemNew.pidm = 1
+        userActionItemNew.status = ActionItemStatus.fetchDefaultActionItemStatus().id
+        userActionItemNew.userResponseDate = null
+        userActionItemNew.displayStartDate = null
+        userActionItemNew.displayEndDate = null
+        userActionItemNew.groupId = 1
+        userActionItemNew.creatorId = "GRAILS"
+        userActionItemNew.createDate = new Date()
+        userActionItemNew.dataOrigin = "GRAILS"
 
         return userActionItemNew
     }
