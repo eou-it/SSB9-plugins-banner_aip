@@ -152,7 +152,7 @@ class ActionItemStatusCompositeService {
         def success = false
         def message
         def inputRules = jsonObj.rules
-        def result = actionItemCompositeService.validateEditActionItemContent( jsonObj.actionItemId )
+        def result = actionItemCompositeService.validateEditActionItemContent( jsonObj.actionItemId.toLong() )
         if (!result.editable) {
             def model = [
                     success: false,
@@ -160,7 +160,7 @@ class ActionItemStatusCompositeService {
             ]
             return model
         }
-        List<ActionItemStatusRule> currentRules = actionItemStatusRuleService.getActionItemStatusRuleByActionItemId( jsonObj.actionItemId )
+        List<ActionItemStatusRule> currentRules = actionItemStatusRuleService.getActionItemStatusRuleByActionItemId( jsonObj.actionItemId.toLong() )
         List<Long> newRuleIdList = inputRules.statusRuleId.toList()
         List<Long> existingRuleIdList = currentRules.id.toList()
         def deleteRules = existingRuleIdList.minus( newRuleIdList )
@@ -188,13 +188,13 @@ class ActionItemStatusCompositeService {
                     statusRule.seqOrder = rule.statusRuleSeqOrder.toInteger()
                     statusRule.labelText = rule.statusRuleLabelText
                     statusRule.actionItemStatusId = statusId
-                    statusRule.actionItemId = jsonObj.actionItemId
+                    statusRule.actionItemId = jsonObj.actionItemId.toLong()
                     statusRule.version = rule.status.version
                 } else {
                     statusRule = new ActionItemStatusRule(
                             seqOrder: rule.statusRuleSeqOrder,
                             labelText: rule.statusRuleLabelText,
-                            actionItemId: jsonObj.actionItemId,
+                            actionItemId: jsonObj.actionItemId.toLong(),
                             actionItemStatusId: statusId
                     )
                 }
@@ -208,7 +208,7 @@ class ActionItemStatusCompositeService {
             LOGGER.error( e.getMessage() )
         }
         List<ActionItemStatusRule> updatedActionItemStatusRules =
-                actionItemStatusRuleService.getActionItemStatusRuleByActionItemId( jsonObj.actionItemId )
+                actionItemStatusRuleService.getActionItemStatusRuleByActionItemId( jsonObj.actionItemId.toLong() )
         [
                 success: success,
                 message: message,
