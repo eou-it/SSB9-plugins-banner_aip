@@ -2,11 +2,13 @@ package net.hedtech.banner.aip
 
 import net.hedtech.banner.service.ServiceBase
 
-
+/**
+ * Service class for UserBlockedProcessReadOnly
+ */
 class UserBlockedProcessReadOnlyService extends ServiceBase {
 
     def getBlockedProcessesByPidmAndActionItemId( Long actionItemPidm, Long actionItemId ) {
-        return UserBlockedProcessReadOnly.fetchBlockingProcessesROByPidmAndActionItemId(
+        UserBlockedProcessReadOnly.fetchBlockingProcessesROByPidmAndActionItemId(
                 actionItemPidm, actionItemId )
     }
 }

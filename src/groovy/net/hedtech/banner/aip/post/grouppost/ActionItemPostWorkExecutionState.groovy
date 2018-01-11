@@ -33,7 +33,7 @@ enum ActionItemPostWorkExecutionState implements Serializable {
     static ActionItemPostWorkExecutionState valueOf( int ordinal) {
         for(ActionItemPostWorkExecutionState ds: values()) {
             if (ds.ordinal() == ordinal){
-                ds
+               return ds
             }
         }
         throw new IllegalArgumentException( "ordinal out of range:" + ordinal )
