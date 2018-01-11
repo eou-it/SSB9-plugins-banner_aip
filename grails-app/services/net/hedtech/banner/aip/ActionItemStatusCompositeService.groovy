@@ -189,7 +189,6 @@ class ActionItemStatusCompositeService {
                     statusRule.labelText = rule.statusRuleLabelText
                     statusRule.actionItemStatusId = statusId
                     statusRule.actionItemId = jsonObj.actionItemId.toLong()
-                    statusRule.version = rule.status.version
                 } else {
                     statusRule = new ActionItemStatusRule(
                             seqOrder: rule.statusRuleSeqOrder,
