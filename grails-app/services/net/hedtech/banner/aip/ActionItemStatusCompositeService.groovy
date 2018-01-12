@@ -119,18 +119,18 @@ class ActionItemStatusCompositeService {
      * Saved Action Item Status
      * @return
      */
-    def statusSave( def title ) {
+    def statusSave( def paramMap ) {
         def user = springSecurityService.getAuthentication()?.user
         if (!user) {
             throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'user.id.not.valid', [] ) )
         }
-        if (actionItemStatusService.checkIfNameAlreadyPresent( title )) {
+        if (actionItemStatusService.checkIfNameAlreadyPresent( paramMap.title )) {
             throw new ApplicationException( ActionItemStatusCompositeService, new BusinessLogicValidationException( 'actionItemStatus.status.unique', [] ) )
         }
         ActionItemStatus status = new ActionItemStatus(
-                actionItemStatus: title,
+                actionItemStatus: paramMap.title,
                 actionItemStatusActive: AIPConstants.YES_IND,
-                actionItemStatusBlockedProcess: AIPConstants.NO_IND,
+                actionItemStatusBlockedProcess: paramMap.block==true? AIPConstants.YES_IND:AIPConstants.NO_IND,
                 actionItemStatusSystemRequired: AIPConstants.NO_IND
         )
         ActionItemStatus newStatus

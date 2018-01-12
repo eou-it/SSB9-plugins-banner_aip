@@ -46,7 +46,7 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
     void testFetchActionItemCheckIfStatusRulePresent() {
         loginSSB( 'CSRSTU001', '111111' )
         def title = 'TEST_TITLE'
-        ActionItemStatus actionItemStatus = actionItemStatusCompositeService.statusSave( title ).status
+        ActionItemStatus actionItemStatus = actionItemStatusCompositeService.statusSave( [title:title] ).status
         assert actionItemStatus.actionItemStatus == title
         def actionItem = actionItemService.create( new ActionItem( title: 'test integration',
                                                                    name: 'test integration',
@@ -68,7 +68,7 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
     void testFetchActionItemCheckIfStatusRulePresent1() {
         loginSSB( 'CSRSTU001', '111111' )
         def title = 'TEST_TITLE'
-        ActionItemStatus actionItemStatus = actionItemStatusCompositeService.statusSave( title ).status
+        ActionItemStatus actionItemStatus = actionItemStatusCompositeService.statusSave( [title:title] ).status
         assert actionItemStatus.actionItemStatus == title
         def actionItem = actionItemService.create( new ActionItem( title: 'test integration',
                                                                    name: 'test integration',
@@ -92,7 +92,7 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
     void testStatusSave() {
         loginSSB( 'CSRSTU001', '111111' )
         def title = 'TEST_TITLE'
-        ActionItemStatus actionItemStatus = actionItemStatusCompositeService.statusSave( title ).status
+        ActionItemStatus actionItemStatus = actionItemStatusCompositeService.statusSave( [title:title] ).status
         assertEquals actionItemStatus.actionItemStatus, title
         assertEquals actionItemStatus.actionItemStatusActive, 'Y'
         assertEquals actionItemStatus.actionItemStatusBlockedProcess, 'N'
@@ -105,7 +105,7 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
     void testStatusSaveCheckDuplicate() {
         try {
             loginSSB( 'CSRSTU001', '111111' )
-            ActionItemStatus actionItemStatusList1 = actionItemStatusCompositeService.statusSave( 'Completed' )
+            ActionItemStatus actionItemStatusList1 = actionItemStatusCompositeService.statusSave( [title:'Completed'] )
         } catch (ApplicationException e) {
             assertApplicationException( e, 'actionItemStatus.status.unique' )
         }
@@ -116,7 +116,7 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
     void testStatusSaveInvalidPidm() {
         try {
             loginSSB( 'INVALID', '111111' )
-            ActionItemStatus actionItemStatusList1 = actionItemStatusCompositeService.statusSave( 'Completed' )
+            ActionItemStatus actionItemStatusList1 = actionItemStatusCompositeService.statusSave( [title:'Completed'] )
         } catch (ApplicationException e) {
             assertApplicationException( e, 'user.id.not.valid' )
         }
@@ -137,7 +137,7 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
     void testRemoveStatus() {
         loginSSB( 'CSRSTU001', '111111' )
         def title = 'TEST_TITLE'
-        ActionItemStatus actionItemStatus = actionItemStatusCompositeService.statusSave( title ).status
+        ActionItemStatus actionItemStatus = actionItemStatusCompositeService.statusSave( [title:title] ).status
         assertTrue actionItemStatusCompositeService.removeStatus( actionItemStatus.id ).success
     }
 
