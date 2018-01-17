@@ -38,25 +38,6 @@ enum ActionItemPostExecutionState implements Serializable {
         return EnumSet.range( New, Error )
     }
 
-
-    String toString() {
-        this.name()
-    }
-
-    /**
-     *
-     * @param ordinal
-     * @return
-     */
-    static ActionItemPostExecutionState valueOf( int ordinal ) {
-        for (ActionItemPostExecutionState ds : values()) {
-            if (ds.ordinal() == ordinal) {
-                return ds
-            }
-        }
-        throw new IllegalArgumentException( "ordinal out of range:" + ordinal )
-    }
-
     /**
      *
      * @param ordinal
