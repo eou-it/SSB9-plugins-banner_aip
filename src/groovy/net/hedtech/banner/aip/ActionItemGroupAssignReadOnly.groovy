@@ -10,10 +10,6 @@ import org.hibernate.annotations.Type
 import javax.persistence.*
 
 @NamedQueries(value = [
-        @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchActionItemGroupAssign",
-                query = """
-           FROM ActionItemGroupAssignReadOnly a
-          """),
         @NamedQuery(name = "ActionItemGroupAssignReadOnly.fetchById",
                 query = """
             FROM ActionItemGroupAssignReadOnly a 
@@ -175,17 +171,6 @@ class ActionItemGroupAssignReadOnly implements Serializable {
         ActionItemGroupAssignReadOnly.withSession {session ->
             List groupAssigned = session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchById' ).setLong( 'myId', myId ).list()
             return groupAssigned
-        }
-    }
-
-    /**
-     *
-     * @return
-     */
-    static def fetchActionItemGroupAssignRO() {
-        ActionItemGroupAssignReadOnly.withSession {session ->
-            List groupAssignedAll = session.getNamedQuery( 'ActionItemGroupAssignReadOnly.fetchActionItemGroupAssign' ).list()
-            return groupAssignedAll
         }
     }
 

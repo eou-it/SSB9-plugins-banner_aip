@@ -30,15 +30,6 @@ enum ActionItemPostWorkExecutionState implements Serializable {
         this.name(  )
     }
 
-    static ActionItemPostWorkExecutionState valueOf( int ordinal) {
-        for(ActionItemPostWorkExecutionState ds: values()) {
-            if (ds.ordinal() == ordinal){
-               return ds
-            }
-        }
-        throw new IllegalArgumentException( "ordinal out of range:" + ordinal )
-    }
-
     boolean isTerminal() {
         terminal
     }

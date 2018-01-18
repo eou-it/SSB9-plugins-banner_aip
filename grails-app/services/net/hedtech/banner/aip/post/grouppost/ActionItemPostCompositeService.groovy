@@ -205,12 +205,7 @@ class ActionItemPostCompositeService {
      */
     void deletePost( Long groupSendId ) {
         LoggerUtility.debug( LOGGER, "deleteGroupSend for id = ${groupSendId}." )
-
         ActionItemPost groupSend = (ActionItemPost) actionItemPostService.get( groupSendId )
-        if (!groupSend) {
-            throw ActionItemExceptionFactory.createNotFoundException( groupSendId, ActionItemPost.class )
-        }
-
         if (!groupSend.postingCurrentState.pending && !groupSend.postingCurrentState.terminal) {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostCompositeService.class, "cannotDeleteRunningPost" )
         }
@@ -442,10 +437,9 @@ class ActionItemPostCompositeService {
      * Schedules the action item posting
      * @param groupSend
      * @param bannerUser
-     * @param doPost
      * @return
      */
-    ActionItemPost schedulePost( ActionItemPost groupSend, String bannerUser, boolean doPost = true ) {
+    ActionItemPost schedulePost( ActionItemPost groupSend, String bannerUser) {
         Date now = new Date( System.currentTimeMillis() )
         if (now.after( groupSend.postingScheduleDateTime )) {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService.class, "invalidScheduledDate" )
