@@ -33,6 +33,25 @@ class ActionItemPostExecutionStateIntegrationTests extends BaseIntegrationTestCa
 
 
     @Test
+    void getStateEnum() {
+        assert ActionItemPostExecutionState.getStateEnum( 'New' ) == ActionItemPostExecutionState.New
+        assert ActionItemPostExecutionState.getStateEnum( 'Scheduled' ) == ActionItemPostExecutionState.Scheduled
+        assert ActionItemPostExecutionState.getStateEnum( 'Queued' ) == ActionItemPostExecutionState.New
+        assert ActionItemPostExecutionState.getStateEnum( 'Calculating' ) == ActionItemPostExecutionState.Calculating
+        assert ActionItemPostExecutionState.getStateEnum( 'Processing' ) == ActionItemPostExecutionState.Processing
+        assert ActionItemPostExecutionState.getStateEnum( 'Complete' ) == ActionItemPostExecutionState.Complete
+        assert ActionItemPostExecutionState.getStateEnum( 'Stopped' ) == ActionItemPostExecutionState.Stopped
+        assert ActionItemPostExecutionState.getStateEnum( 'Error' ) == ActionItemPostExecutionState.Error
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    void getStateEnumFailedCase() {
+        assert ActionItemPostExecutionState.getStateEnum( 'New1' )
+    }
+
+
+    @Test
     void isTerminal() {
         ActionItemPostExecutionState executionState = ActionItemPostExecutionState.New
         assert executionState.isTerminal() == false

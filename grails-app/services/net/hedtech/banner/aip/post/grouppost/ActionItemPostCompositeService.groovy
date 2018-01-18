@@ -442,10 +442,9 @@ class ActionItemPostCompositeService {
      * Schedules the action item posting
      * @param groupSend
      * @param bannerUser
-     * @param doPost
      * @return
      */
-    ActionItemPost schedulePost( ActionItemPost groupSend, String bannerUser, boolean doPost = true ) {
+    ActionItemPost schedulePost( ActionItemPost groupSend, String bannerUser) {
         Date now = new Date( System.currentTimeMillis() )
         if (now.after( groupSend.postingScheduleDateTime )) {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService.class, "invalidScheduledDate" )
