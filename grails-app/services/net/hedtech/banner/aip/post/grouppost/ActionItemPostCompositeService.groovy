@@ -205,12 +205,7 @@ class ActionItemPostCompositeService {
      */
     void deletePost( Long groupSendId ) {
         LoggerUtility.debug( LOGGER, "deleteGroupSend for id = ${groupSendId}." )
-
         ActionItemPost groupSend = (ActionItemPost) actionItemPostService.get( groupSendId )
-        if (!groupSend) {
-            throw ActionItemExceptionFactory.createNotFoundException( groupSendId, ActionItemPost.class )
-        }
-
         if (!groupSend.postingCurrentState.pending && !groupSend.postingCurrentState.terminal) {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostCompositeService.class, "cannotDeleteRunningPost" )
         }
