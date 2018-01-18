@@ -36,7 +36,7 @@ class ActionItemPostExecutionStateIntegrationTests extends BaseIntegrationTestCa
     void getStateEnum() {
         assert ActionItemPostExecutionState.getStateEnum( 'New' ) == ActionItemPostExecutionState.New
         assert ActionItemPostExecutionState.getStateEnum( 'Scheduled' ) == ActionItemPostExecutionState.Scheduled
-        assert ActionItemPostExecutionState.getStateEnum( 'Queued' ) == ActionItemPostExecutionState.New
+        assert ActionItemPostExecutionState.getStateEnum( 'Queued' ) == ActionItemPostExecutionState.Queued
         assert ActionItemPostExecutionState.getStateEnum( 'Calculating' ) == ActionItemPostExecutionState.Calculating
         assert ActionItemPostExecutionState.getStateEnum( 'Processing' ) == ActionItemPostExecutionState.Processing
         assert ActionItemPostExecutionState.getStateEnum( 'Complete' ) == ActionItemPostExecutionState.Complete
