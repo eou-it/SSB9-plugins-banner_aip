@@ -54,6 +54,7 @@ class GateKeepingFilters {
                             // FIXME: pull in registration info (urls and session variable) from tables
                             // TODO: may need to look at session variable to see if student in Registration
                             log.info( "roleCode: " + session.getAttribute( 'selectedRole' )?.persona?.code )
+                            // provide this limited set of values for personas in shipped data
                             if ('STUDENT'.equals( session.getAttribute( 'selectedRole' )?.persona?.code )) {
                                 def isBlocked = false
                                 try {
