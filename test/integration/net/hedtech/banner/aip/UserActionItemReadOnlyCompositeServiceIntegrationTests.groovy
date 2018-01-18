@@ -34,7 +34,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
         assert result.groups.size() > 0
         assert result.groups.items.size() > 0
-        assert result.groups.items[0].find {
+        assert result.groups.items.find {
             it.name == 'Drug and Alcohol Policy'
 
         }.name == 'Drug and Alcohol Policy'
@@ -44,39 +44,48 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void actionItemOrGroupInfoByGroupSearch() {
-        def result = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'group', groupId: "${ActionItemGroup.findByName( 'Enrollment' ).id}"] )
-        assert result[0].id != null
-        assert result[0].title == 'Enrollment'
-        assert result[0].status == 'Active'
-        assert result[0].userId != null
-        assert result[0].text != null
-        assert result[0].activity != null
-        assert result[0].version >= 0
+        def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'group', groupId: "${ActionItemGroup.findByName( 'Enrollment' ).id}"] )
+        def result = result1.find {
+            it.title == 'Enrollment'
+        }
+        assert result.id != null
+        assert result.title == 'Enrollment'
+        assert result.status == 'Active'
+        assert result.userId != null
+        assert result.text != null
+        assert result.activity != null
+        assert result.version >= 0
 
     }
 
 
     @Test
     void actionItemOrGroupInfoByActionItemSearch() {
-        List<ActionItemReadOnly> result = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'actionItem', actionItemId: "${ActionItem.findByName( 'Drug and Alcohol Policy' ).id}"] )
-        assert result[1].actionItemId != null
-        assert result[1].actionItemName == 'Drug and Alcohol Policy'
-        assert result[1].actionItemTitle == 'Drug and Alcohol Policy'
-        assert result[1].folderId != null
-        assert result[1].folderName != null
+        List<ActionItemReadOnly> result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'actionItem', actionItemId: "${ActionItem.findByName( 'Drug and Alcohol Policy' ).id}"] )
+        def result = result1.find {
+            it.actionItemName == 'Drug and Alcohol Policy'
+        }
+        assert result.actionItemId != null
+        assert result.actionItemName == 'Drug and Alcohol Policy'
+        assert result.actionItemTitle == 'Drug and Alcohol Policy'
+        assert result.folderId != null
+        assert result.folderName != null
     }
 
 
     @Test
     void actionItemOrGroupInfoByGroupNoDescInTableSearch() {
         sessionFactory.currentSession.createSQLQuery( """UPDATE gcbagrp set GCBAGRP_INSTRUCTION = null where GCBAGRP_NAME='Enrollment'""" ).executeUpdate()
-        def result = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'group', groupId: "${ActionItemGroup.findByName( 'Enrollment' ).id}"] )
-        assert result[0].id != null
-        assert result[0].title == 'Enrollment'
-        assert result[0].status == 'Active'
-        assert result[0].userId != null
-        assert result[0].text == 'There is no description for this group.'
-        assert result[0].activity != null
-        assert result[0].version >= 0
+        def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'group', groupId: "${ActionItemGroup.findByName( 'Enrollment' ).id}"] )
+        def result = result1.find {
+            it.title == 'Enrollment'
+        }
+        assert result.id != null
+        assert result.title == 'Enrollment'
+        assert result.status == 'Active'
+        assert result.userId != null
+        assert result.text == 'There is no description for this group.'
+        assert result.activity != null
+        assert result.version >= 0
     }
 }

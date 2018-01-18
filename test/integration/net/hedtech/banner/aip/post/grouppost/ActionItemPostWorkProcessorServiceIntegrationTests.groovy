@@ -19,6 +19,7 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
     def actionItemProcessingCommonService
     def springSecurityService
     def actionItemPostService
+    def actionItemPostDetailService
 
 
     @Before
@@ -51,8 +52,16 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
         actionItemPostWork.recipientPidm = user.pidm
         actionItemPostWork.currentExecutionState = ActionItemPostWorkExecutionState.Ready
         actionItemPostWork.creationDateTime = new Date()
-        ActionItemPost aip = newAIP()
+        Map obj = newAIP()
+        ActionItemPost aip = obj.instance
         aip = actionItemPostService.create( aip )
+        obj.actionItemIds.each {
+            ActionItemPostDetail groupDetail = new ActionItemPostDetail(
+                    actionItemPostId: aip.id,
+                    actionItemId: it
+            )
+            actionItemPostDetailService.create( groupDetail )
+        }
         actionItemPostCompositeService.createPostItems( aip )
         aip.postingCurrentState = ActionItemPostExecutionState.New
         actionItemPostWork.actionItemGroupSend = aip
@@ -91,5 +100,6 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
         actionItemPost.populationCalculationId = populationVersion.id
         actionItemPost.populationVersionId = populationVersion.id
         actionItemPost
+        [instance: actionItemPost, actionItemIds: actionItemIds]
     }
 }
