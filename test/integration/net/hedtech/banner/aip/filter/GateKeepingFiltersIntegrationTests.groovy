@@ -5,6 +5,8 @@ package net.hedtech.banner.aip.filter
 
 import grails.util.GrailsWebUtil
 import grails.util.Holders
+import groovy.sql.Sql
+import net.hedtech.banner.general.overall.IntegrationConfiguration
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
@@ -19,6 +21,7 @@ import org.springframework.mock.web.MockHttpServletResponse
 class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
 
     public static final String UNBLOCKEDURI = '/somethingrandom'
+    static final String BLOCKREGISTERFORCOURSES = '/ssb/term/termSelection?mode=registration'
 
     def filterInterceptor
 
@@ -77,6 +80,7 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testFilterNoRedirect() {
+        setGORICCR('Y')
         def person = PersonUtility.getPerson( "CSRSTU013" ) // user has no blocking AIs
         assertNotNull person
         loginSSB( person.bannerId, '111111' )
@@ -85,6 +89,66 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
 
         request.characterEncoding = 'UTF-8'
         request.setRequestURI( UNBLOCKEDURI )
+
+        def result = doRequest( request )
+        assert result
+
+        assertNull( response.redirectedUrl )
+    }
+
+
+    @Test
+    void testFilterRedirect() {
+        setGORICCR('Y')
+        def person = PersonUtility.getPerson( "CSRSTU002" ) // user has blocking AIs
+        assertNotNull person
+        loginSSB( person.bannerId, '111111' )
+
+        MockHttpServletRequest request = new MockHttpServletRequest()
+
+        request.characterEncoding = 'UTF-8'
+        request.setRequestURI( BLOCKREGISTERFORCOURSES ) // will need to fix this when values came from DB
+
+        doRequest( request )
+
+        assertNotNull( response.redirectedUrl )
+        CharSequence cs1 = "informedList";
+        assertTrue ( response.redirectedUrl.contains(cs1) )
+    }
+
+
+    @Test
+    void testGORICCRBlockingOn() {
+        setGORICCR('Y')
+        def person = PersonUtility.getPerson( "CSRSTU002" ) // user has blocking AIs
+        assertNotNull person
+        loginSSB( person.bannerId, '111111' )
+
+        MockHttpServletRequest request = new MockHttpServletRequest()
+
+        request.characterEncoding = 'UTF-8'
+        request.setRequestURI( BLOCKREGISTERFORCOURSES ) // will need to fix this when values came from DB
+
+        doRequest( request )
+
+        assertNotNull( response.redirectedUrl )
+        CharSequence cs1 = "informedList";
+        assertTrue( response.redirectedUrl.contains( cs1 ) )
+
+    }
+
+
+    @Test
+    void testGORICCRBlockingOff() {
+        setGORICCR('N')
+        def person = PersonUtility.getPerson( "CSRSTU002" ) // user has blocking AIs
+        assertNotNull person
+        loginSSB( person.bannerId, '111111' )
+
+        MockHttpServletRequest request = new MockHttpServletRequest()
+
+        request.characterEncoding = 'UTF-8'
+        request.setRequestURI( BLOCKREGISTERFORCOURSES ) // will need to fix this when values came from DB
 
         def result = doRequest( request )
         assert result
@@ -104,5 +168,18 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
                 Holders.getGrailsApplication().mainContext, mockRequest, new MockHttpServletResponse() )
 
         filterInterceptor.preHandle( grailsWebRequest.request, grailsWebRequest.response, null )
+    }
+
+
+    private void setGORICCR( String value ) {
+        def sql
+        def nameSQL = """update goriccr set goriccr_value = ? where goriccr_icsn_code = 'ENABLE.ACTION.ITEMS' and goriccr_sqpr_code = 'GENERAL_SSB'"""
+        try {
+            sql = new Sql( sessionFactory.getCurrentSession().connection() )
+            sql.executeUpdate( nameSQL, [value] )
+        } finally {
+            sql?.close()
+        }
+        assertEquals( value, IntegrationConfiguration.fetchByProcessCodeAndSettingName( 'GENERAL_SSB', 'ENABLE.ACTION.ITEMS' ).value )
     }
 }
