@@ -2,9 +2,8 @@
  Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
-package net.hedtech.banner.aip.blocking.process
+package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.ActionItem
 import net.hedtech.banner.aip.blocking.process.ActionItemBlockedProcess
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
