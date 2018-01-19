@@ -20,7 +20,7 @@ class GateKeepingFilters {
 
     // Same as in GeneralSsbConfigService. Didn't want to create dependency on General App. This code needs to be consumable by Student Apps
     static final String GENERAL_SSB = 'GENERAL_SSB' // GORICCR_SQPR_CODE
-    static final String ENABLE_ACTION_ITEM = 'ENABLE.ACTION.ITEMS' // GORICCR_ICSN_CODE
+    static final String ENABLE_ACTION_ITEMS = 'ENABLE.ACTION.ITEMS' // GORICCR_ICSN_CODE
 
     static final String BLOCKREGISTERFORCOURSES = '/ssb/term/termSelection?mode=registration'
     private static final String SLASH = "/"
@@ -38,7 +38,7 @@ class GateKeepingFilters {
         actionItemFilter( controller: "selfServiceMenu|login|logout|error|dateConverter", invert: true ) {
             before = {
                 if ("N".equals( IntegrationConfiguration.fetchByProcessCodeAndSettingName(
-                        'GENERAL_SSB', 'ENABLE.ACTION.ITEMS' ).value ) )
+                        GENERAL_SSB, ENABLE_ACTION_ITEMS ).value ) )
                 {
                     return true;
                 }
