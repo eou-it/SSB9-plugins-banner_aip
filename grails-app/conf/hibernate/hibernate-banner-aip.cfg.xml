@@ -17,7 +17,7 @@ Copyright 2017 Ellucian Company L.P. and its affiliates.
     <session-factory>
         <property name="dialect">org.hibernate.dialect.Oracle10gDialect</property>
         <mapping class="net.hedtech.banner.aip.ActionItem"/>
-        <mapping class="net.hedtech.banner.aip.ActionItemBlockedProcess"/>
+        <mapping class="net.hedtech.banner.aip.blocking.process.ActionItemBlockedProcess"/>
         <mapping class="net.hedtech.banner.aip.ActionItemContent"/>
         <mapping class="net.hedtech.banner.aip.ActionItemGroup"/>
         <mapping class="net.hedtech.banner.aip.ActionItemGroupAssign"/>
@@ -30,7 +30,7 @@ Copyright 2017 Ellucian Company L.P. and its affiliates.
         <mapping class="net.hedtech.banner.aip.GroupFolderReadOnly"/>
         <mapping class="net.hedtech.banner.aip.UserActionItem"/>
         <mapping class="net.hedtech.banner.aip.UserActionItemReadOnly"/>
-        <mapping class="net.hedtech.banner.aip.UserBlockedProcessReadOnly"/>
+        <mapping class="net.hedtech.banner.aip.blocking.process.UserBlockedProcessReadOnly"/>
         <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPost"/>
         <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPostDetail"/>
         <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPostReadOnly"/>

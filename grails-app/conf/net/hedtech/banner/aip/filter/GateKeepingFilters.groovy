@@ -1,17 +1,10 @@
-/** *****************************************************************************
- © 2016 SunGard Higher Education.  All Rights Reserved.
-
- CONFIDENTIAL BUSINESS INFORMATION
-
- THIS PROGRAM IS PROPRIETARY INFORMATION OF SUNGARD HIGHER EDUCATION
- AND IS NOT TO BE COPIED, REPRODUCED, LENT, OR DISPOSED OF,
- NOR USED FOR ANY PURPOSE OTHER THAN THAT WHICH IT IS SPECIFICALLY PROVIDED
- WITHOUT THE WRITTEN PERMISSION OF THE SAID COMPANY
- ****************************************************************************** */
+/*********************************************************************************
+ Copyright 2018 Ellucian Company L.P. and its affiliates.
+ **********************************************************************************/
 
 package net.hedtech.banner.aip.filter
 
-import net.hedtech.banner.aip.UserBlockedProcessReadOnly
+import net.hedtech.banner.aip.blocking.process.UserBlockedProcessReadOnly
 import net.hedtech.banner.security.BannerUser
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -22,7 +15,7 @@ import javax.servlet.http.HttpSession
 
 
 class GateKeepingFilters {
-    private final Log log = LogFactory.getLog(this.getClass())
+    private final Log log = LogFactory.getLog( this.getClass() )
     public static final String BLOCKREGISTERFORCOURSES = '/ssb/term/termSelection?mode=registration'
     private static final String SLASH = "/"
 
@@ -59,12 +52,13 @@ class GateKeepingFilters {
                                 def isBlocked = false
                                 try {
                                     //isBlocked = UserBlockedProcessReadOnly.fetchBlockingProcessesROByPidm( userPidm)
-                                    isBlocked = UserBlockedProcessReadOnly.fetchProcessesROByPidm( userPidm) // this doesn't check the block
+                                    isBlocked = UserBlockedProcessReadOnly.fetchProcessesROByPidm( userPidm )
+                                    // this doesn't check the block
                                     // indicator. just here for proof of concept
                                     log.info( "isBlocked: " + isBlocked + " for: " + userPidm )
                                 } catch (Throwable t) {
                                     log.info( "isBlocked: service call failed. Keep an eye on this. Was failing intermittently. I think it is " +
-                                            "right now" )
+                                                      "right now" )
                                     log.info( t )
                                 }
 

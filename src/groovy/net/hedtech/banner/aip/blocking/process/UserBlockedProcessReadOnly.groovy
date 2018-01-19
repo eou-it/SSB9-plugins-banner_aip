@@ -1,7 +1,7 @@
 /*********************************************************************************
  Copyright 2016-2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
-package net.hedtech.banner.aip
+package net.hedtech.banner.aip.blocking.process
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
