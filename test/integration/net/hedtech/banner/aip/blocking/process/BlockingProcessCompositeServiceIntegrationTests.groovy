@@ -19,7 +19,7 @@ class BlockingProcessCompositeServiceIntegrationTests extends BaseIntegrationTes
     void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
-        Holders.config.BANNER_AIP_BLOCK_PROCESS_PERSONA=['EVERYONE', 'STUDENT', 'REGISTRAR', 'FACULTYINSTRUCTOR', 'FACULTYADVISOR', 'FACULTYBOTH']
+        Holders.config.BANNER_AIP_BLOCK_PROCESS_PERSONA = ['EVERYONE', 'STUDENT', 'REGISTRAR', 'FACULTYINSTRUCTOR', 'FACULTYADVISOR', 'FACULTYBOTH']
     }
 
 
@@ -32,6 +32,6 @@ class BlockingProcessCompositeServiceIntegrationTests extends BaseIntegrationTes
     @Test
     void loadBlockingProcessLov() {
         def result = blockingProcessCompositeService.loadBlockingProcessLov()
-        assert result.persona.findAll {key, value -> key == 'EVERYONE'}.value == 'Every One'
+        assert result.persona.findAll {key, value -> key == 'EVERYONE'}.find {key, value -> key == 'EVERYONE'}.value == 'Every One'
     }
 }
