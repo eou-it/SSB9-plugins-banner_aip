@@ -2,7 +2,7 @@
  Copyright 2017 Ellucian Company L.P. and its affiliates.
  ****************************************************************************** */
 
-package net.hedtech.banner.aip
+package net.hedtech.banner.aip.block.process
 
 import grails.converters.JSON
 import net.hedtech.banner.aip.blocking.process.ActionItemBlockedProcess

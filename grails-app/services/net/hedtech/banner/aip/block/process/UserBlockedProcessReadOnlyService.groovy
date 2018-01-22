@@ -1,4 +1,4 @@
-package net.hedtech.banner.aip
+package net.hedtech.banner.aip.block.process
 
 import net.hedtech.banner.aip.blocking.process.UserBlockedProcessReadOnly
 import net.hedtech.banner.service.ServiceBase

@@ -5,13 +5,11 @@
 package net.hedtech.banner.aip.blocking.process
 
 import net.hedtech.banner.aip.ActionItem
-import net.hedtech.banner.aip.blocking.process.UserBlockedProcessReadOnly
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-
 
 class UserBlockedProcessServiceIntegrationTests extends BaseIntegrationTestCase {
     def userBlockedProcessReadOnlyService
