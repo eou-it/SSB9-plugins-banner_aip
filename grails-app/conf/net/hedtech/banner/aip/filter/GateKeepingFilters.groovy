@@ -5,6 +5,7 @@
 package net.hedtech.banner.aip.filter
 
 import net.hedtech.banner.aip.blocking.process.UserBlockedProcessReadOnly
+import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.general.overall.IntegrationConfiguration
 import net.hedtech.banner.security.BannerUser
 import org.apache.commons.logging.Log
@@ -37,7 +38,7 @@ class GateKeepingFilters {
     def filters = {
         actionItemFilter( controller: "selfServiceMenu|login|logout|error|dateConverter", invert: true ) {
             before = {
-                if ("N".equals( IntegrationConfiguration.fetchByProcessCodeAndSettingName(
+                if (AIPConstants.NO_IND.equals( IntegrationConfiguration.fetchByProcessCodeAndSettingName(
                         GENERAL_SSB, ENABLE_ACTION_ITEMS ).value ) )
                 {
                     return true;

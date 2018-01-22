@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2018 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
@@ -79,9 +79,7 @@ class ActionItemPostCompositeService {
         // Create the details records.
         requestMap.actionItemIds.each {
             addPostingDetail( it, groupSendSaved.id )
-            markActionItemPosted( it )
         }
-        markActionItemGroupPosted( groupSendSaved.postingActionItemGroupId )
         if (requestMap.postNow) {
             if (hasQuery) {
                 assert (groupSendSaved.populationCalculationId != null)
@@ -285,6 +283,7 @@ class ActionItemPostCompositeService {
     //////////////////////////////////////////////////////////////////////////////////////
 
     public ActionItemPost calculatePopulationVersionForPostFired( SchedulerJobContext jobContext ) {
+        markArtifactsAsPosted( jobContext.parameters.get( "groupSendId" ) as Long )
         calculatePopulationVersionForGroupSend( jobContext.parameters )
     }
 
@@ -293,8 +292,24 @@ class ActionItemPostCompositeService {
         scheduledPostCallbackFailed( errorContext )
     }
 
+    /**
+     *
+     * @param groupSendId
+     * @return
+     */
+    public def markArtifactsAsPosted( groupSendId ) {
+        println 'Start marking artifacts on ' + new Date()
+        ActionItemPost groupSend = actionItemPostService.get( groupSendId )
+        markActionItemGroupPosted( groupSend.postingActionItemGroupId )
+        List actionItemsIds = actionItemPostDetailService.fetchByActionItemPostId().actionItemPostId
+        actionItemsIds?.each {
+            markActionItemPosted( it )
+        }
+    }
+
 
     public ActionItemPost generatePostItemsFired( SchedulerJobContext jobContext ) {
+        markArtifactsAsPosted( jobContext.parameters.get( "groupSendId" ) as Long )
         generatePostItems( jobContext.parameters )
     }
 
@@ -439,7 +454,7 @@ class ActionItemPostCompositeService {
      * @param bannerUser
      * @return
      */
-    ActionItemPost schedulePost( ActionItemPost groupSend, String bannerUser) {
+    ActionItemPost schedulePost( ActionItemPost groupSend, String bannerUser ) {
         Date now = new Date( System.currentTimeMillis() )
         if (now.after( groupSend.postingScheduleDateTime )) {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService.class, "invalidScheduledDate" )
