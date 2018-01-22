@@ -172,14 +172,9 @@ class GateKeepingFiltersIntegrationTests extends BaseIntegrationTestCase {
 
 
     private void setGORICCR( String value ) {
-        def sql
         def nameSQL = """update goriccr set goriccr_value = ? where goriccr_icsn_code = 'ENABLE.ACTION.ITEMS' and goriccr_sqpr_code = 'GENERAL_SSB'"""
-        try {
-            sql = new Sql( sessionFactory.getCurrentSession().connection() )
-            sql.executeUpdate( nameSQL, [value] )
-        } finally {
-            sql?.close()
-        }
+        sessionFactory.getCurrentSession().createSQLQuery(nameSQL).setString(0, value).executeUpdate()
+
         assertEquals( value, IntegrationConfiguration.fetchByProcessCodeAndSettingName( 'GENERAL_SSB', 'ENABLE.ACTION.ITEMS' ).value )
     }
 }
