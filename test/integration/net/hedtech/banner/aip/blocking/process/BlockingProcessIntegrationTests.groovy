@@ -9,7 +9,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class BlockIngProcessIntegrationTests extends BaseIntegrationTestCase {
+class BlockingProcessIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
     void setUp() {

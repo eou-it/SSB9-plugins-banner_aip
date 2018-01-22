@@ -13,7 +13,11 @@ import javax.persistence.*
         @NamedQuery(name = "BlockingProcessUrls.fetchUrlsForSpecificProcess",
                 query = """
                     FROM BlockingProcessUrls a where a.processId = :processId
-          """)
+          """),
+        @NamedQuery(name = "BlockingProcessUrls.fetchUrls",
+                query = """
+                            FROM BlockingProcessUrls a
+                  """)
 ])
 
 @Entity
@@ -83,4 +87,16 @@ class BlockingProcessUrls implements Serializable {
                     .list()
         }
     }
+
+    /**
+     * Fetch Blocking Process Urls
+     * @return
+     */
+    static def fetchUrls( ) {
+        BlockingProcessUrls.withSession {session ->
+            session.getNamedQuery( 'BlockingProcessUrls.fetchUrls' )
+                    .list()
+        }
+    }
+
 }

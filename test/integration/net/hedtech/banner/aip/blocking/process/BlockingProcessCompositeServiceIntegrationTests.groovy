@@ -4,17 +4,22 @@
 
 package net.hedtech.banner.aip.blocking.process
 
+import grails.util.Holders
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class BlockIngProcessUrlIntegrationTests extends BaseIntegrationTestCase {
+class BlockingProcessCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
+
+    def blockingProcessCompositeService
+
 
     @Before
     void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
+        Holders.config.BANNER_AIP_BLOCK_PROCESS_PERSONA=['EVERYONE', 'STUDENT', 'REGISTRAR', 'FACULTYINSTRUCTOR', 'FACULTYADVISOR', 'FACULTYBOTH']
     }
 
 
@@ -25,11 +30,8 @@ class BlockIngProcessUrlIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
-    void fetchNonGlobalBlockingProcesUrls() {
-        def blockingProcess = BlockingProcess.findByProcessNameAndProcessOwnerCode( 'Plan Ahead', 'S' )
-        List<BlockingProcessUrls> blockingProcessUrlsList = BlockingProcessUrls.fetchUrlsForSpecificProcess( blockingProcess.id )
-        assert blockingProcessUrlsList.find {
-            it.processUrl == 'ssb/term/termSelection?mode=plan'
-        }.processUrl == 'ssb/term/termSelection?mode=plan'
+    void loadBlockingProcessLov() {
+        def result = blockingProcessCompositeService.loadBlockingProcessLov()
+        assert result.persona.findAll {key, value -> key == 'EVERYONE'}.value == 'Every One'
     }
 }
