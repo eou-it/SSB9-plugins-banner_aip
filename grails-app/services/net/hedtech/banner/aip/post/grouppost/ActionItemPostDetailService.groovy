@@ -9,4 +9,13 @@ import net.hedtech.banner.service.ServiceBase
  * Service class for Action Item Posting Details
  */
 class ActionItemPostDetailService extends ServiceBase {
+
+    /**
+     *
+     * @param groupSendId
+     * @return
+     */
+    def fetchByActionItemPostId( groupSendId ) {
+        ActionItemPostDetail.fetchByActionItemPostId( groupSendId )
+    }
 }
