@@ -5,6 +5,8 @@
 package net.hedtech.banner.aip.filter
 
 import net.hedtech.banner.aip.blocking.process.UserBlockedProcessReadOnly
+import net.hedtech.banner.aip.common.AIPConstants
+import net.hedtech.banner.general.overall.IntegrationConfiguration
 import net.hedtech.banner.security.BannerUser
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -16,7 +18,12 @@ import javax.servlet.http.HttpSession
 
 class GateKeepingFilters {
     private final Log log = LogFactory.getLog( this.getClass() )
-    public static final String BLOCKREGISTERFORCOURSES = '/ssb/term/termSelection?mode=registration'
+
+    // Same as in GeneralSsbConfigService. Didn't want to create dependency on General App. This code needs to be consumable by Student Apps
+    static final String GENERAL_SSB = 'GENERAL_SSB' // GORICCR_SQPR_CODE
+    static final String ENABLE_ACTION_ITEMS = 'ENABLE.ACTION.ITEMS' // GORICCR_ICSN_CODE
+
+    static final String BLOCKREGISTERFORCOURSES = '/ssb/term/termSelection?mode=registration'
     private static final String SLASH = "/"
 
     private static final String QUESTION_MARK = "?"
@@ -31,6 +38,11 @@ class GateKeepingFilters {
     def filters = {
         actionItemFilter( controller: "selfServiceMenu|login|logout|error|dateConverter", invert: true ) {
             before = {
+                if (AIPConstants.NO_IND.equals( IntegrationConfiguration.fetchByProcessCodeAndSettingName(
+                        GENERAL_SSB, ENABLE_ACTION_ITEMS ).value ) )
+                {
+                    return true;
+                }
                 // FIXME: get urls from tables. Check and cache
                 // only want to look at type 'document'? not stylesheet, script, gif, font, ? ?
                 // at this point he getRequestURI returns the forwared dispatcher URL */aip/myplace.dispatch
@@ -48,7 +60,8 @@ class GateKeepingFilters {
                             // TODO: may need to look at session variable to see if student in Registration
                             log.info( "roleCode: " + session.getAttribute( 'selectedRole' )?.persona?.code )
                             // provide this limited set of values for personas in shipped data
-                            if ('STUDENT'.equals( session.getAttribute( 'selectedRole' )?.persona?.code )) {
+                            // if ('STUDENT'.equals( session.getAttribute( 'selectedRole' )?.persona?.code )) { // FIXME: Handle persona requirements
+                            if (true) {
                                 def isBlocked = false
                                 try {
                                     //isBlocked = UserBlockedProcessReadOnly.fetchBlockingProcessesROByPidm( userPidm)
