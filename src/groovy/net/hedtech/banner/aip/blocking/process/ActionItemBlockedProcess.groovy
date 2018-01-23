@@ -52,16 +52,16 @@ class ActionItemBlockedProcess implements Serializable {
     Long blockActionItemId
 
     /**
-     * Name of the action item blocked process config record
+     * Blocked process Id
      */
-    @Column(name = "GCRABLK_CONFIG_NAME")
-    String blockConfigName
+    @Column(name = "GCRABLK_GCBBPRC_ID")
+    Long blockedProcessId
 
     /**
-     * Type of the action item block
+     * Blocked Process Role
      */
-    @Column(name = "GCRABLK_CONFIG_TYPE", columnDefinition = "default 'json/aipBlock'")
-    String blockConfigType
+    @Column(name = "GCRABLK_APPLICABLE_ROLE")
+    String blockedProcessRole
 
     /**
      * User action item pertains to
@@ -89,9 +89,9 @@ class ActionItemBlockedProcess implements Serializable {
     String dataOrigin
 
     static constraints = {
-        blockActionItemId( blank: false, nullable: false, maxSize: 19 )
-        blockConfigName( blank: false, nullable: false, maxSize: 50 )
-        blockConfigType( blank: false, nullable: false, maxSize: 30 )
+        blockActionItemId( nullable: false )
+        blockedProcessId( nullable: false, maxSize: 50 )
+        blockedProcessRole( blank: true )
         lastModifiedBy( nullable: true, maxSize: 30 )
         lastModified( nullable: true )
         dataOrigin( nullable: true, maxSize: 30 )
@@ -109,12 +109,14 @@ class ActionItemBlockedProcess implements Serializable {
 
     /**
      *
-     * @param myId
+     * @param actionItemId
      * @return
      */
-    static def fetchActionItemBlockProcessById( Long myId ) {
+    static def fetchActionItemBlockProcessById( Long actionItemId ) {
         ActionItemBlockedProcess.withSession {session ->
-            session.getNamedQuery( 'ActionItemBlockedProcess.fetchActionItemBlockProcessById' ).setLong( 'myId', myId ).list()
+            session.getNamedQuery( 'ActionItemBlockedProcess.fetchActionItemBlockProcessById' )
+                    .setLong( 'actionItemId', actionItemId )
+                    .list()
         }
     }
 
