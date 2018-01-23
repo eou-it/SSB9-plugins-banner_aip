@@ -6,6 +6,7 @@ package net.hedtech.banner.aip.filter
 
 import net.hedtech.banner.aip.blocking.process.UserBlockedProcessReadOnly
 import net.hedtech.banner.aip.common.AIPConstants
+
 import net.hedtech.banner.general.overall.IntegrationConfiguration
 import net.hedtech.banner.security.BannerUser
 import org.apache.commons.logging.Log
@@ -76,13 +77,12 @@ class GateKeepingFilters {
                                 }
 
                                 if (isBlocked) {
-                                    String uri = request.getScheme() + "://" +   // "http" + "://
-                                            request.getServerName()
                                     //response.addHeader("Access-Control-Allow-Origin", "*");
-                                    // FIXME: goto general app. We need to be able to look up the location
-                                    // FIXME: make this configurable
-                                    redirect( url: "http://csr-daily-1.ellucian.com:8080/BannerGeneralSsb/ssb/aip/informedList#/informedList" )
-                                    //    redirect( url: uri + ":8090/StudentRegistrationSsb/ssb/registrationHistory/registrationHistory" )
+
+                                    // lookup by name and type (and appId) and cache
+                                    String base = net.hedtech.banner.general.ConfigurationData.fetchByNameAndType(
+                                            'GENERALLOCATION', 'string' , 'GENERAL_SS' )
+                                    redirect( url: base  + "/ssb/aip/informedList#/informedList" )
                                     return false
                                 }
                             }
