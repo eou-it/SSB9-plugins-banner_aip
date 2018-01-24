@@ -30,7 +30,6 @@ Copyright 2017 Ellucian Company L.P. and its affiliates.
         <mapping class="net.hedtech.banner.aip.GroupFolderReadOnly"/>
         <mapping class="net.hedtech.banner.aip.UserActionItem"/>
         <mapping class="net.hedtech.banner.aip.UserActionItemReadOnly"/>
-        <mapping class="net.hedtech.banner.aip.blocking.process.UserBlockedProcessReadOnly"/>
         <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPost"/>
         <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPostDetail"/>
         <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPostReadOnly"/>
