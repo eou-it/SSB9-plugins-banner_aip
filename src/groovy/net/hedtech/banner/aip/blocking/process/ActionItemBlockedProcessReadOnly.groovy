@@ -90,20 +90,26 @@ class ActionItemBlockedProcessReadOnly implements Serializable {
     /**
      * Process user id
      */
-    @Column(name = "process_user_id")
+    @Column(name = "blocked_process_user_id")
     String lastModifiedBy
 
     /**
      * Last activity date for the action item
      */
-    @Column(name = "process_activity_date")
+    @Column(name = "blocked_process_activity_date")
     Date lastModified
 
     /**
      *  Version of the action item: required for app
      */
-    @Column(name = "process_version")
+    @Column(name = "blocked_process_version")
     Long version
+
+    /**
+     *  VPDI Code of record
+     */
+    @Column(name = "blocked_process_vipdi_code")
+    String vpdiCode
 
     /**
      *
