@@ -41,4 +41,35 @@ class ActionItemBlockedProcessCompositeServiceIntegrationTests extends BaseInteg
         assert result.size() == 0
     }
 
+
+    @Test
+    void updateBlockedProcessItemsFailedCase() {
+        Map paramMap = [actionItemId: null]
+        def result = actionItemBlockedProcessCompositeService.updateBlockedProcessItems( paramMap )
+        assert !result.success
+        assert result.message == 'Invalid Input Request'
+        paramMap = [actionItemId: "1", globalBlockProcess: false, blockedProcesses: null]
+        result = actionItemBlockedProcessCompositeService.updateBlockedProcessItems( paramMap )
+        assert !result.success
+        assert result.message == 'Invalid Input Request'
+    }
+
+
+    @Test
+    void updateBlockedProcessItems() {
+        ActionItem actionItem = ActionItem.findByName( 'The Declaration of Independence' )
+        BlockingProcess blockingProcess = BlockingProcess.findByProcessName( 'Prepare for Registration' )
+        Map paramMap = [actionItemId: actionItem.id.toString(), globalBlockProcess: false, blockedProcesses: [[processId: blockingProcess.id, persona: 'STUDENT']]]
+        def result = actionItemBlockedProcessCompositeService.updateBlockedProcessItems( paramMap )
+        assert result.success
+        paramMap = [actionItemId: actionItem.id.toString(), globalBlockProcess: false, blockedProcesses: [[processId: BlockingProcess.findByProcessName( 'Prepare for Registration' ).id, persona: null]]]
+        result = actionItemBlockedProcessCompositeService.updateBlockedProcessItems( paramMap )
+        assert result.success
+        paramMap = [actionItemId: actionItem.id.toString(), globalBlockProcess: true, blockedProcesses: [[processId: BlockingProcess.findByProcessName( 'Prepare for Registration' ).id, persona: 'STUDENT']]]
+        result = actionItemBlockedProcessCompositeService.updateBlockedProcessItems( paramMap )
+        assert result.success
+        paramMap = [actionItemId: actionItem.id.toString(), globalBlockProcess: true, blockedProcesses: []]
+        result = actionItemBlockedProcessCompositeService.updateBlockedProcessItems( paramMap )
+        assert result.success
+    }
 }

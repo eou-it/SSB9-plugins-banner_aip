@@ -38,7 +38,7 @@ class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTes
         List<ActionItemBlockedProcess> actionItemBlockedProcessById = ActionItemBlockedProcess.fetchActionItemBlockProcessById( blockId )
 
         List<ActionItemBlockedProcess> actionItemBlockedProcessByIdService = actionItemBlockedProcessService.listBlockedProcessById( blockId )
-        assertEquals( actionItemBlockedProcessById.blockConfigName, actionItemBlockedProcessByIdService.blockConfigName )
+        assertEquals( actionItemBlockedProcessById.blockedProcessId, actionItemBlockedProcessByIdService.blockedProcessId )
 
     }
 
@@ -48,8 +48,8 @@ class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTes
         ActionItem.findByName( 'Notice of Scholastic Standards' ).id
         List<ActionItemBlockedProcess> actionItemBlockedProcess = actionItemBlockedProcessService.listBlockedProcessByActionItemId( ActionItem.findByName( 'Notice of Scholastic Standards' ).id )
         assert actionItemBlockedProcess.find() {
-            it.blockConfigName == 'planAhead'
-        }.blockConfigName == 'planAhead'
+            it.blockedProcessId == BlockingProcess.findByProcessName('Prepare for Registration').id
+        }.blockedProcessId == BlockingProcess.findByProcessName('Prepare for Registration').id
     }
 
 }

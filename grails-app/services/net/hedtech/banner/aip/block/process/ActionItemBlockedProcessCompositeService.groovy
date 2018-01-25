@@ -4,15 +4,18 @@
 
 package net.hedtech.banner.aip.block.process
 
+import grails.transaction.Transactional
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.aip.common.LoggerUtility
-import net.hedtech.banner.service.ServiceBase
+import net.hedtech.banner.exceptions.ApplicationException
 import org.apache.log4j.Logger
+import org.springframework.transaction.annotation.Propagation
 
 /**
  * Service class for Action item Blocked Process
  */
-class ActionItemBlockedProcessCompositeService extends ServiceBase {
+class ActionItemBlockedProcessCompositeService {
+    static transactional = true
     def actionItemBlockedProcessReadOnlyService
     def actionItemBlockedProcessService
     def blockingProcessService
@@ -60,14 +63,15 @@ class ActionItemBlockedProcessCompositeService extends ServiceBase {
      * @param paramMap
      * @return
      */
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     def updateBlockedProcessItems( paramMap ) {
-        long actionItemId = new Long( paramMap.actionItemId )
         boolean isGlobalBlock = paramMap.globalBlockProcess
         List blockedProcesses = paramMap.blockedProcesses
         LoggerUtility.debug( LOGGER, 'Input params for updateBlockedProcessItems' + paramMap )
-        if (!actionItemId || (!isGlobalBlock && !blockedProcesses)) {
+        if (!paramMap.actionItemId || (!isGlobalBlock && !blockedProcesses)) {
             return [success: false, message: 'Invalid Input Request']
         }
+        long actionItemId = new Long( paramMap.actionItemId )
         List<Long> exitingBlockedProcessId = actionItemBlockedProcessService.listBlockedProcessByActionItemId( actionItemId )?.blockedProcessId
         LoggerUtility.debug( LOGGER, 'exitingBlockedProcessId' + exitingBlockedProcessId )
         List<Long> inputBlockedProcessId = blockedProcesses.processId

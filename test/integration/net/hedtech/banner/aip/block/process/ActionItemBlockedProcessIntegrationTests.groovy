@@ -41,9 +41,9 @@ class ActionItemBlockedProcessIntegrationTests extends BaseIntegrationTestCase {
         List<ActionItemBlockedProcess> actionItemBlockedProcessById = ActionItemBlockedProcess.fetchActionItemBlockProcessById( actionItemBlockedProcessList.id[0] )
 
         assertEquals( actionItemBlockedProcessList.blockActionItemId[0], actionItemBlockedProcessById.blockActionItemId[0] )
-        assertEquals( actionItemBlockedProcessList.blockConfigName[0], actionItemBlockedProcessById.blockConfigName[0] )
+        assertEquals( actionItemBlockedProcessList.blockedProcessId[0], actionItemBlockedProcessById.blockedProcessId[0] )
         assertEquals( actionItemBlockedProcessList.id[0], actionItemBlockedProcessById.id[0] )
-        assertEquals( actionItemBlockedProcessList.blockConfigType[0], actionItemBlockedProcessById.blockConfigType[0] )
+        assertEquals( actionItemBlockedProcessList.blockedProcessId[0], actionItemBlockedProcessById.blockedProcessId[0] )
 
     }
 
@@ -56,9 +56,9 @@ class ActionItemBlockedProcessIntegrationTests extends BaseIntegrationTestCase {
                 actionItemBlockedProcessList.blockActionItemId[0] )
 
         assertEquals( actionItemBlockedProcessList.blockActionItemId[0], actionItemBlockedProcessByActionId.blockActionItemId[0] )
-        assertEquals( actionItemBlockedProcessList.blockConfigName[0], actionItemBlockedProcessByActionId.blockConfigName[0] )
+        assertEquals( actionItemBlockedProcessList.blockedProcessId[0], actionItemBlockedProcessByActionId.blockedProcessId[0] )
         assertEquals( actionItemBlockedProcessList.id[0], actionItemBlockedProcessByActionId.id[0] )
-        assertEquals( actionItemBlockedProcessList.blockConfigType[0], actionItemBlockedProcessByActionId.blockConfigType[0] )
+        assertEquals( actionItemBlockedProcessList.blockedProcessId[0], actionItemBlockedProcessByActionId.blockedProcessId[0] )
 
     }
 
