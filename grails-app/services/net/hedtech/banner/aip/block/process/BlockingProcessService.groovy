@@ -4,7 +4,6 @@
 
 package net.hedtech.banner.aip.block.process
 
-import net.hedtech.banner.aip.blocking.process.BlockingProcess
 import net.hedtech.banner.service.ServiceBase
 
 /**
@@ -18,4 +17,8 @@ class BlockingProcessService extends ServiceBase {
     def fetchNonGlobalBlockingProcess() {
         BlockingProcess.fetchNonGlobalBlockingProcess()
     }
+
+    def fetchGlobalBlockingProcess() {
+            BlockingProcess.fetchGlobalBlockingProcess()
+        }
 }

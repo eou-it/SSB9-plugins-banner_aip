@@ -1,7 +1,7 @@
 /*********************************************************************************
- Copyright 2017 Ellucian Company L.P. and its affiliates.
+ Copyright 2018 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
-package net.hedtech.banner.aip.blocking.process
+package net.hedtech.banner.aip.block.process
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
@@ -14,6 +14,11 @@ import javax.persistence.*
                 query = """
            FROM ActionItemBlockedProcess a
           """),
+        @NamedQuery(name = "ActionItemBlockedProcess.getBlockedProcessByActionItemAndProcessId",
+                query = """ FROM ActionItemBlockedProcess a 
+                                    WHERE a.blockActionItemId = :blockActionItemId 
+                                    AND a.blockedProcessId=:blockedProcessId
+                  """),
         @NamedQuery(name = "ActionItemBlockedProcess.fetchActionItemBlockProcessById",
                 query = """
            FROM ActionItemBlockedProcess a
@@ -90,8 +95,8 @@ class ActionItemBlockedProcess implements Serializable {
 
     static constraints = {
         blockActionItemId( nullable: false )
-        blockedProcessId( nullable: false, maxSize: 50 )
-        blockedProcessRole( blank: true )
+        blockedProcessId( nullable: false )
+        blockedProcessRole( blank: true, nullable: true )
         lastModifiedBy( nullable: true, maxSize: 30 )
         lastModified( nullable: true )
         dataOrigin( nullable: true, maxSize: 30 )
@@ -109,14 +114,29 @@ class ActionItemBlockedProcess implements Serializable {
 
     /**
      *
-     * @param actionItemId
+     * @param actionItemBlockId
      * @return
      */
-    static def fetchActionItemBlockProcessById( Long actionItemId ) {
+    static def fetchActionItemBlockProcessById( Long actionItemBlockId ) {
         ActionItemBlockedProcess.withSession {session ->
             session.getNamedQuery( 'ActionItemBlockedProcess.fetchActionItemBlockProcessById' )
-                    .setLong( 'actionItemId', actionItemId )
+                    .setLong( 'myId', actionItemBlockId )
                     .list()
+        }
+    }
+
+    /**
+     *
+     * @param actionItemId
+     * @param blockedProcessId
+     * @return
+     */
+    static def getBlockedProcessByActionItemAndProcessId( Long blockActionItemId, Long blockedProcessId ) {
+        ActionItemBlockedProcess.withSession {session ->
+            session.getNamedQuery( 'ActionItemBlockedProcess.getBlockedProcessByActionItemAndProcessId' )
+                    .setLong( 'blockActionItemId', blockActionItemId )
+                    .setLong( 'blockedProcessId', blockedProcessId )
+                    .uniqueResult()
         }
     }
 

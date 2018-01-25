@@ -5,8 +5,6 @@
 package net.hedtech.banner.aip.block.process
 
 import grails.util.Holders
-import net.hedtech.banner.aip.blocking.process.BlockingProcess
-import net.hedtech.banner.aip.blocking.process.BlockingProcessUrls
 import net.hedtech.banner.i18n.MessageHelper
 
 /**

@@ -2,7 +2,7 @@
  Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
-package net.hedtech.banner.aip.blocking.process
+package net.hedtech.banner.aip.block.process
 
 import net.hedtech.banner.aip.ActionItem
 import net.hedtech.banner.testing.BaseIntegrationTestCase
@@ -52,21 +52,4 @@ class ActionItemBlockedProcessServiceIntegrationTests extends BaseIntegrationTes
         }.blockConfigName == 'planAhead'
     }
 
-
-    @Test
-    void listBlockedProcessesByNameAndType() {
-        def processMap = actionItemBlockedProcessService.listBlockedProcessesByNameAndType( null )
-        assert processMap.url== '["/ssb/term/termSelection?mode=registration"]'
-        assert processMap.processNamei18n == 'aip.blocked.process.name.register.for.classes'
-    }
-
-
-    @Test
-    void listBlockedProcessesByType() {
-        def processMap = actionItemBlockedProcessService.listBlockedProcessesByType()[0]
-        assert processMap.id == 1
-        assert processMap.name == 'registerForClasses'
-        assert processMap.type == 'json/aipBlock'
-        assert processMap.value == '{"aipBlock": {"processNamei18n":"aip.blocked.process.name.register.for.classes","urls":["/ssb/term/termSelection?mode=registration" ] }}'
-    }
 }

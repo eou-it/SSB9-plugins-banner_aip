@@ -1,7 +1,7 @@
 /*********************************************************************************
  Copyright 2017 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
-package net.hedtech.banner.aip.blocking.process
+package net.hedtech.banner.aip.block.process
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
@@ -13,7 +13,11 @@ import javax.persistence.*
         @NamedQuery(name = "BlockingProcess.fetchNonGlobalBlockingProcess",
                 query = """
                     FROM BlockingProcess a where a.globalProcessIndicator = 'N'
-          """)
+          """),
+        @NamedQuery(name = "BlockingProcess.fetchGlobalBlockingProcess",
+                query = """
+                            FROM BlockingProcess a where a.globalProcessIndicator = 'Y'
+                  """)
 ])
 
 @Entity
@@ -97,6 +101,16 @@ class BlockingProcess implements Serializable {
     static def fetchNonGlobalBlockingProcess() {
         BlockingProcess.withSession {session ->
             session.getNamedQuery( 'BlockingProcess.fetchNonGlobalBlockingProcess' ).list()
+        }
+    }
+
+    /**
+     * Fetch Global Blocking Process
+     * @return
+     */
+    static def fetchGlobalBlockingProcess() {
+        BlockingProcess.withSession {session ->
+            session.getNamedQuery( 'BlockingProcess.fetchGlobalBlockingProcess' ).list()
         }
     }
 }

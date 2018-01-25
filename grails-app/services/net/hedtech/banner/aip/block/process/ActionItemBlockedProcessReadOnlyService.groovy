@@ -3,7 +3,6 @@
  ****************************************************************************** */
 package net.hedtech.banner.aip.block.process
 
-import net.hedtech.banner.aip.blocking.process.ActionItemBlockedProcessReadOnly
 import net.hedtech.banner.service.ServiceBase
 
 /**
