@@ -1,3 +1,6 @@
+/********************************************************************************
+  Copyright 2017 Ellucian Company L.P. and its affiliates.
+********************************************************************************/
 class BannerAipGrailsPlugin {
 
     String groupId = "net.hedtech"
