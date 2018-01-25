@@ -66,7 +66,7 @@ class ActionItemBlockedProcessCompositeService extends ServiceBase {
         List blockedProcesses = paramMap.blockedProcesses
         LoggerUtility.debug( LOGGER, 'Input params for updateBlockedProcessItems' + paramMap )
         if (!actionItemId || (!isGlobalBlock && !blockedProcesses)) {
-            return [success: false, message: 'Invalid Inpu Request']
+            return [success: false, message: 'Invalid Input Request']
         }
         List<Long> exitingBlockedProcessId = actionItemBlockedProcessService.listBlockedProcessByActionItemId( actionItemId )?.blockedProcessId
         LoggerUtility.debug( LOGGER, 'exitingBlockedProcessId' + exitingBlockedProcessId )
