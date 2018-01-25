@@ -1,5 +1,5 @@
 /********************************************************************************
-  Copyright 2017 Ellucian Company L.P. and its affiliates.
+  Copyright 2017-2018 Ellucian Company L.P. and its affiliates.
 ********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -8,7 +8,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class ActionItemTemplateServiceIntegraionTests extends BaseIntegrationTestCase {
+class ActionItemTemplateServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemTemplateService
 
