@@ -71,39 +71,41 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     // sort by other than name is secondarily sorted by name
     @Test
     void testActionItemSortSecondaryAsc() {
+        def folderId = CommunicationFolder.findByName( 'AIPstudent' ).id
+        new ActionItem( name: 'A-INT-TEST1', title: 'A-INT-TEST1', folderId: folderId, status: 'D', postedIndicator: 'N' ).save( flush: true )
+        new ActionItem( name: 'B-INT-TEST1', title: 'B-INT-TEST1', folderId: folderId, status: 'I', postedIndicator: 'N' ).save( flush: true )
+        new ActionItem( name: 'C-INT-TEST1', title: 'C-INT-TEST1', folderId: folderId, status: 'A', postedIndicator: 'N' ).save( flush: true )
+        new ActionItem( name: 'D-INT-TEST1', title: 'D-INT-TEST1', folderId: folderId, status: 'D', postedIndicator: 'N' ).save( flush: true )
+        new ActionItem( name: 'E-INT-TEST1', title: 'E-INT-TEST1', folderId: folderId, status: 'I', postedIndicator: 'N' ).save( flush: true )
+        new ActionItem( name: 'F-INT-TEST1', title: 'F-INT-TEST1', folderId: folderId, status: 'A', postedIndicator: 'N' ).save( flush: true )
+        new ActionItem( name: 'G-INT-TEST1', title: 'G-INT-TEST1', folderId: folderId, status: 'I', postedIndicator: 'N' ).save( flush: true )
         def results = ActionItemReadOnly.fetchWithPagingAndSortParams(
-                [name: "%"],
+                [name: "%-INT-TEST1"],
                 [sortColumn: "actionItemStatus", sortAscending: true, max: 50, offset: 0] )
 
         def foundActive = false
-        def foundPending = false
+        def foundDraft = false
         def foundInactive = false
         def activeAsFound = []
-        def pendingAsFound = []
+        def draftAsFound = []
         def inactiveAsFound = []
-        results.each {it ->
-            if (it.actionItemStatus == 'Active') {
-                assertFalse foundPending
-                assertFalse foundInactive
+        results.each {ActionItemReadOnly it ->
+            if (it.actionItemStatus == 'A') {
                 foundActive = true
                 activeAsFound.add( it.actionItemName )
             }
-            if (it.actionItemStatus == 'Inactive') {
-                assertTrue foundActive
-                assertFalse foundPending
+            if (it.actionItemStatus == 'I') {
                 foundInactive = true
                 inactiveAsFound.add( it.actionItemName )
             }
-            if (it.actionItemStatus == 'Pending') {
-                assertTrue foundActive
-                assertTrue foundInactive
-                foundPending = true
-                pendingAsFound.add( it.actionItemName )
+            if (it.actionItemStatus == 'D') {
+                foundDraft = true
+                draftAsFound.add( it.actionItemName )
             }
         }
         (0..4).each {it ->
             assertEquals( activeAsFound[it], activeAsFound.sort( false )[it] )
-            assertEquals( pendingAsFound[it], pendingAsFound.sort( false )[it] )
+            assertEquals( draftAsFound[it], draftAsFound.sort( false )[it] )
             assertEquals( inactiveAsFound[it], inactiveAsFound.sort( false )[it] )
         }
     }
@@ -111,29 +113,45 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testActionItemSortSecondaryDesc() {
+
+        def folderId = CommunicationFolder.findByName( 'AIPstudent' ).id
+        new ActionItem( name: 'A-INT-TEST1', title: 'A-INT-TEST1', folderId: folderId, status: 'D', postedIndicator: 'N' ).save( flush: true )
+        new ActionItem( name: 'B-INT-TEST1', title: 'B-INT-TEST1', folderId: folderId, status: 'I', postedIndicator: 'N' ).save( flush: true )
+        new ActionItem( name: 'C-INT-TEST1', title: 'C-INT-TEST1', folderId: folderId, status: 'A', postedIndicator: 'N' ).save( flush: true )
+        new ActionItem( name: 'D-INT-TEST1', title: 'D-INT-TEST1', folderId: folderId, status: 'D', postedIndicator: 'N' ).save( flush: true )
+        new ActionItem( name: 'E-INT-TEST1', title: 'E-INT-TEST1', folderId: folderId, status: 'I', postedIndicator: 'N' ).save( flush: true )
+        new ActionItem( name: 'F-INT-TEST1', title: 'F-INT-TEST1', folderId: folderId, status: 'A', postedIndicator: 'N' ).save( flush: true )
+        new ActionItem( name: 'G-INT-TEST1', title: 'G-INT-TEST1', folderId: folderId, status: 'I', postedIndicator: 'N' ).save( flush: true )
+
         def results = ActionItemReadOnly.fetchWithPagingAndSortParams(
-                [name: "Draft"],
-                [sortColumn: "actionItemStatus", sortAscending: false, max: 10, offset: 0] )
+                [params: [name: "%-INT-TEST1"]],
+                [sortColumn: "actionItemStatus", sortAscending: false, max: 50, offset: 0] )
 
-        results.each {it ->
-            assertTrue 'Draft' == it.actionItemStatus
+        def foundActive = false
+        def foundDraft = false
+        def foundInactive = false
+        def activeAsFound = []
+        def draftAsFound = []
+        def inactiveAsFound = []
+        results.each {ActionItemReadOnly it ->
+            if (it.actionItemStatus == 'D') {
+                foundDraft = true
+                draftAsFound.add( it.actionItemName )
+            }
+            if (it.actionItemStatus == 'I') {
+                foundInactive = true
+                inactiveAsFound.add( it.actionItemName )
+            }
+            if (it.actionItemStatus == 'A') {
+                foundActive = true
+                activeAsFound.add( it.actionItemName )
+            }
 
         }
-        results = ActionItemReadOnly.fetchWithPagingAndSortParams(
-                [name: "Action"],
-                [sortColumn: "actionItemStatus", sortAscending: false, max: 10, offset: 0] )
-
-        results.each {it ->
-            assertTrue 'Action' == it.actionItemStatus
-
-        }
-        results = ActionItemReadOnly.fetchWithPagingAndSortParams(
-                [name: "Inaction"],
-                [sortColumn: "actionItemStatus", sortAscending: false, max: 10, offset: 0] )
-
-        results.each {it ->
-            assertTrue 'Inaction' == it.actionItemStatus
-
+        (0..4).each {it ->
+            assertEquals( draftAsFound[it], draftAsFound.sort( false )[it] )
+            assertEquals( inactiveAsFound[it], inactiveAsFound.sort( false )[it] )
+            assertEquals( activeAsFound[it], activeAsFound.sort( false )[it] )
         }
     }
 
