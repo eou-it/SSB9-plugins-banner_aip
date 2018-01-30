@@ -28,9 +28,12 @@ class AipPageBuilderCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     @Test
     void page() {
-        def page = aipPageBuilderCompositeService.page( 'AIPMasterTemplateSystemRequired' )
+        String query = """ INSERT INTO PAGE ( CONSTANT_NAME, VERSION, ID, MODEL_VIEW ) VALUES ('TestAIPMasterTemplateSystemRequired', 0, -9999, :clob) """
+        println query
+        sessionFactory.currentSession.createSQLQuery( query ).setString( 'clob', '{ "name":"TestAIPMasterTemplateSystemRequired","type":"page" }' ).executeUpdate()
+        def page = aipPageBuilderCompositeService.page( 'TestAIPMasterTemplateSystemRequired' )
         assert page.html != null
-        assert page.pageName == 'AIPMasterTemplateSystemRequired'
+        assert page.pageName == 'TestAIPMasterTemplateSystemRequired'
         assert page.script != null
         assert page.compiled != null
     }
@@ -38,9 +41,12 @@ class AipPageBuilderCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     @Test
     void pageScript() {
-        String pageScript = aipPageBuilderCompositeService.pageScript( 'AIPMasterTemplateSystemRequired' )
+        String query = """ INSERT INTO PAGE ( CONSTANT_NAME, VERSION, ID, MODEL_VIEW ) VALUES ('TestAIPMasterTemplateSystemRequired', 0, -9999, '{ \t"name": "TestAIPMasterTemplateSystemRequired", \t"type": "page" }') """
+        println query
+        sessionFactory.currentSession.createSQLQuery( query ).executeUpdate()
+        String pageScript = aipPageBuilderCompositeService.pageScript( 'TestAIPMasterTemplateSystemRequired' )
         assert pageScript != null
-        assert pageScript.contains( 'AIPMasterTemplateSystemRequired' )
+        assert pageScript.contains( 'TestAIPMasterTemplateSystemRequired' )
     }
 
 }
