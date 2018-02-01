@@ -47,7 +47,7 @@ class ActionItemBlockedProcessCompositeServiceIntegrationTests extends BaseInteg
         Map paramMap = [actionItemId: null]
         def result = actionItemBlockedProcessCompositeService.updateBlockedProcessItems( paramMap )
         assert !result.success
-        assert result.message == 'Invalid Input Request'
+        assert result.message == 'Action Item Id not present'
     }
 
 
