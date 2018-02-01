@@ -95,13 +95,16 @@ class ActionItemPostCompositeService {
         ]
     }
 
-
+    /**
+     * Update the posting of a actionItems to a set of prospect recipients
+     * @param requestMap the post to update
+     */
     def updateAsynchronousPostItem( requestMap ) {
+        actionItemPostService.preCreateValidation( requestMap )
         ActionItemPost groupSend = (ActionItemPost) actionItemPostService.get( requestMap.id )
         if (!groupSend.postingCurrentState.pending && !groupSend.postingCurrentState.terminal) {
-            throw ActionItemExceptionFactory.createApplicationException( ActionItemPostCompositeService.class, "cannotDeleteRunningPost" )
+            throw ActionItemExceptionFactory.createApplicationException( ActionItemPostCompositeService.class, "cannotUpdateRunningPost" )
         }
-        actionItemPostService.preCreateValidation( requestMap )
         def user = springSecurityService.getAuthentication()?.user
         def success = false
        // ActionItemPost groupSend = getActionPostInstance( requestMap, user )
