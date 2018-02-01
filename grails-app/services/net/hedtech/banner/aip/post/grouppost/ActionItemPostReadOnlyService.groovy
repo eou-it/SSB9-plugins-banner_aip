@@ -3,6 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.i18n.MessageHelper
 import net.hedtech.banner.service.ServiceBase
 
@@ -56,4 +57,19 @@ class ActionItemPostReadOnlyService extends ServiceBase {
         params.searchParam = params.searchParam ? ('%' + params.searchParam.toUpperCase() + '%') : ('%')
         ActionItemPostReadOnly.fetchJobsCount( params )
     }
+	
+	/**
+     * Lists Post status
+     *
+     * @return
+     */
+	def statusPosted(postingId) {
+		ActionItemPostReadOnly actionItemPostReadOnly = ActionItemPostReadOnly.fetchByPostingId(postingId)
+		if (actionItemPostReadOnly) {
+			if (actionItemPostReadOnly.postingCurrentState.equals( "Scheduled" ) ){
+				return AIPConstants.YES_IND
+			}
+		}
+		return AIPConstants.NO_IND
+	}
 }

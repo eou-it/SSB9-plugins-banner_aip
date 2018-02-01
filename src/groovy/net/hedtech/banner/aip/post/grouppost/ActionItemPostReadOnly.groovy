@@ -24,6 +24,11 @@ import javax.persistence.*
                 query = """SELECT COUNT(a.postingId) FROM ActionItemPostReadOnly a
                            WHERE upper(a.postingName) like :postingName 
             """
+        ),
+        @NamedQuery(name = "ActionItemPostReadOnly.fetchByPostingId",
+                query = """FROM ActionItemPostReadOnly a
+                           WHERE a.postingId = :postingId 
+            """
         )
 ])
 class ActionItemPostReadOnly implements Serializable {
@@ -227,6 +232,13 @@ class ActionItemPostReadOnly implements Serializable {
             session.getNamedQuery( 'ActionItemPostReadOnly.fetchJobsCount' )
                     .setString( 'postingName', params.searchParam )
                     .uniqueResult()
+        }
+    }
+
+    def static fetchByPostingId( postingId ) {
+        ActionItemPostReadOnly.withSession {session ->
+            session.getNamedQuery( 'ActionItemPostReadOnly.fetchByPostingId' )
+                    .setLong( 'postingId', postingId ).list()[0]
         }
     }
 }

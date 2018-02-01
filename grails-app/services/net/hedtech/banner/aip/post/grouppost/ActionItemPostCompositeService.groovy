@@ -96,6 +96,62 @@ class ActionItemPostCompositeService {
     }
 
     /**
+     * Update the posting of a actionItems to a set of prospect recipients
+     * @param requestMap the post to update
+     */
+    def updateAsynchronousPostItem( requestMap ) {
+        actionItemPostService.preCreateValidation( requestMap )
+        ActionItemPost groupSend = (ActionItemPost) actionItemPostService.get( requestMap.id )
+        if (!groupSend.postingCurrentState.pending && !groupSend.postingCurrentState.terminal) {
+            throw ActionItemExceptionFactory.createApplicationException( ActionItemPostCompositeService.class, "cannotUpdateRunningPost" )
+        }
+        def user = springSecurityService.getAuthentication()?.user
+        def success = false
+       // ActionItemPost groupSend = getActionPostInstance( requestMap, user )
+        validateDates( groupSend, requestMap.scheduled )
+        CommunicationPopulation population = communicationPopulationCompositeService.fetchPopulation( groupSend.populationListId )
+        boolean hasQuery = (CommunicationPopulationQueryAssociation.countByPopulation( population ) > 0)
+        boolean useCurrentReplica = (!groupSend.populationRegenerateIndicator || !requestMap.scheduledStartDate)
+        if (hasQuery && useCurrentReplica) {
+            // this will need to be updated once we allow queries to be added to existing manual only populations
+            assignPopulationVersion( groupSend )
+            assignPopulationCalculation( groupSend, user.oracleUserName )
+        } else if (groupSend.populationRegenerateIndicator) { // scheduled with future replica of population
+            groupSend.populationVersionId = null
+            groupSend.populationCalculationId = null
+        } else { // sending now or scheduled with replica of current population
+            assert (useCurrentReplica == true)
+            assignPopulationVersion( groupSend )
+            if (hasQuery) {
+                assignPopulationCalculation( groupSend, user.oracleUserName )
+            }
+        }
+        // we don't use parameterValues. remove?
+        ActionItemPost groupSendSaved = actionItemPostService.update( groupSend )
+        // Create the details records.
+        deletePostingDetail( groupSendSaved.id)
+        requestMap.actionItemIds.each {
+            addPostingDetail( it, groupSendSaved.id )
+        }
+        if (groupSend.aSyncJobId != null) {
+            schedulerJobService.deleteScheduledJob( groupSend.aSyncJobId, groupSend.aSyncGroupId )
+        }
+        if (requestMap.postNow) {
+            if (hasQuery) {
+                assert (groupSendSaved.populationCalculationId != null)
+            }
+            groupSendSaved = schedulePostImmediately( groupSendSaved, user.oracleUserName )
+        } else if (requestMap.scheduledStartDate) {
+            groupSendSaved = schedulePost( groupSendSaved, user.oracleUserName )
+        }
+        success = true
+        [
+                success : success,
+                savedJob: groupSendSaved
+        ]
+    }
+
+    /**
      * Creates new Instance of Action Item Post
      * @param requestMap
      * @param user
@@ -110,18 +166,19 @@ class ActionItemPostCompositeService {
             scheduledStartDateCalendar = actionItemProcessingCommonService.getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset );
         }
         new ActionItemPost(
-                populationListId: requestMap.populationId,
-                postingActionItemGroupId: requestMap.postingActionItemGroupId,
-                postingName: requestMap.postingName,
-                postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
-                postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
-                postingScheduleDateTime: scheduledStartDateCalendar ? scheduledStartDateCalendar.getTime() : null,
-                postingCreationDateTime: new Date(),
-                populationRegenerateIndicator: false,
-                postingDeleteIndicator: false,
-                postingCreatorId: user.oracleUserName,
-                postingCurrentState: requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New),
-                )
+                    populationListId: requestMap.populationId,
+                    postingActionItemGroupId: requestMap.postingActionItemGroupId,
+                    postingName: requestMap.postingName,
+                    postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.displayStartDate),
+                    postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.displayEndDate),
+                    postingScheduleDateTime: scheduledStartDateCalendar ? scheduledStartDateCalendar.getTime() : null,
+                    postingCreationDateTime: new Date(),
+                    populationRegenerateIndicator: false,
+                    postingDeleteIndicator: false,
+                    postingCreatorId: user.oracleUserName,
+                    postingCurrentState: requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New),
+            )
+
     }
 
     /**
@@ -137,6 +194,20 @@ class ActionItemPostCompositeService {
                 actionItemId: actionItemId
         )
         actionItemPostDetailService.create( groupDetail )
+    }
+
+
+    /**
+     * delete Posting Details
+     * @param postingId
+     * @param user
+     * @return
+     */
+    private deletePostingDetail(postingId ) {
+        List actionItemPostDetailList = actionItemPostDetailService.fetchByActionItemPostId(postingId)
+        actionItemPostDetailList.each {
+            actionItemPostDetailService.delete(it)
+        }
     }
 
     /**
