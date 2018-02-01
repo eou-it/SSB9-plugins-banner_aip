@@ -301,7 +301,7 @@ class ActionItemPostCompositeService {
         println 'Start marking artifacts on ' + new Date()
         ActionItemPost groupSend = actionItemPostService.get( groupSendId )
         markActionItemGroupPosted( groupSend.postingActionItemGroupId )
-        List actionItemsIds = actionItemPostDetailService.fetchByActionItemPostId().actionItemPostId
+        List actionItemsIds = actionItemPostDetailService.fetchByActionItemPostId(groupSendId).actionItemId
         actionItemsIds?.each {
             markActionItemPosted( it )
         }
