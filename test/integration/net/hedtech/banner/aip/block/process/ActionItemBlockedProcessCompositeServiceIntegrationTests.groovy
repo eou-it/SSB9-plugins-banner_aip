@@ -48,10 +48,6 @@ class ActionItemBlockedProcessCompositeServiceIntegrationTests extends BaseInteg
         def result = actionItemBlockedProcessCompositeService.updateBlockedProcessItems( paramMap )
         assert !result.success
         assert result.message == 'Invalid Input Request'
-        paramMap = [actionItemId: "1", globalBlockProcess: false, blockedProcesses: null]
-        result = actionItemBlockedProcessCompositeService.updateBlockedProcessItems( paramMap )
-        assert !result.success
-        assert result.message == 'Invalid Input Request'
     }
 
 

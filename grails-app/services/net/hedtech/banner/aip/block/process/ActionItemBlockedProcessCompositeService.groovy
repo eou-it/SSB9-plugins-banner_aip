@@ -8,6 +8,7 @@ import grails.transaction.Transactional
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.aip.common.LoggerUtility
 import net.hedtech.banner.exceptions.ApplicationException
+import net.hedtech.banner.i18n.MessageHelper
 import org.apache.log4j.Logger
 import org.springframework.transaction.annotation.Propagation
 
@@ -31,7 +32,9 @@ class ActionItemBlockedProcessCompositeService {
         boolean globalBlockProcess = blockedList.find {
             it.processGlobalProcInd == AIPConstants.YES_IND
         }?.processGlobalProcInd == AIPConstants.YES_IND
+
         def actionItem = blockedList?.get( 0 )
+        blockedList.retainAll {it.processGlobalProcInd != AIPConstants.YES_IND}
         Map processIdAndUrlMap = blockedList.collectEntries {
             [it.id.blockingProcessId, blockedList.findAll {it1 -> it1.id.blockingProcessId == it.id.blockingProcessId}.processUrl.unique().sort()]
         }
@@ -68,8 +71,9 @@ class ActionItemBlockedProcessCompositeService {
         boolean isGlobalBlock = paramMap.globalBlockProcess
         List blockedProcesses = paramMap.blockedProcesses
         LoggerUtility.debug( LOGGER, 'Input params for updateBlockedProcessItems' + paramMap )
-        if (!paramMap.actionItemId || (!isGlobalBlock && !blockedProcesses)) {
-            return [success: false, message: 'Invalid Input Request']
+        if (!paramMap.actionItemId) {
+            LoggerUtility.error( LOGGER, 'Action Item Id not present' )
+            return [success: false, message: MessageHelper.message( 'incomplete.request.action.item.id.not.present' )]
         }
         long actionItemId = new Long( paramMap.actionItemId )
         List<Long> exitingBlockedProcessId = actionItemBlockedProcessService.listBlockedProcessByActionItemId( actionItemId )?.blockedProcessId
