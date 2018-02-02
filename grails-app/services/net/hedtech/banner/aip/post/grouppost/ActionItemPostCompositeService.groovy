@@ -102,12 +102,15 @@ class ActionItemPostCompositeService {
     def updateAsynchronousPostItem( requestMap ) {
         actionItemPostService.preCreateValidation( requestMap )
         ActionItemPost groupSend = (ActionItemPost) actionItemPostService.get( requestMap.id )
+        if (!groupSend) {
+            throw ActionItemExceptionFactory.createApplicationException( ActionItemPostCompositeService.class, "ActionItemPostNotExist" )
+        }
         if (!groupSend.postingCurrentState.pending && !groupSend.postingCurrentState.terminal) {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostCompositeService.class, "cannotUpdateRunningPost" )
         }
         def user = springSecurityService.getAuthentication()?.user
         def success = false
-       // ActionItemPost groupSend = getActionPostInstance( requestMap, user )
+        groupSend = updateActionPostInstance( requestMap, user ,groupSend)
         validateDates( groupSend, requestMap.scheduled )
         CommunicationPopulation population = communicationPopulationCompositeService.fetchPopulation( groupSend.populationListId )
         boolean hasQuery = (CommunicationPopulationQueryAssociation.countByPopulation( population ) > 0)
@@ -179,6 +182,36 @@ class ActionItemPostCompositeService {
                     postingCurrentState: requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New),
             )
 
+    }
+
+
+    /**
+     * update  Instance of Action Item Post
+     * @param requestMap
+     * @param user
+     * @param actionItemPost
+     * @return
+     */
+    ActionItemPost updateActionPostInstance( requestMap, user ,actionItemPost) {
+        Date scheduledStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.scheduledStartDate )
+        String scheduledStartTime = requestMap.scheduledStartTime
+        String timezoneStringOffset = requestMap.timezoneStringOffset
+        Calendar scheduledStartDateCalendar = null;
+        if (!requestMap.postNow && scheduledStartDate && scheduledStartTime) {
+            scheduledStartDateCalendar = actionItemProcessingCommonService.getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset );
+        }
+        actionItemPost.populationListId = requestMap.populationId
+        actionItemPost.postingActionItemGroupId = requestMap.postingActionItemGroupId
+        actionItemPost.postingName = requestMap.postingName
+        actionItemPost.postingDisplayStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate )
+        actionItemPost.postingDisplayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate )
+        actionItemPost.postingScheduleDateTime = scheduledStartDateCalendar ? scheduledStartDateCalendar.getTime() : null
+        actionItemPost.postingCreationDateTime = new Date()
+        actionItemPost.populationRegenerateIndicator = false
+        actionItemPost.postingDeleteIndicator = false
+        actionItemPost.postingCreatorId = user.oracleUserName
+        actionItemPost.postingCurrentState = requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New)
+        actionItemPost
     }
 
     /**
