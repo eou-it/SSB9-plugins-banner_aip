@@ -33,7 +33,10 @@ import javax.persistence.*
         @NamedQuery(name = "ActionItemPost.checkIfJobNameAlreadyExists",
                 query = """ select count (gs.postingName) FROM ActionItemPost gs
                         WHERE upper(gs.postingName) = upper( :postingName) """
-        )
+        ),@NamedQuery(name = "ActionItemPost.checkIfJobNameAlreadyExistsForUpdate",
+        query = """ select count (gs.postingName) FROM ActionItemPost gs
+                        WHERE upper(gs.postingName) = upper( :postingName) and gs.id != :postId """
+)
 ])
 class ActionItemPost implements Serializable {
 
@@ -328,6 +331,22 @@ class ActionItemPost implements Serializable {
         ActionItemPostWork.withSession {session ->
             count = session.getNamedQuery( 'ActionItemPost.checkIfJobNameAlreadyExists' )
                     .setParameter( 'postingName', name )
+                    .uniqueResult()
+        }
+        count > 0
+    }
+
+    /**
+     * Checks if posting name is already present
+     * @param name
+     * @return
+     */
+    static def checkIfJobNameAlreadyExistsForUpdate( name ,postId) {
+        def count
+        ActionItemPostWork.withSession {session ->
+            count = session.getNamedQuery( 'ActionItemPost.checkIfJobNameAlreadyExistsForUpdate' )
+                    .setParameter( 'postingName', name )
+                    .setParameter( 'postId', postId )
                     .uniqueResult()
         }
         count > 0
