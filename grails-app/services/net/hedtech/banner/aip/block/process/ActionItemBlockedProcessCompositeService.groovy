@@ -49,6 +49,7 @@ class ActionItemBlockedProcessCompositeService {
                      processPersonaBlockAllowedInd: obj.processPersonaBlockAllowedInd,
                      processSystemReqInd          : obj.processSystemReqInd,
                      blockedProcessAppRole        : obj.blockedProcessAppRole,
+                     blockedProcessAppRoleDisplay : obj.blockedProcessAppRole ? MessageHelper.message( 'aip.blocking.process.persona.' + obj.blockedProcessAppRole ) : null,
                      processName                  : obj.processName,
                      version                      : obj.version,
                      urls                         : processIdAndUrlMap.get( obj.id.blockingProcessId )
