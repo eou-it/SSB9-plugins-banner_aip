@@ -52,6 +52,13 @@ class ActionItemBlockedProcessCompositeServiceIntegrationTests extends BaseInteg
 
 
     @Test
+    void checkDuplicateProcessPersonaEntries() {
+        Map paramMap = [actionItemId: 22, blockedProcesses: [[persona: 'X', processId: 3], [persona: 'X', processId: 3]], globalBlockProcess: true]
+        def result = actionItemBlockedProcessCompositeService.updateBlockedProcessItems( paramMap )
+    }
+
+
+    @Test
     void updateBlockedProcessItems() {
         ActionItem actionItem = ActionItem.findByName( 'The Declaration of Independence' )
         BlockingProcess blockingProcess = BlockingProcess.findByProcessName( 'Prepare for Registration' )

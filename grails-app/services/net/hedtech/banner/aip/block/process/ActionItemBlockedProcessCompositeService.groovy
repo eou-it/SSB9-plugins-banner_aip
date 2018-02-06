@@ -70,12 +70,18 @@ class ActionItemBlockedProcessCompositeService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     def updateBlockedProcessItems( paramMap ) {
         boolean isGlobalBlock = paramMap.globalBlockProcess
-        List blockedProcesses = paramMap.blockedProcesses
+
         LoggerUtility.debug( LOGGER, 'Input params for updateBlockedProcessItems' + paramMap )
         if (!paramMap.actionItemId) {
             LoggerUtility.error( LOGGER, 'Action Item Id not present' )
             return [success: false, message: MessageHelper.message( 'incomplete.request.action.item.id.not.present' )]
         }
+        def initialSize = paramMap.blockedProcesses?.size()
+        def uniqueListSie = paramMap.blockedProcesses?.unique().size()
+        if (uniqueListSie != initialSize) {
+            return [success: false, message: MessageHelper.message( 'process.persona.combination.not.unique' )]
+        }
+        List blockedProcesses = paramMap.blockedProcesses?.unique()
         long actionItemId = new Long( paramMap.actionItemId )
         List<Long> exitingBlockedProcessId = actionItemBlockedProcessService.listBlockedProcessByActionItemId( actionItemId )?.blockedProcessId
         LoggerUtility.debug( LOGGER, 'exitingBlockedProcessId' + exitingBlockedProcessId )
@@ -84,7 +90,12 @@ class ActionItemBlockedProcessCompositeService {
         LoggerUtility.debug( LOGGER, 'deleteBlockedProcessId' + deleteBlockedProcessId )
         List<ActionItemBlockedProcess> addActionItemBlockedProcessList = []
         blockedProcesses.each {process ->
-            ActionItemBlockedProcess actionItemBlockedProcess = actionItemBlockedProcessService.getBlockedProcessByActionItemAndProcessId( actionItemId, process.processId )
+            ActionItemBlockedProcess actionItemBlockedProcess
+            if (process.persona) {
+                actionItemBlockedProcess = actionItemBlockedProcessService.getBlockedProcessByActionItemAndProcessIdAndPersona( actionItemId, process.processId, process.persona )
+            } else {
+                actionItemBlockedProcess = actionItemBlockedProcessService.getBlockedProcessByActionItemAndProcessId( actionItemId, process.processId )
+            }
             if (actionItemBlockedProcess) {
                 //update
                 LoggerUtility.debug( LOGGER, 'actionItemBlockedProcess for update' + actionItemBlockedProcess )

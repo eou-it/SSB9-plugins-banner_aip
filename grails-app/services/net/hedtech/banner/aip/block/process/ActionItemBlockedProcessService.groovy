@@ -32,11 +32,23 @@ class ActionItemBlockedProcessService extends ServiceBase {
      *
      * @param actionItemId
      * @param blockedProcessId
+     * @param  persona
      * @return
      */
-    def getBlockedProcessByActionItemAndProcessId( Long actionItemId, Long blockedProcessId ) {
-        ActionItemBlockedProcess.getBlockedProcessByActionItemAndProcessId( actionItemId, blockedProcessId )
+    def getBlockedProcessByActionItemAndProcessIdAndPersona( Long actionItemId, Long blockedProcessId, String persona ) {
+        ActionItemBlockedProcess.getBlockedProcessByActionItemAndProcessIdAndPersona( actionItemId, blockedProcessId , persona)
     }
+
+
+    /**
+        *
+        * @param actionItemId
+        * @param blockedProcessId
+        * @return
+        */
+       def getBlockedProcessByActionItemAndProcessId( Long actionItemId, Long blockedProcessId ) {
+           ActionItemBlockedProcess.getBlockedProcessByActionItemAndProcessId( actionItemId, blockedProcessId )
+       }
 
     /**
      *
