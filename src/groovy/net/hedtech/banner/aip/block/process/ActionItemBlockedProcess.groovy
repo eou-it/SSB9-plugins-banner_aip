@@ -160,7 +160,6 @@ class ActionItemBlockedProcess implements Serializable {
             session.getNamedQuery( 'ActionItemBlockedProcess.getBlockedProcessByActionItemAndProcessId' )
                     .setLong( 'blockActionItemId', blockActionItemId )
                     .setLong( 'blockedProcessId', blockedProcessId )
-                    .uniqueResult()
         }
     }
 

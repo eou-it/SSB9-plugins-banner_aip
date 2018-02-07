@@ -83,30 +83,19 @@ class ActionItemBlockedProcessCompositeService {
         }
         List blockedProcesses = paramMap.blockedProcesses?.unique()
         long actionItemId = new Long( paramMap.actionItemId )
-        List<Long> exitingBlockedProcessId = actionItemBlockedProcessService.listBlockedProcessByActionItemId( actionItemId )?.blockedProcessId
-        LoggerUtility.debug( LOGGER, 'exitingBlockedProcessId' + exitingBlockedProcessId )
-        List<Long> inputBlockedProcessId = blockedProcesses.processId
-        List<Long> deleteBlockedProcessId = exitingBlockedProcessId - inputBlockedProcessId
-        LoggerUtility.debug( LOGGER, 'deleteBlockedProcessId' + deleteBlockedProcessId )
+        List<ActionItemBlockedProcess> exitingBlockedProcessList = actionItemBlockedProcessService.listBlockedProcessByActionItemId( actionItemId )
+        List<Long> deleteActionItemBlockedProcessList = []
+        if (exitingBlockedProcessList) {
+            deleteActionItemBlockedProcessList.push( exitingBlockedProcessList.id )
+        }
         List<ActionItemBlockedProcess> addActionItemBlockedProcessList = []
         blockedProcesses.each {process ->
             ActionItemBlockedProcess actionItemBlockedProcess
-            if (process.persona) {
-                actionItemBlockedProcess = actionItemBlockedProcessService.getBlockedProcessByActionItemAndProcessIdAndPersona( actionItemId, process.processId, process.persona )
-            } else {
-                actionItemBlockedProcess = actionItemBlockedProcessService.getBlockedProcessByActionItemAndProcessId( actionItemId, process.processId )
-            }
-            if (actionItemBlockedProcess) {
-                //update
-                LoggerUtility.debug( LOGGER, 'actionItemBlockedProcess for update' + actionItemBlockedProcess )
-                actionItemBlockedProcess.blockedProcessRole = process.persona
-            } else {
-                actionItemBlockedProcess = new ActionItemBlockedProcess(
-                        blockedProcessId: process.processId,
-                        blockActionItemId: actionItemId,
-                        blockedProcessRole: process.persona
-                )
-            }
+            actionItemBlockedProcess = new ActionItemBlockedProcess(
+                    blockedProcessId: process.processId,
+                    blockActionItemId: actionItemId,
+                    blockedProcessRole: process.persona
+            )
             addActionItemBlockedProcessList.push( actionItemBlockedProcess )
         }
         if (isGlobalBlock) {
@@ -119,11 +108,6 @@ class ActionItemBlockedProcessCompositeService {
                 )
                 addActionItemBlockedProcessList.push( actionItemBlockedProcess )
             }
-        }
-        List<Long> deleteActionItemBlockedProcessList = []
-        deleteBlockedProcessId.each {processId ->
-            LoggerUtility.debug( LOGGER, 'collecting for delete' + processId )
-            deleteActionItemBlockedProcessList.push( actionItemBlockedProcessService.getBlockedProcessByActionItemAndProcessId( actionItemId, processId )?.id )
         }
         actionItemBlockedProcessService.delete( deleteActionItemBlockedProcessList )
         actionItemBlockedProcessService.createOrUpdate( addActionItemBlockedProcessList, false )
