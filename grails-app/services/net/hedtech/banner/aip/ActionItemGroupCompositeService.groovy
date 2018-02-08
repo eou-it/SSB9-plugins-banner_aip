@@ -7,6 +7,7 @@ import grails.transaction.Transactional
 import grails.validation.ValidationException
 import net.hedtech.banner.MessageUtility
 import net.hedtech.banner.aip.common.AIPConstants
+import net.hedtech.banner.aip.post.grouppost.ActionItemPost
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.i18n.MessageHelper
 import org.springframework.transaction.annotation.Propagation
@@ -34,10 +35,10 @@ class ActionItemGroupCompositeService {
         def message
         def group
         if (map.group.groupId) {
-            group = actionItemGroupService.getActionItemGroupById(map.group.groupId.longValue())
+            group = actionItemGroupService.getActionItemGroupById( map.group.groupId.longValue() )
             group.description = map.group.groupDesc
             group.title = map.group.groupTitle
-            group.status = AIPConstants.STATUS_MAP.get(map.group.groupStatus)
+            group.status = AIPConstants.STATUS_MAP.get( map.group.groupStatus )
         } else {
             group = new ActionItemGroup(
                     title: map.group.groupTitle,
@@ -45,8 +46,8 @@ class ActionItemGroupCompositeService {
                     folderId: map.group.folderId,
                     description: map.group.groupDesc,
                     postingInd: AIPConstants.NO_IND,
-                    status: map.group.groupStatus ? (AIPConstants.STATUS_MAP.get(map.group.groupStatus)) : null,
-            )
+                    status: map.group.groupStatus ? (AIPConstants.STATUS_MAP.get( map.group.groupStatus )) : null,
+                    )
         }
         def groupNew
         try {
@@ -81,6 +82,9 @@ class ActionItemGroupCompositeService {
         try {
             ActionItemGroup group = actionItemGroupService.get( map.groupId )
             if (group.postingInd == AIPConstants.YES_IND) {
+                return [success: success, message: MessageHelper.message( 'group.not.deletable.mark.as.posted' )]
+            }
+            if (ActionItemPost.findByPostingActionItemGroupId( map.groupId )) {
                 return [success: success, message: MessageHelper.message( 'group.not.deletable.mark.as.posted' )]
             }
             List<ActionItemGroupAssign> actionItemGroupAssignList = actionItemGroupAssignService.fetchByGroupId( group.id )

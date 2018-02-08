@@ -4,6 +4,7 @@
 package net.hedtech.banner.aip
 
 import net.hedtech.banner.aip.common.AIPConstants
+import net.hedtech.banner.aip.post.grouppost.ActionItemPostDetail
 import net.hedtech.banner.i18n.MessageHelper
 import net.hedtech.banner.service.ServiceBase
 
@@ -27,6 +28,11 @@ class ActionItemReadOnlyCompositeService extends ServiceBase {
         if (actionItemGroupAssignService.checkIfAssignedGroupPresentForSpecifiedActionItem( actionItemId )) {
             res.deletable = false
             res.message = MessageHelper.message( 'action.item.not.deletable.assigned.to.group' )
+            return res
+        }
+        if (ActionItemPostDetail.findByActionItemId( actionItemId )) {
+            res.deletable = false
+            res.message = MessageHelper.message( 'action.item.not.deletable.associated.to.submitted.posting' )
         }
         res
     }
