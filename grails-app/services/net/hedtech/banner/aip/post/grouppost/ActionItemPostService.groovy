@@ -24,7 +24,7 @@ class ActionItemPostService extends ServiceBase {
         if (!dataMap.postingName) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.posting.job.name', [] ) )
         }
-        if (isDuplicateJobName( dataMap.postingName )) {
+        if (isDuplicateJobName( dataMap.postingName, dataMap.id )) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.job.name.already.defined', [] ) )
         }
         if (!dataMap.postingActionItemGroupId) {
@@ -63,7 +63,13 @@ class ActionItemPostService extends ServiceBase {
      * @param name
      * @return
      */
-    def isDuplicateJobName( postingName ) {
-        ActionItemPost.checkIfJobNameAlreadyExists( postingName )
+    def isDuplicateJobName( postingName, postId) {
+        boolean isDuplicate = false
+        if(postId){
+            isDuplicate = ActionItemPost.checkIfJobNameAlreadyExistsForUpdate( postingName, postId )
+        }else{
+            isDuplicate = ActionItemPost.checkIfJobNameAlreadyExists( postingName)
+        }
+        return isDuplicate
     }
 }

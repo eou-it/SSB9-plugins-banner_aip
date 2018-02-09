@@ -569,9 +569,13 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         assert post.id != null
         assert post.postingErrorText == null
         assert post.lastModifiedBy == USERNAME
+        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes1'
+        def result1 = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
+        assert result1.success == true
+        assert result1.savedJob != null
         ActionItemPost actionItemPost = (ActionItemPost) actionItemPostService.get( post.id )
         assert actionItemPost != null
-        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes1'
+        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.id = post.id
         requestMap.displayStartDate = testingDateFormat.format( new Date() + 2 )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
