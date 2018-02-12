@@ -576,7 +576,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         ActionItemPost actionItemPost = (ActionItemPost) actionItemPostService.get( post.id )
         assert actionItemPost != null
         requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
-        requestMap.id = post.id
+        requestMap.postId = post.id
         requestMap.displayStartDate = testingDateFormat.format( new Date() + 2 )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date() + 2

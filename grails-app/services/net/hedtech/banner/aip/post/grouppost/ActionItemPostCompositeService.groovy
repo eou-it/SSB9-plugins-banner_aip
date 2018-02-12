@@ -101,7 +101,7 @@ class ActionItemPostCompositeService {
      */
     def updateAsynchronousPostItem( requestMap ) {
         actionItemPostService.preCreateValidation( requestMap )
-        ActionItemPost groupSend = (ActionItemPost) actionItemPostService.get( requestMap.id )
+        ActionItemPost groupSend = (ActionItemPost) actionItemPostService.get((requestMap.postId ?: 0) as long)
         if (!groupSend) {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostCompositeService.class, "ActionItemPostNotExist" )
         }
