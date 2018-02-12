@@ -12,7 +12,7 @@ import javax.persistence.*
 @NamedQueries(value = [
         @NamedQuery(name = "BlockingProcess.fetchNonGlobalBlockingProcess",
                 query = """
-                    FROM BlockingProcess a where a.globalProcessIndicator = 'N'
+                    FROM BlockingProcess a where a.globalProcessIndicator = 'N' order by processName
           """),
         @NamedQuery(name = "BlockingProcess.fetchGlobalBlockingProcess",
                 query = """
