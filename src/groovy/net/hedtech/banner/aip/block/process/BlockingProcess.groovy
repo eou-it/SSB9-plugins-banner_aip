@@ -40,6 +40,12 @@ class BlockingProcess implements Serializable {
     Long id
 
     /**
+     * Code of blocking process
+     */
+    @Column(name = "GCBBPRC_PROCESS_CODE")
+    String processCode
+
+    /**
      * Name of blocking process
      */
     @Column(name = "GCBBPRC_PROCESS_NAME")

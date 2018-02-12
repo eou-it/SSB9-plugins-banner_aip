@@ -62,6 +62,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
 
     def statusPosted(postingId) {
         ActionItemPostReadOnly actionItemPostReadOnly = ActionItemPostReadOnly.fetchByPostingId(postingId)
+        actionItemPostReadOnly
         if (actionItemPostReadOnly) {
             if (actionItemPostReadOnly.postingCurrentState.equals( "Scheduled") ){
                 return AIPConstants.YES_IND

@@ -70,6 +70,12 @@ class ActionItemBlockedProcessReadOnly implements Serializable {
     String processPersonaBlockAllowedInd
 
     /**
+     * Blocked Process code
+     */
+    @Column(name = "process_code")
+    String processCode
+
+    /**
      * Blocked Process Name
      */
     @Column(name = "process_name")

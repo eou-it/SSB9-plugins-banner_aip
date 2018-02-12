@@ -32,7 +32,7 @@ class BlockingProcessCompositeService {
             processUrlList = processUrlList.collect {
                 it.processUrl
             }
-            processMap.add( [id: it.id, name: it.processName, personAllowed: it.personaAllowedIndicator, ownerCode: it.processOwnerCode, urls: processUrlList] )
+            processMap.add( [id: it.id, name: it.processName, code: it.processCode, personAllowed: it.personaAllowedIndicator, ownerCode: it.processOwnerCode, urls: processUrlList] )
         }
         result.persona = personaMap
         result.process = processMap
