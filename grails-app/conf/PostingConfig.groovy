@@ -1,10 +1,10 @@
 /********************************************************************************
-  Copyright 2018 Ellucian Company L.P. and its affiliates.
-********************************************************************************/
-import org.apache.log4j.Logger
+ Copyright 2018 Ellucian Company L.P. and its affiliates.
+ ********************************************************************************/
+import grails.util.Holders
 
 posting {
-    autoStartup = grails.util.Holders.getConfig()?.aip?.scheduler?.enabled ?: true
+    autoStartup = Holders.getConfig()?.aip?.scheduler?.enabled ?: true
     waitForJobsToCompleteOnShutdown = true
     exposeSchedulerInRepository = true
 
@@ -26,7 +26,7 @@ posting {
             println( "Setting driverDelegateClass to org.quartz.impl.jdbcjobstore.oracle.OracleDelegate" )
             jobStore.driverDelegateClass = 'org.quartz.impl.jdbcjobstore.oracle.OracleDelegate'
         }
-            jobStore.class = 'net.hedtech.banner.general.scheduler.quartz.BannerDataSourceJobStoreCMT'
+        jobStore.class = 'net.hedtech.banner.general.scheduler.quartz.BannerDataSourceJobStoreCMT'
 //        jobStore.class = 'net.hedtech.banner.aip.post.scheduler.quartz.ActionItemDataSourceJobStoreCMT' // AIP can share?
 
         jobStore.tablePrefix = 'GCRQRTZ_' // Share tables. AIP has own instance
