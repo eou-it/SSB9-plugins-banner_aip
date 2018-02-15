@@ -34,6 +34,7 @@ class BlockingProcessCompositeService {
             }
             processMap.add( [id: it.id, name: it.processName, code: it.processCode, personAllowed: it.personaAllowedIndicator, ownerCode: it.processOwnerCode, urls: processUrlList] )
         }
+        personaMap = personaMap.sort {it.value}
         result.persona = personaMap
         result.process = processMap
         result
