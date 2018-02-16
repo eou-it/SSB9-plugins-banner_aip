@@ -46,6 +46,12 @@ class BlockingProcess implements Serializable {
     String processCode
 
     /**
+     * Code of blocking process locale
+     */
+    @Column(name = "GCBBPRC_LOCALE")
+    String processLocale
+
+    /**
      * Name of blocking process
      */
     @Column(name = "GCBBPRC_PROCESS_NAME")

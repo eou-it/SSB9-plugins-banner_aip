@@ -12,7 +12,7 @@ import javax.persistence.*
  * Action Item Post Selection Detail
  */
 @Entity
-@Table(name = "GVQ_ACTION_ITEM_POST_POPUL")
+@Table(name = "GVQ_ACTION_ITEM_POST_POPSEL")
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
 @NamedQueries(value = [
