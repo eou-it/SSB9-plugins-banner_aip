@@ -71,7 +71,7 @@ class ActionItemBlockedProcess implements Serializable {
     /**
      * Blocked Process Role
      */
-    @Column(name = "GCRABLK_APPLICABLE_ROLE")
+    @Column(name = "GCRABLK_PERS_CODE")
     String blockedProcessRole
 
     /**
