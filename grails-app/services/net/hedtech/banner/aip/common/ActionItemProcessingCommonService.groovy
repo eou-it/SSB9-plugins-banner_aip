@@ -141,8 +141,22 @@ class ActionItemProcessingCommonService {
             commTimezone.displayNameWithoutOffset = messageSource.getMessage( "timezone." + it, null, LocaleContextHolder.getLocale() )
             commTimezoneList.add( commTimezone )
         }
+        commTimezoneList.add( getDefaultTimeServerTimeZone() )
         commTimezoneList.sort {t1, t2 -> (t1.offset <=> t2.offset) ?: (t1.timezoneId <=> t2.timezoneId)}
         return commTimezoneList;
+    }
+
+
+    private AipTimezone getDefaultTimeServerTimeZone(){
+        TimeZone tz = TimeZone.getDefault()
+        String GMTResult = formatGMTString(tz)
+        AipTimezone commTimezone = new AipTimezone()
+        commTimezone.setStringOffset( GMTResult )
+        commTimezone.setOffset( tz.getOffset( new Date().getTime() ) )
+        commTimezone.setTimezoneId( tz.getID() )
+        commTimezone.displayName = GMTResult + " " + tz.getID()
+        commTimezone.displayNameWithoutOffset = tz.getID()
+        commTimezone
     }
 
     /**
