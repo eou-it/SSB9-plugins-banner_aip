@@ -29,7 +29,7 @@ class BlockingProcessUrlIntegrationTests extends BaseIntegrationTestCase {
         def blockingProcess = BlockingProcess.findByProcessNameAndProcessOwnerCode( 'Plan Ahead', 'S' )
         List<BlockingProcessUrls> blockingProcessUrlsList = BlockingProcessUrls.fetchUrlsForSpecificProcess( blockingProcess.id )
         assert blockingProcessUrlsList.find {
-            it.processUrl == 'ssb/term/termSelection?mode=plan'
-        }.processUrl == 'ssb/term/termSelection?mode=plan'
+            it.processUrl == '/ssb/term/termSelection?mode=plan'
+        }.processUrl == '/ssb/term/termSelection?mode=plan'
     }
 }

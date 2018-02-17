@@ -51,8 +51,28 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
     // sort by other than name is secondarily sorted by name
     @Test
     void testActionItemStatusSortSecondaryAsc() {
+        new ActionItemStatus(
+                actionItemStatus: "A_INT_TEST", actionItemStatusActive: 'Y', actionItemStatusBlockedProcess: 'N',
+                actionItemStatusDefault: 'N',
+                actionItemStatusSystemRequired: 'N'
+        ).save( flash: true )
+        new ActionItemStatus(
+                actionItemStatus: "B_INT_TEST", actionItemStatusActive: 'Y', actionItemStatusBlockedProcess: 'N',
+                actionItemStatusDefault: 'N',
+                actionItemStatusSystemRequired: 'N'
+        ).save( flash: true )
+        new ActionItemStatus(
+                actionItemStatus: "C_INT_TEST", actionItemStatusActive: 'Y', actionItemStatusBlockedProcess: 'N',
+                actionItemStatusDefault: 'N',
+                actionItemStatusSystemRequired: 'N'
+        ).save( flash: true )
+        new ActionItemStatus(
+                actionItemStatus: "D_INT_TEST", actionItemStatusActive: 'Y', actionItemStatusBlockedProcess: 'N',
+                actionItemStatusDefault: 'N',
+                actionItemStatusSystemRequired: 'N'
+        ).save( flash: true )
         def results = ActionItemStatus.fetchWithPagingAndSortParams(
-                [params: [name: "%"]],
+                [params: [name: "%_INT_TEST"]],
                 [sortColumn: "actionItemStatusBlockedProcess", sortAscending: true, max: 50, offset: 0] )
 
         def foundBlocked = false
@@ -79,8 +99,28 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testActionItemStatusSortSecondaryDesc() {
+        new ActionItemStatus(
+                actionItemStatus: "A_INT_TEST", actionItemStatusActive: 'Y', actionItemStatusBlockedProcess: 'N',
+                actionItemStatusDefault: 'N',
+                actionItemStatusSystemRequired: 'N'
+        ).save( flash: true )
+        new ActionItemStatus(
+                actionItemStatus: "B_INT_TEST", actionItemStatusActive: 'Y', actionItemStatusBlockedProcess: 'N',
+                actionItemStatusDefault: 'N',
+                actionItemStatusSystemRequired: 'N'
+        ).save( flash: true )
+        new ActionItemStatus(
+                actionItemStatus: "C_INT_TEST", actionItemStatusActive: 'Y', actionItemStatusBlockedProcess: 'N',
+                actionItemStatusDefault: 'N',
+                actionItemStatusSystemRequired: 'N'
+        ).save( flash: true )
+        new ActionItemStatus(
+                actionItemStatus: "D_INT_TEST", actionItemStatusActive: 'Y', actionItemStatusBlockedProcess: 'N',
+                actionItemStatusDefault: 'N',
+                actionItemStatusSystemRequired: 'N'
+        ).save( flash: true )
         def results = ActionItemStatus.fetchWithPagingAndSortParams(
-                [params: [name: "%"]],
+                [params: [name: "%_INT_TEST"]],
                 [sortColumn: "actionItemStatusBlockedProcess", sortAscending: false, max: 50, offset: 0] )
 
         boolean foundNotBlocked = false
@@ -137,13 +177,6 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
 
         result = actionItemStatusList.equals( actionItemStatusNewList )
         assertTrue result
-
-        /* TODO: this test doesn't pass because of null object error.
-        result = actionItemStatusList.equals( null )
-        assertFalse result
-        */
-
-
         def actionItemStatusListNull = new ActionItem( null )
         result = actionItemStatusList.equals( actionItemStatusListNull )
         assertFalse result
@@ -161,9 +194,7 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
         actionItemStatusNew.actionItemStatusSystemRequired = "Y"
         actionItemStatusNew.actionItemStatusActive = "Y"
 
-        //
         assertFalse actionItemStatusNew.validate()
-        // TODO: verify something
         assertTrue( actionItemStatusNew.errors.allErrors.codes[0].contains( 'actionItemStatus.actionItemStatus.nullable.error' ) )
     }
 
@@ -179,9 +210,7 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
         actionItemStatusNew.actionItemStatusSystemRequired = "Y"
         actionItemStatusNew.actionItemStatusActive = "Y"
 
-        //
         assertFalse actionItemStatusNew.validate()
-        // TODO: verify something
         assertTrue( actionItemStatusNew.errors.allErrors.codes[0].contains( 'actionItemStatus.actionItemStatusBlockedProcess.nullable.error' ) )
     }
 
