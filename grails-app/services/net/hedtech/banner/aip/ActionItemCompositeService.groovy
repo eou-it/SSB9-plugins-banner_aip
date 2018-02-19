@@ -197,7 +197,33 @@ class ActionItemCompositeService {
 
         ActionItemContent newAic = actionItemContentService.createOrUpdate( aic )
         def errors = []
-        ActionItemReadOnly actionItemRO = actionItemReadOnlyService.getActionItemROById( newAic.actionItemId )
+        def actionItemRO = actionItemReadOnlyService.getActionItemROById( newAic.actionItemId )
+        actionItemRO = actionItemRO?.collect {ActionItemReadOnly it ->
+            [id                     : it.actionItemId,
+             version                : it.actionItemVersion,
+             actionItemId           : it.actionItemId,
+             actionItemActivityDate : it.actionItemActivityDate,
+             actionItemCompositeDate: it.actionItemCompositeDate,
+             actionItemContent      : it.actionItemContent,
+             actionItemContentDate  : it.actionItemContentDate,
+             actionItemContentId    : it.actionItemContentId,
+             actionItemContentUserId: it.actionItemContentUserId,
+             actionItemCreateDate   : it.actionItemCreateDate,
+             actionItemCreatorId    : it.actionItemCreatorId,
+             actionItemDesc         : it.actionItemDesc,
+             actionItemLastUserId   : it.actionItemLastUserId,
+             actionItemName         : it.actionItemName,
+             actionItemPageName     : it.actionItemPageName,
+             actionItemPostedStatus : it.actionItemPostedStatus,
+             actionItemStatus       : it.actionItemStatus ? MessageHelper.message( "aip.status.${it.actionItemStatus.trim()}" ) : null,
+             actionItemTemplateId   : it.actionItemTemplateId,
+             actionItemTemplateName : it.actionItemTemplateName,
+             actionItemTitle        : it.actionItemTitle,
+             actionItemUserId       : it.actionItemUserId,
+             folderDesc             : it.folderDesc,
+             folderId               : it.folderId,
+             folderName             : it.folderName]
+        }?.get(0)
         success = true
         [
                 success   : success,
