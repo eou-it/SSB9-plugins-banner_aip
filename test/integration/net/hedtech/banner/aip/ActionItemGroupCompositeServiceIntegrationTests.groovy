@@ -159,7 +159,7 @@ class ActionItemGroupCompositeServiceIntegrationTests extends BaseIntegrationTes
     @Test
     void deleteActionItemGroupHaveAssignedItems() {
         def result = actionItemGroupCompositeService.deleteGroup( [groupId: ActionItemGroup.findByName( 'Enrollment' ).id] )
-        assert result.message == 'The group is associated with assigned action items or a submitted Post Action Items job and cannot be deleted.'
+        assert result.message == 'The group is associated with a submitted Post Action Items job and cannot be deleted.'
         assert result.success == false
     }
 
@@ -195,7 +195,7 @@ class ActionItemGroupCompositeServiceIntegrationTests extends BaseIntegrationTes
         group.postingInd = 'Y'
         actionItemGroupService.update( group )
         result = actionItemGroupCompositeService.deleteGroup( [groupId: result.group.groupId] )
-        assert result.message == 'The group is associated with assigned action items or a submitted Post Action Items job and cannot be deleted.'
+        assert result.message == 'The group is associated with a submitted Post Action Items job and cannot be deleted.'
         assert result.success == false
     }
 
