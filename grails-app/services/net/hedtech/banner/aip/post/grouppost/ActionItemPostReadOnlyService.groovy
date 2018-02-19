@@ -6,6 +6,7 @@ package net.hedtech.banner.aip.post.grouppost
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.i18n.MessageHelper
 import net.hedtech.banner.service.ServiceBase
+import net.hedtech.banner.aip.common.AipTimezone
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -13,6 +14,8 @@ import java.util.Date;
  * Service class for Action Item Posting Details Read Only
  */
 class ActionItemPostReadOnlyService extends ServiceBase {
+
+    def actionItemProcessingCommonService
 
     /**
      * Lists Group Folders
@@ -74,8 +77,12 @@ class ActionItemPostReadOnlyService extends ServiceBase {
         ActionItemPostReadOnly actionItemPostReadOnly = ActionItemPostReadOnly.fetchByPostingId(postingId)
         def result ={}
         SimpleDateFormat timeFormat = new SimpleDateFormat(MessageHelper.message("default.time.format"));//Initializing the date format
-        def timeZone = TimeZone.getDefault();//Getting the time zone of the server
-
+        List timeZoneList = actionItemProcessingCommonService.populateAvailableTimezones()
+        TimeZone timezone = TimeZone.getDefault();
+        int defaultRowOffset = timezone.getRawOffset()
+        AipTimezone serverDefaultTimeZone = timeZoneList.find {
+            it.offset == defaultRowOffset //Getting the time zone of the server
+        }
         if (actionItemPostReadOnly)
         {
             result = [
@@ -106,7 +113,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
                 postingStartedDate:actionItemPostReadOnly.postingStartedDate,
                 version:actionItemPostReadOnly.version,
                 scheduledStartTime : actionItemPostReadOnly.postingScheduleDateTime ? timeFormat.format(actionItemPostReadOnly.postingScheduleDateTime) : actionItemPostReadOnly.postingScheduleDateTime,
-                timezoneStringOffset  : timeZone
+                timezoneStringOffset  : serverDefaultTimeZone
 
             ]
 
