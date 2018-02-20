@@ -13,13 +13,13 @@ import javax.persistence.*
         @NamedQuery(name = "UserActionItemReadOnly.fetchUserActionItemsROByPidmDate",
                 query = """FROM UserActionItemReadOnly a
                     WHERE a.pidm = :myPidm
-                    AND CURRENT_DATE BETWEEN a.displayStartDate AND a.displayEndDate
+                    AND trunc(CURRENT_DATE) BETWEEN trunc(a.displayStartDate) AND trunc(a.displayEndDate)
                     ORDER BY a.actionItemGroupName,  a.actionItemSequenceNumber
                     """),
         @NamedQuery(name = "UserActionItemReadOnly.checkIfUserActionItemsPresentByPidmAndCurrentDate",
                 query = """select count (id) FROM UserActionItemReadOnly a
                             WHERE a.pidm = :myPidm
-                            AND CURRENT_DATE BETWEEN a.displayStartDate AND a.displayEndDate
+                             AND trunc(CURRENT_DATE) BETWEEN trunc(a.displayStartDate) AND trunc(a.displayEndDate)
                             """)
 ])
 
