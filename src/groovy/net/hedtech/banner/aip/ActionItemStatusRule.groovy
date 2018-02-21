@@ -14,6 +14,10 @@ import javax.persistence.*
                 query = """
            FROM ActionItemStatusRule a
           """),
+        @NamedQuery(name = "ActionItemStatusRule.getActionItemStatusRuleNameByStatusIdAndActionItemId",
+                query = """
+                  FROM ActionItemStatusRule a WHERE a.actionItemId = :actionItemId and a.actionItemStatusId = :statusId
+                 """),
         @NamedQuery(name = "ActionItemStatusRule.fetchActionItemStatusRuleById",
                 query = """
            FROM ActionItemStatusRule a
@@ -116,7 +120,7 @@ class ActionItemStatusRule implements Serializable {
         actionItemStatusId( blank: true, nullable: true, maxSize: 19 )
         resubmitInd( blank: true, nullable: true, maxSize: 1 )
         lastModifiedBy( nullable: true, maxSize: 30 )
-        lastModified( nullable: true)
+        lastModified( nullable: true )
         dataOrigin( nullable: true, maxSize: 30 )
         version( nullable: true, maxSize: 30 )
     }
@@ -156,17 +160,41 @@ class ActionItemStatusRule implements Serializable {
         }
     }
 
-
+    /**
+     *
+     * @param actionItemStatusId
+     * @return
+     */
     static checkIfPresent( long actionItemStatusId ) {
         ActionItemStatusRule.withSession {session ->
             session.getNamedQuery( "ActionItemStatusRule.checkIfPresent" ).setLong( "actionItemStatusId", actionItemStatusId ).uniqueResult() > 0
         }
     }
 
-
+    /**
+     *
+     * @param actionItemStatusId
+     * @return
+     */
     static checkIfPresentAndAssociatedToActionItemContent( long actionItemStatusId ) {
         ActionItemStatusRule.withSession {session ->
             session.getNamedQuery( "ActionItemStatusRule.checkIfPresentAndAssociatedToActionItemContent" ).setLong( "actionItemStatusId", actionItemStatusId ).uniqueResult() > 0
         }
     }
+
+    /**
+     *
+     * @param actionItemId
+     * @param statusId
+     * @return
+     */
+    static getActionItemStatusRuleNameByStatusIdAndActionItemId( Long statusId, Long actionItemId) {
+        ActionItemStatusRule.withSession {session ->
+            session.getNamedQuery( "ActionItemStatusRule.getActionItemStatusRuleNameByStatusIdAndActionItemId" )
+                    .setLong( "actionItemId", actionItemId )
+                    .setLong( "statusId", statusId )
+                    .list()
+        }
+    }
+
 }

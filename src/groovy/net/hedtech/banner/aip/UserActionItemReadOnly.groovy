@@ -126,6 +126,12 @@ class UserActionItemReadOnly implements Serializable {
     /**
      * Status of action item
      */
+    @Column(name = "ACTION_ITEM_STATUS_ID")
+    Long statusId
+
+    /**
+     * Status of action item
+     */
     @Column(name = "ACTION_ITEM_STATUS")
     String status
 

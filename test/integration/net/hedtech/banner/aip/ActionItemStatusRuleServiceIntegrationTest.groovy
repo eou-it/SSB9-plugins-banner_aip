@@ -62,6 +62,15 @@ class ActionItemStatusRuleServiceIntegrationTest extends BaseIntegrationTestCase
 
 
     @Test
+    void testGetActionItemStatusRuleNameByStatusIdAndActionItemId() {
+        def actionItemId = ActionItem.findByName( 'Policy Handbook' ).id
+        def statusId = ActionItemStatus.findByActionItemStatus( 'Completed' ).id
+        ActionItemStatusRule actionItemStatusRules = actionItemStatusRuleService.getActionItemStatusRuleNameByStatusIdAndActionItemId( statusId, actionItemId )
+        assertTrue( actionItemStatusRules != null )
+    }
+
+
+    @Test
     void testValidateSuccessCases() {
         ActionItemStatusRule actionItemStatusRule = new ActionItemStatusRule(
                 actionItemId: 1,

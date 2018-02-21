@@ -18,6 +18,7 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
     def springSecurityService
     def actionItemContentService
     def actionItemReadOnlyService
+    def actionItemStatusRuleService
 
     /**
      * Lists user specific action items
@@ -25,7 +26,36 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
      */
     def listActionItemByPidmWithinDate() {
         def user = springSecurityService.getAuthentication()?.user
-        List<UserActionItemReadOnly> actionItems = userActionItemReadOnlyService.listActionItemByPidmWithinDate( user.pidm )
+        def actionItems = userActionItemReadOnlyService.listActionItemByPidmWithinDate( user.pidm )
+        actionItems = actionItems.collect {UserActionItemReadOnly it ->
+            [
+                    id                      : it.id,
+                    version                 : it.version,
+                    actionItemGroupID       : it.actionItemGroupID,
+                    actionItemGroupName     : it.actionItemGroupName,
+                    actionItemGroupTitle    : it.actionItemGroupTitle,
+                    actionItemSequenceNumber: it.actionItemSequenceNumber,
+                    activeTmpl              : it.activeTmpl,
+                    activityDate            : it.activityDate,
+                    activityDateTmpl        : it.activityDateTmpl,
+                    completedDate           : it.completedDate,
+                    createDate              : it.createDate,
+                    createDateTmpl          : it.createDateTmpl,
+                    creatorId               : it.creatorId,
+                    creatorIdTmpl           : it.creatorIdTmpl,
+                    description             : it.description,
+                    displayEndDate          : it.displayEndDate,
+                    displayStartDate        : it.displayStartDate,
+                    isBlocking              : it.isBlocking,
+                    name                    : it.name,
+                    pidm                    : it.pidm,
+                    status                  : it.status,
+                    title                   : it.title,
+                    userId                  : it.userId,
+                    userIdTmpl              : it.userIdTmpl,
+                    currentResponse         : it.completedDate ? actionItemStatusRuleService.getActionItemStatusRuleNameByStatusIdAndActionItemId( it.statusId, it.id )?.labelText : null
+            ]
+        }
 
         def userGroupInfo = []
         actionItems.each {item ->
@@ -38,14 +68,14 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
                         id         : group.groupId,
                         name       : group.groupName,
                         title      : group.groupTitle,
-                        discription: group.groupDesc ? group.groupDesc : MessageHelper.message( "aip.placeholder.nogroups" ),
+                        discription: group.groupDesc ? group.groupDesc : MessageHelper.message( 'aip.placeholder.nogroups' ),
                         status     : group.groupStatus,
                         postInd    : group.postedInd,
                         folderName : group.folderName,
                         folderId   : group.folderId,
                         folderDesc : group.folderDesc,
                         items      : [],
-                        header     : ["title", "status", "completedDate", "description"]
+                        header     : ['title', 'status', 'completedDate', 'description']
                 ]
                 newGroup.items.push( item )
                 userGroupInfo.push( newGroup )
@@ -55,7 +85,7 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
         }
         [
                 groups: userGroupInfo,
-                header: ["title", "state", "completedDate", "description"]
+                header: ['title', 'state', 'completedDate', 'description']
         ]
     }
 
@@ -67,12 +97,12 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
     def actionItemOrGroupInfo( params ) {
         def itemDetailInfo = []
         LoggerUtility.debug( LOGGER, 'Params for actionItemOrGroupInfo ' + params )
-        if (params.searchType == "group") {
+        if (params.searchType == 'group') {
             def group = groupFolderReadOnlyService.getActionItemGroupById( Long.parseLong( params.groupId ) )
             if (group) {
                 def groupDesc = group.groupDesc
                 if (!groupDesc) {
-                    groupDesc = MessageHelper.message( "aip.placeholder.nogroups" )
+                    groupDesc = MessageHelper.message( 'aip.placeholder.nogroups' )
                 }
                 def groupItem = [
                         id      : group.groupId,
@@ -85,7 +115,7 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
                 ]
                 itemDetailInfo << groupItem
             }
-        } else if (params.searchType == "actionItem") {
+        } else if (params.searchType == 'actionItem') {
             def itemDetail = actionItemContentService.listActionItemContentById( Long.parseLong( params.actionItemId ) )
             def templateInfo = actionItemReadOnlyService.getActionItemROById( Long.parseLong( params.actionItemId ) )
             if (itemDetail) {
