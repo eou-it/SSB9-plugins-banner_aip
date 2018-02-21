@@ -25,36 +25,7 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
      */
     def listActionItemByPidmWithinDate() {
         def user = springSecurityService.getAuthentication()?.user
-        def actionItems = userActionItemReadOnlyService.listActionItemByPidmWithinDate( user.pidm )
-        actionItems = actionItems.collect {UserActionItemReadOnly it->
-            [
-             "id"                      : it.id,
-             "version"                 : it.version,
-             "actionItemGroupID"       : it.actionItemGroupID,
-             "actionItemGroupName"     : "Enrollment",
-             "actionItemGroupTitle"    : "Enrollment",
-             "actionItemSequenceNumber": 1,
-             "activeTmpl"              : "A",
-             "activityDate"            : "01/01/2010",
-             "activityDateTmpl"        : "01/01/2010",
-             "completedDate"           : null,
-             "createDate"              : null,
-             "createDateTmpl"          : "01/28/2016",
-             "creatorId"               : "AIPADM001",
-             "creatorIdTmpl"           : "GRAILS",
-             "description"             : "You must review and confirm the Ellucian University Campus Drug and Alcohol policy prior to\n            registering for classes.\n        ",
-             "displayEndDate"          : "12/09/2018",
-             "displayStartDate"        : "02/09/2016",
-             "isBlocking"              : true,
-             "name"                    : "Drug and Alcohol Policy",
-             "pidm"                    : 124001,
-             "status"                  : "Pending",
-             "title"                   : "Drug and Alcohol Policy",
-             "userId"                  : "GRAILS",
-             "userIdTmpl"              : "GRAILS",
-             "version"                 : 0]
-        }
-
+        List<UserActionItemReadOnly> actionItems = userActionItemReadOnlyService.listActionItemByPidmWithinDate( user.pidm )
 
         def userGroupInfo = []
         actionItems.each {item ->
