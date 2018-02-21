@@ -133,15 +133,6 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
 
     @Transactional(rollbackFor = Throwable.class)
     public AsynchronousTaskMonitorRecord updateMonitorRecord( AsynchronousTaskMonitorRecord monitorRecord ) {
-        /*
-        if (log.isDebugEnabled()) {
-            ActionItemPostWork groupSendItem = (ActionItemPostWork) task
-            log.debug( "Continuing to process group send item id = " + groupSendItem.getId() + ", pidm = " + groupSendItem.recipientPidm + "." )
-        }
-
-        // Not implemented for CR1. The purpose of this service method is for debug monitoring active thread
-        // processing.
-        */
         null
     }
 

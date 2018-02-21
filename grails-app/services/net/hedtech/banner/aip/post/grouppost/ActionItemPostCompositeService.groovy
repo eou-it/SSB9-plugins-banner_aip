@@ -101,7 +101,7 @@ class ActionItemPostCompositeService {
      */
     def updateAsynchronousPostItem( requestMap ) {
         actionItemPostService.preCreateValidation( requestMap )
-        ActionItemPost groupSend = (ActionItemPost) actionItemPostService.get((requestMap.postId ?: 0) as long)
+        ActionItemPost groupSend = (ActionItemPost) actionItemPostService.get( (requestMap.postId ?: 0) as long )
         if (!groupSend) {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostCompositeService.class, "ActionItemPostNotExist" )
         }
@@ -110,7 +110,7 @@ class ActionItemPostCompositeService {
         }
         def user = springSecurityService.getAuthentication()?.user
         def success = false
-        groupSend = updateActionPostInstance( requestMap, user ,groupSend)
+        groupSend = updateActionPostInstance( requestMap, user, groupSend )
         validateDates( groupSend, requestMap.scheduled )
         CommunicationPopulation population = communicationPopulationCompositeService.fetchPopulation( groupSend.populationListId )
         boolean hasQuery = (CommunicationPopulationQueryAssociation.countByPopulation( population ) > 0)
@@ -132,7 +132,7 @@ class ActionItemPostCompositeService {
         // we don't use parameterValues. remove?
         ActionItemPost groupSendSaved = actionItemPostService.update( groupSend )
         // Create the details records.
-        deletePostingDetail( groupSendSaved.id)
+        deletePostingDetail( groupSendSaved.id )
         requestMap.actionItemIds.each {
             addPostingDetail( it, groupSendSaved.id )
         }
@@ -169,21 +169,20 @@ class ActionItemPostCompositeService {
             scheduledStartDateCalendar = actionItemProcessingCommonService.getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset );
         }
         new ActionItemPost(
-                    populationListId: requestMap.populationId,
-                    postingActionItemGroupId: requestMap.postingActionItemGroupId,
-                    postingName: requestMap.postingName,
-                    postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.displayStartDate),
-                    postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.displayEndDate),
-                    postingScheduleDateTime: scheduledStartDateCalendar ? scheduledStartDateCalendar.getTime() : null,
-                    postingCreationDateTime: new Date(),
-                    populationRegenerateIndicator: false,
-                    postingDeleteIndicator: false,
-                    postingCreatorId: user.oracleUserName,
-                    postingCurrentState: requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New),
-            )
+                populationListId: requestMap.populationId,
+                postingActionItemGroupId: requestMap.postingActionItemGroupId,
+                postingName: requestMap.postingName,
+                postingDisplayStartDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayStartDate ),
+                postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
+                postingScheduleDateTime: scheduledStartDateCalendar ? scheduledStartDateCalendar.getTime() : null,
+                postingCreationDateTime: new Date(),
+                populationRegenerateIndicator: false,
+                postingDeleteIndicator: false,
+                postingCreatorId: user.oracleUserName,
+                postingCurrentState: requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New),
+                )
 
     }
-
 
     /**
      * update  Instance of Action Item Post
@@ -192,7 +191,7 @@ class ActionItemPostCompositeService {
      * @param actionItemPost
      * @return
      */
-    ActionItemPost updateActionPostInstance( requestMap, user ,actionItemPost) {
+    ActionItemPost updateActionPostInstance( requestMap, user, actionItemPost ) {
         Date scheduledStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.scheduledStartDate )
         String scheduledStartTime = requestMap.scheduledStartTime
         String timezoneStringOffset = requestMap.timezoneStringOffset
@@ -229,17 +228,16 @@ class ActionItemPostCompositeService {
         actionItemPostDetailService.create( groupDetail )
     }
 
-
     /**
      * delete Posting Details
      * @param postingId
      * @param user
      * @return
      */
-    private deletePostingDetail(postingId ) {
-        List actionItemPostDetailList = actionItemPostDetailService.fetchByActionItemPostId(postingId)
+    private deletePostingDetail( postingId ) {
+        List actionItemPostDetailList = actionItemPostDetailService.fetchByActionItemPostId( postingId )
         actionItemPostDetailList.each {
-            actionItemPostDetailService.delete(it)
+            actionItemPostDetailService.delete( it )
         }
     }
 
@@ -402,10 +400,9 @@ class ActionItemPostCompositeService {
      * @return
      */
     public def markArtifactsAsPosted( groupSendId ) {
-        println 'Start marking artifacts on ' + new Date()
         ActionItemPost groupSend = actionItemPostService.get( groupSendId )
         markActionItemGroupPosted( groupSend.postingActionItemGroupId )
-        List actionItemsIds = actionItemPostDetailService.fetchByActionItemPostId(groupSendId).actionItemId
+        List actionItemsIds = actionItemPostDetailService.fetchByActionItemPostId( groupSendId ).actionItemId
         actionItemsIds?.each {
             markActionItemPosted( it )
         }
@@ -478,11 +475,11 @@ class ActionItemPostCompositeService {
             try {
                 boolean shouldUpdateGroupSend = false
                 CommunicationPopulationVersion populationVersion
-                if (!groupSend.populationVersionId) {
+                if (groupSend.populationVersionId) {
+                    populationVersion = CommunicationPopulationVersion.get( groupSend.populationVersionId )
+                } else {
                     populationVersion = assignPopulationVersion( groupSend )
                     shouldUpdateGroupSend = true
-                } else {
-                    populationVersion = CommunicationPopulationVersion.get( groupSend.populationVersionId )
                 }
 
                 if (!populationVersion) {

@@ -88,6 +88,7 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
         actionItemJobService.acquire( job.id )
     }
 
+
     public void markComplete( AsynchronousTask task ) throws ApplicationException {
         ActionItemJob job = task as ActionItemJob
         LoggerUtility.info( LOGGER, "Marking completed actionItem job id = ${job.id}." )
@@ -148,13 +149,6 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
 
     @Transactional(rollbackFor = Throwable.class)
     public AsynchronousTaskMonitorRecord updateMonitorRecord( AsynchronousTaskMonitorRecord monitorRecord ) {
-        /*
-        if (log.isDebugEnabled()) {
-            ActionItemJob job = (ActionItemJob) task
-            log.debug( "Continuing to process actionItem job id = ${job.id}." )
-        }
-
-        */
         null
     }
 
