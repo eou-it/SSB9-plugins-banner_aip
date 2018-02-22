@@ -30,7 +30,7 @@ class ActionItemStatusServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testListActionItemStatusById() {
-        ActionItemStatus aiStatus = actionItemStatusService.listActionItemStatuses()[1]
+        def aiStatus = actionItemStatusService.listActionItemStatuses()[1]
         assertNotNull( aiStatus )
         ActionItemStatus actionItemStatus = actionItemStatusService.listActionItemStatusById( aiStatus.id )
         assertEquals( aiStatus.actionItemStatus, actionItemStatus.actionItemStatus )

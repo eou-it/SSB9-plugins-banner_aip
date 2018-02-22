@@ -23,7 +23,19 @@ class ActionItemStatusService extends ServiceBase {
      * @return
      */
     def listActionItemStatuses() {
-        ActionItemStatus.fetchActionItemStatuses()
+        ActionItemStatus.fetchActionItemStatuses()?.collect {ActionItemStatus it ->
+            [
+                    id                            : it.id,
+                    version                       : it.version,
+                    actionItemStatus              : it.actionItemStatus,
+                    actionItemStatusActive        : it.actionItemStatusActive,
+                    actionItemStatusActivityDate  : it.lastModified,
+                    actionItemStatusBlockedProcess: it.actionItemStatusBlockedProcess,
+                    actionItemStatusDataOrigin    : it.dataOrigin,
+                    actionItemStatusDefault       : it.actionItemStatusDefault,
+                    actionItemStatusSystemRequired: it.actionItemStatusSystemRequired
+            ]
+        }
     }
 
     /**
