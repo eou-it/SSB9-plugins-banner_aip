@@ -90,6 +90,7 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         userActionItemRONewList.createDateTmpl = userActionItemListRO.createDateTmpl
         userActionItemRONewList.versionTmpl = userActionItemListRO.versionTmpl
         userActionItemRONewList.pidm = userActionItemListRO.pidm
+        userActionItemRONewList.statusId = userActionItemListRO.statusId
         userActionItemRONewList.status = userActionItemListRO.status
         userActionItemRONewList.isBlocking = userActionItemListRO.isBlocking
         userActionItemRONewList.completedDate = userActionItemListRO.completedDate

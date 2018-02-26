@@ -118,7 +118,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
             ]
 
         }
-        return result
+        result
     }
 
 }
