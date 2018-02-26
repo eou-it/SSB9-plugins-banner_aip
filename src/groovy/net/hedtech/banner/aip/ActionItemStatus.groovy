@@ -14,7 +14,7 @@ import javax.persistence.*
 @NamedQueries(value = [
         @NamedQuery(name = "ActionItemStatus.fetchActionItemStatuses",
                 query = """
-           FROM ActionItemStatus a
+           FROM ActionItemStatus a order by a.actionItemStatus
           """),
         @NamedQuery(name = "ActionItemStatus.fetchDefaultActionItemStatus",
                 query = """
