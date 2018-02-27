@@ -17,7 +17,7 @@ class ActionItemPostService extends ServiceBase {
      * Validation before creation of Posting
      * @param dataMap
      */
-    def  preCreateValidation( dataMap ) {
+    def preCreateValidation( dataMap ) {
         if (!dataMap) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.insufficient.request', [] ) )
         }
@@ -45,17 +45,14 @@ class ActionItemPostService extends ServiceBase {
         if (!dataMap.displayEndDate) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.display.end.date', [] ) )
         }
-        if (!dataMap.postNow && !dataMap.scheduledStartDate) {
+        if (!dataMap.postNow && (!dataMap.scheduledStartDate || !dataMap.scheduledStartTime)) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.schedule', [] ) )
         }
-        // TODO: intent? ended up with duplicate case. Not sure if something got lost
-        //if (dataMap.scheduledStartDate) {
-        //    if (!dataMap.scheduledStartDate) {
-        //        throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException(
-        //                'preCreate.validation.no.schedule.start.date', [] ) )
-        //    }
-        //}
-
+        if (!dataMap.postNow && dataMap.scheduledStartDate && dataMap.scheduledStartTime) {
+            if (dataMap.scheduledStartTime.length() != 4) {
+                throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.schedule', [] ) )
+            }
+        }
     }
 
     /**
@@ -63,12 +60,12 @@ class ActionItemPostService extends ServiceBase {
      * @param name
      * @return
      */
-    def isDuplicateJobName( postingName, postId) {
+    def isDuplicateJobName( postingName, postId ) {
         boolean isDuplicate = false
-        if(postId){
-            isDuplicate = ActionItemPost.checkIfJobNameAlreadyExistsForUpdate( postingName, postId as long)
-        }else{
-            isDuplicate = ActionItemPost.checkIfJobNameAlreadyExists( postingName)
+        if (postId) {
+            isDuplicate = ActionItemPost.checkIfJobNameAlreadyExistsForUpdate( postingName, postId as long )
+        } else {
+            isDuplicate = ActionItemPost.checkIfJobNameAlreadyExists( postingName )
         }
         return isDuplicate
     }
