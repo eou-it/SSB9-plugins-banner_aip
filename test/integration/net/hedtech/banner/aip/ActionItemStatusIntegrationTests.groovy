@@ -28,7 +28,7 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testCount() {
-        def myCount = ActionItemStatus.fetchActionItemStatusCount()
+        def myCount = ActionItemStatus.fetchActionItemStatusCount('%')
         assert myCount > 0
     }
 

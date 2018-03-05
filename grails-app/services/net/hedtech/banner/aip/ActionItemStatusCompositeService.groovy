@@ -26,7 +26,7 @@ class ActionItemStatusCompositeService {
         def results = ActionItemStatus.fetchWithPagingAndSortParams(
                 [params: [name: params?.filterName]],
                 [sortColumn: params?.sortColumn, sortAscending: params?.sortAscending, max: params?.max, offset: params?.offset] )
-        def resultCount = actionItemStatusService.listActionItemStatusCount()
+        def resultCount = actionItemStatusService.listActionItemStatusCount(params?.filterName)
         results = results?.collect {ActionItemStatus it ->
             def deleteMessage = checkIfDeleteable( it )
             def person = PersonUtility.getPerson( it.lastModifiedBy )

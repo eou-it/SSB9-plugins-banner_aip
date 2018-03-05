@@ -39,11 +39,11 @@ class ActionItemStatusService extends ServiceBase {
     }
 
     /**
-     *
+     * @param actionItemStatus
      * @return
      */
-    def listActionItemStatusCount() {
-        ActionItemStatus.fetchActionItemStatusCount()
+    def listActionItemStatusCount(actionItemStatus) {
+        ActionItemStatus.fetchActionItemStatusCount(actionItemStatus)
     }
 
     /**
