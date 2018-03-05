@@ -32,7 +32,7 @@ import javax.persistence.*
            WHERE a.id = :myId
           """),
         @NamedQuery(name = "ActionItemStatus.fetchActionItemStatusCount",
-                query = """SELECT COUNT(a.id) FROM ActionItemStatus a where a.actionItemStatus like :actionItemStatus
+                query = """SELECT COUNT(a.id) FROM ActionItemStatus a where upper(a.actionItemStatus) like upper(:actionItemStatus)
             """
         )
 ])
