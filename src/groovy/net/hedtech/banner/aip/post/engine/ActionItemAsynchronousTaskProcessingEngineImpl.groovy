@@ -25,7 +25,7 @@ import java.util.concurrent.*
  */
 public class ActionItemAsynchronousTaskProcessingEngineImpl implements AsynchronousTaskProcessingEngine, DisposableBean {
 
-    private final Log log = LogFactory.getLog(this.getClass())
+    private final Log log = LogFactory.getLog( this.getClass() )
 
     /**
      * The job manager for which this processing engine is configured to support.
@@ -74,7 +74,7 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
      * sucessfuly, then the ErrorExecutor is given an ErrorHandler wrapping the job, and the ErrorHandler ensure that
      * the job is removed from the pendingJobs set once the error handling is complete.
      */
-    private Set pendingJobs = Collections.synchronizedSet(new HashSet())
+    private Set pendingJobs = Collections.synchronizedSet( new HashSet() )
 
     /**
      * The monitor thread.
@@ -108,7 +108,7 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
      * Initializes the job processing engine.  This method starts the polling process.
      */
     public void init() {
-        log.info("Initialized with enabled = ${enabled}, maxThreads = ${maxThreads}, maxQueueSize = ${maxQueueSize}, continuousPolling = ${continuousPolling}, pollingInterval = ${pollingInterval}, and deleteSuccessfullyCompleted = ${deleteSuccessfullyCompleted}.")
+        log.info( "Initialized with enabled = ${enabled}, maxThreads = ${maxThreads}, maxQueueSize = ${maxQueueSize}, continuousPolling = ${continuousPolling}, pollingInterval = ${pollingInterval}, and deleteSuccessfullyCompleted = ${deleteSuccessfullyCompleted}." )
     }
 
     /**
@@ -127,20 +127,20 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
 
 
     @Required
-    public void setJobManager(AsynchronousTaskManager jobManager) {
+    public void setJobManager( AsynchronousTaskManager jobManager ) {
         this.jobManager = jobManager
     }
 
 
     @Required
-    void setAsynchronousBannerAuthenticationSpoofer(asynchronousBannerAuthenticationSpoofer) {
+    void setAsynchronousBannerAuthenticationSpoofer( asynchronousBannerAuthenticationSpoofer ) {
         this.asynchronousBannerAuthenticationSpoofer = asynchronousBannerAuthenticationSpoofer
     }
 
 
     @Override
     void destroy() throws Exception {
-        log.info("Calling disposable bean method.")
+        log.info( "Calling disposable bean method." )
         this.stopRunning()
     }
 
@@ -152,28 +152,28 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
 
 
     public void startRunning() {
-        log.info("Asynchronous Task Processing engine starting.")
+        log.info( "Asynchronous Task Processing engine starting." )
 
         if (!threadsRunning) {
             try {
                 monitorThread = new MonitorThread()
                 pollingThread = new PollingThread()
-                executor = new ThreadPoolExecutor(getMaxProcessingThreads(),
-                        getMaxProcessingThreads(),
-                        0L, TimeUnit.MILLISECONDS,
-                        new LinkedBlockingQueue(maxQueueSize),
-                        new AsynchronousActionPoolThreadFactory(jobManager.getJobType().getSimpleName() + "-GUID" + UUID.randomUUID()))
+                executor = new ThreadPoolExecutor( getMaxProcessingThreads(),
+                                                   getMaxProcessingThreads(),
+                                                   0L, TimeUnit.MILLISECONDS,
+                                                   new LinkedBlockingQueue( maxQueueSize ),
+                                                   new AsynchronousActionPoolThreadFactory( jobManager.getJobType().getSimpleName() + "-GUID" + UUID.randomUUID() ) )
                 // error handling pool is single threaded, unbounded queue, as we expect the work to be done by
                 // this pool to be very small (ideally, no work)
-                errorExecutor = Executors.newFixedThreadPool(1)
+                errorExecutor = Executors.newFixedThreadPool( 1 )
             } catch (ApplicationException e) {
-                log.fatal("JobProcessingEngine for " + jobManager.getJobType() + " caught " + e, e)
-                throw new RuntimeException(e)
+                log.fatal( "JobProcessingEngine for " + jobManager.getJobType() + " caught " + e, e )
+                throw new RuntimeException( e )
             }
             pollingThread.start()
             threadsRunning = true
         }
-        log.info("JobProcessingEngine " + this + " has started running ")
+        log.info( "JobProcessingEngine " + this + " has started running " )
     }
 
     /* (non-Javadoc)
@@ -190,7 +190,7 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
             }
             while (pollingThread.isRunning()) {
                 try {
-                    Thread.sleep(50)
+                    Thread.sleep( 50 )
                 } catch (InterruptedException e) {
                 }
             }
@@ -198,19 +198,20 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
             errorExecutor.shutdown()
             while (!executor.isTerminated()) {
                 try {
-                    Thread.sleep(50)
+                    Thread.sleep( 50 )
                 } catch (InterruptedException e) {
                 }
             }
             while (!errorExecutor.isTerminated()) {
                 try {
-                    Thread.sleep(50)
+                    Thread.sleep( 50 )
                 } catch (InterruptedException e) {
+                    log.error( "InterruptedException", e )
                 }
             }
             threadsRunning = false
         }
-        log.info("JobProcessingEngine " + this + " has shutdown.")
+        log.info( "JobProcessingEngine " + this + " has shutdown." )
     }
 
     /**
@@ -232,37 +233,38 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder()
-        sb.append(super.toString())
-        sb.append("<Configured for: ").append(jobManager.getClass()).append("> ")
+        sb.append( super.toString() )
+        sb.append( "<Configured for: " ).append( jobManager.getClass() ).append( "> " )
         return sb.toString()
     }
 
 
-    public void setMaxThreads(int maxThreads) {
+    public void setMaxThreads( int maxThreads ) {
         this.maxThreads = maxThreads
     }
 
 
-    public void setMaxQueueSize(int maxQueueSize) {
+    public void setMaxQueueSize( int maxQueueSize ) {
         this.maxQueueSize = maxQueueSize
     }
 
 
-    public void setContinuousPolling(boolean continuousPolling) {
+    public void setContinuousPolling( boolean continuousPolling ) {
         this.continuousPolling = continuousPolling
     }
 
-    public void setEnabled(boolean enabled) {
+
+    public void setEnabled( boolean enabled ) {
         this.enabled = enabled
     }
 
 
-    public void setPollingInterval(int pollingInterval) {
+    public void setPollingInterval( int pollingInterval ) {
         this.pollingInterval = pollingInterval
     }
 
 
-    public void setDeleteSuccessfullyCompleted(boolean deleteSuccessfullyCompleted) {
+    public void setDeleteSuccessfullyCompleted( boolean deleteSuccessfullyCompleted ) {
         this.deleteSuccessfullyCompleted = deleteSuccessfullyCompleted
     }
 //---------------------------- protected methods -------------------------------
@@ -281,64 +283,65 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
      * available jobs.
      */
     private boolean poll() {
-        log.debug("polling")
+        log.debug( "polling" )
 
         boolean found = false
         //to avoid putting duplicate jobs into the executor queue, we will only poll if all
         //the jobs enqueued from the previous poll have run to completion
         if (pendingJobs.size() > 0) {
-            log.debug("Pending jobs still queued (size=${pendingJobs.size()}).")
-            log.debug("Are threads still running: ${threadsRunning}")
+            log.debug( "Pending jobs still queued (size=${pendingJobs.size()})." )
+            log.debug( "Are threads still running: ${threadsRunning}" )
             return false
         } else {
-            log.debug("Get more pending jobs")
+            log.debug( "Get more pending jobs" )
         }
         try {
-            List jobs = jobManager.getPendingJobs(maxQueueSize)
+            List jobs = jobManager.getPendingJobs( maxQueueSize )
             if (log.isDebugEnabled()) {
-                log.debug("Found " + jobs.size() + " jobs for processing using maxQueueSize " + maxQueueSize)
+                log.debug( "Found " + jobs.size() + " jobs for processing using maxQueueSize " + maxQueueSize )
             }
             found = (jobs.size() > 0)
 
             for (AsynchronousTask job : jobs) {
-                pendingJobs.add(job.getId())
+                pendingJobs.add( job.getId() )
                 try {
-                    executor.execute(new AsynchronousTaskHandler(job) {
+                    executor.execute( new AsynchronousTaskHandler( job ) {
                         @Override
                         void run() {
-                            handleTask(getJob())
+                            handleTask( getJob() )
                         }
-                    })
+                    } )
 
                 } catch (RejectedExecutionException e) {
-                    pendingJobs.remove(job.getId())
-                    log.warn("JobProcessingEngine " + this + " handler queue is currently saturated", e)
+                    pendingJobs.remove( job.getId() )
+                    log.warn( "JobProcessingEngine " + this + " handler queue is currently saturated", e )
                     break
                 }
             }
         } catch (TransactionException e) {
-            log.error("error polling", e)
+            log.error( "error polling", e )
         } catch (Throwable t) {
-            log.error("error polling", t)
+            log.error( "error polling", t )
         }
         return found
     }
 
+
     @Synchronized
-    void handleTask(AsynchronousTask job) {
-        log.debug("Asynchronous Task Processing Engine handler will process job " + job.getId())
+    void handleTask( AsynchronousTask job ) {
+        log.debug( "Asynchronous Task Processing Engine handler will process job " + job.getId() )
         try {
             asynchronousBannerAuthenticationSpoofer.authenticateAndSetFormContextForExecute()
             // This is a short-lived transactional method, and if successful the job has been marked as acquired.
-            log.debug("Acquiring job " + job.getId())
-            boolean acquired = jobManager.acquire(job)
+            log.debug( "Acquiring job " + job.getId() )
+            boolean acquired = jobManager.acquire( job )
             if (!acquired) return
 
             if (log.isDebugEnabled()) {
-                log.debug("JobProcessingEngine " + this + " - A handler has successfully processed job " + job.getId())
+                log.debug( "JobProcessingEngine " + this + " - A handler has successfully processed job " + job.getId() )
             }
 
-            monitorThread.register(new AsynchronousTaskMonitorRecord(Thread.currentThread().getName(), job.getId()))
+            monitorThread.register( new AsynchronousTaskMonitorRecord( Thread.currentThread().getName(), job.getId() ) )
 
             // TODO: Add a map of the job to this thread in a monitor table, so that a monitor
             // thread can check to make sure this thread is alive, and update that monitor record's
@@ -347,21 +350,21 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
             // the monitor table)
 
             // This is the potentially long-running and non-transactional processing...
-            log.debug("Processing job " + job.getId())
-            jobManager.process(job)
+            log.debug( "Processing job " + job.getId() )
+            jobManager.process( job )
 
             // Now we'll mark the job as complete using another short transactional method
             if (deleteSuccessfullyCompleted) {
-                log.debug("Deleting job " + job.getId())
-                jobManager.delete(job)
+                log.debug( "Deleting job " + job.getId() )
+                jobManager.delete( job )
             } else {
-                log.debug("Marking complete job " + job.getId())
-                jobManager.markComplete(job)
+                log.debug( "Marking complete job " + job.getId() )
+                jobManager.markComplete( job )
             }
-            monitorThread.deregister(new AsynchronousTaskMonitorRecord(Thread.currentThread().getName(), job.getId()))
+            monitorThread.deregister( new AsynchronousTaskMonitorRecord( Thread.currentThread().getName(), job.getId() ) )
             //Job has been successfully completed.  As the very last step, we remove it from the pendingJobs set
             //to signal the polling thread that when all pending work has been completed, it should fetch more work.
-            pendingJobs.remove(job.getId())
+            pendingJobs.remove( job.getId() )
 
 
         } catch (ApplicationException e) {
@@ -371,9 +374,9 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
                 log.debug( "Marking job with id = ${job.getId()} as failed because of ${e.message} for service ${jobManager.getClass()}.", e )
             }
 
-            errorExecutor.execute(new ErrorHandler(job, e))
+            errorExecutor.execute( new ErrorHandler( job, e ) )
         } catch (Throwable t) {
-            log.error("Async job handler caught an unexpected error and will mark the job as having an error state")
+            log.error( "Async job handler caught an unexpected error and will mark the job as having an error state" )
             //LOGGER.error( "JobProcessingEngine " + this + " - A handler encountered a Throwable for job " + job.getId() + ", and will mark it as failed", t )
 
             // Any other exceptions will be handled by another runnable, regardless
@@ -381,12 +384,12 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
             // facilitate alternative processing for system exceptions - for e.g., putting
             // them back onto the queue for later processing... but for now, we'll just
             // mark them as failed (just like the process method does for application exceptions above).
-            errorExecutor.execute(new ErrorHandler(job, t))
+            errorExecutor.execute( new ErrorHandler( job, t ) )
         } finally {
             //We are finished, one way or another, with working on this job.  Remove it from the
             //pending jobs set to signal the polling queue that when all pending work is completed,
             //it should grab another block.
-            pendingJobs.remove(job.getId())
+            pendingJobs.remove( job.getId() )
         }
     }
 
@@ -408,7 +411,7 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
                 isRunning = true
                 foundItems = poll()
                 if (!foundItems || !continuousPolling) {
-                    pause(pollingInterval)
+                    pause( pollingInterval )
                 }
             }
             isRunning = false
@@ -428,14 +431,14 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
          * Pauses this thread for the specified time.
          * @param time the time in milliseconds to pause
          */
-        private void pause(long time) {
+        private void pause( long time ) {
             try {
                 synchronized (this) {
                     //check the keepRunning flag here - race conditions could have set the flag and issued a notify, and
                     //if we reach this point after this has happened, we wait the full pause time even if the thread
                     //has been ordered to shutdown.  so we only wait if we are still running
                     if (keepRunning) {
-                        wait(time)
+                        wait( time )
                     }
                 }
             } catch (InterruptedException e) {
@@ -450,7 +453,7 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
         private final ArrayList monitoredThreads = new ArrayList()
         private static final long DEFAULT_UPDATE_INTERVAL = 60 * 1000
         private long _updateInterval = DEFAULT_UPDATE_INTERVAL
-        private final Log log = LogFactory.getLog(MonitorThread.class.getName())
+        private final Log log = LogFactory.getLog( MonitorThread.class.getName() )
 
 
         @SuppressWarnings("unchecked")
@@ -463,12 +466,13 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
                     monitored = (ArrayList) monitoredThreads.clone()
                 }
                 for (AsynchronousTaskMonitorRecord thread : monitored) {
-                    update(thread)
+                    update( thread )
                 }
                 synchronized (this) {
                     try {
-                        wait(_updateInterval)
+                        wait( _updateInterval )
                     } catch (InterruptedException e) {
+                        log.error( 'InterruptedException', e )
                     }
                 }
             }
@@ -483,7 +487,7 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
         }
 
 
-        void setUpdateInterval(long interval) {
+        void setUpdateInterval( long interval ) {
             _updateInterval = interval
             synchronized (this) {
                 notify()
@@ -492,38 +496,38 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
 
 
         void setUpdateIntervalToDefault() {
-            setUpdateInterval(DEFAULT_UPDATE_INTERVAL)
+            setUpdateInterval( DEFAULT_UPDATE_INTERVAL )
         }
 
 
-        void register(AsynchronousTaskMonitorRecord thread) {
+        void register( AsynchronousTaskMonitorRecord thread ) {
             if (log.isDebugEnabled()) {
-                log.debug("Monitor thread adding " + thread)
+                log.debug( "Monitor thread adding " + thread )
             }
             synchronized (monitoredThreads) {
-                monitoredThreads.add(thread)
+                monitoredThreads.add( thread )
             }
         }
 
 
-        void deregister(AsynchronousTaskMonitorRecord thread) {
+        void deregister( AsynchronousTaskMonitorRecord thread ) {
             if (log.isDebugEnabled()) {
-                log.debug("Monitor thread removing " + thread)
+                log.debug( "Monitor thread removing " + thread )
             }
             synchronized (monitoredThreads) {
-                monitoredThreads.remove(thread)
+                monitoredThreads.remove( thread )
             }
         }
 
 
-        private void update(AsynchronousTaskMonitorRecord monitorRecord) {
+        private void update( AsynchronousTaskMonitorRecord monitorRecord ) {
             if (log.isDebugEnabled()) {
-                log.debug("Monitor thread will update " + monitorRecord.toString())
+                log.debug( "Monitor thread will update " + monitorRecord.toString() )
             }
             try {
-                jobManager.updateMonitorRecord(monitorRecord)
+                jobManager.updateMonitorRecord( monitorRecord )
             } catch (Throwable t) {
-                log.error("Critical failure while monitoring an automated activity", t)
+                log.error( "Critical failure while monitoring an automated activity", t )
             }
         }
     }
@@ -533,7 +537,8 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
         private final AsynchronousTask job
         private final Throwable cause
 
-        ErrorHandler(AsynchronousTask job, Throwable cause) {
+
+        ErrorHandler( AsynchronousTask job, Throwable cause ) {
             this.job = job
             this.cause = cause
         }
@@ -542,18 +547,13 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
         public void run() {
             try {
                 asynchronousBannerAuthenticationSpoofer.authenticateAndSetFormContextForExecute()
-//                  ThreadCallerContext.set( new TrustedCallerContext() )
-                if(cause instanceof ApplicationException) {
-                    jobManager.markFailed(job, cause.friendlyName, cause )
-                }
-                else
-                {
-                    jobManager.markFailed(job, ActionItemErrorCode.UNKNOWN_ERROR.name(), cause)
+                if (cause instanceof ApplicationException) {
+                    jobManager.markFailed( job, cause.friendlyName, cause )
+                } else {
+                    jobManager.markFailed( job, ActionItemErrorCode.UNKNOWN_ERROR.name(), cause )
                 }
             } catch (Throwable t) {
-                log.error("JobProcessingEngine " + this + " - An error handler could not mark job " + job.getId() + " as in error", t)
-            } finally {
-//                  ThreadCallerContext.set( cc )
+                log.error( "JobProcessingEngine " + this + " - An error handler could not mark job " + job.getId() + " as in error", t )
             }
         }
     }
