@@ -151,7 +151,7 @@ class GroupFolderReadOnly implements Serializable {
     static def fetchGroupFolderROCount( params ) {
         GroupFolderReadOnly.withSession {session ->
             session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolderROCount' )
-                    .setString( 'groupTitle', CommunicationCommonUtility.getScrubbedInput( params.name ) )
+                    .setString( 'groupName', CommunicationCommonUtility.getScrubbedInput( params.name ) )
                     .uniqueResult()
         }
     }
