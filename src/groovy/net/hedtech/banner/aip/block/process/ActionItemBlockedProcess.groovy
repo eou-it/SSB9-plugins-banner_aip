@@ -14,17 +14,6 @@ import javax.persistence.*
                 query = """
            FROM ActionItemBlockedProcess a
           """),
-        @NamedQuery(name = "ActionItemBlockedProcess.getBlockedProcessByActionItemAndProcessIdAndPersona",
-                query = """ FROM ActionItemBlockedProcess a 
-                                    WHERE a.blockActionItemId = :blockActionItemId 
-                                    AND a.blockedProcessId = :blockedProcessId
-                                    AND a.blockedProcessRole = :blockedProcessRole
-                  """),
-        @NamedQuery(name = "ActionItemBlockedProcess.getBlockedProcessByActionItemAndProcessId",
-                query = """ FROM ActionItemBlockedProcess a 
-                                            WHERE a.blockActionItemId = :blockActionItemId 
-                                            AND a.blockedProcessId = :blockedProcessId
-                          """),
         @NamedQuery(name = "ActionItemBlockedProcess.fetchActionItemBlockProcessById",
                 query = """
            FROM ActionItemBlockedProcess a
@@ -128,38 +117,6 @@ class ActionItemBlockedProcess implements Serializable {
             session.getNamedQuery( 'ActionItemBlockedProcess.fetchActionItemBlockProcessById' )
                     .setLong( 'myId', actionItemBlockId )
                     .list()
-        }
-    }
-
-    /**
-     *
-     * @param actionItemId
-     * @param blockedProcessId
-     * @param blockedProcessRole
-     * @return
-     */
-    static
-    def getBlockedProcessByActionItemAndProcessIdAndPersona( Long blockActionItemId, Long blockedProcessId, String blockedProcessRole ) {
-        ActionItemBlockedProcess.withSession {session ->
-            session.getNamedQuery( 'ActionItemBlockedProcess.getBlockedProcessByActionItemAndProcessIdAndPersona' )
-                    .setLong( 'blockActionItemId', blockActionItemId )
-                    .setLong( 'blockedProcessId', blockedProcessId )
-                    .setString( 'blockedProcessRole', blockedProcessRole )
-                    .uniqueResult()
-        }
-    }
-
-    /**
-     *
-     * @param actionItemId
-     * @param blockedProcessId
-     * @return
-     */
-    static def getBlockedProcessByActionItemAndProcessId( Long blockActionItemId, Long blockedProcessId ) {
-        ActionItemBlockedProcess.withSession {session ->
-            session.getNamedQuery( 'ActionItemBlockedProcess.getBlockedProcessByActionItemAndProcessId' )
-                    .setLong( 'blockActionItemId', blockActionItemId )
-                    .setLong( 'blockedProcessId', blockedProcessId )
         }
     }
 
