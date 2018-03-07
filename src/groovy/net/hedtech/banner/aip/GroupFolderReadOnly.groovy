@@ -24,7 +24,7 @@ import javax.persistence.*
            WHERE a.id = :myId
           """),
         @NamedQuery(name = "GroupFolderReadOnly.fetchGroupFolderROCount",
-                query = """SELECT COUNT(a.groupId) FROM GroupFolderReadOnly a WHERE UPPER(a.groupTitle) like upper(:groupTitle) 
+                query = """SELECT COUNT(a.groupId) FROM GroupFolderReadOnly a WHERE UPPER(a.groupName) like upper(:groupName) 
             """
         )
 ])
