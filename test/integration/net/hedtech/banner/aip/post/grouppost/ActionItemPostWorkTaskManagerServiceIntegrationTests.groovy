@@ -56,7 +56,7 @@ class ActionItemPostWorkTaskManagerServiceIntegrationTests extends BaseIntegrati
     void delete() {
         ActionItemPostWork actionItemPostWork = newActionItemPostWork()
         ActionItemPost aip = newAIP()
-        actionItemPostService.create( aip )
+        aip = actionItemPostService.create( aip )
         actionItemPostWork.actionItemGroupSend = aip
         actionItemPostWork = actionItemPostWorkService.create( actionItemPostWork )
         actionItemPostWorkTaskManagerService.delete( actionItemPostWork )

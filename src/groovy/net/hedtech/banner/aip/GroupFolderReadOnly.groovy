@@ -24,7 +24,7 @@ import javax.persistence.*
            WHERE a.id = :myId
           """),
         @NamedQuery(name = "GroupFolderReadOnly.fetchGroupFolderROCount",
-                query = """SELECT COUNT(a.groupId) FROM GroupFolderReadOnly a WHERE UPPER(a.groupTitle) like upper(:groupTitle) 
+                query = """SELECT COUNT(a.groupId) FROM GroupFolderReadOnly a WHERE UPPER(a.groupName) like upper(:groupName) 
             """
         )
 ])
@@ -151,7 +151,7 @@ class GroupFolderReadOnly implements Serializable {
     static def fetchGroupFolderROCount( params ) {
         GroupFolderReadOnly.withSession {session ->
             session.getNamedQuery( 'GroupFolderReadOnly.fetchGroupFolderROCount' )
-                    .setString( 'groupTitle', CommunicationCommonUtility.getScrubbedInput( params.name ) )
+                    .setString( 'groupName', CommunicationCommonUtility.getScrubbedInput( params.name ) )
                     .uniqueResult()
         }
     }

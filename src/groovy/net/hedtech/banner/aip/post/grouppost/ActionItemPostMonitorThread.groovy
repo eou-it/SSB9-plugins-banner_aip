@@ -29,6 +29,7 @@ class ActionItemPostMonitorThread extends Thread {
                 try {
                     while (System.currentTimeMillis() < nextMonitorTime) wait( monitor.monitorIntervalInSeconds * 1000)
                 } catch (InterruptedException e) {
+                    log.error( "Exception running posts", e )
                 }
             }
         }

@@ -38,12 +38,15 @@ class ActionItemBlockedProcessIntegrationTests extends BaseIntegrationTestCase {
     void testListBlockedProcessById() {
 
         List<ActionItemBlockedProcess> actionItemBlockedProcessList = ActionItemBlockedProcess.fetchActionItemBlockedProcessList()
-        List<ActionItemBlockedProcess> actionItemBlockedProcessById = ActionItemBlockedProcess.fetchActionItemBlockProcessById( actionItemBlockedProcessList.id[0] )
-
-        assertEquals( actionItemBlockedProcessList.blockActionItemId[0], actionItemBlockedProcessById.blockActionItemId[0] )
-        assertEquals( actionItemBlockedProcessList.blockedProcessId[0], actionItemBlockedProcessById.blockedProcessId[0] )
-        assertEquals( actionItemBlockedProcessList.id[0], actionItemBlockedProcessById.id[0] )
-        assertEquals( actionItemBlockedProcessList.blockedProcessId[0], actionItemBlockedProcessById.blockedProcessId[0] )
+        ActionItemBlockedProcess process = actionItemBlockedProcessList.get( 0 )
+        List<ActionItemBlockedProcess> actionItemBlockedProcessById = ActionItemBlockedProcess.fetchActionItemBlockProcessById( process.id )
+        actionItemBlockedProcessById = actionItemBlockedProcessById.findAll {
+            it.blockActionItemId == process.blockActionItemId
+        }
+        assertEquals( process.blockActionItemId, actionItemBlockedProcessById.blockActionItemId[0] )
+        assertEquals( process.blockedProcessId, actionItemBlockedProcessById.blockedProcessId[0] )
+        assertEquals( process.id, actionItemBlockedProcessById.id[0] )
+        assertEquals( process.blockedProcessId, actionItemBlockedProcessById.blockedProcessId[0] )
 
     }
 
@@ -52,13 +55,16 @@ class ActionItemBlockedProcessIntegrationTests extends BaseIntegrationTestCase {
     void testListBlockedProcessByActionId() {
 
         List<ActionItemBlockedProcess> actionItemBlockedProcessList = ActionItemBlockedProcess.fetchActionItemBlockedProcessList()
+        ActionItemBlockedProcess process = actionItemBlockedProcessList.get( 0 )
         List<ActionItemBlockedProcess> actionItemBlockedProcessByActionId = ActionItemBlockedProcess.fetchActionItemBlockProcessByActionId(
-                actionItemBlockedProcessList.blockActionItemId[0] )
-
-        assertEquals( actionItemBlockedProcessList.blockActionItemId[0], actionItemBlockedProcessByActionId.blockActionItemId[0] )
-        assertEquals( actionItemBlockedProcessList.blockedProcessId[0], actionItemBlockedProcessByActionId.blockedProcessId[0] )
-        assertEquals( actionItemBlockedProcessList.id[0], actionItemBlockedProcessByActionId.id[0] )
-        assertEquals( actionItemBlockedProcessList.blockedProcessId[0], actionItemBlockedProcessByActionId.blockedProcessId[0] )
+                process.blockActionItemId )
+        actionItemBlockedProcessByActionId = actionItemBlockedProcessByActionId.findAll {
+            it.blockedProcessId == process.blockedProcessId
+        }
+        assertEquals( process.blockActionItemId, actionItemBlockedProcessByActionId.blockActionItemId[0] )
+        assertEquals( process.blockedProcessId, actionItemBlockedProcessByActionId.blockedProcessId[0] )
+        assertEquals( process.id, actionItemBlockedProcessByActionId.id[0] )
+        assertEquals( process.blockedProcessId, actionItemBlockedProcessByActionId.blockedProcessId[0] )
 
     }
 

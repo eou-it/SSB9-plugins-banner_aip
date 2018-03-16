@@ -14,7 +14,7 @@ import javax.persistence.*
 @NamedQueries(value = [
         @NamedQuery(name = "ActionItemStatus.fetchActionItemStatuses",
                 query = """
-           FROM ActionItemStatus a
+           FROM ActionItemStatus a order by a.actionItemStatus
           """),
         @NamedQuery(name = "ActionItemStatus.fetchDefaultActionItemStatus",
                 query = """
@@ -32,7 +32,7 @@ import javax.persistence.*
            WHERE a.id = :myId
           """),
         @NamedQuery(name = "ActionItemStatus.fetchActionItemStatusCount",
-                query = """SELECT COUNT(a.id) FROM ActionItemStatus a
+                query = """SELECT COUNT(a.id) FROM ActionItemStatus a where upper(a.actionItemStatus) like upper(:actionItemStatus)
             """
         )
 ])
@@ -158,9 +158,11 @@ class ActionItemStatus implements Serializable {
      *
      * @return
      */
-    static def fetchActionItemStatusCount() {
+    static def fetchActionItemStatusCount( actionItemStatus ) {
         ActionItemStatus.withSession {session ->
-            session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatusCount' ).uniqueResult()
+            session.getNamedQuery( 'ActionItemStatus.fetchActionItemStatusCount' )
+                    .setString( 'actionItemStatus', CommunicationCommonUtility.getScrubbedInput( actionItemStatus ) )
+                    .uniqueResult()
         }
     }
 

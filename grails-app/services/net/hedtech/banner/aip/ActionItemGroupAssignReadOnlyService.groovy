@@ -51,6 +51,6 @@ class ActionItemGroupAssignReadOnlyService {
     def fetchGroupLookup() {
         ActionItemGroupAssignReadOnly.fetchGroupLookup().collect() {
             [folderId: it[0], folderName: it[1], groupId: it[2], groupName: it[3], groupTitle: it[4]]
-        }
+        }?.sort{ it.groupName }
     }
 }

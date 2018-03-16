@@ -53,7 +53,7 @@ class ActionItemStatusServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testListActionItemStatusCount() {
-        assert 0 < actionItemStatusService.listActionItemStatusCount()
+        assert 0 < actionItemStatusService.listActionItemStatusCount('%')
     }
 
 

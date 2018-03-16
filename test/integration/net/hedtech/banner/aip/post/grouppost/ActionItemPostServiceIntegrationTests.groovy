@@ -82,7 +82,7 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void preCreateValidationDuplicateJobName() {
         loginSSB( 'AIPADM001', '111111' )
-        def population = CommunicationPopulationListView.findAllByPopulationFolderName('AIPstudent');
+        def population = CommunicationPopulationListView.findAllByPopulationFolderName( 'AIPstudent' );
         def actionItemGroups = ActionItemGroup.findAll()
         def actionItemGroup = actionItemGroups[0]
         def requestMap = [populationListId             : population[0]?.id,
@@ -231,6 +231,93 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
                    populationId            : 2,
                    displayStartDate        : new Date(),
                    displayEndDate          : new Date(),
+        ]
+        try {
+            actionItemPostService.preCreateValidation( map )
+        } catch (ApplicationException e) {
+            assertApplicationException( e, 'preCreate.validation.no.schedule' )
+        }
+    }
+
+
+    @Test
+    void preCreateValidationScheduleNoScheduleDate() {
+        def map = [populationId            : 1L,
+                   populationVersionId     : 1L,
+                   postingName             : "some name",
+                   postingActionItemGroupId: 1,
+                   actionItemIds           : [1, 2],
+                   populationId            : 2,
+                   displayStartDate        : new Date(),
+                   displayEndDate          : new Date(),
+                   postNow                 : false,
+                   scheduledStartDate      : null
+        ]
+        try {
+            actionItemPostService.preCreateValidation( map )
+        } catch (ApplicationException e) {
+            assertApplicationException( e, 'preCreate.validation.no.schedule' )
+        }
+    }
+
+
+    @Test
+    void preCreateValidationScheduleNoScheduleTime() {
+        def map = [populationId            : 1L,
+                   populationVersionId     : 1L,
+                   postingName             : "some name",
+                   postingActionItemGroupId: 1,
+                   actionItemIds           : [1, 2],
+                   populationId            : 2,
+                   displayStartDate        : new Date(),
+                   displayEndDate          : new Date(),
+                   postNow                 : false,
+                   scheduledStartDate      : new Date(),
+                   scheduledStartTime      : null
+        ]
+        try {
+            actionItemPostService.preCreateValidation( map )
+        } catch (ApplicationException e) {
+            assertApplicationException( e, 'preCreate.validation.no.schedule' )
+        }
+    }
+
+
+    @Test
+    void preCreateValidationScheduleNoScheduleDateAndTime() {
+        def map = [populationId            : 1L,
+                   populationVersionId     : 1L,
+                   postingName             : "some name",
+                   postingActionItemGroupId: 1,
+                   actionItemIds           : [1, 2],
+                   populationId            : 2,
+                   displayStartDate        : new Date(),
+                   displayEndDate          : new Date(),
+                   postNow                 : false,
+                   scheduledStartDate      : null,
+                   scheduledStartTime      : null
+        ]
+        try {
+            actionItemPostService.preCreateValidation( map )
+        } catch (ApplicationException e) {
+            assertApplicationException( e, 'preCreate.validation.no.schedule' )
+        }
+    }
+
+
+    @Test
+    void preCreateValidationScheduleNoCorrectScheduleTimeFormat() {
+        def map = [populationId            : 1L,
+                   populationVersionId     : 1L,
+                   postingName             : "some name",
+                   postingActionItemGroupId: 1,
+                   actionItemIds           : [1, 2],
+                   populationId            : 2,
+                   displayStartDate        : new Date(),
+                   displayEndDate          : new Date(),
+                   postNow                 : false,
+                   scheduledStartDate      : new Date(),
+                   scheduledStartTime      : '89'
         ]
         try {
             actionItemPostService.preCreateValidation( map )

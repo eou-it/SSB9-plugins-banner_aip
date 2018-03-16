@@ -40,6 +40,16 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
+    void checkActionItemPosted() {
+        ActionItem actionItem = ActionItem.findByName( 'Drug and Alcohol Policy' )
+        actionItem.postedIndicator = 'Y'
+        actionItem = actionItem.save( flush: true )
+        assert actionItem.postedIndicator == 'Y'
+        assert actionItemService.checkActionItemPosted( actionItem.id )
+    }
+
+
+    @Test
     void testCreateActionItem() {
         def folderId = communicationFolderService.list()[0].id
         ActionItem ai = new ActionItem()

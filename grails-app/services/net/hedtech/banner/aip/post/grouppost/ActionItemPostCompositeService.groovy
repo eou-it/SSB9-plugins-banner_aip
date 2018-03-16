@@ -247,7 +247,7 @@ class ActionItemPostCompositeService {
      * @param user
      * @return
      */
-    private markActionItemPosted( actionItemId ) {
+    def markActionItemPosted( actionItemId ) {
         ActionItem actionItem = actionItemService.get( actionItemId )
         actionItem.postedIndicator = AIPConstants.YES_IND
         actionItemService.update( actionItem )

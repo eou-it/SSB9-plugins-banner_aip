@@ -3,6 +3,7 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import net.hedtech.banner.aip.ActionItem
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.ActionItemGroupAssign
 import net.hedtech.banner.aip.post.ActionItemErrorCode
@@ -517,6 +518,18 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
 
     @Test
+    void markActionItemPosted() {
+        ActionItem actionItem = ActionItem.findByName( 'Drug and Alcohol Policy' )
+        actionItem.postedIndicator = 'N'
+        actionItem = actionItem.save( flush: true )
+        assert actionItem.postedIndicator == 'N'
+        actionItemPostCompositeService.markActionItemPosted( actionItem.id )
+        actionItem = ActionItem.findByName( 'Drug and Alcohol Policy' )
+        assert actionItem.postedIndicator == 'Y'
+    }
+
+
+    @Test
     void sendAsynchronousPostItemInvalidDisplayEndDate() {
         CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'AIP Student Population 1' )[0]
         SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
@@ -542,6 +555,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         }
 
     }
+
 
     @Test
     void updateAsynchronousPostItem() {
@@ -589,6 +603,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         assert updatedPost.lastModifiedBy == USERNAME
 
     }
+
 
     private def newAIP() {
         getInstance()
