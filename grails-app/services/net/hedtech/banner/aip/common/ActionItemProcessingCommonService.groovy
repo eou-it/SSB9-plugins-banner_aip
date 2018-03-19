@@ -91,7 +91,7 @@ class ActionItemProcessingCommonService {
                         "id"   : 3,
                         "value": "Inactive"
                 ]
-        ]
+        ].sort {a, b -> a.value <=> b.value}
     }
 
     /**

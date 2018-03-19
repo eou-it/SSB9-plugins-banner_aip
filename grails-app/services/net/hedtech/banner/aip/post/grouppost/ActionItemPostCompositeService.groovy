@@ -32,7 +32,8 @@ class ActionItemPostCompositeService {
     def actionItemPostService
     def actionItemProcessingCommonService
     def actionItemPostDetailService
-
+    def grailsApplication
+    def transactionManager
     def communicationPopulationCompositeService
 
     def schedulerJobService
@@ -612,20 +613,26 @@ class ActionItemPostCompositeService {
     void createPostItems( ActionItemPost groupSend ) {
         LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id )
         def session = sessionFactory.currentSession
-        List<ActionItemPostSelectionDetailReadOnly> list = session.getNamedQuery( 'ActionItemPostSelectionDetailReadOnly.fetchSelectionIds' )
-                .setLong( 'postingId', groupSend.id )
-                .list()
-        list?.each {ActionItemPostSelectionDetailReadOnly it ->
-            session.createSQLQuery( """ INSERT INTO gcraiim (gcraiim_gcbapst_id, gcraiim_pidm, gcraiim_creationdatetime
+        def timeoutSeconds = (grailsApplication.config.banner?.transactionTimeout instanceof Integer ? (grailsApplication.config.banner?.transactionTimeout) : 300)
+        try {
+            transactionManager.setDefaultTimeout( timeoutSeconds * 2 )
+            List<ActionItemPostSelectionDetailReadOnly> list = session.getNamedQuery( 'ActionItemPostSelectionDetailReadOnly.fetchSelectionIds' )
+                    .setLong( 'postingId', groupSend.id )
+                    .list()
+            list?.each {ActionItemPostSelectionDetailReadOnly it ->
+                session.createSQLQuery( """ INSERT INTO gcraiim (gcraiim_gcbapst_id, gcraiim_pidm, gcraiim_creationdatetime
                                                                    ,gcraiim_current_state, gcraiim_reference_id, gcraiim_user_id, gcraiim_activity_date, 
                                                                    gcraiim_started_date) values (${groupSend.id}, ${
-                it.actionItemPostSelectionPidm
-            }, sysdate, '${ActionItemPostWorkExecutionState.Ready.toString()}' ,'$sysGuId', '${
-                it.postingUserId
-            }', sysdate, sysdate ) """ )
-                    .executeUpdate()
+                    it.actionItemPostSelectionPidm
+                }, sysdate, '${ActionItemPostWorkExecutionState.Ready.toString()}' ,'$sysGuId', '${
+                    it.postingUserId
+                }', sysdate, sysdate ) """ )
+                        .executeUpdate()
+            }
+            LoggerUtility.debug( LOGGER, "Created " + list?.size() + " group send item records for group send with id = " + groupSend.id )
+        }finally{
+            transactionManager.setDefaultTimeout( timeoutSeconds )
         }
-        LoggerUtility.debug( LOGGER, "Created " + list?.size() + " group send item records for group send with id = " + groupSend.id )
     }
     /**
      * Get system GU id
