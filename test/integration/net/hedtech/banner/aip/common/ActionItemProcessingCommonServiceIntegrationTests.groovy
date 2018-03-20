@@ -77,10 +77,10 @@ class ActionItemProcessingCommonServiceIntegrationTests extends BaseIntegrationT
         assert [
                 [
                         "id"   : 1,
-                        "value": "Draft"
+                        "value": "Active"
                 ], [
                         "id"   : 2,
-                        "value": "Active"
+                        "value": "Draft"
                 ], [
                         "id"   : 3,
                         "value": "Inactive"
