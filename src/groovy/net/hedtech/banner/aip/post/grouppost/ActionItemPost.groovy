@@ -33,7 +33,7 @@ import javax.persistence.*
         @NamedQuery(name = "ActionItemPost.checkIfJobNameAlreadyExists",
                 query = """ select count (gs.postingName) FROM ActionItemPost gs
                         WHERE upper(gs.postingName) = upper( :postingName) """
-        ),@NamedQuery(name = "ActionItemPost.checkIfJobNameAlreadyExistsForUpdate",
+        ), @NamedQuery(name = "ActionItemPost.checkIfJobNameAlreadyExistsForUpdate",
         query = """ select count (gs.postingName) FROM ActionItemPost gs
                         WHERE upper(gs.postingName) = upper( :postingName) and gs.id != :postId """
 )
@@ -200,13 +200,6 @@ class ActionItemPost implements Serializable {
     @Column(name = "GCBAPST_DATA_ORIGIN")
     String dataOrigin
 
-    /**
-     * VPDI CODE: Multi-entity processing code.
-     */
-    @Column(name = "GCBAPST_VPDI_CODE")
-    String vpdiCode
-
-
     static constraints = {
         version( nullable: true, maxSize: 19 )
         postingCreationDateTime( nullable: false )
@@ -232,7 +225,6 @@ class ActionItemPost implements Serializable {
         lastModified( nullable: true )
         lastModifiedBy( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 30 )
-        vpdiCode( nullable: true, maxSize: 6 )
     }
 
 
@@ -341,7 +333,7 @@ class ActionItemPost implements Serializable {
      * @param name
      * @return
      */
-    static def checkIfJobNameAlreadyExistsForUpdate( name ,postId) {
+    static def checkIfJobNameAlreadyExistsForUpdate( name, postId ) {
         def count
         ActionItemPostWork.withSession {session ->
             count = session.getNamedQuery( 'ActionItemPost.checkIfJobNameAlreadyExistsForUpdate' )

@@ -18,6 +18,7 @@ import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.general.scheduler.SchedulerJobReceipt
 import org.apache.log4j.Logger
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.context.request.RequestContextHolder
 
 /**
  * ActionItemPost Composite Service is responsible for initiating and processing group posts.
@@ -76,25 +77,18 @@ class ActionItemPostCompositeService {
             }
         }
         // we don't use parameterValues. remove?
-        LoggerUtility.debug( LOGGER, " Ready to create groupSend: $groupSend ." )
         ActionItemPost groupSendSaved = actionItemPostService.create( groupSend )
-        LoggerUtility.debug( LOGGER, " Saved groupSendSaved: $groupSendSaved ." )
         // Create the details records.
         requestMap.actionItemIds.each {
             addPostingDetail( it, groupSendSaved.id )
         }
-        LoggerUtility.debug( LOGGER, " Added Posting Details ( Action item to posting) complete." )
         if (requestMap.postNow) {
             if (hasQuery) {
                 assert (groupSendSaved.populationCalculationId != null)
             }
-            LoggerUtility.debug( LOGGER, " Start Calling schedulePostImmediately for ${user.oracleUserName}." )
             groupSendSaved = schedulePostImmediately( groupSendSaved, user.oracleUserName )
-            LoggerUtility.debug( LOGGER, " Finished Calling schedulePostImmediately for ${user.oracleUserName}." )
         } else if (requestMap.scheduledStartDate) {
-            LoggerUtility.debug( LOGGER, " Start Calling schedulePost for ${user.oracleUserName}." )
             groupSendSaved = schedulePost( groupSendSaved, user.oracleUserName )
-            LoggerUtility.debug( LOGGER, " Finished Calling schedulePost for ${user.oracleUserName}." )
         }
         success = true
         LoggerUtility.debug( LOGGER, " Finished Saving Posting ${groupSendSaved}." )
@@ -546,23 +540,15 @@ class ActionItemPostCompositeService {
 
     ActionItemPost schedulePostImmediately( ActionItemPost groupSend, String bannerUser ) {
         LoggerUtility.debug( LOGGER, " Start creating  jobContext for ${bannerUser}." )
-        LoggerUtility.debug( LOGGER, " Start creating  jobContext Printing groupSend details $groupSend")
-
-        LoggerUtility.debug( LOGGER, " Printing  creating  jobContext Printing groupSend details $groupSend")
+        def mepCode = RequestContextHolder.currentRequestAttributes().request.session.getAttribute( 'mep' )
         SchedulerJobContext jobContext = new SchedulerJobContext(
                 groupSend.aSyncJobId != null ? groupSend.aSyncJobId : UUID.randomUUID().toString() )
                 .setBannerUser( bannerUser )
-                .setMepCode( groupSend.vpdiCode )
+                .setMepCode( mepCode )
                 .setJobHandle( "actionItemPostCompositeService", "generatePostItemsFired" )
                 .setErrorHandle( "actionItemPostCompositeService", "generatePostItemsFailed" )
                 .setParameter( "groupSendId", groupSend.id )
-
-        LoggerUtility.debug( LOGGER, " Finished creating  jobContext for ${bannerUser}." )
-        LoggerUtility.debug( LOGGER, " Printing jobContext : ${jobContext}." )
-        LoggerUtility.debug( LOGGER, " Start calling  scheduleNowServiceMethod from schedulerJobService ." )
         SchedulerJobReceipt jobReceipt = schedulerJobService.scheduleNowServiceMethod( jobContext )
-        LoggerUtility.debug( LOGGER, " Printing  jobReceipt: $jobReceipt" )
-        LoggerUtility.debug( LOGGER, " Marking posting in Queue." )
         groupSend.markQueued( jobReceipt.jobId, jobReceipt.groupId )
         LoggerUtility.debug( LOGGER, " Completing marking posting in Queue." )
         actionItemPostService.update( groupSend )
@@ -579,10 +565,11 @@ class ActionItemPostCompositeService {
         if (now.after( groupSend.postingScheduleDateTime )) {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService.class, "invalidScheduledDate" )
         }
+        def mepCode = RequestContextHolder.currentRequestAttributes().request.session.getAttribute( 'mep' )
         SchedulerJobContext jobContext = new SchedulerJobContext(
                 groupSend.aSyncJobId != null ? groupSend.aSyncJobId : UUID.randomUUID().toString() )
                 .setBannerUser( bannerUser )
-                .setMepCode( groupSend.vpdiCode )
+                .setMepCode( mepCode )
                 .setScheduledStartDate( groupSend.postingScheduleDateTime )
                 .setParameter( "groupSendId", groupSend.id )
 
@@ -648,7 +635,7 @@ class ActionItemPostCompositeService {
                         .executeUpdate()
             }
             LoggerUtility.debug( LOGGER, "Created " + list?.size() + " group send item records for group send with id = " + groupSend.id )
-        }finally{
+        } finally {
             transactionManager.setDefaultTimeout( timeoutSeconds )
         }
     }
