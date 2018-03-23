@@ -44,7 +44,6 @@ class ActionItemReadOnlyCompositeService extends ServiceBase {
      */
     def listActionItemsPageSort( Map params ) {
         def results = actionItemReadOnlyService.fetchWithPagingAndSortParams( params )
-        println 'Shiv ' + results
         def resultCount = actionItemReadOnlyService.listActionItemROCount( [name: params?.filterName] )
         def resultMap = [
                 result: results?.collect {ActionItemReadOnly actionItem ->
