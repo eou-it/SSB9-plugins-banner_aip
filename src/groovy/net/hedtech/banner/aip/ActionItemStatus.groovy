@@ -7,6 +7,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import net.hedtech.banner.general.CommunicationCommonUtility
 import org.hibernate.criterion.Order
+import org.springframework.web.context.request.RequestContextHolder
 
 import javax.persistence.*
 
@@ -19,7 +20,7 @@ import javax.persistence.*
         @NamedQuery(name = "ActionItemStatus.fetchDefaultActionItemStatus",
                 query = """
                    FROM ActionItemStatus a
-                   WHERE a.actionItemStatusDefault = :myY
+                   WHERE a.actionItemStatusDefault = :myY  AND (:mepCode is null or a.mepCode = :mepCode)
                   """),
         @NamedQuery(name = "ActionItemStatus.checkIfNameAlreadyPresent",
                 query = """ SELECT COUNT(actionItemStatus)
@@ -105,6 +106,12 @@ class ActionItemStatus implements Serializable {
     Long version
 
     /**
+     * VPDI Code
+     */
+    @Column(name = "GCVASTS_VPDI_CODE")
+    String mepCode
+
+    /**
      * Data Origin column for GCVASTS
      */
     @Column(name = "GCVASTS_DATA_ORIGIN")
@@ -135,12 +142,15 @@ class ActionItemStatus implements Serializable {
 
     /**
      *
-     * @param myId
+     * @param mepCode
      * @return
      */
-    static ActionItemStatus fetchDefaultActionItemStatus() {
+    static ActionItemStatus fetchDefaultActionItemStatus( mepCode = null ) {
         ActionItemStatus.withSession {session ->
-            session.getNamedQuery( 'ActionItemStatus.fetchDefaultActionItemStatus' ).setString( 'myY', 'Y' )?.uniqueResult()
+            session.getNamedQuery( 'ActionItemStatus.fetchDefaultActionItemStatus' )
+                    .setString( 'myY', 'Y' )
+                    .setString( 'mepCode', mepCode )
+                    .uniqueResult()
         }
     }
     /**

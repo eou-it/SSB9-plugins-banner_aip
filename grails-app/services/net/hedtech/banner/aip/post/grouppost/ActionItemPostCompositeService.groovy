@@ -12,11 +12,13 @@ import net.hedtech.banner.aip.post.exceptions.ActionItemExceptionFactory
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.exceptions.NotFoundException
+import net.hedtech.banner.general.CommunicationCommonUtility
 import net.hedtech.banner.general.communication.population.*
 import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.general.scheduler.SchedulerJobReceipt
 import org.apache.log4j.Logger
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.request.RequestContextHolder
 
@@ -28,7 +30,8 @@ import org.springframework.web.context.request.RequestContextHolder
 @Transactional
 class ActionItemPostCompositeService {
 
-    private static final LOGGER = Logger.getLogger( this.class )
+    private static
+    final LOGGER = Logger.getLogger( "net.hedtech.banner.aip.post.grouppost.ActionItemPostCompositeService" )
 
     def actionItemPostService
     def actionItemProcessingCommonService
@@ -36,6 +39,7 @@ class ActionItemPostCompositeService {
     def grailsApplication
     def transactionManager
     def communicationPopulationCompositeService
+    def asynchronousBannerAuthenticationSpoofer
 
     def schedulerJobService
 
@@ -403,6 +407,8 @@ class ActionItemPostCompositeService {
      * @return
      */
     public def markArtifactsAsPosted( groupSendId ) {
+        println 'SHIV ==>markArtifactsAsPosted  groupSend' + groupSendId
+        println 'MEP CODE from markArtifactsAsPosted ' + asynchronousBannerAuthenticationSpoofer.getMultiEntityProcessingService().getHomeContext()
         ActionItemPost groupSend = actionItemPostService.get( groupSendId )
         markActionItemGroupPosted( groupSend.postingActionItemGroupId )
         List actionItemsIds = actionItemPostDetailService.fetchByActionItemPostId( groupSendId ).actionItemId
@@ -413,12 +419,49 @@ class ActionItemPostCompositeService {
 
 
     public ActionItemPost generatePostItemsFired( SchedulerJobContext jobContext ) {
+        def originalMap
+        try {
+            originalMap = asynchronousBannerAuthenticationSpoofer.authenticateAndSetFormContextForExecuteAndSave( jobContext.parameters.get( "bannerUser" ), jobContext.parameters.get( "mepCode" ) )
+            Test1( jobContext )
+        }
+        finally {
+            asynchronousBannerAuthenticationSpoofer.resetAuthAndFormContext( originalMap )
+        }
+
+    }
+
+    @Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true, rollbackFor = Throwable.class )
+    private void Test1( SchedulerJobContext jobContext ) {
+        println 'MEP CODE from ' + asynchronousBannerAuthenticationSpoofer.getMultiEntityProcessingService().getHomeContext()
+        println 'SHIV jobContext.parameters.get( "mepCode" ) generatePostItemsFired before setting MEP' + jobContext.parameters.get( "mepCode" )
+        println 'SHIV ==>generatePostItemsFired before setting mep Code connection' + sessionFactory.currentSession.connection()
+        //    asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), jobContext.parameters.get( "mepCode" ) )
+        println 'SHIV ==>generatePostItemsFired after setting mep Code connection' + sessionFactory.currentSession.connection()
+        println 'MEP CODE from generatePostItemsFired after setting MEP ' + asynchronousBannerAuthenticationSpoofer.getMultiEntityProcessingService().getHomeContext()
         markArtifactsAsPosted( jobContext.parameters.get( "groupSendId" ) as Long )
         generatePostItems( jobContext.parameters )
     }
 
-
     public ActionItemPost generatePostItemsFailed( SchedulerErrorContext errorContext ) {
+        def originalMap
+        try {
+            originalMap = asynchronousBannerAuthenticationSpoofer.authenticateAndSetFormContextForExecuteAndSave( errorContext.jobContext.parameters.get( "bannerUser" ), errorContext.jobContext.parameters.get( "mepCode" ) )
+            test2( errorContext )
+
+        }
+        finally {
+            asynchronousBannerAuthenticationSpoofer.resetAuthAndFormContext( originalMap )
+
+
+        }
+    }
+
+    @Transactional(propagation=Propagation.REQUIRES_NEW, readOnly = true, rollbackFor = Throwable.class )
+    private void test2( SchedulerErrorContext errorContext ) {
+        println 'SHIV jobContext.parameters.get( "mepCode" ) from Error context' + errorContext.jobContext.parameters.get( "mepCode" )
+        println 'MEP CODE from generatePostItemsFailed before setting MEP ' + asynchronousBannerAuthenticationSpoofer.getMultiEntityProcessingService().getHomeContext()
+        asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), errorContext.jobContext.parameters.get( "mepCode" ) )
+        println 'MEP CODE from generatePostItemsFailed after setting MEP ' + asynchronousBannerAuthenticationSpoofer.getMultiEntityProcessingService().getHomeContext()
         scheduledPostCallbackFailed( errorContext )
     }
 
@@ -444,7 +487,9 @@ class ActionItemPostCompositeService {
     ActionItemPost scheduledPostCallbackFailed( SchedulerErrorContext errorContext ) {
         Long groupSendId = errorContext.jobContext.getParameter( "groupSendId" ) as Long
         LoggerUtility.debug( LOGGER, "${errorContext.jobContext.errorHandle} called for groupSendId = ${groupSendId} with message = ${errorContext?.cause?.message}" )
-        ActionItemPost groupSend = ActionItemPost.get( groupSendId )
+        println 'SHIV==> groupSend' + groupSendId
+        ActionItemPost groupSend = actionItemPostService.get( groupSendId )
+        groupSend.refresh()
         if (!groupSend) {
             throw new ApplicationException( "groupSend", new NotFoundException() )
         }
@@ -539,8 +584,12 @@ class ActionItemPostCompositeService {
 
 
     ActionItemPost schedulePostImmediately( ActionItemPost groupSend, String bannerUser ) {
+        println 'MEP CODE from schedulePostImmediately ' + asynchronousBannerAuthenticationSpoofer.getMultiEntityProcessingService().getHomeContext()
         LoggerUtility.debug( LOGGER, " Start creating  jobContext for ${bannerUser}." )
         def mepCode = RequestContextHolder.currentRequestAttributes().request.session.getAttribute( 'mep' )
+        println 'SHIv MEP' + mepCode
+        println 'SHIv groupSend in schedulePostImmediately ' + groupSend
+        println 'SHIv groupSend in schedulePostImmediately ' + groupSend.vpdiCode
         SchedulerJobContext jobContext = new SchedulerJobContext(
                 groupSend.aSyncJobId != null ? groupSend.aSyncJobId : UUID.randomUUID().toString() )
                 .setBannerUser( bannerUser )

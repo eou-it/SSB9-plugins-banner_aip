@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional
  * methods for manipulating group send item tasks.
  */
 class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
-    private static final LOGGER = Logger.getLogger( this.class )
+    private static final LOGGER = Logger.getLogger( 'net.hedtech.banner.aip.post.grouppost.ActionItemPostWorkTaskManagerService' )
 
     def actionItemPostWorkProcessorService
     def actionItemPostWorkService
@@ -107,7 +107,7 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
             }
             actionItemPostWorkProcessorService.performPostItem( actionItemWorkTask )
         } catch (Exception e) {
-            LoggerUtility.debug( LOGGER, "GroupSendItemManagerImpl.process caught exception " + e.getMessage(), e )
+            LoggerUtility.debug( LOGGER, "GroupSendItemManagerImpl.process caught exception " + e.getMessage())
             // we MUST re-throw as the thread which invoked this method must
             // mark the job as failed by using another thread (as the
             // thread associated with this thread will likely be rolled back)

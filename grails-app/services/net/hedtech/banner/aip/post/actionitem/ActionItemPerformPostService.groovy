@@ -22,6 +22,7 @@ class ActionItemPerformPostService {
 
 
     Map postActionItems( ActionItemPostWork actionItemPostWork ) {
+        println 'SHIV actionItemPostWork.vpdi ' + actionItemPostWork.mepCode
         ActionItemPost groupSend = actionItemPostWork.actionItemGroupSend
         def currentExecutionState = ActionItemPostWorkExecutionState.Stopped
         def errorCode = null
@@ -39,7 +40,7 @@ class ActionItemPerformPostService {
                 UserActionItem userActionItem = new UserActionItem()
                 userActionItem.pidm = userPidm
                 userActionItem.actionItemId = it.actionItemId
-                userActionItem.status = ActionItemStatus.fetchDefaultActionItemStatus().id
+                userActionItem.status = ActionItemStatus.fetchDefaultActionItemStatus(actionItemPostWork.mepCode).id
                 userActionItem.displayStartDate = groupSend.postingDisplayStartDate
                 userActionItem.displayEndDate = groupSend.postingDisplayEndDate
                 userActionItem.groupId = groupSend.postingActionItemGroupId

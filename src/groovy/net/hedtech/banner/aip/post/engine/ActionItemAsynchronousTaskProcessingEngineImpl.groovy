@@ -25,7 +25,7 @@ import java.util.concurrent.*
  */
 public class ActionItemAsynchronousTaskProcessingEngineImpl implements AsynchronousTaskProcessingEngine, DisposableBean {
 
-    private final Log log = LogFactory.getLog( this.getClass() )
+    private final Log log = LogFactory.getLog( "net.hedtech.banner.aip.post.engine.ActionItemAsynchronousTaskProcessingEngineImpl" )
 
     /**
      * The job manager for which this processing engine is configured to support.
@@ -371,7 +371,7 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
             if (log.isWarnEnabled()) {
                 log.warn( "Marking job with id = ${job.getId()} as failed because of ${e.message} for service ${jobManager.getClass()}." )
             } else if (log.isDebugEnabled()) {
-                log.debug( "Marking job with id = ${job.getId()} as failed because of ${e.message} for service ${jobManager.getClass()}.", e )
+                log.debug( "Marking job with id = ${job.getId()} as failed because of ${e.message} for service ${jobManager.getClass()}." )
             }
 
             errorExecutor.execute( new ErrorHandler( job, e ) )

@@ -6,6 +6,7 @@ package net.hedtech.banner.aip.post.grouppost
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import net.hedtech.banner.aip.post.ActionItemErrorCode
+import net.hedtech.banner.service.DatabaseModifiesState
 import org.hibernate.annotations.Type
 
 import javax.persistence.*
@@ -17,6 +18,7 @@ import javax.persistence.*
 @Table(name = "GCBAPST")
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
+
 @NamedQueries(value = [
         @NamedQuery(name = "ActionItemPost.findRunning",
                 query = """ FROM ActionItemPost gs
@@ -38,6 +40,7 @@ import javax.persistence.*
                         WHERE upper(gs.postingName) = upper( :postingName) and gs.id != :postId """
 )
 ])
+@DatabaseModifiesState
 class ActionItemPost implements Serializable {
 
     /**
@@ -200,6 +203,13 @@ class ActionItemPost implements Serializable {
     @Column(name = "GCBAPST_DATA_ORIGIN")
     String dataOrigin
 
+    /**
+     * VPDI CODE: Multi-entity processing code.
+     */
+    @Column(name = "GCBAPST_VPDI_CODE")
+    String vpdiCode
+
+
     static constraints = {
         version( nullable: true, maxSize: 19 )
         postingCreationDateTime( nullable: false )
@@ -225,6 +235,7 @@ class ActionItemPost implements Serializable {
         lastModified( nullable: true )
         lastModifiedBy( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 30 )
+        vpdiCode( nullable: true, maxSize: 6 )
     }
 
 
