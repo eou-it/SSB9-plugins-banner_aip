@@ -371,7 +371,7 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
             if (log.isWarnEnabled()) {
                 log.warn( "Marking job with id = ${job.getId()} as failed because of ${e.message} for service ${jobManager.getClass()}." )
             } else if (log.isDebugEnabled()) {
-                log.debug( "Marking job with id = ${job.getId()} as failed because of ${e.message} for service ${jobManager.getClass()}." )
+                log.debug( "Marking job with id = ${job.getId()} as failed because of ${e.message} for service ${jobManager.getClass()}.", e )
             }
 
             errorExecutor.execute( new ErrorHandler( job, e ) )

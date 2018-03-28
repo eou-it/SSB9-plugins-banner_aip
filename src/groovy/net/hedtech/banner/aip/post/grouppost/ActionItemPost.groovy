@@ -304,26 +304,6 @@ class ActionItemPost implements Serializable {
         return query
     }
 
-    /*static List fetchCompleted() {//TODO Need to remove if not used
-        def results
-        ActionItemPostWork.withSession {session ->
-            results = session.getNamedQuery( 'ActionItemPost.fetchCompleted' )
-                    .setParameter( 'complete_', ActionItemPostExecutionState.Complete )
-                    .list()
-        }
-        return results
-    }
-
-
-    static int findCountByPopulationCalculationId( Long populationCalculationId ) {
-        return ActionItemPost.createCriteria().list {
-            projections {
-                count()
-            }
-            eq( 'populationCalculationId', populationCalculationId )
-        }[0]
-    }*/
-
     /**
      * Checks if posting name is already present
      * @param name
@@ -354,19 +334,4 @@ class ActionItemPost implements Serializable {
         }
         count > 0
     }
-
-    /*
-        public static findByNameWithPagingAndSortParams(filterData, pagingAndSortParams) {
-
-            def descdir = pagingAndSortParams?.sortDirection?.toLowerCase() == 'desc'
-
-            def queryCriteria = ActionItemPost.createCriteria()
-            def results = queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
-                ilike("name", ActionItemCommonUtility.getScrubbedInput(filterData?.params?.groupSendName))
-                ilike("createdBy", filterData?.params?.createdBy)
-                order((descdir ? Order.desc(pagingAndSortParams?.sortColumn) : Order.asc(pagingAndSortParams?.sortColumn)).ignoreCase())
-            }
-            return results
-        }
-    */
 }

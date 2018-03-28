@@ -21,28 +21,23 @@ class ActionItemPostWorkProcessorService {
     def actionItemPerformPostService
     def actionItemPostWorkService
     def sessionFactory
-    def asynchronousBannerAuthenticationSpoofer
 
     private static final int noWaitErrorCode = 54
 
 
     public void performPostItem( ActionItemPostWork actionItemPostWork ) {
         def groupSendItemId = actionItemPostWork.id
-        println 'actionItemPostWork mep code in  performPostItem' + actionItemPostWork
         log.debug( "Performing group send item id = " + groupSendItemId )
-        println "sessionFactory.currentSession.connection() " + sessionFactory.currentSession.connection()
-        asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), actionItemPostWork.mepCode )
-        /*boolean locked = lockGroupSendItem( groupSendItemId, ActionItemPostWorkExecutionState.Ready )
+        boolean locked = lockGroupSendItem( groupSendItemId, ActionItemPostWorkExecutionState.Ready )
         if (!locked) {
             // Do nothing
             return
-        }*/
+        }
         actionItemPostWorkService.update( actionItemPerformPostService.postActionItems( actionItemPostWork ) )
     }
 
 
     public void failGroupSendItem( Long groupSendItemId, String errorCode, String errorText ) {
-        println "Shiv $groupSendItemId , $errorCode , $errorText"
         ActionItemPostWork groupSendItem = (ActionItemPostWork) actionItemPostWorkService.get( groupSendItemId )
         def groupSendItemParamMap = [
                 id                   : groupSendItem.id,

@@ -22,7 +22,6 @@ class ActionItemPerformPostService {
 
 
     Map postActionItems( ActionItemPostWork actionItemPostWork ) {
-        println 'SHIV actionItemPostWork.vpdi ' + actionItemPostWork.mepCode
         ActionItemPost groupSend = actionItemPostWork.actionItemGroupSend
         def currentExecutionState = ActionItemPostWorkExecutionState.Stopped
         def errorCode = null
