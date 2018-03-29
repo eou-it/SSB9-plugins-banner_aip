@@ -21,11 +21,31 @@ class ActionItemPostWorkProcessorService {
     def actionItemPerformPostService
     def actionItemPostWorkService
     def sessionFactory
+    def asynchronousBannerAuthenticationSpoofer
 
     private static final int noWaitErrorCode = 54
 
+    /**
+     *
+     * @param home
+     * @return
+     */
+    def setHomeContext( home ) {
+        Sql sql = new Sql( sessionFactory.getCurrentSession().connection() )
+        try {
+            sql.call( "{call g\$_vpdi_security.g\$_vpdi_set_home_context(${home})}" )
+
+        } catch (e) {
+            log.error( "ERROR: Could not establish mif context. $e" )
+            throw e
+        } finally {
+            sql?.close()
+        }
+    }
+
 
     public void performPostItem( ActionItemPostWork actionItemPostWork ) {
+        setHomeContext( actionItemPostWork.mepCode )
         def groupSendItemId = actionItemPostWork.id
         log.debug( "Performing group send item id = " + groupSendItemId )
         boolean locked = lockGroupSendItem( groupSendItemId, ActionItemPostWorkExecutionState.Ready )
@@ -33,6 +53,7 @@ class ActionItemPostWorkProcessorService {
             // Do nothing
             return
         }
+        asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), actionItemPostWork.mepCode )
         actionItemPostWorkService.update( actionItemPerformPostService.postActionItems( actionItemPostWork ) )
     }
 

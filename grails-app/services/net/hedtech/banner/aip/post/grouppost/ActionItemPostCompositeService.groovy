@@ -431,12 +431,12 @@ class ActionItemPostCompositeService {
      * @return
      */
     def setHomeContext( home ) {
-        Sql sql = new Sql( sessionFactory.getCurrentSession().connection() )
+        Sql sql = new Sql(sessionFactory.getCurrentSession().connection())
         try {
             sql.call( "{call g\$_vpdi_security.g\$_vpdi_set_home_context(${home})}" )
 
         } catch (e) {
-            log.error( "ERROR: Could not establish mif context. $e" )
+            log.error("ERROR: Could not establish mif context. $e")
             throw e
         } finally {
             sql?.close()
@@ -447,7 +447,7 @@ class ActionItemPostCompositeService {
      *
      * @param jobContext
      */
-    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Throwable.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
     private void generatePostItemsFiredImpl( SchedulerJobContext jobContext ) {
         asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), jobContext.parameters.get( "mepCode" ) )
         markArtifactsAsPosted( jobContext.parameters.get( "groupSendId" ) as Long )
@@ -468,7 +468,7 @@ class ActionItemPostCompositeService {
      *
      * @param errorContext
      */
-    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Throwable.class)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
     private void generatePostItemsFailedImpl( SchedulerErrorContext errorContext ) {
         asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), errorContext.jobContext.parameters.get( "mepCode" ) )
         scheduledPostCallbackFailed( errorContext )
