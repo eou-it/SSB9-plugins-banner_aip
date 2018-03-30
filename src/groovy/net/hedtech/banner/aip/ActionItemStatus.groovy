@@ -126,6 +126,7 @@ class ActionItemStatus implements Serializable {
         actionItemStatusSystemRequired( blank: false, nullable: false, maxSize: 1 )
         lastModifiedBy( blank: false, nullable: true, maxSize: 30 )
         version( nullable: true )
+        mepCode( nullable: true )
         dataOrigin( nullable: true, maxSize: 30 )
     }
 

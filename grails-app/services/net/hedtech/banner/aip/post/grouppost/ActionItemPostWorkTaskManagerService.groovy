@@ -20,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional
  * methods for manipulating group send item tasks.
  */
 class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
-    private static final LOGGER = Logger.getLogger( 'net.hedtech.banner.aip.post.grouppost.ActionItemPostWorkTaskManagerService' )
+    private static
+    final LOGGER = Logger.getLogger( 'net.hedtech.banner.aip.post.grouppost.ActionItemPostWorkTaskManagerService' )
 
     def actionItemPostWorkProcessorService
     def actionItemPostWorkService

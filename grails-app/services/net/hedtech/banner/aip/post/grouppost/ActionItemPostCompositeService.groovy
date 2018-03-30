@@ -431,12 +431,12 @@ class ActionItemPostCompositeService {
      * @return
      */
     def setHomeContext( home ) {
-        Sql sql = new Sql(sessionFactory.getCurrentSession().connection())
+        Sql sql = new Sql( sessionFactory.getCurrentSession().connection() )
         try {
             sql.call( "{call g\$_vpdi_security.g\$_vpdi_set_home_context(${home})}" )
 
         } catch (e) {
-            log.error("ERROR: Could not establish mif context. $e")
+            log.error( "ERROR: Could not establish mif context. $e" )
             throw e
         } finally {
             sql?.close()
@@ -678,7 +678,7 @@ class ActionItemPostCompositeService {
                     .list()
             list?.each {ActionItemPostSelectionDetailReadOnly it ->
                 session.createSQLQuery( """ INSERT INTO gcraiim (gcraiim_gcbapst_id, gcraiim_pidm, gcraiim_creationdatetime
-                                                                   ,gcraiim_current_state, gcraiim_reference_id, gcraiim_user_id, gcraiim_activity_date, 
+                                                                   ,gcraiim_current_state, gcraiim_reference_id, gcraiim_user_id, gcraiim_activity_date,
                                                                    gcraiim_started_date) values (${groupSend.id}, ${
                     it.actionItemPostSelectionPidm
                 }, sysdate, '${ActionItemPostWorkExecutionState.Ready.toString()}' ,'$sysGuId', '${
