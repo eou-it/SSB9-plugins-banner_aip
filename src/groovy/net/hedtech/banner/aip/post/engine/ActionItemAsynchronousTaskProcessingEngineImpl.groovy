@@ -25,7 +25,7 @@ import java.util.concurrent.*
  */
 public class ActionItemAsynchronousTaskProcessingEngineImpl implements AsynchronousTaskProcessingEngine, DisposableBean {
 
-    private final Log log = LogFactory.getLog( this.getClass() )
+    private final Log log = LogFactory.getLog( "net.hedtech.banner.aip.post.engine.ActionItemAsynchronousTaskProcessingEngineImpl" )
 
     /**
      * The job manager for which this processing engine is configured to support.

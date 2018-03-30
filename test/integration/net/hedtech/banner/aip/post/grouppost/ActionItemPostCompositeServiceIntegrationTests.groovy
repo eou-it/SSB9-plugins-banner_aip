@@ -11,9 +11,8 @@ import net.hedtech.banner.aip.post.job.ActionItemJob
 import net.hedtech.banner.aip.post.job.ActionItemJobStatus
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.population.CommunicationPopulation
-import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculation
-import net.hedtech.banner.general.communication.population.CommunicationPopulationVersion
 import net.hedtech.banner.general.communication.population.CommunicationPopulationListView
+import net.hedtech.banner.general.communication.population.CommunicationPopulationVersion
 import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.testing.BaseIntegrationTestCase
@@ -303,7 +302,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
     }
 
 
-    @Test
+    //@Test
     void generatePostItemsFired() {
         ActionItemPost aip = newAIP()
         aip = actionItemPostService.create( aip )
@@ -314,7 +313,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
     }
 
 
-    @Test
+    //@Test
     void generatePostItemsFailed() {
         ActionItemPost aip = newAIP()
         aip = actionItemPostService.create( aip )

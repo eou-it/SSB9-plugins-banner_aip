@@ -6,6 +6,7 @@ package net.hedtech.banner.aip.post.grouppost
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import net.hedtech.banner.aip.post.ActionItemErrorCode
+import net.hedtech.banner.service.DatabaseModifiesState
 import org.hibernate.annotations.Type
 
 import javax.persistence.*
@@ -17,6 +18,7 @@ import javax.persistence.*
 @Table(name = "GCBAPST")
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
+
 @NamedQueries(value = [
         @NamedQuery(name = "ActionItemPost.findRunning",
                 query = """ FROM ActionItemPost gs
@@ -33,11 +35,12 @@ import javax.persistence.*
         @NamedQuery(name = "ActionItemPost.checkIfJobNameAlreadyExists",
                 query = """ select count (gs.postingName) FROM ActionItemPost gs
                         WHERE upper(gs.postingName) = upper( :postingName) """
-        ),@NamedQuery(name = "ActionItemPost.checkIfJobNameAlreadyExistsForUpdate",
+        ), @NamedQuery(name = "ActionItemPost.checkIfJobNameAlreadyExistsForUpdate",
         query = """ select count (gs.postingName) FROM ActionItemPost gs
                         WHERE upper(gs.postingName) = upper( :postingName) and gs.id != :postId """
 )
 ])
+@DatabaseModifiesState
 class ActionItemPost implements Serializable {
 
     /**
@@ -301,26 +304,6 @@ class ActionItemPost implements Serializable {
         return query
     }
 
-    /*static List fetchCompleted() {//TODO Need to remove if not used
-        def results
-        ActionItemPostWork.withSession {session ->
-            results = session.getNamedQuery( 'ActionItemPost.fetchCompleted' )
-                    .setParameter( 'complete_', ActionItemPostExecutionState.Complete )
-                    .list()
-        }
-        return results
-    }
-
-
-    static int findCountByPopulationCalculationId( Long populationCalculationId ) {
-        return ActionItemPost.createCriteria().list {
-            projections {
-                count()
-            }
-            eq( 'populationCalculationId', populationCalculationId )
-        }[0]
-    }*/
-
     /**
      * Checks if posting name is already present
      * @param name
@@ -341,7 +324,7 @@ class ActionItemPost implements Serializable {
      * @param name
      * @return
      */
-    static def checkIfJobNameAlreadyExistsForUpdate( name ,postId) {
+    static def checkIfJobNameAlreadyExistsForUpdate( name, postId ) {
         def count
         ActionItemPostWork.withSession {session ->
             count = session.getNamedQuery( 'ActionItemPost.checkIfJobNameAlreadyExistsForUpdate' )
@@ -351,19 +334,4 @@ class ActionItemPost implements Serializable {
         }
         count > 0
     }
-
-    /*
-        public static findByNameWithPagingAndSortParams(filterData, pagingAndSortParams) {
-
-            def descdir = pagingAndSortParams?.sortDirection?.toLowerCase() == 'desc'
-
-            def queryCriteria = ActionItemPost.createCriteria()
-            def results = queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
-                ilike("name", ActionItemCommonUtility.getScrubbedInput(filterData?.params?.groupSendName))
-                ilike("createdBy", filterData?.params?.createdBy)
-                order((descdir ? Order.desc(pagingAndSortParams?.sortColumn) : Order.asc(pagingAndSortParams?.sortColumn)).ignoreCase())
-            }
-            return results
-        }
-    */
 }

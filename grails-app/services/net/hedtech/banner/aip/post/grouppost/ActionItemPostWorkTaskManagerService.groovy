@@ -3,6 +3,7 @@
  *********************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import groovy.sql.Sql
 import net.hedtech.banner.aip.common.LoggerUtility
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTask
@@ -11,6 +12,7 @@ import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskMonitorRecor
 import net.hedtech.banner.general.communication.groupsend.automation.StringHelper
 import org.apache.commons.lang.NotImplementedException
 import org.apache.log4j.Logger
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 
 /**
@@ -18,10 +20,12 @@ import org.springframework.transaction.annotation.Transactional
  * methods for manipulating group send item tasks.
  */
 class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
-    private static final LOGGER = Logger.getLogger( this.class )
+    private static
+    final LOGGER = Logger.getLogger( 'net.hedtech.banner.aip.post.grouppost.ActionItemPostWorkTaskManagerService' )
 
     def actionItemPostWorkProcessorService
     def actionItemPostWorkService
+    def sessionFactory
 
     /**
      * Used for testing purposes only.  If this is not null when a job is being
@@ -93,13 +97,32 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
     }
 
     /**
+     *
+     * @param home
+     * @return
+     */
+    def setHomeContext( home ) {
+        Sql sql = new Sql( sessionFactory.getCurrentSession().connection() )
+        try {
+            sql.call( "{call g\$_vpdi_security.g\$_vpdi_set_home_context(${home})}" )
+
+        } catch (e) {
+            log.error( "ERROR: Could not establish mif context. $e" )
+            throw e
+        } finally {
+            sql?.close()
+        }
+    }
+    /**
      * Performs work for the specified job.
      * @return a boolean indicating whether the job could be processed or not.  If true, the service was
      *         able to obtain an exclusive lock on the job and process it.  If false, the job was either
      *         already processed, or locked by another thread, and the call returned without doing any work
      */
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
     public void process( AsynchronousTask task ) throws ApplicationException {
         ActionItemPostWork actionItemWorkTask = task as ActionItemPostWork
+        setHomeContext( actionItemWorkTask.mepCode )
         LoggerUtility.info( LOGGER, "Processing group send item id = " + actionItemWorkTask.getId() + ", pidm = " + actionItemWorkTask.recipientPidm + "." )
         try {
             if (simulatedFailureException != null) {
@@ -107,7 +130,7 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
             }
             actionItemPostWorkProcessorService.performPostItem( actionItemWorkTask )
         } catch (Exception e) {
-            LoggerUtility.debug( LOGGER, "GroupSendItemManagerImpl.process caught exception " + e.getMessage(), e )
+            LoggerUtility.debug( LOGGER, "GroupSendItemManagerImpl.process caught exception " + e.getMessage() )
             // we MUST re-throw as the thread which invoked this method must
             // mark the job as failed by using another thread (as the
             // thread associated with this thread will likely be rolled back)
@@ -124,8 +147,10 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
      * @param job the job that failed
      * @param cause the cause of the failure
      */
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
     public void markFailed( AsynchronousTask task, String errorCode, Throwable cause ) throws ApplicationException {
         ActionItemPostWork groupSendItem = (ActionItemPostWork) task
+        setHomeContext( groupSendItem.mepCode )
         actionItemPostWorkProcessorService.failGroupSendItem( groupSendItem.getId(), errorCode, StringHelper.stackTraceToString( cause ) )
         LoggerUtility.debug( LOGGER, "GroupSendItemManager.markFailed(task=" + groupSendItem.getId() + ") has marked the task as failed " )
     }

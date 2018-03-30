@@ -3,6 +3,7 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import groovy.sql.Sql
 import net.hedtech.banner.aip.ActionItem
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.common.AIPConstants
@@ -17,7 +18,9 @@ import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.general.scheduler.SchedulerJobReceipt
 import org.apache.log4j.Logger
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.context.request.RequestContextHolder
 
 /**
  * ActionItemPost Composite Service is responsible for initiating and processing group posts.
@@ -27,13 +30,16 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class ActionItemPostCompositeService {
 
-    private static final LOGGER = Logger.getLogger( this.class )
+    private static
+    final LOGGER = Logger.getLogger( "net.hedtech.banner.aip.post.grouppost.ActionItemPostCompositeService" )
 
     def actionItemPostService
     def actionItemProcessingCommonService
     def actionItemPostDetailService
-
+    def grailsApplication
+    def transactionManager
     def communicationPopulationCompositeService
+    def asynchronousBannerAuthenticationSpoofer
 
     def schedulerJobService
 
@@ -89,6 +95,7 @@ class ActionItemPostCompositeService {
             groupSendSaved = schedulePost( groupSendSaved, user.oracleUserName )
         }
         success = true
+        LoggerUtility.debug( LOGGER, " Finished Saving Posting ${groupSendSaved}." )
         [
                 success : success,
                 savedJob: groupSendSaved
@@ -408,14 +415,62 @@ class ActionItemPostCompositeService {
         }
     }
 
-
+    /**
+     *
+     * @param jobContext
+     * @return
+     */
     public ActionItemPost generatePostItemsFired( SchedulerJobContext jobContext ) {
+        setHomeContext( jobContext.parameters.get( "mepCode" ) )
+        generatePostItemsFiredImpl( jobContext )
+    }
+
+    /**
+     *
+     * @param home
+     * @return
+     */
+    def setHomeContext( home ) {
+        Sql sql = new Sql( sessionFactory.getCurrentSession().connection() )
+        try {
+            sql.call( "{call g\$_vpdi_security.g\$_vpdi_set_home_context(${home})}" )
+
+        } catch (e) {
+            log.error( "ERROR: Could not establish mif context. $e" )
+            throw e
+        } finally {
+            sql?.close()
+        }
+    }
+
+    /**
+     *
+     * @param jobContext
+     */
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
+    private void generatePostItemsFiredImpl( SchedulerJobContext jobContext ) {
+        asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), jobContext.parameters.get( "mepCode" ) )
         markArtifactsAsPosted( jobContext.parameters.get( "groupSendId" ) as Long )
         generatePostItems( jobContext.parameters )
     }
 
-
+    /**
+     *
+     * @param errorContext
+     * @return
+     */
     public ActionItemPost generatePostItemsFailed( SchedulerErrorContext errorContext ) {
+        setHomeContext( errorContext.jobContext.parameters.get( "mepCode" ) )
+        generatePostItemsFailedImpl( errorContext )
+    }
+
+    /**
+     *
+     * @param errorContext
+     */
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
+    private void generatePostItemsFailedImpl( SchedulerErrorContext errorContext ) {
+        asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), errorContext.jobContext.parameters.get( "mepCode" ) )
         scheduledPostCallbackFailed( errorContext )
     }
 
@@ -536,16 +591,18 @@ class ActionItemPostCompositeService {
 
 
     ActionItemPost schedulePostImmediately( ActionItemPost groupSend, String bannerUser ) {
+        LoggerUtility.debug( LOGGER, " Start creating  jobContext for ${bannerUser}." )
+        def mepCode = RequestContextHolder.currentRequestAttributes().request.session.getAttribute( 'mep' )
         SchedulerJobContext jobContext = new SchedulerJobContext(
                 groupSend.aSyncJobId != null ? groupSend.aSyncJobId : UUID.randomUUID().toString() )
                 .setBannerUser( bannerUser )
-                .setMepCode( groupSend.vpdiCode )
+                .setMepCode( mepCode )
                 .setJobHandle( "actionItemPostCompositeService", "generatePostItemsFired" )
                 .setErrorHandle( "actionItemPostCompositeService", "generatePostItemsFailed" )
                 .setParameter( "groupSendId", groupSend.id )
-
         SchedulerJobReceipt jobReceipt = schedulerJobService.scheduleNowServiceMethod( jobContext )
         groupSend.markQueued( jobReceipt.jobId, jobReceipt.groupId )
+        LoggerUtility.debug( LOGGER, " Completing marking posting in Queue." )
         actionItemPostService.update( groupSend )
     }
 
@@ -560,10 +617,11 @@ class ActionItemPostCompositeService {
         if (now.after( groupSend.postingScheduleDateTime )) {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService.class, "invalidScheduledDate" )
         }
+        def mepCode = RequestContextHolder.currentRequestAttributes().request.session.getAttribute( 'mep' )
         SchedulerJobContext jobContext = new SchedulerJobContext(
                 groupSend.aSyncJobId != null ? groupSend.aSyncJobId : UUID.randomUUID().toString() )
                 .setBannerUser( bannerUser )
-                .setMepCode( groupSend.vpdiCode )
+                .setMepCode( mepCode )
                 .setScheduledStartDate( groupSend.postingScheduleDateTime )
                 .setParameter( "groupSendId", groupSend.id )
 
@@ -612,20 +670,26 @@ class ActionItemPostCompositeService {
     void createPostItems( ActionItemPost groupSend ) {
         LoggerUtility.debug( LOGGER, "Generating group send item records for group send with id = " + groupSend?.id )
         def session = sessionFactory.currentSession
-        List<ActionItemPostSelectionDetailReadOnly> list = session.getNamedQuery( 'ActionItemPostSelectionDetailReadOnly.fetchSelectionIds' )
-                .setLong( 'postingId', groupSend.id )
-                .list()
-        list?.each {ActionItemPostSelectionDetailReadOnly it ->
-            session.createSQLQuery( """ INSERT INTO gcraiim (gcraiim_gcbapst_id, gcraiim_pidm, gcraiim_creationdatetime
-                                                                   ,gcraiim_current_state, gcraiim_reference_id, gcraiim_user_id, gcraiim_activity_date, 
+        def timeoutSeconds = (grailsApplication.config.banner?.transactionTimeout instanceof Integer ? (grailsApplication.config.banner?.transactionTimeout) : 300)
+        try {
+            transactionManager.setDefaultTimeout( timeoutSeconds * 2 )
+            List<ActionItemPostSelectionDetailReadOnly> list = session.getNamedQuery( 'ActionItemPostSelectionDetailReadOnly.fetchSelectionIds' )
+                    .setLong( 'postingId', groupSend.id )
+                    .list()
+            list?.each {ActionItemPostSelectionDetailReadOnly it ->
+                session.createSQLQuery( """ INSERT INTO gcraiim (gcraiim_gcbapst_id, gcraiim_pidm, gcraiim_creationdatetime
+                                                                   ,gcraiim_current_state, gcraiim_reference_id, gcraiim_user_id, gcraiim_activity_date,
                                                                    gcraiim_started_date) values (${groupSend.id}, ${
-                it.actionItemPostSelectionPidm
-            }, sysdate, '${ActionItemPostWorkExecutionState.Ready.toString()}' ,'$sysGuId', '${
-                it.postingUserId
-            }', sysdate, sysdate ) """ )
-                    .executeUpdate()
+                    it.actionItemPostSelectionPidm
+                }, sysdate, '${ActionItemPostWorkExecutionState.Ready.toString()}' ,'$sysGuId', '${
+                    it.postingUserId
+                }', sysdate, sysdate ) """ )
+                        .executeUpdate()
+            }
+            LoggerUtility.debug( LOGGER, "Created " + list?.size() + " group send item records for group send with id = " + groupSend.id )
+        } finally {
+            transactionManager.setDefaultTimeout( timeoutSeconds )
         }
-        LoggerUtility.debug( LOGGER, "Created " + list?.size() + " group send item records for group send with id = " + groupSend.id )
     }
     /**
      * Get system GU id

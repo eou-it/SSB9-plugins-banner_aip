@@ -74,18 +74,7 @@ class ActionItemProcessingCommonServiceIntegrationTests extends BaseIntegrationT
 
     @Test
     void testListStatus() {
-        assert [
-                [
-                        "id"   : 1,
-                        "value": "Draft"
-                ], [
-                        "id"   : 2,
-                        "value": "Active"
-                ], [
-                        "id"   : 3,
-                        "value": "Inactive"
-                ]
-        ] == actionItemProcessingCommonService.listStatus()
+        assert [[id: 2, value: 'Active'], [id: 1, value: 'Draft'], [id: 3, value: 'Inactive']] == actionItemProcessingCommonService.listStatus()
     }
 
 

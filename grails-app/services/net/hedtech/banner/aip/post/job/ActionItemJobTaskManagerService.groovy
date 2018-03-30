@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional
  *
  */
 class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
-    private static final LOGGER = Logger.getLogger( this.class )
+    private static final LOGGER = Logger.getLogger( 'net.hedtech.banner.aip.post.job.ActionItemJobTaskManagerService' )
 
     def actionItemJobService
 
@@ -113,7 +113,7 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
 
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                LoggerUtility.debug( LOGGER, "${this.getClass().getSimpleName()}.process caught exception " + e.getMessage(), e )
+                LoggerUtility.debug( LOGGER, "${this.getClass().getSimpleName()}.process caught exception " + e.getMessage())
             }
 
             // we MUST re-throw as the thread which invoked this method must
