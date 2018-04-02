@@ -7,10 +7,8 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import net.hedtech.banner.general.CommunicationCommonUtility
 import org.hibernate.criterion.Order
-import org.springframework.web.context.request.RequestContextHolder
 
 import javax.persistence.*
-
 
 @NamedQueries(value = [
         @NamedQuery(name = "ActionItemStatus.fetchActionItemStatuses",
