@@ -36,6 +36,7 @@ class ActionItemPostMonitorIntegrationTests extends BaseIntegrationTestCase {
     @After
     void tearDown() {
         super.tearDown()
+        logout()
     }
 
 
