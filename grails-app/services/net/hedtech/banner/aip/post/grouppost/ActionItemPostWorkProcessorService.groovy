@@ -89,13 +89,7 @@ class ActionItemPostWorkProcessorService {
                                  [groupSendItemId, state.name()],
                                  0, 2
             )
-
-            if (rows.size() > 1) {
-                throw new RuntimeException( "Found more than one GCRAIIM row for a single group send item id" )
-            } else {
-                return rows.size() == 1
-            }
-
+            return rows.size() == 1
         } catch (SQLException e) {
             if (e.getErrorCode() == noWaitErrorCode) {
                 return false

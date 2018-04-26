@@ -10,6 +10,7 @@ import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.aip.post.job.ActionItemJob
 import net.hedtech.banner.aip.post.job.ActionItemJobStatus
 import net.hedtech.banner.exceptions.ApplicationException
+import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
 import net.hedtech.banner.general.communication.population.CommunicationPopulation
 import net.hedtech.banner.general.communication.population.CommunicationPopulationListView
 import net.hedtech.banner.general.communication.population.CommunicationPopulationVersion
@@ -273,6 +274,18 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
 
     @Test
+    void testSetHomeContext() {
+        actionItemPostCompositeService.setHomeContext( 'TEST' )
+    }
+
+
+    @Test(expected = Exception.class)
+    void testSetHomeContextFail() {
+        actionItemPostCompositeService.setHomeContext( 'SOMETHING_DIFFERENT' )
+    }
+
+
+    @Test
     void scheduledPostCallbackFailed() {
         ActionItemPost aip = newAIP()
         aip = actionItemPostService.create( aip )
@@ -302,9 +315,10 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
     }
 
 
-    //@Test
+    @Test
     void generatePostItemsFired() {
         ActionItemPost aip = newAIP()
+        actionItemPostCompositeService.setAsynchronousBannerAuthenticationSpoofer( new AsynchronousBannerAuthenticationSpoofer() )
         aip = actionItemPostService.create( aip )
         SchedulerJobContext jobContext = new SchedulerJobContext( 'test' )
         jobContext.setParameter( 'groupSendId', aip.id )
@@ -313,9 +327,10 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
     }
 
 
-    //@Test
+    @Test
     void generatePostItemsFailed() {
         ActionItemPost aip = newAIP()
+        actionItemPostCompositeService.setAsynchronousBannerAuthenticationSpoofer( new AsynchronousBannerAuthenticationSpoofer() )
         aip = actionItemPostService.create( aip )
         SchedulerJobContext jobContext = new SchedulerJobContext( 'test' )
         jobContext.setParameter( 'groupSendId', aip.id )

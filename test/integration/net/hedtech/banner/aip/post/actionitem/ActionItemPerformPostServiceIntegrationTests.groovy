@@ -8,6 +8,7 @@ import net.hedtech.banner.aip.ActionItemGroupAssign
 import net.hedtech.banner.aip.post.grouppost.ActionItemPost
 import net.hedtech.banner.aip.post.grouppost.ActionItemPostDetail
 import net.hedtech.banner.aip.post.grouppost.ActionItemPostWork
+import net.hedtech.banner.aip.post.grouppost.ActionItemPostWorkExecutionState
 import net.hedtech.banner.general.communication.population.CommunicationPopulation
 import net.hedtech.banner.general.communication.population.CommunicationPopulationListView
 import net.hedtech.banner.general.communication.population.CommunicationPopulationVersion
@@ -29,6 +30,7 @@ class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCa
     def actionItemPostDetailService
 
     private static final String USERNAME = 'AIPADM001'
+
 
     @Before
     void setUp() {
@@ -63,7 +65,7 @@ class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCa
         println newAip
         actionItemPostCompositeService.createPostItems( newAip )
 
-        ActionItemPostWork actionItemPostWork2 = ActionItemPostWork.fetchByGroupSend(newAip, 1)[0]
+        ActionItemPostWork actionItemPostWork2 = ActionItemPostWork.fetchByGroupSend( newAip, 1 )[0]
 
         println "post 2"
         println actionItemPostWork2
@@ -72,7 +74,11 @@ class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCa
 
         println "post work"
         println actionItemPostWork
+        def result = actionItemPerformPostService.postActionItems( actionItemPostWork )
         assert userActionItemService.list( [max: Integer.MAX_VALUE] ).size() > 0
+        assertEquals result.id, actionItemPostWork.id
+        assertEquals result.version, actionItemPostWork.version
+        assertNotEquals( actionItemPostWork.currentExecutionState, ActionItemPostWorkExecutionState.Ready.name() )
 
     }
 
@@ -94,7 +100,7 @@ class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCa
         requestMap.scheduledStartDate = new Date()
         def actionItemPost = actionItemPostCompositeService.getActionPostInstance( requestMap, springSecurityService.getAuthentication()?.user )
         actionItemPost.populationCalculationId = populationVersion.id
-        actionItemPost.populationVersionId=populationVersion.id
+        actionItemPost.populationVersionId = populationVersion.id
         actionItemPost
     }
 }

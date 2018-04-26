@@ -1,6 +1,7 @@
-/********************************************************************************
+/*********************************************************************************
  Copyright 2018 Ellucian Company L.P. and its affiliates.
- ********************************************************************************/
+ **********************************************************************************/
+
 package net.hedtech.banner.aip.post.grouppost
 
 import net.hedtech.banner.aip.ActionItemGroup
@@ -16,14 +17,12 @@ import org.junit.Test
 
 import java.text.SimpleDateFormat
 
-class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegrationTestCase {
+class ActionItemPostMonitorIntegrationTests extends BaseIntegrationTestCase {
+    def actionItemPostService
 
-    def actionItemPostWorkProcessorService
     def actionItemPostCompositeService
     def actionItemProcessingCommonService
     def springSecurityService
-    def actionItemPostService
-    def actionItemPostDetailService
 
 
     @Before
@@ -37,41 +36,22 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
     @After
     void tearDown() {
         super.tearDown()
-        logout()
     }
 
-    // TODO: try posting to bad pidm
-    // TODO: try posting to date range overlap
-    // TODO: try posting with null actionitemid
-    // TODO: post a set of valid items and verify logged info
-    // TODO: post a set of items, some violating date range rule, and verify logged info
 
-    // TODO: try posting to date range overlap
     @Test
-    // FIXME: not working
-    void testPerformGroupSendItem() {
-        actionItemPostWorkProcessorService.setAsynchronousBannerAuthenticationSpoofer( new AsynchronousBannerAuthenticationSpoofer() )
-        def user = springSecurityService.getAuthentication()?.user
-        ActionItemPostWork actionItemPostWork = new ActionItemPostWork()
-        actionItemPostWork.referenceId = 'somestringfortestinglswefhihvciewranc'
-        actionItemPostWork.recipientPidm = user.pidm
-        actionItemPostWork.currentExecutionState = ActionItemPostWorkExecutionState.Ready
-        actionItemPostWork.creationDateTime = new Date()
-        Map obj = newAIP()
-        ActionItemPost aip = obj.instance
+    void monitorPosts() {
+        ActionItemPostMonitor actionItemPostMonitor = new ActionItemPostMonitor()
+        actionItemPostMonitor.setAsynchronousBannerAuthenticationSpoofer( new AsynchronousBannerAuthenticationSpoofer() )
+        ActionItemPost aip = newAIP()
+        aip.postingCurrentState = ActionItemPostExecutionState.Processing
         aip = actionItemPostService.create( aip )
-        obj.actionItemIds.each {
-            ActionItemPostDetail groupDetail = new ActionItemPostDetail(
-                    actionItemPostId: aip.id,
-                    actionItemId: it
-            )
-            actionItemPostDetailService.create( groupDetail )
-        }
-        actionItemPostCompositeService.createPostItems( aip )
-        aip.postingCurrentState = ActionItemPostExecutionState.New
-        actionItemPostWork.actionItemGroupSend = aip
+        ActionItemPostWork actionItemPostWork =
+                new ActionItemPostWork( actionItemGroupSend: aip,
+                                        currentExecutionState: ActionItemPostWorkExecutionState.Partial,
+                                        recipientPidm: springSecurityService.getAuthentication()?.user.pidm )
         actionItemPostWork.save( flush: true )
-        actionItemPostWorkProcessorService.performPostItem( actionItemPostWork )
+        actionItemPostMonitor.monitorPosts()
     }
 
 
@@ -105,6 +85,6 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
         actionItemPost.populationCalculationId = populationVersion.id
         actionItemPost.populationVersionId = populationVersion.id
         actionItemPost
-        [instance: actionItemPost, actionItemIds: actionItemIds]
     }
+
 }
