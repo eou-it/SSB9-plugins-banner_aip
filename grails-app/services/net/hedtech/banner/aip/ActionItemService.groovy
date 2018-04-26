@@ -56,11 +56,10 @@ class ActionItemService extends ServiceBase {
             } else if (errorCodes.contains( 'maxSize.exceeded' )) {
                 throw new ApplicationException( ActionItem, MAX_SIZE_ERROR, 'actionItem.max.size.error' )
             }
-            throw new ApplicationException( ActionItem, OTHER_VALIDATION_ERROR, 'actionItem.operation.not.permitted' )
         }
 
         if (!CommunicationFolder.get( ai.folderId )) {
-            throw new ApplicationException( ActionItem, FOLDER_VALIDATION_ERROR, 'actionItem.folder.validation.error')
+            throw new ApplicationException( ActionItem, FOLDER_VALIDATION_ERROR, 'actionItem.folder.validation.error' )
         }
         if (ActionItem.existsSameNameInFolder( ai.folderId, ai.name )) {
             throw new ApplicationException( ActionItem, UNIQUE_NAME_FOLDER_ERROR, 'actionItem.name.unique.error' )
@@ -96,10 +95,9 @@ class ActionItemService extends ServiceBase {
             } else if (errorCodes.contains( 'maxSize.exceeded' )) {
                 throw new ApplicationException( ActionItem, MAX_SIZE_ERROR, 'actionItem.max.size.error' )
             }
-            throw new ApplicationException( ActionItem, OTHER_VALIDATION_ERROR, 'actionItem.operation.not.permitted' )
         }
         if (!CommunicationFolder.get( ai.folderId )) {
-            throw new ApplicationException( ActionItem, FOLDER_VALIDATION_ERROR, 'actionItem.folder.validation.error')
+            throw new ApplicationException( ActionItem, FOLDER_VALIDATION_ERROR, 'actionItem.folder.validation.error' )
         }
         if (oldFolderId != ai.folderId && ActionItem.existsSameNameInFolder( ai.folderId, ai.name )) {
             throw new ApplicationException( ActionItem, UNIQUE_NAME_FOLDER_ERROR, 'actionItem.name.unique.error' )

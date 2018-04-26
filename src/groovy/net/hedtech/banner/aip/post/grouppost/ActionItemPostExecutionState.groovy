@@ -44,12 +44,13 @@ enum ActionItemPostExecutionState implements Serializable {
      * @return
      */
     static ActionItemPostExecutionState getStateEnum( String executionState ) {
-        for (ActionItemPostExecutionState ds : values()) {
-            if (ds.name() == executionState) {
-                return ds
-            }
+        ActionItemPostExecutionState ret = values().find {
+            it.name() == executionState
         }
-        throw new IllegalArgumentException( "executionState not found:" + executionState )
+        if (!ret) {
+            throw new IllegalArgumentException( "executionState not found:" + executionState )
+        }
+        ret
     }
 
 

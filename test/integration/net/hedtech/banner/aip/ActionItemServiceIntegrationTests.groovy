@@ -187,4 +187,154 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
             assertTrue( e.getDefaultMessage().toString().contains( 'actionItem.name.unique.error' ) )
         }
     }
+
+
+    @Test
+    void testCreateActionItemFailWithDomainAsMap() {
+        ActionItem existingAI = actionItemService.list()[7]
+        Map ai = [
+                folderId       : existingAI.folderId,
+                status         : 'P',
+                name           : existingAI.name,
+                title          : existingAI.title,
+                postedIndicator: 'N',
+                description    : 'this is some action item']
+        try {
+            actionItemService.create( [domainModel: ai] )
+            Assert.fail "Expected duplicate title in folder to fail because of name unique constraint."
+        } catch (ApplicationException e) {
+            assertTrue( e.getMessage().toString().contains( "@@r1:UniqueNameInFolderError@@" ) )
+            assertTrue( e.getDefaultMessage().toString().contains( 'actionItem.name.unique.error' ) )
+        }
+    }
+
+
+    @Test
+    void testCreateActionItemFailMaxSizeForName() {
+        ActionItem existingAI = actionItemService.list()[7]
+        String largeString = 'Large Text Large Text Large Text Large TextLarge Text  Large Text Large Text Large Text Large Text Large Text Large Text Large Text Large Text Large Text Large Text Large Text Large Text Large Text Large Text '
+        Map ai = [
+                folderId       : existingAI.folderId,
+                status         : 'P',
+                name           : existingAI.name + largeString,
+                title          : existingAI.title,
+                postedIndicator: 'N',
+                description    : 'this is some action item']
+        try {
+            actionItemService.create( [domainModel: ai] )
+        } catch (ApplicationException e) {
+            assertTrue( e.getMessage().toString().contains( "@@r1:MaxSizeError@@" ) )
+            assertTrue( e.getDefaultMessage().toString().contains( 'actionItem.max.size.error' ) )
+        }
+    }
+
+
+    @Test
+    void testValidateUpdateActionItemSuccess() {
+        ActionItem existingAI = actionItemService.list()[7]
+        ActionItem ai = new ActionItem()
+        ai.folderId = existingAI.folderId
+        ai.status = 'P'
+        ai.name = existingAI.name
+        ai.title = existingAI.title
+        ai.postedIndicator = 'N'
+        ai.description = 'this is some action item'
+        actionItemService.validateUpdate( ai, existingAI.folderId )
+    }
+
+
+    @Test
+    void testValidateUpdateActionItemFailNullName() {
+        ActionItem existingAI = actionItemService.list()[7]
+        ActionItem ai = new ActionItem()
+        ai.folderId = existingAI.folderId
+        ai.status = 'P'
+        ai.name = null
+        ai.title = existingAI.title
+        ai.postedIndicator = 'N'
+        ai.description = 'this is some action item'
+        try {
+            actionItemService.validateUpdate( ai, existingAI.folderId )
+        } catch (ApplicationException e) {
+            assertTrue( e.getMessage().toString().contains( "@@r1:NameCanNotBeNullError@@" ) )
+            assertTrue( e.getDefaultMessage().toString().contains( 'actionItem.name.nullable.error' ) )
+        }
+    }
+
+
+    @Test
+    void testValidateUpdateActionItemFailNullTitle() {
+        ActionItem existingAI = actionItemService.list()[7]
+        ActionItem ai = new ActionItem()
+        ai.folderId = existingAI.folderId
+        ai.status = 'P'
+        ai.name = existingAI.name
+        ai.title = null
+        ai.postedIndicator = 'N'
+        ai.description = 'this is some action item'
+        try {
+            actionItemService.validateUpdate( ai, existingAI.folderId )
+        } catch (ApplicationException e) {
+            assertTrue( e.getMessage().toString().contains( "@@r1:TitleCanNotBeNullError@@" ) )
+            assertTrue( e.getDefaultMessage().toString().contains( 'actionItem.title.nullable.error' ) )
+        }
+    }
+
+
+    @Test
+    void testValidateUpdateActionItemFailNullFolder() {
+        ActionItem existingAI = actionItemService.list()[7]
+        ActionItem ai = new ActionItem()
+        ai.folderId = null
+        ai.status = 'P'
+        ai.name = existingAI.name
+        ai.title = existingAI.title
+        ai.postedIndicator = 'N'
+        ai.description = 'this is some action item'
+        try {
+            actionItemService.validateUpdate( ai, existingAI.folderId )
+        } catch (ApplicationException e) {
+            assertTrue( e.getMessage().toString().contains( "@@r1:FolderCanNotBeNullError@@" ) )
+            assertTrue( e.getDefaultMessage().toString().contains( 'actionItem.folderId.nullable.error' ) )
+        }
+    }
+
+
+    @Test
+    void testValidateUpdateActionItemFailNullStatus() {
+        ActionItem existingAI = actionItemService.list()[7]
+        ActionItem ai = new ActionItem()
+        ai.folderId = existingAI.folderId
+        ai.status = null
+        ai.name = existingAI.name
+        ai.title = existingAI.title
+        ai.postedIndicator = 'N'
+        ai.description = 'this is some action item'
+        try {
+            actionItemService.validateUpdate( ai, existingAI.folderId )
+        } catch (ApplicationException e) {
+            assertTrue( e.getMessage().toString().contains( "@@r1:StatusCanNotBeNullError@@" ) )
+            assertTrue( e.getDefaultMessage().toString().contains( 'actionItem.status.nullable.error' ) )
+        }
+    }
+
+
+    @Test
+    void testValidateUpdateActionItemFailExceedNameSize() {
+        ActionItem existingAI = actionItemService.list()[7]
+        String largeString = 'Large Text Large Text Large Text Large TextLarge Text  Large Text Large Text Large Text Large Text Large Text Large Text Large Text Large Text Large Text Large Text Large Text Large Text Large Text Large Text '
+        ActionItem ai = new ActionItem()
+        ai.folderId = existingAI.folderId
+        ai.status = 'D' + largeString
+        ai.name = existingAI.name
+        ai.title = existingAI.title
+        ai.postedIndicator = 'N'
+        ai.description = 'this is some action item'
+        try {
+            actionItemService.validateUpdate( ai, existingAI.folderId )
+        } catch (ApplicationException e) {
+            assertTrue( e.getMessage().toString().contains( "@@r1:MaxSizeError@@" ) )
+            assertTrue( e.getDefaultMessage().toString().contains( 'actionItem.max.size.error' ) )
+        }
+    }
 }

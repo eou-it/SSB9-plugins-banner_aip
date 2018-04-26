@@ -112,10 +112,7 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
             //actionItemJobProcessorService.performActionItemJob( task.getId() )
 
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                LoggerUtility.debug( LOGGER, "${this.getClass().getSimpleName()}.process caught exception " + e.getMessage())
-            }
-
+            LoggerUtility.debug( LOGGER, "${this.getClass().getSimpleName()}.process caught exception " + e.getMessage() )
             // we MUST re-throw as the thread which invoked this method must
             // mark the job as failed by using another thread (as the
             // thread associated with this thread will likely be rolled back)
@@ -141,8 +138,6 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
         actionItemJobService.update( job )
         if (cause) {
             LoggerUtility.info( LOGGER, "Marked job with id = ${job.id} as failed cause = ${cause.toString()}." )
-        } else {
-            LoggerUtility.info( LOGGER, "Marked job with id = ${job.id} as failed." )
         }
     }
 

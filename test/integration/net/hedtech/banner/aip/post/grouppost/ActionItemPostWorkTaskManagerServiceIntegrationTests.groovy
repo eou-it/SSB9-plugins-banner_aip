@@ -59,7 +59,9 @@ class ActionItemPostWorkTaskManagerServiceIntegrationTests extends BaseIntegrati
         aip = actionItemPostService.create( aip )
         actionItemPostWork.actionItemGroupSend = aip
         actionItemPostWork = actionItemPostWorkService.create( actionItemPostWork )
+        actionItemPostWorkService.refreshIfNeeded( true )
         actionItemPostWorkTaskManagerService.delete( actionItemPostWork )
+        actionItemPostWorkService.refreshIfNeeded( true )
         assert ActionItemPost.findById( actionItemPostWork.id ) == null
     }
 
@@ -106,7 +108,6 @@ class ActionItemPostWorkTaskManagerServiceIntegrationTests extends BaseIntegrati
         // TODO Need to complete this
     }
 
-
     //@Test
     void process() {
         ActionItemPostWork actionItemPostWork = newActionItemPostWork()
@@ -126,7 +127,7 @@ class ActionItemPostWorkTaskManagerServiceIntegrationTests extends BaseIntegrati
         actionItemPostService.create( aip )
         actionItemPostWork.actionItemGroupSend = aip
         actionItemPostWork = actionItemPostWorkService.create( actionItemPostWork )
-        actionItemPostWorkTaskManagerService.markFailed( actionItemPostWork, ActionItemErrorCode.UNKNOWN_ERROR.name(  ), new Exception( 'test' ) )
+        actionItemPostWorkTaskManagerService.markFailed( actionItemPostWork, ActionItemErrorCode.UNKNOWN_ERROR.name(), new Exception( 'test' ) )
         ActionItemPostWork failedOne = actionItemPostWorkService.get( actionItemPostWork.id )
         assert failedOne.currentExecutionState == ActionItemPostWorkExecutionState.Failed
     }
@@ -139,8 +140,14 @@ class ActionItemPostWorkTaskManagerServiceIntegrationTests extends BaseIntegrati
 
 
     @Test
-    void updateMonitorRecord1() {
+    void testSetSimulatedFailureException() {
         actionItemPostWorkTaskManagerService.setSimulatedFailureException( null )
+    }
+
+
+    @Test(expected = Exception.class)
+    void testMepContextFailedCase() {
+        actionItemPostWorkTaskManagerService.setHomeContext( "SOMETHING_DIFFERENT" )
     }
 
 

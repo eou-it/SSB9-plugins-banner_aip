@@ -4,6 +4,8 @@
 
 package net.hedtech.banner.aip.post.job
 
+import net.hedtech.banner.exceptions.ApplicationException
+import net.hedtech.banner.general.communication.groupsend.automation.StringHelper
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.apache.commons.lang.NotImplementedException
 import org.junit.After
@@ -91,8 +93,27 @@ class ActionItemJobTaskManagerServiceIntegrationTests extends BaseIntegrationTes
     void process() {
         ActionItemJob actionItemJob = new ActionItemJob( status: ActionItemJobStatus.PENDING, referenceId: 'ashahs', creationDateTime: new Date() )
         actionItemJob = actionItemJobService.create( actionItemJob )
+        actionItemJobTaskManagerService.setSimulatedFailureException( null )
         actionItemJobTaskManagerService.process( actionItemJob )
 
+    }
+
+
+    @Test(expected = RuntimeException.class)
+    void testProcessWithException() {
+        ActionItemJob actionItemJob = new ActionItemJob( status: ActionItemJobStatus.PENDING, referenceId: 'ashahs', creationDateTime: new Date() )
+        actionItemJob = actionItemJobService.create( actionItemJob )
+        actionItemJobTaskManagerService.setSimulatedFailureException( new Exception( "test" ) )
+        actionItemJobTaskManagerService.process( actionItemJob )
+    }
+
+
+    @Test(expected = ApplicationException.class)
+    void testProcessWithApplicationException() {
+        ActionItemJob actionItemJob = new ActionItemJob( status: ActionItemJobStatus.PENDING, referenceId: 'ashahs', creationDateTime: new Date() )
+        actionItemJob = actionItemJobService.create( actionItemJob )
+        actionItemJobTaskManagerService.setSimulatedFailureException( new ApplicationException( this, new Exception( "test" ) ) )
+        actionItemJobTaskManagerService.process( actionItemJob )
     }
 
 
@@ -103,6 +124,8 @@ class ActionItemJobTaskManagerServiceIntegrationTests extends BaseIntegrationTes
         actionItemJobTaskManagerService.markFailed( actionItemJob, 'UNKNOWN_ERROR', new Exception( 'test' ) )
         ActionItemJob failedOne = actionItemJobService.get( actionItemJob.id )
         assert failedOne.status == ActionItemJobStatus.FAILED
+        assert failedOne.errorCode.name() == 'UNKNOWN_ERROR'
+        assertNotNull failedOne.errorText
     }
 
 
