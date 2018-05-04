@@ -37,6 +37,7 @@ class ActionItemGroupCompositeService {
         if (map.group.groupId) {
             group = actionItemGroupService.getActionItemGroupById( map.group.groupId.longValue() )
             group.description = map.group.groupDesc
+            group.folderId = map.group.folderId
             group.title = map.group.groupTitle
             group.status = AIPConstants.STATUS_MAP.get( map.group.groupStatus )
         } else {
