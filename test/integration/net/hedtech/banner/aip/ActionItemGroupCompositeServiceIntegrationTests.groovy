@@ -76,7 +76,7 @@ class ActionItemGroupCompositeServiceIntegrationTests extends BaseIntegrationTes
         assert result.group.groupTitle == 'groupTitle'
         assert result.group.groupDesc == 'groupDesc'
         assert (result.group.folderId as long) == CommunicationFolder.findByName('Student').id
-        assert (exitingFolder as long)!= CommunicationFolder.findByName('Student').id
+        assert (exitingFolder as long) != CommunicationFolder.findByName('Student').id
     }
 
 
