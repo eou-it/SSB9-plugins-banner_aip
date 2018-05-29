@@ -117,6 +117,10 @@ class ActionItemCompositeService {
             return [success: success,
                     message: checkDeletable.message]
         }
+        List<ActionItemBlockedProcess> actionItemBlockedProcess =  actionItemBlockedProcessService.listBlockedProcessByActionItemId( actionItemId )
+        actionItemBlockedProcess.each {
+            actionItemBlockedProcessService.delete( it )
+        }
         ActionItemContent actionItemContent = actionItemContentService.listActionItemContentById( actionItemId )
         if (actionItemContent) {
             actionItemContentService.delete( actionItemContent )
