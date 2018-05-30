@@ -343,7 +343,7 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
 
             monitorThread.register( new AsynchronousTaskMonitorRecord( Thread.currentThread().getName(), job.getId() ) )
 
-            // TODO: Add a map of the job to this thread in a monitor table, so that a monitor
+            // Add a map of the job to this thread in a monitor table, so that a monitor
             // thread can check to make sure this thread is alive, and update that monitor record's
             // 'runningAsOf' timestamp.  If the monitor thread cannot find this thread, it would know that
             // this thread did not successfully complete it's task (or at least never removed it's map from

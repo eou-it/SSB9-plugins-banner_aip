@@ -40,15 +40,7 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
         logout()
     }
 
-    // TODO: try posting to bad pidm
-    // TODO: try posting to date range overlap
-    // TODO: try posting with null actionitemid
-    // TODO: post a set of valid items and verify logged info
-    // TODO: post a set of items, some violating date range rule, and verify logged info
-
-    // TODO: try posting to date range overlap
     @Test
-    // FIXME: not working
     void testPerformGroupSendItem() {
         actionItemPostWorkProcessorService.setAsynchronousBannerAuthenticationSpoofer( new AsynchronousBannerAuthenticationSpoofer() )
         def user = springSecurityService.getAuthentication()?.user

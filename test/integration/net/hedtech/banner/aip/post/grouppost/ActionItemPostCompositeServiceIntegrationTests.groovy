@@ -97,14 +97,12 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
             assert actionItemJob.referenceId == it.referenceId
             assert actionItemJob.status == ActionItemJobStatus.PENDING
             assert actionItemJob.id != null
-            //println 'actionItemJob ' + actionItemJob
         }
 
         actionItemPostCompositeService.stopPendingAndDispatchedJobs( aip.id )
         actionItemJobService.list( [max: 10000] ).each {ActionItemJob it ->
-            //println 'actionItemJob1 ' + it
             if (refList.contains( it.referenceId )) {
-                //assert it.status == ActionItemJobStatus.STOPPED //TODO Need to check and fix
+                //assert it.status == ActionItemJobStatus.STOPPED
             }
         }
     }

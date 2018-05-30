@@ -482,8 +482,6 @@ class ActionItemPostCompositeService {
             populationVersion = communicationPopulationCompositeService.createPopulationVersion( population )
             population.changesPending = false
             communicationPopulationCompositeService.updatePopulation( population )
-            // Todo: Should we delete population versions no longer in use by any group sends aside from he one we just created
-            // We would need to remove all the associated objects.
         } else {
             populationVersion = CommunicationPopulationVersion.findLatestByPopulationId( groupSend.populationListId )
         }
@@ -524,8 +522,6 @@ class ActionItemPostCompositeService {
         if (!groupSend) {
             throw new ApplicationException( "groupSend", new NotFoundException() )
         }
-        // TODO: this doesn't seem to be using the versioning mechanism properly. Just creates new
-        // TODO: not sure if this will work when we implement recurring
         if (!groupSend.postingCurrentState.isTerminal()) {
             try {
                 boolean shouldUpdateGroupSend = false

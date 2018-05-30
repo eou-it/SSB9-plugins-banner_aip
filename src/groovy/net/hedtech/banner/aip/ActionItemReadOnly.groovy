@@ -23,8 +23,8 @@ import javax.persistence.*
            FROM ActionItemReadOnly a
           """),
         @NamedQuery(name = "ActionItemReadOnly.fetchActionItemROCount",
-                query = """SELECT COUNT(a.actionItemId) FROM ActionItemReadOnly a 
-                           WHERE upper(a.actionItemName) like upper(:actionItemName) 
+                query = """SELECT COUNT(a.actionItemId) FROM ActionItemReadOnly a
+                           WHERE upper(a.actionItemName) like upper(:actionItemName)
             """
         )
 
@@ -228,8 +228,6 @@ class ActionItemReadOnly implements Serializable {
         }
     }
 
-    // TODO: make filter (filterData and ilike) optional
-    // TODO: filter seems to need tests.
     /**
      *
      * @param filterData

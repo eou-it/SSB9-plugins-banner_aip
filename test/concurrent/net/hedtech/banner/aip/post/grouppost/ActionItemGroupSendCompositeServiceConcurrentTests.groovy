@@ -146,7 +146,6 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         sleepUntilPostComplete( groupSend, 3 * 60 )
 
         // test delete group send
-        // TODO: send and assert for multiple action items in group
         assertEquals( 1, fetchPostCount( groupSend.id ) )
         assertEquals( 5, fetchPostItemCount( groupSend.id ) )
         assertEquals( 5, ActionItemJob.findAll().size() )
@@ -240,7 +239,6 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         sleepUntilPostComplete( groupSend, 3 * 60 )
 
         // test delete group send
-        // TODO: send and assert for multiple action items in group
         assertEquals( 1, fetchPostCount( groupSend.id ) )
         assertEquals( 5, fetchPostItemCount( groupSend.id ) )
         assertEquals( 5, ActionItemJob.findAll().size() )
@@ -299,18 +297,6 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
             return ActionItemPostWork.fetchByGroupSend( each ).size() == 5
         }
         assertTrueWithRetry( checkExpectedGroupSendItemsCreated, groupSend.id, 15, 5 )
-        /* TODO: implement these views
-        // Confirm group send view returns the correct results
-        def sendViewDetails = ActionItemGroupSendDetailView.findAll()
-        assertEquals(1, sendViewDetails.size())
-
-        def sendListView = ActionItemGroupSendListView.findAll()
-        assertEquals(1, sendListView.size())
-
-        // Confirm group send item view returns the correct results
-        def sendItemViewDetails = ActionItemGroupSendItemView.findAll()
-        assertEquals(5, sendItemViewDetails.size())
-        */
         boolean isComplete = sleepUntilPostItemsComplete( groupSend, 60 )
         assertTrue( "items not completed", isComplete )
         // just a little more
@@ -324,18 +310,9 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
 
         sleepUntilPostComplete( groupSend, 3 * 60 )
 
-        // test delete group send
-        // TODO: send and assert for multiple action items in group
         assertEquals( 1, fetchPostCount( groupSend.id ) )
         assertEquals( 5, fetchPostItemCount( groupSend.id ) )
         assertEquals( 5, ActionItemJob.findAll().size() )
-        // Not yet supported
-        /*
-        actionItemPostCompositeService.deletePost( groupSend.id )
-        assertEquals( 0, fetchPostCount( groupSend.id ) )
-        assertEquals( 0, fetchPostItemCount( groupSend.id ) )
-        assertEquals( 0, ActionItemJob.findAll().size() )
-        */
 
         /*
          send again. Should not get duplicates
@@ -371,7 +348,6 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         sleepUntilPostComplete( groupSend2, 3 * 60 )
 
         // test delete group send
-        // TODO: send and assert for multiple action items in group
         assertEquals( 1, fetchPostCount( groupSend2.id ) )
         assertEquals( 5, fetchPostItemCount( groupSend2.id ) )
         assertEquals( 10, ActionItemJob.findAll().size() )
@@ -409,7 +385,6 @@ class ActionItemGroupSendCompositeServiceConcurrentTests extends ActionItemBaseC
         sleepUntilPostComplete( groupSend3, 3 * 60 )
 
         // test delete group send
-        // TODO: send and assert for multiple action items in group
         assertEquals( 1, fetchPostCount( groupSend3.id ) )
         assertEquals( 5, fetchPostItemCount( groupSend3.id ) )
         assertEquals( 15, ActionItemJob.findAll().size() )
