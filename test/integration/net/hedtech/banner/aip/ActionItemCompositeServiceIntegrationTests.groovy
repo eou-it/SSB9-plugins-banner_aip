@@ -10,6 +10,8 @@ import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import net.hedtech.banner.aip.block.process.ActionItemBlockedProcess
+import net.hedtech.banner.aip.block.process.BlockingProcess
 
 class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
 
@@ -17,6 +19,7 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
     def actionItemService
     def actionItemContentService
     def actionItemStatusRuleService
+    def actionItemBlockedProcessService
 
 
     @Before
@@ -178,6 +181,31 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         assert result.success == true
         assert result.newActionItem.description == 'description'
         ActionItem ai = result.newActionItem
+        actionItemContentService.create( new ActionItemContent(
+                actionItemId: ai.id,
+                actionItemTemplateId: (ActionItemTemplate.findAll()[0]).id,
+                text: 'Text'
+        ) )
+        actionItemStatusRuleService.create( new ActionItemStatusRule(
+                actionItemId: ai.id,
+                seqOrder: 1,
+                labelText: 'Text'
+        ) )
+        result = actionItemCompositeService.deleteActionItem( ai.id )
+        assert result.success == true
+    }
+
+
+    @Test
+    void deleteActionItemWithBlockedProcess() {
+        def result = actionItemCompositeService.addActionItem( [folderId: CommunicationFolder.findByName( 'Student' ).id, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
+        assert result.success == true
+        assert result.newActionItem.description == 'description'
+        ActionItem ai = result.newActionItem
+        actionItemBlockedProcessService.create (new ActionItemBlockedProcess(
+                blockActionItemId: ai.id,
+                blockedProcessId:BlockingProcess.findByProcessName('Prepare for Registration').id
+        ))
         actionItemContentService.create( new ActionItemContent(
                 actionItemId: ai.id,
                 actionItemTemplateId: (ActionItemTemplate.findAll()[0]).id,

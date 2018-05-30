@@ -12,6 +12,9 @@ import org.springframework.transaction.annotation.Propagation
 
 import java.text.MessageFormat
 
+import net.hedtech.banner.aip.block.process.ActionItemBlockedProcess
+
+
 /**
  * Class for ActionItemCompositeService.
  */
@@ -23,6 +26,7 @@ class ActionItemCompositeService {
     def actionItemStatusRuleService
     def actionItemContentService
     def actionItemReadOnlyService
+    def actionItemBlockedProcessService
 
     /**
      * Adds Action Item
