@@ -89,7 +89,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         def refList = []
         list = ActionItemPostWork.findAllByActionItemGroupSend( aip )
         list.each {
-            //println 'ActionItemPostWork ' + it
             assert it.currentExecutionState == ActionItemPostWorkExecutionState.Complete
             refList.push( it.referenceId )
             ActionItemJob actionItemJob = new ActionItemJob( referenceId: it.referenceId, status: ActionItemJobStatus.PENDING, creationDateTime: new Date() )
@@ -102,7 +101,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         actionItemPostCompositeService.stopPendingAndDispatchedJobs( aip.id )
         actionItemJobService.list( [max: 10000] ).each {ActionItemJob it ->
             if (refList.contains( it.referenceId )) {
-                //assert it.status == ActionItemJobStatus.STOPPED
+               assert it.status == ActionItemJobStatus.STOPPED
             }
         }
     }
@@ -132,7 +131,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         def refList = []
         list = ActionItemPostWork.findAllByActionItemGroupSend( aip )
         list.each {
-            //println 'ActionItemPostWork ' + it
             assert it.currentExecutionState == ActionItemPostWorkExecutionState.Complete
             refList.push( it.referenceId )
             ActionItemJob actionItemJob = new ActionItemJob( referenceId: it.referenceId, status: ActionItemJobStatus.PENDING, creationDateTime: new Date() )
@@ -140,7 +138,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
             assert actionItemJob.referenceId == it.referenceId
             assert actionItemJob.status == ActionItemJobStatus.PENDING
             assert actionItemJob.id != null
-            println 'actionItemJob ' + actionItemJob
         }
         actionItemPostCompositeService.deleteActionItemJobsByGroupSendId( aip.id )
         def newCountPostDelete = actionItemJobService.list( [max: Integer.MAX_VALUE] ).size()

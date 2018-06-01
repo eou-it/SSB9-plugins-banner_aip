@@ -41,12 +41,15 @@ Brief summary/description of the plugin.
 //    def scm = [ url: "http://svn.codehaus.org/grails-plugins/" ]
 
     def doWithWebDescriptor = { xml ->
+        // Implement additions to web.xml (optional), this event occurs before
     }
 
     def doWithSpring = {
+        // Implement runtime spring config (optional)
     }
 
     def doWithDynamicMethods = { ctx ->
+        // Implement registering dynamic methods to classes (optional)
     }
 
     def doWithApplicationContext = { ctx ->
@@ -67,14 +70,17 @@ Brief summary/description of the plugin.
     }
 
     def onChange = { event ->
+        // Implement code that is executed when any artefact that this plugin is
         // watching is modified and reloaded. The event contains: event.source,
         // event.application, event.manager, event.ctx, and event.plugin.
     }
 
     def onConfigChange = { event ->
+        // Implement code that is executed when the project configuration changes.
         // The event is the same as for 'onChange'.
     }
 
     def onShutdown = { event ->
+        // Implement code that is executed when the application shuts down (optional)
     }
 }

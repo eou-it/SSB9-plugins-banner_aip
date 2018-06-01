@@ -60,8 +60,13 @@ class ActionItemJobService extends ServiceBase {
      * @return
      */
     void stopPendingAndDispatchedJobs( Long groupSendId ) {
-        def count = ActionItemJob.stopPendingAndDispatchedJobs( groupSendId )
-        LoggerUtility.debug( LOGGER, 'Number of updates ' + count )
+        List<ActionItemJob> list = ActionItemJob.findRecordsToStopPendingAndDispatchedJobs( groupSendId )
+        list?.each {
+            it.status = ActionItemJobStatus.STOPPED
+            it.lastModified = new Date()
+            update( it, true )
+        }
+        LoggerUtility.debug( LOGGER, 'Number of updates ' + list?.size() )
     }
 
     /**
