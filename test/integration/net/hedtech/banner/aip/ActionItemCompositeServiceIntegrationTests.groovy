@@ -10,6 +10,8 @@ import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import net.hedtech.banner.aip.block.process.ActionItemBlockedProcess
+import net.hedtech.banner.aip.block.process.BlockingProcess
 
 class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
 
@@ -17,6 +19,7 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
     def actionItemService
     def actionItemContentService
     def actionItemStatusRuleService
+    def actionItemBlockedProcessService
 
 
     @Before
@@ -192,6 +195,45 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         assert result.success == true
     }
 
+    @Test
+    void deleteActionItemWithBlockedProcess() {
+        def result = actionItemCompositeService.addActionItem( [folderId: CommunicationFolder.findByName( 'Student' ).id, status: 'Draft', title: 'title', name: 'name', description: 'description'] )
+        assert result.success == true
+        assert result.newActionItem.description == 'description'
+        ActionItem ai = result.newActionItem
+        ActionItemBlockedProcess savedActionItemBlockedProcess=  actionItemBlockedProcessService.create (new ActionItemBlockedProcess(
+                blockActionItemId: ai.id,
+                blockedProcessId:BlockingProcess.findByProcessName('Prepare for Registration').id
+        ))
+        assertNotNull(savedActionItemBlockedProcess.blockActionItemId)
+        assertEquals(savedActionItemBlockedProcess.blockActionItemId,ai.id)
+
+        ActionItemContent savedActionItemContent = actionItemContentService.create( new ActionItemContent(
+                actionItemId: ai.id,
+                actionItemTemplateId: (ActionItemTemplate.findAll()[0]).id,
+                text: 'Text'
+        ))
+        assertNotNull(savedActionItemContent.actionItemId)
+        assertEquals(savedActionItemContent.actionItemId,ai.id)
+
+        ActionItemStatusRule savedActionItemStatusRule = actionItemStatusRuleService.create( new ActionItemStatusRule(
+                actionItemId: ai.id,
+                seqOrder: 1,
+                labelText: 'Text'
+        ))
+        assertNotNull(savedActionItemStatusRule.id)
+        assertEquals(savedActionItemStatusRule.actionItemId,ai.id)
+        assertEquals(savedActionItemStatusRule.seqOrder,1)
+        assertEquals(savedActionItemStatusRule.labelText,'Text')
+
+        result = actionItemCompositeService.deleteActionItem( ai.id )
+        assert result.success == true
+        assertNull(ActionItem.findById(ai.id))
+        assertNull(ActionItemBlockedProcess.findByBlockActionItemId(ai.id))
+        assertNull(ActionItemContent.findByActionItemId(ai.id))
+        assertNull(ActionItemStatusRule.findByActionItemId(ai.id))
+
+    }
 
     @Test
     void getActionItemsListForSelect() {
