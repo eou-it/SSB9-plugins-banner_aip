@@ -181,7 +181,7 @@ class ActionItemProcessingCommonService {
      * @return
      */
     def is12HourClock() {
-        def use12HourClock = MessageHelper.message( 'default.action.item.port.timepicker.12hourclock' ) == '1'
+        def use12HourClock = MessageHelper.message( 'default.cm.timepicker.12hourclock' ) == '1'
         [use12HourClock: use12HourClock]
     }
 
