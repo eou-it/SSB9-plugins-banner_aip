@@ -209,6 +209,20 @@ class ActionItemPost implements Serializable {
     @Column(name = "GCBAPST_VPDI_CODE")
     String vpdiCode
 
+    /**
+     * postingDisplayDateTime: Store UserEntered Date Time.
+     */
+
+    @Column(name = "GCBAPST_DISPLAY_DATETIME")
+    @Temporal(TemporalType.TIMESTAMP)
+    Date postingDisplayDateTime
+
+    /**
+     * postingTimeZone:Store UserEntered TimeZone
+     */
+    @Column(name = "GCBAPST_TIME_ZONE")
+    String postingTimeZone
+
 
     static constraints = {
         version( nullable: true, maxSize: 19 )
@@ -236,6 +250,8 @@ class ActionItemPost implements Serializable {
         lastModifiedBy( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 30 )
         vpdiCode( nullable: true, maxSize: 6 )
+        postingDisplayDateTime( nullable: true )
+        postingTimeZone( nullable: false, maxSize: 100 )
     }
 
 
