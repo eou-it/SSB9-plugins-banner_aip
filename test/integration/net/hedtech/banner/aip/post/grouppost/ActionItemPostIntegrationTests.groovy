@@ -26,7 +26,8 @@ class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
         super.tearDown()
     }
 
-    def dateFormat="dd-MM-yyyy"
+    def dateFormat = "dd-MM-yyyy"
+
     @Test
     void testActionPostConstraints() {
         def actionItemPost = newAIP()
@@ -47,7 +48,7 @@ class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
         Map map = [time: '2314', date: '19-06-2018', timeZone: 'Asia/Singapore']
         SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormat)
         def actionItemPost = newAIPWithCustomTimeAndTimeZone(map)
-        actionItemPost.save(flush:true)
+        actionItemPost.save(flush: true)
         ActionItemPost actionItemPostRetrieved = ActionItemPost.findByPostingName('some name')
         assert actionItemPostRetrieved != null
         boolean _12_HourTimeFormat = true
@@ -61,7 +62,7 @@ class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
         Map map = [time: '2314', date: '19-06-2018', timeZone: 'Asia/Singapore']
         SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormat)
         def actionItemPost = newAIPWithCustomTimeAndTimeZone(map)
-        actionItemPost.save(flush:true)
+        actionItemPost.save(flush: true)
         ActionItemPost actionItemPostRetrieved = ActionItemPost.findByPostingName('some name')
         assert actionItemPostRetrieved != null
         boolean _12_HourTimeFormat = false
@@ -71,8 +72,8 @@ class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
     }
 
     private retTimeFormat(_12_HourTimeFormat, actionItemPostRetrieved) {
-        SimpleDateFormat _24_hr_timeFormat = new SimpleDateFormat(MessageHelper.message("HH:mm"))
-        SimpleDateFormat _12_hr_timeFormat = new SimpleDateFormat(MessageHelper.message("K:mm a"))
+        SimpleDateFormat _24_hr_timeFormat = new SimpleDateFormat("HH:mm")
+        SimpleDateFormat _12_hr_timeFormat = new SimpleDateFormat("K:mm a")
         _12_HourTimeFormat ? _12_hr_timeFormat.format(actionItemPostRetrieved.postingDisplayDateTime) : _24_hr_timeFormat.format(actionItemPostRetrieved.postingDisplayDateTime)
     }
 
