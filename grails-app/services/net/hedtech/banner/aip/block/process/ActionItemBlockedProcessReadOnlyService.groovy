@@ -13,4 +13,7 @@ class ActionItemBlockedProcessReadOnlyService extends ServiceBase {
     def fetchByActionItemId( Long actionItemId ) {
         ActionItemBlockedProcessReadOnly.fetchByActionItemId( actionItemId )
     }
+    def fetchByListOfActionItemIds( List actionItemIds ) {
+        ActionItemBlockedProcessReadOnly.fetchByListOfActionItemIds( actionItemIds )
+    }
 }

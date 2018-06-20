@@ -19,6 +19,8 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
     def actionItemContentService
     def actionItemReadOnlyService
     def actionItemStatusRuleService
+    def actionItemBlockedProcessReadOnlyService
+
 
     /**
      * Lists user specific action items
@@ -27,7 +29,9 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
     def listActionItemByPidmWithinDate() {
         def user = springSecurityService.getAuthentication()?.user
         def actionItems = userActionItemReadOnlyService.listActionItemByPidmWithinDate( user.pidm )
+        def actionItemIds = actionItems.collect{it.id}
         actionItems = actionItems.collect {UserActionItemReadOnly it ->
+
             [
                     id                      : it.id,
                     version                 : it.version,
@@ -56,9 +60,20 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
                     currentResponse         : it.completedDate ? actionItemStatusRuleService.getActionItemStatusRuleNameByStatusIdAndActionItemId( it.statusId, it.id )?.labelText : null
             ]
         }
+        def haltProcesses = []
+        if(actionItemIds.size() >0){
+            haltProcesses =  actionItemBlockedProcessReadOnlyService.fetchByListOfActionItemIds(actionItemIds)
+        }
 
         def userGroupInfo = []
         actionItems.each {item ->
+            def haltProcessNamesList = haltProcesses.findAll{it.id.actionItemId == item.id}.collect{it.processName}
+            def groupHalted = false;
+            if(haltProcessNamesList.size() > 0){
+                item.haltProcesses = haltProcessNamesList
+                item.actionItemHalted = true
+                groupHalted = true;
+            }
             def exist = userGroupInfo.findIndexOf {it ->
                 it.id == item.actionItemGroupID
             }
@@ -75,12 +90,16 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
                         folderId   : group.folderId,
                         folderDesc : group.folderDesc,
                         items      : [],
-                        header     : ['title', 'status', 'completedDate', 'description']
+                        header     : ['title', 'status', 'completedDate', 'description'],
+                        groupHalted: groupHalted
                 ]
                 newGroup.items.push( item )
                 userGroupInfo.push( newGroup )
             } else {
                 userGroupInfo[exist].items.push( item )
+                if(item.actionItemHalted){
+                    userGroupInfo[exist].groupHalted = groupHalted
+                }
             }
         }
         [
