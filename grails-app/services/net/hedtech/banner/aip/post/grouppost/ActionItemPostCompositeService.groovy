@@ -211,7 +211,7 @@ class ActionItemPostCompositeService {
      * @param requestMap
      * @return
      */
-    private splitUserEnteredValues( requestMap ) {
+    def splitUserEnteredValues( requestMap ) {
         requestMap.displayDatetimeZone.split( "\\s+" )
     }
 
@@ -220,7 +220,7 @@ class ActionItemPostCompositeService {
      * @param userEnteredValue
      * @return
      */
-    def private getDisplayDateTimeCalender( userEnteredValue ) {
+    def getDisplayDateTimeCalender( userEnteredValue ) {
         Date displayDate = actionItemProcessingCommonService.convertToLocaleBasedDate( userEnteredValue[0] )
         Calendar displayDateTimeCalendar = Calendar.getInstance()
         displayDateTimeCalendar.setTime( displayDate )
