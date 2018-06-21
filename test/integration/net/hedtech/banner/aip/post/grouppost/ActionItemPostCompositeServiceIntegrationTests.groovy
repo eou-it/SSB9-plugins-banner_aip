@@ -456,7 +456,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.displayStartDate = testingDateFormat.format( new Date() )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date() + 1
-        requestMap.displayDatetimeZone = "06/21/2018 0330 Asia/Kolkata"
+        requestMap.displayDatetimeZone = "06/21/2018 0330 (GMT+5:30) Asia/Kolkata"
         requestMap.actionItemIds = actionItemIds
         def result = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
         assert result.success == true
@@ -489,6 +489,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.scheduledStartDate = new Date() - 1
         requestMap.scheduledStartTime = "0900"
         requestMap.timezoneStringOffset = "Asia/Kolkata"
+        requestMap.displayDatetimeZone = "06/21/2018 0330 (GMT+5:30) Asia/Kolkata"
         requestMap.actionItemIds = actionItemIds
         try {
             actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
@@ -514,6 +515,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.postingActionItemGroupId = actionItemGroup.id
         requestMap.postNow = true
         requestMap.recalculateOnPost = false
+        requestMap.displayDatetimeZone = "06/21/2018 0330 (GMT+5:30) Asia/Kolkata"
         requestMap.displayStartDate = testingDateFormat.format( new Date() - 1 )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date()
@@ -553,6 +555,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.referenceId = UUID.randomUUID().toString()
         requestMap.postingActionItemGroupId = actionItemGroup.id
         requestMap.postNow = true
+        requestMap.displayDatetimeZone = "06/21/2018 0330 (GMT+5:30) Asia/Kolkata"
         requestMap.recalculateOnPost = false
         requestMap.displayStartDate = testingDateFormat.format( new Date() )
         requestMap.displayEndDate = testingDateFormat.format( new Date() - 1 )
@@ -585,8 +588,9 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.displayStartDate = testingDateFormat.format( new Date() )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date() + 1
+        requestMap.displayDatetimeZone = "06/21/2018 0330 (GMT+5:30) Asia/Kolkata"
         requestMap.actionItemIds = actionItemIds
-        def result = actionItemPostCompositeService.( requestMap )
+        def result = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
         assert result.success == true
         assert result.savedJob != null
         ActionItemPost post = result.savedJob
@@ -641,7 +645,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date() + 1
         requestMap.actionItemIds = actionItemIds
-        requestMap.displayDatetimeZone = "06/21/2018 0330 Asia/Kolkata"
+        requestMap.displayDatetimeZone = "06/21/2018 0330 (GMT+5:30) Asia/Kolkata"
         def actionItemPost = actionItemPostCompositeService.getActionPostInstance( requestMap, springSecurityService.getAuthentication()?.user )
         actionItemPost.populationCalculationId = populationVersion.id
         actionItemPost.populationVersionId = populationVersion.id
