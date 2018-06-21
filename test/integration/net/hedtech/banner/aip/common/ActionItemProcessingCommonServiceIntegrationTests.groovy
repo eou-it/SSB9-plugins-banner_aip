@@ -133,7 +133,7 @@ class ActionItemProcessingCommonServiceIntegrationTests extends BaseIntegrationT
         AipTimezone serverDefaultTimeZone = timeZoneList.find {
             it.offset == defaultRowOffset //Getting the time zone of the server
         }
-        assert result.serverTimeZone != serverDefaultTimeZone.timezoneId
+        assert result.serverTimeZone != serverDefaultTimeZone?.timezoneId
     }
 
 
