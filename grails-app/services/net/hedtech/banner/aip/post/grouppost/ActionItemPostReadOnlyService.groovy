@@ -26,7 +26,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
         params.searchParam = params.searchParam ? ('%' + params.searchParam.toUpperCase() + '%') : ('%')
         SimpleDateFormat timeFormat = new SimpleDateFormat(MessageHelper.message("default.time.format"));
 
-        if( MessageHelper.message( 'default.action.item.port.timepicker.12hourclock' ) == '1')
+        if( actionItemProcessingCommonService.is12HourClock().use12HourClock)
         {
              timeFormat = new SimpleDateFormat("hh:mm a");
         }
@@ -91,7 +91,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
         def result = [:]
         SimpleDateFormat timeFormat = new SimpleDateFormat(MessageHelper.message("default.time.format"));
 
-        if( MessageHelper.message( 'default.action.item.port.timepicker.12hourclock' ) == '1')
+        if( actionItemProcessingCommonService.is12HourClock().use12HourClock)
         {
             timeFormat = new SimpleDateFormat("hh:mm a");
         }
