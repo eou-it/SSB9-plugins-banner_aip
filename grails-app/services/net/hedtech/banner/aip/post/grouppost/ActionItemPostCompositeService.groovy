@@ -244,6 +244,7 @@ class ActionItemPostCompositeService {
         actionItemPost.postingCurrentState = requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New)
         actionItemPost.postingDisplayDateTime=displayDateTimeCalendar ? displayDateTimeCalendar.getTime() :null
         actionItemPost.postingTimeZone=userEnteredValue[2]+" "+userEnteredValue[3]
+        actionItemPost
 
     }
 
