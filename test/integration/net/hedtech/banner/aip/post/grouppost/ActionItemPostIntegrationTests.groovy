@@ -73,7 +73,7 @@ class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
 
     private retTimeFormat(_12_HourTimeFormat, actionItemPostRetrieved) {
         SimpleDateFormat _24_hr_timeFormat = new SimpleDateFormat("HH:mm")
-        SimpleDateFormat _12_hr_timeFormat = new SimpleDateFormat("HH:mm a")
+        SimpleDateFormat _12_hr_timeFormat = new SimpleDateFormat("hh:mm a")
         _12_HourTimeFormat ? _12_hr_timeFormat.format(actionItemPostRetrieved.postingDisplayDateTime) : _24_hr_timeFormat.format(actionItemPostRetrieved.postingDisplayDateTime)
     }
 

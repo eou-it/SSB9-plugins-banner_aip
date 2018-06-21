@@ -223,7 +223,7 @@ class ActionItemProcessingCommonService {
             it.offset == defaultRowOffset //Getting the time zone of the server
         }
         SimpleDateFormat hr24TimeFormat = new SimpleDateFormat( MessageHelper.message( "default.time.format" ) )
-        SimpleDateFormat hr12TimeFormat = new SimpleDateFormat( "HH:mm a" )
+        SimpleDateFormat hr12TimeFormat = new SimpleDateFormat( "hh:mm a" )
         [serverDate    : scheduledStartDateCalendar.getTime(),
          serverTime    : is12HourClock().use12HourClock ? hr12TimeFormat.format( scheduledStartDateCalendar.getTime() ) : hr24TimeFormat.format( scheduledStartDateCalendar.getTime() ),
          serverTimeZone: serverDefaultTimeZone.timezoneId
