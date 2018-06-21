@@ -217,7 +217,6 @@ class ActionItemProcessingCommonService {
         Date scheduledStartDate = convertToLocaleBasedDate( requestMap.userEnterDate )
         String scheduledStartTime = requestMap.userEnterTime
         String timezoneStringOffset = requestMap.userEnterTimeZone
-        SimpleDateFormat timeFormat = new SimpleDateFormat( MessageHelper.message( "default.time.format" ) );
         java.util.Calendar scheduledStartDateCalendar = getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset );
         List timeZoneList = populateAvailableTimezones()
         TimeZone timezone = TimeZone.getDefault();
@@ -225,11 +224,10 @@ class ActionItemProcessingCommonService {
         AipTimezone serverDefaultTimeZone = timeZoneList.find {
             it.offset == defaultRowOffset //Getting the time zone of the server
         }
-        SimpleDateFormat hr24TimeFormat = new SimpleDateFormat( "HH:mm" )
-        SimpleDateFormat hr12TimeFormat = new SimpleDateFormat( "K:mm a" )
-        is12HourClock().use12HourClock ? hr12TimeFormat.format( scheduledStartDateCalendar.getTime() ) : hr24TimeFormat.format( scheduledStartDateCalendar.getTime() )
+        SimpleDateFormat hr24TimeFormat = new SimpleDateFormat( MessageHelper.message( "default.time.format" ))
+        SimpleDateFormat hr12TimeFormat = new SimpleDateFormat( "HH:mm a" )
         [serverDate    : scheduledStartDateCalendar.getTime(),
-         serverTime    : timeFormat.format( scheduledStartDateCalendar.getTime() ),
+         serverTime    : is12HourClock().use12HourClock ? hr12TimeFormat.format( scheduledStartDateCalendar.getTime() ) : hr24TimeFormat.format( scheduledStartDateCalendar.getTime() ),
          serverTimeZone: serverDefaultTimeZone
         ]
     }
