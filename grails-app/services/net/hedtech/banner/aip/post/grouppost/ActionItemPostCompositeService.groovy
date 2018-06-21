@@ -22,19 +22,6 @@ import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.request.RequestContextHolder
 
-import java.sql.Timestamp
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.text.SimpleDateFormat;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-
 /**
  * ActionItemPost Composite Service is responsible for initiating and processing group posts.
  * Controllers and other client code should generally work through this service for interacting with group send

@@ -13,6 +13,7 @@ import org.junit.Test
 
 import java.text.SimpleDateFormat
 
+
 class ActionItemProcessingCommonServiceIntegrationTests extends BaseIntegrationTestCase {
     def actionItemProcessingCommonService
 
@@ -107,5 +108,17 @@ class ActionItemProcessingCommonServiceIntegrationTests extends BaseIntegrationT
     void populateAvailableTimezones() {
         def result = actionItemProcessingCommonService.populateAvailableTimezones()
         assert result.size() > 0
+    }
+
+
+    @Test
+    void testFetchProcessedServerDateTimeAndTimezone() {
+        Map map = ["userEnterDate"    : "06/21/2018",
+                   "userEnterTime"    : "1330",
+                   "userEnterTimeZone": "US/Alaska"]
+        def result = actionItemProcessingCommonService.fetchProcessedServerDateTimeAndTimezone( map )
+        assert result.serverDate != null
+        assert result.serverTime != null
+        assert result.serverTimeZone != null
     }
 }
