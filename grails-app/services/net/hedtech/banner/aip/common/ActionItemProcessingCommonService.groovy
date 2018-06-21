@@ -197,15 +197,13 @@ class ActionItemProcessingCommonService {
         Date currentDate = new Date()
         SimpleDateFormat timeFormat = new SimpleDateFormat( MessageHelper.message( "default.time.format" ) )
         if (is12HourClock().use12HourClock) {
-            timeFormat = new SimpleDateFormat("hh:mm a")
+            timeFormat = new SimpleDateFormat( "hh:mm a" )
         }
-        TimeZone timezone = TimeZone.getDefault()
-        def result = [
-                "ServerDate"    : currentDate,
-                "ServerTime"    : timeFormat.format( currentDate ),
-                "ServerTimeZone": timezone
+        [
+                ServerDate    : currentDate,
+                ServerTime    : timeFormat.format( currentDate ),
+                ServerTimeZone: TimeZone.getDefault()
         ]
-        return result
     }
 
     /**
@@ -224,7 +222,7 @@ class ActionItemProcessingCommonService {
         AipTimezone serverDefaultTimeZone = timeZoneList.find {
             it.offset == defaultRowOffset //Getting the time zone of the server
         }
-        SimpleDateFormat hr24TimeFormat = new SimpleDateFormat( MessageHelper.message( "default.time.format" ))
+        SimpleDateFormat hr24TimeFormat = new SimpleDateFormat( MessageHelper.message( "default.time.format" ) )
         SimpleDateFormat hr12TimeFormat = new SimpleDateFormat( "HH:mm a" )
         [serverDate    : scheduledStartDateCalendar.getTime(),
          serverTime    : is12HourClock().use12HourClock ? hr12TimeFormat.format( scheduledStartDateCalendar.getTime() ) : hr24TimeFormat.format( scheduledStartDateCalendar.getTime() ),

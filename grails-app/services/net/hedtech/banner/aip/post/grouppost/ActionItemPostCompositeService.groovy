@@ -212,7 +212,7 @@ class ActionItemPostCompositeService {
      * @return
      */
     def splitUserEnteredValues( requestMap ) {
-        requestMap.displayDatetimeZone.split( "\\s+" )
+        requestMap.displayDatetimeZone?.split( "\\s+" )
     }
 
     /**
