@@ -22,6 +22,19 @@ import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.request.RequestContextHolder
 
+import java.sql.Timestamp
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 /**
  * ActionItemPost Composite Service is responsible for initiating and processing group posts.
  * Controllers and other client code should generally work through this service for interacting with group send
@@ -171,10 +184,21 @@ class ActionItemPostCompositeService {
         Date scheduledStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.scheduledStartDate )
         String scheduledStartTime = requestMap.scheduledStartTime
         String timezoneStringOffset = requestMap.timezoneStringOffset
+
+        String[] userEnteredValue=requestMap.displayDatetimeZone.split("\\s+");
+        Date DisplayDate = actionItemProcessingCommonService.convertToLocaleBasedDate( userEnteredValue[0] )
+        Calendar displayDateTimeCalendar = Calendar.getInstance();
+        displayDateTimeCalendar.setTime( DisplayDate )
+        displayDateTimeCalendar.set( java.util.Calendar.HOUR , userEnteredValue[1].substring( 0, 2 ).toInteger() )
+        displayDateTimeCalendar.set( java.util.Calendar.MINUTE, userEnteredValue[1].substring( 2 ).toInteger() )
+        displayDateTimeCalendar.set( java.util.Calendar.SECOND, 0 )
+        displayDateTimeCalendar.set( java.util.Calendar.MILLISECOND, 0 )
+
         Calendar scheduledStartDateCalendar = null;
         if (!requestMap.postNow && scheduledStartDate && scheduledStartTime) {
             scheduledStartDateCalendar = actionItemProcessingCommonService.getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset );
-        }
+          }
+
         new ActionItemPost(
                 populationListId: requestMap.populationId,
                 postingActionItemGroupId: requestMap.postingActionItemGroupId,
@@ -187,6 +211,9 @@ class ActionItemPostCompositeService {
                 postingDeleteIndicator: false,
                 postingCreatorId: user.oracleUserName,
                 postingCurrentState: requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New),
+                postingDisplayDateTime:displayDateTimeCalendar ? displayDateTimeCalendar.getTime() :null,
+                postingTimeZone:userEnteredValue[2]+" "+userEnteredValue[3]
+
                 )
 
     }
@@ -202,10 +229,21 @@ class ActionItemPostCompositeService {
         Date scheduledStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.scheduledStartDate )
         String scheduledStartTime = requestMap.scheduledStartTime
         String timezoneStringOffset = requestMap.timezoneStringOffset
+
+        String[] userEnteredValue=requestMap.displayDatetimeZone.split("\\s+");
+        Date DisplayDate = actionItemProcessingCommonService.convertToLocaleBasedDate( userEnteredValue[0] )
+        Calendar displayDateTimeCalendar = Calendar.getInstance();
+        displayDateTimeCalendar.setTime( DisplayDate )
+        displayDateTimeCalendar.set( java.util.Calendar.HOUR , userEnteredValue[1].substring( 0, 2 ).toInteger() )
+        displayDateTimeCalendar.set( java.util.Calendar.MINUTE, userEnteredValue[1].substring( 2 ).toInteger() )
+        displayDateTimeCalendar.set( java.util.Calendar.SECOND, 0 )
+        displayDateTimeCalendar.set( java.util.Calendar.MILLISECOND, 0 )
+
         Calendar scheduledStartDateCalendar = null;
         if (!requestMap.postNow && scheduledStartDate && scheduledStartTime) {
             scheduledStartDateCalendar = actionItemProcessingCommonService.getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset );
         }
+
         actionItemPost.populationListId = requestMap.populationId
         actionItemPost.postingActionItemGroupId = requestMap.postingActionItemGroupId
         actionItemPost.postingName = requestMap.postingName
@@ -217,7 +255,9 @@ class ActionItemPostCompositeService {
         actionItemPost.postingDeleteIndicator = false
         actionItemPost.postingCreatorId = user.oracleUserName
         actionItemPost.postingCurrentState = requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New)
-        actionItemPost
+        actionItemPost.postingDisplayDateTime=displayDateTimeCalendar ? displayDateTimeCalendar.getTime() :null
+        actionItemPost.postingTimeZone=userEnteredValue[2]+" "+userEnteredValue[3]
+
     }
 
     /**

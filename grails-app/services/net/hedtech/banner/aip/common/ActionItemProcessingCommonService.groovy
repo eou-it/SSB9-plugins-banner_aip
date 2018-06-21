@@ -6,6 +6,7 @@ package net.hedtech.banner.aip.common
 
 import com.ibm.icu.util.Calendar
 import com.ibm.icu.util.ULocale
+import grails.converters.deep.JSON
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
@@ -16,6 +17,9 @@ import org.apache.log4j.Logger
 import org.springframework.context.i18n.LocaleContextHolder
 
 import java.util.concurrent.TimeUnit
+import java.text.SimpleDateFormat
+import net.hedtech.banner.i18n.MessageHelper
+
 
 class ActionItemProcessingCommonService {
     def dateConverterService
@@ -167,6 +171,7 @@ class ActionItemProcessingCommonService {
         scheduledStartDateCalendar
     }
 
+
     /**
      *
      * @return
@@ -184,5 +189,27 @@ class ActionItemProcessingCommonService {
         def use12HourClock = MessageHelper.message( 'default.cm.timepicker.12hourclock' ) == '1'
         [use12HourClock: use12HourClock]
     }
+
+    /**
+     *
+     * Fetch Current Date,Time,TimeZone
+     */
+   def fetchCurrentDateTimeZone()
+   {
+       Date CurrentDate = new Date()
+       SimpleDateFormat timeFormat = new SimpleDateFormat(MessageHelper.message("default.time.format"))
+       if( MessageHelper.message( 'default.action.item.port.timepicker.12hourclock' ) == '1')
+       {
+           timeFormat = new SimpleDateFormat("hh:mm a")
+       }
+       TimeZone timezone = TimeZone.getDefault()
+       def result=[
+               "ServerDate": CurrentDate,
+               "ServerTime":  timeFormat.format( CurrentDate ),
+               "ServerTimeZone": timezone
+       ]
+       return result
+   }
+
 
 }

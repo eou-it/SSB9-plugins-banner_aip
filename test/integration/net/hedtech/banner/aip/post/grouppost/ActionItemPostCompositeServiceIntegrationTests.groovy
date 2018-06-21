@@ -585,7 +585,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date() + 1
         requestMap.actionItemIds = actionItemIds
-        def result = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
+        def result = actionItemPostCompositeService.( requestMap )
         assert result.success == true
         assert result.savedJob != null
         ActionItemPost post = result.savedJob

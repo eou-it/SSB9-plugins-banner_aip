@@ -250,7 +250,7 @@ class ActionItemPost implements Serializable {
         lastModifiedBy( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 30 )
         vpdiCode( nullable: true, maxSize: 6 )
-        postingDisplayDateTime( nullable: true )
+        postingDisplayDateTime( nullable: false )
         postingTimeZone( nullable: false, maxSize: 100 )
     }
 
