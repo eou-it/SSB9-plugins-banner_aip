@@ -16,13 +16,19 @@ import org.junit.Test
 
 import java.text.SimpleDateFormat
 
+
 class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemPostWorkProcessorService
+
     def actionItemPostCompositeService
+
     def actionItemProcessingCommonService
+
     def springSecurityService
+
     def actionItemPostService
+
     def actionItemPostDetailService
 
 
@@ -39,6 +45,7 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
         super.tearDown()
         logout()
     }
+
 
     @Test
     void testPerformGroupSendItem() {
@@ -81,7 +88,7 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
                 0] )[0]
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
         def actionItemGroup = actionItemGroups[0]
-        List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
+        List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect { it.actionItemId }
         def requestMap = [:]
         requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.populationId = populationListView.id
@@ -91,6 +98,7 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
         requestMap.recalculateOnPost = false
         requestMap.displayStartDate = testingDateFormat.format( new Date() )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
+        requestMap.displayDatetimeZone = "06/21/2018 0330 Asia/Kolkata"
         requestMap.scheduledStartDate = new Date() + 1
         requestMap.actionItemIds = actionItemIds
         def actionItemPost = actionItemPostCompositeService.getActionPostInstance( requestMap, springSecurityService.getAuthentication()?.user )

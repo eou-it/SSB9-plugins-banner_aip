@@ -456,6 +456,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.displayStartDate = testingDateFormat.format( new Date() )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date() + 1
+        requestMap.displayDatetimeZone = "06/21/2018 0330 Asia/Kolkata"
         requestMap.actionItemIds = actionItemIds
         def result = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
         assert result.success == true
@@ -640,6 +641,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date() + 1
         requestMap.actionItemIds = actionItemIds
+        requestMap.displayDatetimeZone = "06/21/2018 0330 Asia/Kolkata"
         def actionItemPost = actionItemPostCompositeService.getActionPostInstance( requestMap, springSecurityService.getAuthentication()?.user )
         actionItemPost.populationCalculationId = populationVersion.id
         actionItemPost.populationVersionId = populationVersion.id
