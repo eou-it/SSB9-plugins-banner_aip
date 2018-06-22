@@ -42,7 +42,32 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         }
         assert result.header == ["title", "state", "completedDate", "description"]
     }
+    @Test
+    void testActionItemWithHaltProcess() {
+        def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
+        assert result.groups.size() > 0
+        assert result.groups.items.size() > 0
+        result.groups.items.each {
+            def o = it.find {it.name == 'Drug and Alcohol Policy'}
+            if (o) {
+                assert o.actionItemHalted == true
+                assert o.haltProcesses.size() > 0
+            }
+        }
 
+    }
+    @Test
+    void testActionItemWithOutHaltProcess() {
+        def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
+        assert result.groups.size() > 0
+        assert result.groups.items.size() > 0
+        result.groups.items.each {
+            def o = it.find {it.name == 'Personal Information'}
+            if (o) {
+                assert o.actionItemHalted == null
+            }
+        }
+    }
 
     @Test
     void actionItemOrGroupInfoByGroupSearch() {
