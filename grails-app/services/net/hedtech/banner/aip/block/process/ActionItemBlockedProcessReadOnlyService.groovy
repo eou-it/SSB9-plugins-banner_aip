@@ -10,9 +10,20 @@ import net.hedtech.banner.service.ServiceBase
  */
 class ActionItemBlockedProcessReadOnlyService extends ServiceBase {
 
+    /**
+     *
+     * @param actionItemId
+     * @return
+     */
     def fetchByActionItemId( Long actionItemId ) {
         ActionItemBlockedProcessReadOnly.fetchByActionItemId( actionItemId )
     }
+
+    /**
+     *
+     * @param actionItemIds
+     * @return
+     */
     def fetchByListOfActionItemIds( List actionItemIds ) {
         ActionItemBlockedProcessReadOnly.fetchByListOfActionItemIds( actionItemIds )
     }

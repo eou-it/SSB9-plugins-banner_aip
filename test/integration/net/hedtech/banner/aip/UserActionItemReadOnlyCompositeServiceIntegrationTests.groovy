@@ -18,7 +18,6 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
     void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
-        loginSSB( 'CSRSTU001', '111111' )
     }
 
 
@@ -31,6 +30,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void listActionItemByPidmWithinDate() {
+        loginSSB( 'CSRSTU004', '111111' )
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
         assert result.groups.size() > 0
         assert result.groups.items.size() > 0
@@ -42,35 +42,62 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         }
         assert result.header == ["title", "state", "completedDate", "description"]
     }
+
     @Test
     void testActionItemWithHaltProcess() {
+        loginSSB( 'CSRSTU004', '111111' )
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
+        def groupId
+        assert result.groups.size() > 0
+        assert result.groups.items.size() > 0
+        result.groups.items.each {
+            def o = it.find {it.name == 'Notice of Scholastic Standards'}
+            if (o) {
+                groupId = o.actionItemGroupID
+                assert o.actionItemHalted == true
+                assert o.haltProcesses.size() > 0
+                assert o.haltProcesses == ['Plan Ahead','Prepare for Registration']
+                assert result.groups.find{it.id==groupId}.groupHalted == true
+            }
+        }
+
+    }
+
+    @Test
+    void testGroupHaltedAndAINotHalted() {
+        loginSSB( 'CSRSTU004', '111111' )
+        def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
+        def groupId
         assert result.groups.size() > 0
         assert result.groups.items.size() > 0
         result.groups.items.each {
             def o = it.find {it.name == 'Drug and Alcohol Policy'}
+            groupId = o.actionItemGroupID
             if (o) {
-                assert o.actionItemHalted == true
-                assert o.haltProcesses.size() > 0
+                assert o.actionItemHalted == null
+                assert result.groups.find{it.id==groupId}.groupHalted == true
             }
         }
-
     }
+
     @Test
-    void testActionItemWithOutHaltProcess() {
+    void testGroupAndAINotHalted() {
+        loginSSB( 'CSRSTU001', '111111' )
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
         assert result.groups.size() > 0
         assert result.groups.items.size() > 0
-        result.groups.items.each {
-            def o = it.find {it.name == 'Personal Information'}
-            if (o) {
-                assert o.actionItemHalted == null
-            }
+        def group = result.groups.find{it.title == 'Enrollment'}
+        def item = group.items.find {it.name == 'Personal Information'}
+        if (item) {
+            assert item.actionItemHalted == null
+            assert group.groupHalted == false
         }
+
     }
 
     @Test
     void actionItemOrGroupInfoByGroupSearch() {
+        loginSSB( 'CSRSTU001', '111111' )
         def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'group', groupId: "${ActionItemGroup.findByName( 'Enrollment' ).id}"] )
         def result = result1.find {
             it.title == 'Enrollment'
@@ -88,6 +115,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void actionItemOrGroupInfoByActionItemSearch() {
+        loginSSB( 'CSRSTU001', '111111' )
         List result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'actionItem', actionItemId: "${ActionItem.findByName( 'Drug and Alcohol Policy' ).id}"] )
         def result = result1.find {
             it instanceof ActionItemReadOnly && it.actionItemName == 'Drug and Alcohol Policy'
@@ -102,6 +130,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void actionItemOrGroupInfoByGroupNoDescInTableSearch() {
+        loginSSB( 'CSRSTU001', '111111' )
         sessionFactory.currentSession.createSQLQuery( """UPDATE gcbagrp set GCBAGRP_INSTRUCTION = null where GCBAGRP_NAME='Enrollment'""" ).executeUpdate()
         def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'group', groupId: "${ActionItemGroup.findByName( 'Enrollment' ).id}"] )
         def result = result1.find {

@@ -67,7 +67,7 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
 
         def userGroupInfo = []
         actionItems.each {item ->
-            def haltProcessNamesList = haltProcesses.findAll{it.id.actionItemId == item.id}.collect{it.processName}
+            def haltProcessNamesList = haltProcesses.findAll{it[0] == item.id}.collect{it[1]}
             def groupHalted = false;
             if(haltProcessNamesList.size() > 0){
                 item.haltProcesses = haltProcessNamesList
