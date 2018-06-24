@@ -226,7 +226,7 @@ class ActionItemProcessingCommonService {
         SimpleDateFormat hr12TimeFormat = new SimpleDateFormat( "hh:mm a" )
         [serverDate    : scheduledStartDateCalendar.getTime(),
          serverTime    : is12HourClock().use12HourClock ? hr12TimeFormat.format( scheduledStartDateCalendar.getTime() ) : hr24TimeFormat.format( scheduledStartDateCalendar.getTime() ),
-         serverTimeZone: serverDefaultTimeZone.timezoneId
+         serverTimeZone: serverDefaultTimeZone.displayName
         ]
     }
 }

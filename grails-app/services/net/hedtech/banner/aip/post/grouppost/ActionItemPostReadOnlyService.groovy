@@ -24,13 +24,18 @@ class ActionItemPostReadOnlyService extends ServiceBase {
      */
     def listActionItemPostJobList( params, paginationParams ) {
         params.searchParam = params.searchParam ? ('%' + params.searchParam.toUpperCase() + '%') : ('%')
-        SimpleDateFormat timeFormat = new SimpleDateFormat(MessageHelper.message("default.time.format"));
+        SimpleDateFormat timeFormat = new SimpleDateFormat( MessageHelper.message( "default.time.format" ) );
 
-        if( actionItemProcessingCommonService.is12HourClock().use12HourClock)
-        {
-             timeFormat = new SimpleDateFormat("hh:mm a");
+        if (actionItemProcessingCommonService.is12HourClock().use12HourClock) {
+            timeFormat = new SimpleDateFormat( "hh:mm a" );
         }
-
+        List<AipTimezone> timeZoneList = actionItemProcessingCommonService.populateAvailableTimezones()
+        Map<String, AipTimezone> map = timeZoneList.collectEntries() {
+            [it.stringOffset + ' ' + it.timezoneId, it]
+        }
+        def getDisplayTimeZoneInfo = { key ->
+            map.get( key )?.displayName
+        }
         def results = ActionItemPostReadOnly.fetchJobs( params, paginationParams )
         results = results.collect {
             ActionItemPostReadOnly it ->
@@ -44,7 +49,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
                         postingStartedDate     : it.postingStartedDate,
                         postingDisplayDateTime : it.postingDisplayDateTime,
                         postingDisplayTime     : it.postingDisplayDateTime ? timeFormat.format( it.postingDisplayDateTime ) : it.postingDisplayDateTime,
-                        postingTimeZone        : it.postingTimeZone,
+                        postingTimeZone        : getDisplayTimeZoneInfo( it.postingTimeZone ),
                         groupFolderName        : it.groupFolderName,
                         postingPopulation      : it.postingPopulation,
                         groupName              : it.groupName,
@@ -89,11 +94,10 @@ class ActionItemPostReadOnlyService extends ServiceBase {
     def JobDetailsByPostId( postingId ) {
         ActionItemPostReadOnly actionItemPostReadOnly = ActionItemPostReadOnly.fetchByPostingId( postingId )
         def result = [:]
-        SimpleDateFormat timeFormat = new SimpleDateFormat(MessageHelper.message("default.time.format"));
+        SimpleDateFormat timeFormat = new SimpleDateFormat( MessageHelper.message( "default.time.format" ) );
 
-        if( actionItemProcessingCommonService.is12HourClock().use12HourClock)
-        {
-            timeFormat = new SimpleDateFormat("hh:mm a");
+        if (actionItemProcessingCommonService.is12HourClock().use12HourClock) {
+            timeFormat = new SimpleDateFormat( "hh:mm a" );
         }
         //Initializing the date format
         List timeZoneList = actionItemProcessingCommonService.populateAvailableTimezones()
