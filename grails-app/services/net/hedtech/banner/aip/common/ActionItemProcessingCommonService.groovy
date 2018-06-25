@@ -191,25 +191,8 @@ class ActionItemProcessingCommonService {
 
     /**
      *
-     * Fetch Current Date,Time,TimeZone
-     */
-    def fetchCurrentDateTimeZone() {
-        Date currentDate = new Date()
-        SimpleDateFormat timeFormat = new SimpleDateFormat( MessageHelper.message( "default.time.format" ) )
-        if (is12HourClock().use12HourClock) {
-            timeFormat = new SimpleDateFormat( "hh:mm a" )
-        }
-        [
-                ServerDate    : currentDate,
-                ServerTime    : timeFormat.format( currentDate ),
-                ServerTimeZone: TimeZone.getDefault()
-        ]
-    }
-
-    /**
+     * Fetch Processed Date,Time,TimeZone
      *
-     * @param requestMap
-     * @return
      */
     def fetchProcessedServerDateTimeAndTimezone( requestMap ) {
         Date scheduledStartDate = convertToLocaleBasedDate( requestMap.userEnterDate )
