@@ -13,20 +13,17 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     def userActionItemReadOnlyCompositeService
 
-
     @Before
     void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
     }
 
-
     @After
     void tearDown() {
         super.tearDown()
         logout()
     }
-
 
     @Test
     void listActionItemByPidmWithinDate() {
@@ -36,9 +33,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         assert result.groups.items.size() > 0
         result.groups.items.each {
             def o = it.find {it.name == 'Drug and Alcohol Policy'}
-            if (o) {
-                assert o.name == 'Drug and Alcohol Policy'
-            }
+            assert o.name == 'Drug and Alcohol Policy'
         }
         assert result.header == ["title", "state", "completedDate", "description"]
     }
@@ -52,13 +47,12 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         assert result.groups.items.size() > 0
         result.groups.items.each {
             def o = it.find {it.name == 'Notice of Scholastic Standards'}
-            if (o) {
-                groupId = o.actionItemGroupID
-                assert o.actionItemHalted == true
-                assert o.haltProcesses.size() > 0
-                assert o.haltProcesses == ['Plan Ahead','Prepare for Registration']
-                assert result.groups.find{it.id==groupId}.groupHalted == true
-            }
+            groupId = o.actionItemGroupID
+            assert o.actionItemHalted == true
+            assert o.haltProcesses.size() > 0
+            assert o.haltProcesses == ['Plan Ahead','Prepare for Registration']
+            assert result.groups.find{it.id==groupId}.groupHalted == true
+
         }
 
     }
@@ -73,11 +67,27 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         result.groups.items.each {
             def o = it.find {it.name == 'Drug and Alcohol Policy'}
             groupId = o.actionItemGroupID
-            if (o) {
-                assert o.actionItemHalted == null
-                assert result.groups.find{it.id==groupId}.groupHalted == true
-            }
+            assert o.actionItemHalted == null
+            assert result.groups.find{it.id==groupId}.groupHalted == true
         }
+    }
+
+    @Test
+    void listActionItemsByPidmNotExists() {
+        loginSSB( 'CSRSTU026', '111111' )
+        def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
+        assert result.groups.isEmpty() == true
+    }
+
+    @Test
+    void listActionItemsByPidmGroupWithNoDesc() {
+        loginSSB( 'CSRSTU001', '111111' )
+        sessionFactory.currentSession.createSQLQuery( """UPDATE gcbagrp set GCBAGRP_INSTRUCTION = null where GCBAGRP_NAME='Enrollment'""" ).executeUpdate()
+        def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
+        assert result.groups.isEmpty() == false
+
+        def group = result.groups.find{it.title == 'Enrollment'}
+        assert group.discription == 'There is no description for this group.'
     }
 
     @Test
@@ -88,10 +98,9 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         assert result.groups.items.size() > 0
         def group = result.groups.find{it.title == 'Enrollment'}
         def item = group.items.find {it.name == 'Personal Information'}
-        if (item) {
-            assert item.actionItemHalted == null
-            assert group.groupHalted == false
-        }
+        assert item.actionItemHalted == null
+        assert group.groupHalted == false
+
 
     }
 
@@ -112,7 +121,6 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     }
 
-
     @Test
     void actionItemOrGroupInfoByActionItemSearch() {
         loginSSB( 'CSRSTU001', '111111' )
@@ -126,7 +134,6 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         assert result.folderId != null
         assert result.folderName != null
     }
-
 
     @Test
     void actionItemOrGroupInfoByGroupNoDescInTableSearch() {
@@ -143,5 +150,25 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         assert result.text == 'There is no description for this group.'
         assert result.activity != null
         assert result.version >= 0
+    }
+
+    @Test
+    void actionItemOrGroupInfoNoGroupExist() {
+        loginSSB( 'CSRSTU001', '111111' )
+        def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'group', groupId: '50'])
+        assert result1.isEmpty() == true
+    }
+
+    @Test
+    void actionItemOrGroupInfoNoActionItemExist() {
+        loginSSB( 'CSRSTU001', '111111' )
+        def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'actionItem', actionItemId: '50'])
+        assert result1.isEmpty() == true
+    }
+    @Test
+    void actionItemOrGroupInfoInvalidSearchType() {
+        loginSSB( 'CSRSTU001', '111111' )
+        def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'invalid'])
+        assert result1.isEmpty() == true
     }
 }

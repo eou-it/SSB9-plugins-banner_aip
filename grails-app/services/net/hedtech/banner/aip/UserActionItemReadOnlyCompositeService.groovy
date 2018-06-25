@@ -61,18 +61,18 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
             ]
         }
         def haltProcesses = []
-        if(actionItemIds.size() >0){
+        if(actionItemIds){
             haltProcesses =  actionItemBlockedProcessReadOnlyService.fetchByListOfActionItemIds(actionItemIds)
         }
 
         def userGroupInfo = []
         actionItems.each {item ->
             def haltProcessNamesList = haltProcesses.findAll{it[0] == item.id}.collect{it[1]}
-            def groupHalted = false;
-            if(haltProcessNamesList.size() > 0){
+            def groupHalted = false
+            if(haltProcessNamesList){
                 item.haltProcesses = haltProcessNamesList
                 item.actionItemHalted = true
-                groupHalted = true;
+                groupHalted = true
             }
             def exist = userGroupInfo.findIndexOf {it ->
                 it.id == item.actionItemGroupID
