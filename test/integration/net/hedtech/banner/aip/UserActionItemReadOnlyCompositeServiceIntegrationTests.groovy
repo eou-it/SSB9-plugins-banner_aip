@@ -31,10 +31,9 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
         assert result.groups.size() > 0
         assert result.groups.items.size() > 0
-        result.groups.items.each {
-            def o = it.find {it.name == 'Drug and Alcohol Policy'}
-            assert o.name == 'Drug and Alcohol Policy'
-        }
+        def group = result.groups.find{it.title == 'Enrollment'}
+        def item = group.items.find {it.name == 'Drug and Alcohol Policy'}
+        assert item.name == 'Drug and Alcohol Policy'
         assert result.header == ["title", "state", "completedDate", "description"]
     }
 
@@ -45,16 +44,12 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         def groupId
         assert result.groups.size() > 0
         assert result.groups.items.size() > 0
-        result.groups.items.each {
-            def o = it.find {it.name == 'Notice of Scholastic Standards'}
-            groupId = o.actionItemGroupID
-            assert o.actionItemHalted == true
-            assert o.haltProcesses.size() > 0
-            assert o.haltProcesses == ['Plan Ahead','Prepare for Registration']
-            assert result.groups.find{it.id==groupId}.groupHalted == true
-
-        }
-
+        def group = result.groups.find{it.title == 'Enrollment'}
+        def item = group.items.find {it.name == 'Notice of Scholastic Standards'}
+        assert item.actionItemHalted == true
+        assert item.haltProcesses.size() > 0
+        assert item.haltProcesses == ['Plan Ahead','Prepare for Registration']
+        assert group.groupHalted == true
     }
 
     @Test
@@ -64,12 +59,10 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         def groupId
         assert result.groups.size() > 0
         assert result.groups.items.size() > 0
-        result.groups.items.each {
-            def o = it.find {it.name == 'Drug and Alcohol Policy'}
-            groupId = o.actionItemGroupID
-            assert o.actionItemHalted == null
-            assert result.groups.find{it.id==groupId}.groupHalted == true
-        }
+        def group = result.groups.find{it.title == 'Enrollment'}
+        def item = group.items.find {it.name == 'Drug and Alcohol Policy'}
+        assert item.actionItemHalted == null
+        assert group.groupHalted == true
     }
 
     @Test
@@ -100,8 +93,6 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         def item = group.items.find {it.name == 'Personal Information'}
         assert item.actionItemHalted == null
         assert group.groupHalted == false
-
-
     }
 
     @Test
