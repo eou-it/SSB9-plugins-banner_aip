@@ -41,7 +41,6 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
     void testActionItemWithHaltProcess() {
         loginSSB( 'CSRSTU004', '111111' )
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
-        def groupId
         assert result.groups.size() > 0
         assert result.groups.items.size() > 0
         def group = result.groups.find{it.title == 'Enrollment'}
@@ -56,7 +55,6 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
     void testGroupHaltedAndAINotHalted() {
         loginSSB( 'CSRSTU004', '111111' )
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
-        def groupId
         assert result.groups.size() > 0
         assert result.groups.items.size() > 0
         def group = result.groups.find{it.title == 'Enrollment'}
