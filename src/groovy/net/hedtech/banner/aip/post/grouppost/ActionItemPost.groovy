@@ -213,7 +213,7 @@ class ActionItemPost implements Serializable {
      * postingDisplayDateTime: Store UserEntered Date Time.
      */
 
-    @Column(name = "GCBAPST_DISPLAY_DATETIME")
+    @Column(name = "GCBAPST_DISPLAY_DATE")
     Date postingDisplayDateTime
 
     /**
