@@ -214,7 +214,6 @@ class ActionItemPost implements Serializable {
      */
 
     @Column(name = "GCBAPST_DISPLAY_DATETIME")
-    @Temporal(TemporalType.TIMESTAMP)
     Date postingDisplayDateTime
 
     /**

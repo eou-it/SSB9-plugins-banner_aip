@@ -180,7 +180,7 @@ class ActionItemPostCompositeService {
         String scheduledStartTime = requestMap.scheduledStartTime
         String timezoneStringOffset = requestMap.timezoneStringOffset
 
-        String[] userEnteredValue = splitUserEnteredValues( requestMap )
+        String[] userEnteredValue = splitUserEnteredDateTimeZone( requestMap )
         Calendar displayDateTimeCalendar = getDisplayDateTimeCalender( userEnteredValue )
         Calendar scheduledStartDateCalendar = null
         if (!requestMap.postNow && scheduledStartDate && scheduledStartTime) {
@@ -211,7 +211,7 @@ class ActionItemPostCompositeService {
      * @param requestMap
      * @return
      */
-    def splitUserEnteredValues( requestMap ) {
+    def splitUserEnteredDateTimeZone( requestMap ) {
         requestMap.displayDatetimeZone?.split( "\\s+" )
     }
 
@@ -242,7 +242,7 @@ class ActionItemPostCompositeService {
         Date scheduledStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.scheduledStartDate )
         String scheduledStartTime = requestMap.scheduledStartTime
         String timezoneStringOffset = requestMap.timezoneStringOffset
-        String[] userEnteredValue = splitUserEnteredValues( requestMap )
+        String[] userEnteredValue = splitUserEnteredDateTimeZone( requestMap )
         Calendar displayDateTimeCalendar = getDisplayDateTimeCalender( userEnteredValue )
         Calendar scheduledStartDateCalendar = null
         if (!requestMap.postNow && scheduledStartDate && scheduledStartTime) {

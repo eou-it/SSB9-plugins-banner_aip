@@ -209,11 +209,10 @@ class ActionItemPostReadOnly implements Serializable {
     Long version
 
     /**
-     * Date: Store UserEntered Date Time Timezone.
+     * Date: Store UserEntered Date Time .
      */
 
     @Column(name = "GCBAPST_DISPLAY_DATETIME")
-    @Temporal(TemporalType.TIMESTAMP)
     Date postingDisplayDateTime
 
     /**
