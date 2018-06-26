@@ -15,11 +15,15 @@ import net.hedtech.banner.i18n.MessageHelper
 import org.apache.log4j.Logger
 import org.springframework.context.i18n.LocaleContextHolder
 
+import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
+
 
 class ActionItemProcessingCommonService {
     def dateConverterService
+
     def grailsApplication
+
     def messageSource
 
     private static final def LOGGER = Logger.getLogger( this.getClass() )
@@ -91,7 +95,7 @@ class ActionItemProcessingCommonService {
                         "id"   : 3,
                         "value": "Inactive"
                 ]
-        ].sort {a, b -> a.value <=> b.value}
+        ].sort { a, b -> a.value <=> b.value }
     }
 
     /**
@@ -120,7 +124,7 @@ class ActionItemProcessingCommonService {
      */
     List<AipTimezone> populateAvailableTimezones() {
         Set<String> keys = messageSource.getMergedProperties( LocaleContextHolder.getLocale() ).properties.keySet()
-        Set<String> timezoneKeys = keys.findAll {key -> key.startsWith( 'timezone.' )}
+        Set<String> timezoneKeys = keys.findAll { key -> key.startsWith( 'timezone.' ) }
         Set<String> intendedTimezoneIds = new HashSet<String>()
         timezoneKeys.each {
             intendedTimezoneIds.add( (String) it.tokenize( "." ).toArray()[1] )
@@ -141,7 +145,7 @@ class ActionItemProcessingCommonService {
             commTimezone.displayNameWithoutOffset = messageSource.getMessage( "timezone." + it, null, LocaleContextHolder.getLocale() )
             commTimezoneList.add( commTimezone )
         }
-        commTimezoneList.sort {t1, t2 -> (t1.offset <=> t2.offset) ?: (t1.timezoneId <=> t2.timezoneId)}
+        commTimezoneList.sort { t1, t2 -> (t1.offset <=> t2.offset) ?: (t1.timezoneId <=> t2.timezoneId) }
         return commTimezoneList;
     }
 
@@ -185,4 +189,27 @@ class ActionItemProcessingCommonService {
         [use12HourClock: use12HourClock]
     }
 
+    /**
+     *
+     * Fetch Processed Date,Time,TimeZone
+     *
+     */
+    def fetchProcessedServerDateTimeAndTimezone( requestMap ) {
+        Date scheduledStartDate = convertToLocaleBasedDate( requestMap.userEnterDate )
+        String scheduledStartTime = requestMap.userEnterTime
+        String timezoneStringOffset = requestMap.userEnterTimeZone
+        java.util.Calendar scheduledStartDateCalendar = getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset );
+        List timeZoneList = populateAvailableTimezones()
+        TimeZone timezone = TimeZone.getDefault();
+        int defaultRowOffset = timezone.getRawOffset()
+        AipTimezone serverDefaultTimeZone = timeZoneList.find {
+            it.offset == defaultRowOffset //Getting the time zone of the server
+        }
+        SimpleDateFormat hr24TimeFormat = new SimpleDateFormat( MessageHelper.message( "default.time.format" ) )
+        SimpleDateFormat hr12TimeFormat = new SimpleDateFormat( "hh:mm a" )
+        [serverDate    : scheduledStartDateCalendar.getTime(),
+         serverTime    : is12HourClock().use12HourClock ? hr12TimeFormat.format( scheduledStartDateCalendar.getTime() ) : hr24TimeFormat.format( scheduledStartDateCalendar.getTime() ),
+         serverTimeZone: serverDefaultTimeZone.displayName
+        ]
+    }
 }
