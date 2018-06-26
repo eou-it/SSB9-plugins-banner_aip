@@ -210,14 +210,14 @@ class ActionItemPost implements Serializable {
     String vpdiCode
 
     /**
-     * postingDisplayDateTime: Store UserEntered Date Time.
+     * postingDisplayDateTime: Store user entered Date Time.
      */
 
     @Column(name = "GCBAPST_DISPLAY_DATE")
     Date postingDisplayDateTime
 
     /**
-     * postingTimeZone:Store UserEntered TimeZone
+     * postingTimeZone:Store user entered TimeZone
      */
     @Column(name = "GCBAPST_TIME_ZONE")
     String postingTimeZone
