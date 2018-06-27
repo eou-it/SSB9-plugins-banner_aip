@@ -47,7 +47,6 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         def item = group.items.find {it.name == 'Notice of Scholastic Standards'}
         assert item.actionItemHalted == true
         assert item.haltProcesses.size() > 0
-        assert item.haltProcesses == ['Plan Ahead','Prepare for Registration']
         assert group.groupHalted == true
     }
 
