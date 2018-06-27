@@ -135,14 +135,4 @@ class ActionItemProcessingCommonServiceIntegrationTests extends BaseIntegrationT
         }
         assert result.serverTimeZone != serverDefaultTimeZone?.timezoneId
     }
-
-
-    @Test
-    void testFetchCurrentDateTimeZone() {
-        Date currentDate = new Date()
-        def result = actionItemProcessingCommonService.fetchCurrentDateTimeZone()
-        assert currentDate.compareTo( result.ServerDate ) <= 0
-        assert result.ServerTime != null
-        assert result.ServerTimeZone == TimeZone.getDefault()
-    }
 }
