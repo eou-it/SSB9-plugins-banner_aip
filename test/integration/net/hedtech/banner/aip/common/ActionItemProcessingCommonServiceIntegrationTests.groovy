@@ -122,7 +122,7 @@ class ActionItemProcessingCommonServiceIntegrationTests extends BaseIntegrationT
         String timezoneStringOffset = map.userEnterTimeZone
         java.util.Calendar scheduledStartDateCalendar = actionItemProcessingCommonService.getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset );
         SimpleDateFormat hr24TimeFormat = new SimpleDateFormat( "HH:mm" )
-        SimpleDateFormat hr12TimeFormat = new SimpleDateFormat( "HH:mm a" )
+        SimpleDateFormat hr12TimeFormat = new SimpleDateFormat( "hh:mm a" )
         def serverTime = actionItemProcessingCommonService.is12HourClock().use12HourClock ? hr12TimeFormat.format( scheduledStartDateCalendar.getTime() ) : hr24TimeFormat.format( scheduledStartDateCalendar.getTime() )
         def result = actionItemProcessingCommonService.fetchProcessedServerDateTimeAndTimezone( map )
         assert result.serverDate == scheduledStartDateCalendar.getTime()
