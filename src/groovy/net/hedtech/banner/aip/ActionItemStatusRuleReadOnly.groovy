@@ -5,6 +5,7 @@ package net.hedtech.banner.aip
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import org.hibernate.annotations.Type
 
 import javax.persistence.*
 
@@ -99,6 +100,13 @@ class ActionItemStatusRuleReadOnly implements Serializable {
      */
     @Column(name = "STATUS_ACTIVE_IND")
     String statusActiveInd
+
+    /**
+     * Action Item Status Review Required Indicator
+     */
+    @Type(type = "yes_no")
+    @Column(name = "STATUS_REV_REQ_IND")
+    Boolean statusReviewRequired
 
     /**
      * Action Item Status Activity Date

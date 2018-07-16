@@ -5,6 +5,7 @@ package net.hedtech.banner.aip
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import org.hibernate.annotations.Type
 
 import javax.persistence.*
 
@@ -83,6 +84,13 @@ class ActionItemStatusRule implements Serializable {
     String resubmitInd
 
     /***
+     * Review Required Indicator
+     */
+    @Type(type = "yes_no")
+    @Column(name = "GCRAISR_REV_REQ_IND")
+    Boolean reviewReqInd = false
+
+    /***
      * Label for the Action Item Status Rule
      */
     @Column(name = "GCRAISR_LABEL_TEXT")
@@ -119,6 +127,7 @@ class ActionItemStatusRule implements Serializable {
         labelText( blank: false, nullable: false, maxSize: 150 )
         actionItemStatusId( blank: true, nullable: true, maxSize: 19 )
         resubmitInd( blank: true, nullable: true, maxSize: 1 )
+        reviewReqInd( blank: true, nullable: false, maxSize: 1)
         lastModifiedBy( nullable: true, maxSize: 30 )
         lastModified( nullable: true )
         dataOrigin( nullable: true, maxSize: 30 )

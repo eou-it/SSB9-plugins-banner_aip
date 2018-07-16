@@ -162,7 +162,9 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
         Map rules = [statusName         : "",
                      status             : ActionItemStatus.findByActionItemStatus( 'Completed' ),
                      statusRuleLabelText: "sas",
-                     statusRuleSeqOrder : 0]
+                     statusRuleSeqOrder : 0,
+                     reviewReqInd       : false
+        ]
         def ruleList = [rules]
         Map params1 = [rules: ruleList, actionItemId: ActionItem.findByName( 'Personal Information' ).id]
         ActionItem aim = ActionItem.findByName( 'Personal Information' )
@@ -172,5 +174,95 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
         assertTrue data.success
         assert data.message == null
         assert data.rules.size() > 0
+    }
+    @Test
+    void createActionItemStatusRuleWithReviewEnabled() {
+        Map rules = [statusName         : "",
+                     status             : ActionItemStatus.findByActionItemStatus( 'Completed' ),
+                     statusRuleLabelText: "test review",
+                     statusRuleSeqOrder : 0,
+                     reviewReqInd       : true
+                    ]
+        def ruleList = [rules]
+        Map params1 = [rules: ruleList, actionItemId: ActionItem.findByName( 'Personal Information' ).id]
+        ActionItem aim = ActionItem.findByName( 'Personal Information' )
+        aim.postedIndicator = 'N'
+        actionItemService.update( aim )
+        def data = actionItemStatusCompositeService.updateActionItemStatusRule( params1 )
+        assertTrue data.success
+        assert data.message == null
+        assert data.rules.size() > 0
+        def rule = data.rules.find {it.labelText == "test review"}
+        assert rule.reviewReqInd == true
+    }
+    @Test
+    void updateActionItemStatusRuleWithReviewEnabled() {
+        Map rules = [statusName         : "",
+                     status             : ActionItemStatus.findByActionItemStatus( 'Completed' ),
+                     statusRuleLabelText: "test review",
+                     statusRuleSeqOrder : 0,
+                     reviewReqInd       : true
+        ]
+        def ruleList = [rules]
+        def actionItemId = ActionItem.findByName( 'Personal Information' ).id
+        Map params1 = [rules: ruleList, actionItemId: actionItemId ]
+        ActionItem aim = ActionItem.findByName( 'Personal Information' )
+        aim.postedIndicator = 'N'
+        actionItemService.update( aim )
+        def data = actionItemStatusCompositeService.updateActionItemStatusRule( params1 )
+        assertTrue data.success
+        assert data.message == null
+        assert data.rules.size() > 0
+        def rule = data.rules.find {it.labelText == "test review"}
+        assert rule.reviewReqInd == true
+
+        //update reviewReqInd to false
+        Map updateRules = [statusRuleId : rule.id,
+             statusName         : "",
+             status             : ActionItemStatus.findByActionItemStatus( 'Completed' ),
+             statusRuleLabelText: "test review",
+             statusRuleSeqOrder : 0,
+             reviewReqInd       : false
+        ]
+        ruleList = [updateRules]
+        params1 = [rules: ruleList, actionItemId: actionItemId ]
+        data = actionItemStatusCompositeService.updateActionItemStatusRule( params1 )
+        assertTrue data.success
+        assert data.message == null
+        assert data.rules.size() > 0
+        rule = data.rules.find {it.labelText == "test review"}
+        assert rule.reviewReqInd == false
+    }
+    @Test
+    void updateActionItemStatusRuleWhenPosted() {
+        Map rules = [statusName         : "",
+                     status             : ActionItemStatus.findByActionItemStatus( 'Completed' ),
+                     statusRuleLabelText: "test review",
+                     statusRuleSeqOrder : 0,
+                     reviewReqInd       : true
+        ]
+        def ruleList = [rules]
+        Map params1 = [rules: ruleList, actionItemId: ActionItem.findByName( 'Personal Information' ).id]
+        ActionItem aim = ActionItem.findByName( 'Personal Information' )
+        aim.postedIndicator = 'Y'
+        actionItemService.update( aim )
+        def data = actionItemStatusCompositeService.updateActionItemStatusRule( params1 )
+        assertFalse data.success
+        assert data.errors == "Cannot be updated. Action Item is posted."
+    }
+    @Test
+    void updateActionItemStatusRuleWhenAINotExists() {
+        Map rules = [statusName         : "",
+                     status             : ActionItemStatus.findByActionItemStatus( 'Completed' ),
+                     statusRuleLabelText: "test review",
+                     statusRuleSeqOrder : 0,
+                     reviewReqInd       : true
+        ]
+        def ruleList = [rules]
+        Long id = 100
+        Map params1 = [rules: ruleList, actionItemId: id]
+        def data = actionItemStatusCompositeService.updateActionItemStatusRule( params1 )
+        assertFalse data.success
+        assert data.errors == "Action Item not present"
     }
 }

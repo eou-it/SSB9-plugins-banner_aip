@@ -45,6 +45,16 @@ class ActionItemStatusRuleReadOnlyIntegrationTest extends BaseIntegrationTestCas
     }
 
     @Test
+    void testIfReviewRequiredNotNull() {
+        List<ActionItemStatusRuleReadOnly> actionItemStatusROs = ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesRO()
+        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlys =
+                ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesROByActionItemId(actionItemStatusROs[0].statusRuleActionItemId)
+        actionItemStatusRuleReadOnlys.each { response ->
+            assertNotNull response.statusReviewRequired
+        }
+    }
+
+    @Test
     void testFetchActionItemStatusRuleReadOnlyString() {
         List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies = ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesRO()
         def actionItemStatusRuleRO = actionItemStatusRuleReadOnlies[0]
@@ -76,6 +86,7 @@ class ActionItemStatusRuleReadOnlyIntegrationTest extends BaseIntegrationTestCas
                 statusBlockProcessInd: actionItemStatusRuleRO.statusBlockProcessInd,
                 statusSystemRequired: actionItemStatusRuleRO.statusSystemRequired,
                 statusActiveInd: actionItemStatusRuleRO.statusActiveInd,
+                statusReviewRequired: actionItemStatusRuleRO.statusReviewRequired,
                 statusActivityDate: actionItemStatusRuleRO.statusActivityDate,
                 statusRuleVersion: actionItemStatusRuleRO.statusRuleVersion
         )

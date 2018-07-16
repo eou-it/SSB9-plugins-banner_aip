@@ -51,4 +51,16 @@ class ActionItemStatusRuleReadOnlyServiceIntegrationTest extends BaseIntegration
         assertEquals(actionItemStatusRuleReadOnlies[0].statusRuleActionItemId, actionItemStatusRuleReadOnlies1[0].statusRuleActionItemId)
 
     }
+
+    @Test
+    void testIfReviewRequiredPresentInResponseList() {
+        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies = actionItemStatusRuleReadOnlyService.listActionItemStatusRulesRO()
+        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies1 = actionItemStatusRuleReadOnlyService
+                .getActionItemStatusRulesROByActionItemId(actionItemStatusRuleReadOnlies[0].statusRuleActionItemId)
+        assertFalse(actionItemStatusRuleReadOnlies1.isEmpty())
+        assertEquals(actionItemStatusRuleReadOnlies[0].statusRuleActionItemId, actionItemStatusRuleReadOnlies1[0].statusRuleActionItemId)
+        actionItemStatusRuleReadOnlies1.each{response ->
+            assertEquals(respone.statusReviewReqInd, false)
+        }
+    }
 }

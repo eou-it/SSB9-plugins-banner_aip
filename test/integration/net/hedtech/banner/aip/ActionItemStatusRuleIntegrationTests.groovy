@@ -40,6 +40,13 @@ class ActionItemStatusRuleIntegrationTests extends BaseIntegrationTestCase {
         assertEquals( actionItemStatusRuleTemp.id, actionItemStatusRule.id )
     }
 
+    @Test
+    void testIfReviewIndicatorPresent() {
+        List<ActionItemStatusRule> actionItemStatusRules = ActionItemStatusRule.fetchActionItemStatusRules()
+        def actionItemStatusRuleTemp = actionItemStatusRules[0]
+        ActionItemStatusRule actionItemStatusRule = ActionItemStatusRule.fetchActionItemStatusRuleById( actionItemStatusRuleTemp.id )
+        assertFalse actionItemStatusRule.reviewReqInd
+    }
 
     @Test
     void testFetchActionItemStatusRuleByActionItemId() {
