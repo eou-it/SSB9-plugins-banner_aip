@@ -14,10 +14,6 @@ import javax.persistence.*
                 query = """
            FROM ActionItemStatusRule a
           """),
-        @NamedQuery(name = "ActionItemStatusRule.getActionItemStatusRuleNameByStatusIdAndActionItemId",
-                query = """
-                  FROM ActionItemStatusRule a WHERE a.actionItemId = :actionItemId and a.actionItemStatusId = :statusId
-                 """),
         @NamedQuery(name = "ActionItemStatusRule.fetchActionItemStatusRuleById",
                 query = """
            FROM ActionItemStatusRule a
@@ -179,21 +175,6 @@ class ActionItemStatusRule implements Serializable {
     static checkIfPresentAndAssociatedToActionItemContent( long actionItemStatusId ) {
         ActionItemStatusRule.withSession {session ->
             session.getNamedQuery( "ActionItemStatusRule.checkIfPresentAndAssociatedToActionItemContent" ).setLong( "actionItemStatusId", actionItemStatusId ).uniqueResult() > 0
-        }
-    }
-
-    /**
-     *
-     * @param actionItemId
-     * @param statusId
-     * @return
-     */
-    static getActionItemStatusRuleNameByStatusIdAndActionItemId( Long statusId, Long actionItemId) {
-        ActionItemStatusRule.withSession {session ->
-            session.getNamedQuery( "ActionItemStatusRule.getActionItemStatusRuleNameByStatusIdAndActionItemId" )
-                    .setLong( "actionItemId", actionItemId )
-                    .setLong( "statusId", statusId )
-                    .list()
         }
     }
 
