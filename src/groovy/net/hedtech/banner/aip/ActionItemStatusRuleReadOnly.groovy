@@ -5,6 +5,7 @@ package net.hedtech.banner.aip
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import org.hibernate.annotations.Type
 
 import javax.persistence.*
 
@@ -101,6 +102,13 @@ class ActionItemStatusRuleReadOnly implements Serializable {
     String statusActiveInd
 
     /**
+     * Action Item Status Review Required Indicator
+     */
+    @Type(type = "yes_no")
+    @Column(name = "STATUS_REV_REQ_IND")
+    Boolean statusReviewRequired
+
+    /**
      * Action Item Status Activity Date
      */
     @Column(name = "STATUS_ACTIVITY_DATE")
@@ -111,10 +119,10 @@ class ActionItemStatusRuleReadOnly implements Serializable {
      * @param myId
      * @return
      */
-    public static def fetchActionItemStatusRuleROById( Long myId ) {
-        ActionItemStatusRuleReadOnly.withSession {session ->
-            ActionItemStatusRuleReadOnly actionitemStatusRuleRO = session.getNamedQuery( "ActionItemStatusRuleReadOnly" +
-                                                                                                 ".fetchActionItemStatusRulesROById" ).setLong( "myId", myId ).list()[0]
+    public static def fetchActionItemStatusRuleROById(Long myId) {
+        ActionItemStatusRuleReadOnly.withSession { session ->
+            ActionItemStatusRuleReadOnly actionitemStatusRuleRO = session.getNamedQuery("ActionItemStatusRuleReadOnly" +
+                    ".fetchActionItemStatusRulesROById").setLong("myId", myId).list()[0]
             return actionitemStatusRuleRO
         }
     }
@@ -124,8 +132,8 @@ class ActionItemStatusRuleReadOnly implements Serializable {
      * @return
      */
     public static fetchActionItemStatusRulesRO() {
-        ActionItemStatusRuleReadOnly.withSession {session ->
-            List<ActionItemStatusRuleReadOnly> actionItemStatusRule = session.getNamedQuery( "ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleRO" ).list()
+        ActionItemStatusRuleReadOnly.withSession { session ->
+            List<ActionItemStatusRuleReadOnly> actionItemStatusRule = session.getNamedQuery("ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleRO").list()
             return actionItemStatusRule
         }
     }
@@ -135,9 +143,9 @@ class ActionItemStatusRuleReadOnly implements Serializable {
      * @param myId
      * @return
      */
-    public static fetchActionItemStatusRulesROByActionItemId( Long myId ) {
-        ActionItemStatusRuleReadOnly.withSession {session ->
-            List<ActionItemStatusRuleReadOnly> actionItemStatusRuleROs = session.getNamedQuery( "ActionItemStatusRuleReadOnly.fetchActionItemStatusByActionItem" ).setLong( "myId", myId ).list()
+    public static fetchActionItemStatusRulesROByActionItemId(Long myId) {
+        ActionItemStatusRuleReadOnly.withSession { session ->
+            List<ActionItemStatusRuleReadOnly> actionItemStatusRuleROs = session.getNamedQuery("ActionItemStatusRuleReadOnly.fetchActionItemStatusByActionItem").setLong("myId", myId).list()
             return actionItemStatusRuleROs
         }
     }
