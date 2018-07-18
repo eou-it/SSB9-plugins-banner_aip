@@ -47,9 +47,7 @@ class ActionItemStatusRuleReadOnlyIntegrationTest extends BaseIntegrationTestCas
     @Test
     void testIfReviewRequiredNotNull() {
         List<ActionItemStatusRuleReadOnly> actionItemStatusROs = ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesRO()
-        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlys =
-                ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesROByActionItemId(actionItemStatusROs[0].statusRuleActionItemId)
-        actionItemStatusRuleReadOnlys.each { response ->
+        actionItemStatusROs.each { response ->
             assertNotNull response.statusReviewRequired
         }
     }
