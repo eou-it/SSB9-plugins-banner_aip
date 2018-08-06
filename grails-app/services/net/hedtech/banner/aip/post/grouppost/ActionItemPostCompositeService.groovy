@@ -477,16 +477,44 @@ class ActionItemPostCompositeService {
      * @return
      */
     def setHomeContext( home ) {
-        Sql sql = new Sql( sessionFactory.getCurrentSession().connection() )
+        def con = sessionFactory.getCurrentSession().connection()
+        if (isMEP( con )) {
+            Sql sql = new Sql( con )
+            try {
+                sql.call( "{call g\$_vpdi_security.g\$_vpdi_set_home_context(${home})}" )
+
+            } catch (e) {
+                log.error( "ERROR: Could not establish mif context. $e" )
+                throw e
+            } finally {
+                sql?.close()
+            }
+        }
+    }
+
+    /**
+     *
+     * @param con
+     * @return
+     */
+
+    private isMEP( con = null ) {
+        def mepEnabled
+        if (!con) {
+            con = new Sql(sessionFactory.getCurrentSession().connection())
+        }
+        Sql sql = new Sql( con )
         try {
             sql.call( "{call g\$_vpdi_security.g\$_vpdi_set_home_context(${home})}" )
-
+            sql.call( "{$Sql.VARCHAR = call g\$_vpdi_security.g\$_is_mif_enabled_str()}" ) {mifEnabled -> mepEnabled = mifEnabled.toLowerCase().toBoolean()}
         } catch (e) {
             log.error( "ERROR: Could not establish mif context. $e" )
             throw e
         } finally {
             sql?.close()
+
         }
+        mepEnabled
     }
 
     /**
@@ -495,7 +523,9 @@ class ActionItemPostCompositeService {
      */
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
     private void generatePostItemsFiredImpl( SchedulerJobContext jobContext ) {
-        asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), jobContext.parameters.get( "mepCode" ) )
+        if (isMEP()) {
+            asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), jobContext.parameters.get( "mepCode" ) )
+        }
         markArtifactsAsPosted( jobContext.parameters.get( "groupSendId" ) as Long )
         generatePostItems( jobContext.parameters )
     }
@@ -516,7 +546,9 @@ class ActionItemPostCompositeService {
      */
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
     private void generatePostItemsFailedImpl( SchedulerErrorContext errorContext ) {
-        asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), errorContext.jobContext.parameters.get( "mepCode" ) )
+        if (isMEP()) {
+            asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), errorContext.jobContext.parameters.get( "mepCode" ) )
+        }
         scheduledPostCallbackFailed( errorContext )
     }
 
