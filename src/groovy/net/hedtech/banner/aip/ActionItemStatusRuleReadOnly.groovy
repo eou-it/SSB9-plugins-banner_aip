@@ -115,6 +115,12 @@ class ActionItemStatusRuleReadOnly implements Serializable {
     Date statusActivityDate
 
     /**
+     * Action Item Status Allowed Attachment
+     */
+    @Column(name = "STATUS_ALLOWED_ATTACHMENT")
+    Integer statusAllowedAttachment
+
+    /**
      *
      * @param myId
      * @return
