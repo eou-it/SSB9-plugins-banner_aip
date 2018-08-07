@@ -190,7 +190,7 @@ class ActionItemStatusCompositeService {
                     statusRule.actionItemStatusId = statusId
                     statusRule.reviewReqInd = rule.reviewReqInd
                     statusRule.actionItemId = jsonObj.actionItemId.toLong()
-                    statusRule.attachments = rule.attachments.toInteger()
+                    statusRule.allowedAttachments = rule.allowedAttachments.toInteger()
                 } else {
                     statusRule = new ActionItemStatusRule(
                             seqOrder: rule.statusRuleSeqOrder,
@@ -198,7 +198,7 @@ class ActionItemStatusCompositeService {
                             actionItemId: jsonObj.actionItemId.toLong(),
                             actionItemStatusId: statusId,
                             reviewReqInd: rule.reviewReqInd,
-                            attachments:rule.attachments
+                            allowedAttachments:rule.allowedAttachments
                     )
                 }
                 ruleList.push(statusRule)
