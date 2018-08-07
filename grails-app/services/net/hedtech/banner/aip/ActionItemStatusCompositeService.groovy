@@ -9,6 +9,7 @@ import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.i18n.MessageHelper
 import org.apache.log4j.Logger
+import net.hedtech.banner.general.overall.IntegrationConfiguration
 
 class ActionItemStatusCompositeService {
     private static final def LOGGER = Logger.getLogger(this.class)
@@ -218,4 +219,24 @@ class ActionItemStatusCompositeService {
                 rules  : updatedActionItemStatusRules
         ]
     }
+
+    /**
+     * Get configured Max Attachment value
+     * @return
+     */
+    def getMaxAttachmentsValue(maxAttachment) {
+        def result
+        try {
+            maxAttachment = IntegrationConfiguration.fetchByProcessCodeAndSettingName('GENERAL_SSB', 'ACTION.ITEM.ATTACHMENT.MAXIMUM').value
+            result = [maxAttachment: Integer.parseInt(maxAttachment)]
+        }
+        catch(NumberFormatException e)
+        {
+            String errorString =MessageHelper.message("actionItemStatusRule.maxAttachment.error")
+            LOGGER.error errorString, e
+            result = [errorMessage: errorString]
+        }
+        result
+    }
+
 }
