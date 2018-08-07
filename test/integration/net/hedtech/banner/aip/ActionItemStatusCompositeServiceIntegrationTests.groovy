@@ -267,7 +267,6 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
         assert data.message == null
         assert data.rules.size() > 0
         def rule = data.rules.find { it.labelText == "test Attachments" }
-        assert rule.reviewReqInd == true
         assert rule.allowedAttachments == 3
     }
 
@@ -291,7 +290,6 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
         assert data.rules.size() > 0
         def rule = data.rules.find { it.labelText == "test review" }
         assert rule.reviewReqInd == true
-        assert rule.allowedAttachments == 3
     }
 
     @Test
@@ -315,7 +313,6 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
         assert data.rules.size() > 0
         def rule = data.rules.find { it.labelText == "test review" }
         assert rule.reviewReqInd == true
-        assert rule.allowedAttachments == 5
 
         //update reviewReqInd to false
         Map updateRules = [statusRuleId       : rule.id,
@@ -333,7 +330,6 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
         assert data.rules.size() > 0
         rule = data.rules.find { it.labelText == "test review" }
         assert rule.reviewReqInd == false
-        assert rule.allowedAttachments == 0
     }
 
     @Test
