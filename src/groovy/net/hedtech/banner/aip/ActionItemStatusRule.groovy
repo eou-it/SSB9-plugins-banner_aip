@@ -87,6 +87,12 @@ class ActionItemStatusRule implements Serializable {
     Boolean reviewReqInd
 
     /***
+     * Allowed Attachments
+     */
+    @Column(name = "GCRAISR_ALLOWED_ATTACHMENT")
+    Integer allowedAttachments
+
+    /***
      * Label for the Action Item Status Rule
      */
     @Column(name = "GCRAISR_LABEL_TEXT")
@@ -124,6 +130,7 @@ class ActionItemStatusRule implements Serializable {
         actionItemStatusId(blank: true, nullable: true, maxSize: 19)
         resubmitInd(blank: true, nullable: true, maxSize: 1)
         reviewReqInd(blank: true, nullable: true, maxSize: 1)
+        allowedAttachments(blank:true,nullable:true,maxSize:3)
         lastModifiedBy(nullable: true, maxSize: 30)
         lastModified(nullable: true)
         dataOrigin(nullable: true, maxSize: 30)

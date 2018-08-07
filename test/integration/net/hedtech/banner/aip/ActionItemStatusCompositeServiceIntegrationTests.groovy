@@ -183,7 +183,8 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
                 status             : status,
                 statusRuleLabelText: "sas",
                 statusRuleSeqOrder : 0,
-                reviewReqInd       : false
+                reviewReqInd       : false,
+                allowedAttachments : 5
         ]
         def ruleList = [rules]
         Map params1 = [rules: ruleList, actionItemId: ActionItem.findByName('Personal Information').id]
@@ -208,7 +209,8 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
                 status             : status,
                 statusRuleLabelText: "sas",
                 statusRuleSeqOrder : 0,
-                reviewReqInd       : false
+                reviewReqInd       : false,
+                allowedAttachments :  2
         ]
         def ruleList = [rules]
         Map params1 = [rules: ruleList, actionItemId: ActionItem.findByName('Personal Information').id]
@@ -247,12 +249,35 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
     }
 
     @Test
+    void createActionItemStatusRuleWithAttachments() {
+        Map rules = [
+                status             : ActionItemStatus.findByActionItemStatus('Completed'),
+                statusRuleLabelText: "test Attachments",
+                statusRuleSeqOrder : 0,
+                reviewReqInd       : true,
+                allowedAttachments : 3
+        ]
+        def ruleList = [rules]
+        Map params1 = [rules: ruleList, actionItemId: ActionItem.findByName('Personal Information').id]
+        ActionItem aim = ActionItem.findByName('Personal Information')
+        aim.postedIndicator = 'N'
+        actionItemService.update(aim)
+        def data = actionItemStatusCompositeService.updateActionItemStatusRule(params1)
+        assertTrue data.success
+        assert data.message == null
+        assert data.rules.size() > 0
+        def rule = data.rules.find { it.labelText == "test Attachments" }
+        assert rule.allowedAttachments == 3
+    }
+
+    @Test
     void createActionItemStatusRuleWithReviewEnabled() {
         Map rules = [
                 status             : ActionItemStatus.findByActionItemStatus('Completed'),
                 statusRuleLabelText: "test review",
                 statusRuleSeqOrder : 0,
-                reviewReqInd       : true
+                reviewReqInd       : true,
+                allowedAttachments : 3
         ]
         def ruleList = [rules]
         Map params1 = [rules: ruleList, actionItemId: ActionItem.findByName('Personal Information').id]
@@ -273,7 +298,8 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
                 status             : ActionItemStatus.findByActionItemStatus('Completed'),
                 statusRuleLabelText: "test review",
                 statusRuleSeqOrder : 0,
-                reviewReqInd       : true
+                reviewReqInd       : true,
+                allowedAttachments  : 5
         ]
         def ruleList = [rules]
         def actionItemId = ActionItem.findByName('Personal Information').id
@@ -293,7 +319,8 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
                            status             : ActionItemStatus.findByActionItemStatus('Completed'),
                            statusRuleLabelText: "test review",
                            statusRuleSeqOrder : 0,
-                           reviewReqInd       : false
+                           reviewReqInd       : false,
+                           allowedAttachments  : 0
         ]
         ruleList = [updateRules]
         params1 = [rules: ruleList, actionItemId: actionItemId]
@@ -311,7 +338,8 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
                 status             : ActionItemStatus.findByActionItemStatus('Completed'),
                 statusRuleLabelText: "test review",
                 statusRuleSeqOrder : 0,
-                reviewReqInd       : true
+                reviewReqInd       : true,
+                allowedAttachments : 1
         ]
         def ruleList = [rules]
         Map params1 = [rules: ruleList, actionItemId: ActionItem.findByName('Personal Information').id]
@@ -329,7 +357,8 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
                 status             : ActionItemStatus.findByActionItemStatus('Completed'),
                 statusRuleLabelText: "test review",
                 statusRuleSeqOrder : 0,
-                reviewReqInd       : true
+                reviewReqInd       : true,
+                allowedAttachments :  2
         ]
         def ruleList = [rules]
         Long id = 100

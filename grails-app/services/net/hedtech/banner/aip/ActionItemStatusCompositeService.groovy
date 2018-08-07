@@ -9,6 +9,7 @@ import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.i18n.MessageHelper
 import org.apache.log4j.Logger
+import net.hedtech.banner.general.overall.IntegrationConfiguration
 
 class ActionItemStatusCompositeService {
     private static final def LOGGER = Logger.getLogger(this.class)
@@ -190,13 +191,15 @@ class ActionItemStatusCompositeService {
                     statusRule.actionItemStatusId = statusId
                     statusRule.reviewReqInd = rule.reviewReqInd
                     statusRule.actionItemId = jsonObj.actionItemId.toLong()
+                    statusRule.allowedAttachments = rule.allowedAttachments.toInteger()
                 } else {
                     statusRule = new ActionItemStatusRule(
                             seqOrder: rule.statusRuleSeqOrder,
                             labelText: rule.statusRuleLabelText,
                             actionItemId: jsonObj.actionItemId.toLong(),
                             actionItemStatusId: statusId,
-                            reviewReqInd: rule.reviewReqInd
+                            reviewReqInd: rule.reviewReqInd,
+                            allowedAttachments:rule.allowedAttachments
                     )
                 }
                 ruleList.push(statusRule)
@@ -216,4 +219,24 @@ class ActionItemStatusCompositeService {
                 rules  : updatedActionItemStatusRules
         ]
     }
+
+    /**
+     * Get configured Max Attachment value
+     * @return
+     */
+    def getMaxAttachmentsValue(maxAttachment) {
+        def result
+        try {
+            maxAttachment = IntegrationConfiguration.fetchByProcessCodeAndSettingName('GENERAL_SSB', 'ACTION.ITEM.ATTACHMENT.MAXIMUM').value
+            result = [maxAttachment: Integer.parseInt(maxAttachment)]
+        }
+        catch(NumberFormatException e)
+        {
+            String errorString =MessageHelper.message("actionItemStatusRule.maxAttachment.error")
+            LOGGER.error errorString, e
+            result = [errorMessage: errorString]
+        }
+        result
+    }
+
 }

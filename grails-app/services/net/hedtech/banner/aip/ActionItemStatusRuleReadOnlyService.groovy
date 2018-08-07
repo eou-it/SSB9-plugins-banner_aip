@@ -36,7 +36,8 @@ class ActionItemStatusRuleReadOnlyService extends ServiceBase {
                     statusRuleLabelText   : it.statusRuleLabelText,
                     statusRuleSeqOrder    : it.statusRuleSeqOrder,
                     statusSystemRequired  : it.statusSystemRequired,
-                    statusReviewReqInd    : it.statusReviewRequired
+                    statusReviewReqInd    : it.statusReviewRequired,
+                    statusAllowedAttachment:it.statusAllowedAttachment
             ]
         }
     }
