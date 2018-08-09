@@ -228,7 +228,7 @@ class ActionItemStatusCompositeService {
         def result
         try {
             maxAttachment = IntegrationConfiguration.fetchByProcessCodeAndSettingName('GENERAL_SSB', 'ACTION.ITEM.ATTACHMENT.MAXIMUM').value
-            if (Integer.parseInt(maxAttachment) < 0  ||Integer.parseInt(maxAttachment).equals(0) ) {
+            if (Integer.parseInt(maxAttachment) < 0  || Integer.parseInt(maxAttachment).equals(0) ) {
                 result = [maxAttachment: 10]
             }
             else
