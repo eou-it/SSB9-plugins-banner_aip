@@ -242,5 +242,4 @@ class ActionItemStatusCompositeService {
         }
         result
     }
-
 }
