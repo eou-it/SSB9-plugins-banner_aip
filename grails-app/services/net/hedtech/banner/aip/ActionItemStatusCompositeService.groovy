@@ -228,13 +228,17 @@ class ActionItemStatusCompositeService {
         def result
         try {
             maxAttachment = IntegrationConfiguration.fetchByProcessCodeAndSettingName('GENERAL_SSB', 'ACTION.ITEM.ATTACHMENT.MAXIMUM').value
-            result = [maxAttachment: Integer.parseInt(maxAttachment)]
+            if (Integer.parseInt(maxAttachment) < 0  ||Integer.parseInt(maxAttachment).equals(0) ) {
+                result = [maxAttachment: 10]
+            }
+            else
+            {
+                result = [maxAttachment: Integer.parseInt(maxAttachment)]
+            }
         }
-        catch(NumberFormatException e)
+        catch(Exception e)
         {
-            String errorString =MessageHelper.message("actionItemStatusRule.maxAttachment.error")
-            LOGGER.error errorString, e
-            result = [errorMessage: errorString]
+            result = [maxAttachment: 10]
         }
         result
     }
