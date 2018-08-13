@@ -57,7 +57,8 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
                     title                   : it.title,
                     userId                  : it.userId,
                     userIdTmpl              : it.userIdTmpl,
-                    currentResponse         : it.completedDate ? it.currentResponseText : null
+                    currentResponse         : it.completedDate ? it.currentResponseText : null,
+                    currentReviewState      : it.reviewStateName
             ]
         }
         def haltProcesses = []
