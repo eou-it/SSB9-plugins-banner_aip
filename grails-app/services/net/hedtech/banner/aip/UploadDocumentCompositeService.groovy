@@ -12,6 +12,8 @@ import net.hedtech.banner.aip.UploadDocument
 import net.hedtech.banner.aip.UploadDocumentContent
 import net.hedtech.banner.general.overall.IntegrationConfiguration
 import org.springframework.web.multipart.MultipartFile
+import net.hedtech.banner.exceptions.ApplicationException
+import net.hedtech.banner.exceptions.BusinessLogicValidationException
 
 import java.text.MessageFormat
 
