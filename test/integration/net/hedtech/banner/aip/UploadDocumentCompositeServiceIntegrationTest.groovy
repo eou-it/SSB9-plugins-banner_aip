@@ -12,28 +12,39 @@ import org.springframework.mock.web.MockMultipartFile
 import org.springframework.web.multipart.MultipartFile
 import org.apache.commons.io.IOUtils
 
-
 class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestCase {
 
     def uploadDocumentCompositeService
+
 
     @Before
     void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
+        super.loginSSB( "CSRSTU001", "111111" )
     }
+
 
     @After
     void tearDown() {
         super.tearDown()
+        super.logout()
     }
+
 
     @Test
     void testsaveUploadDocumentService() {
         MockMultipartFile multipartFile = formFileObject()
-        def result =  uploadDocumentCompositeService.saveUploadDocument(
-                [ actionItemId: 132,responseId: 105, documentName: '1192_Anitha_13565.pdf', documentUploadedDate: new Date(),fileLocation:'AIP',file:multipartFile])
+        def result = uploadDocumentCompositeService.saveUploadDocument(
+                [actionItemId: 132, responseId: 105, documentName: '1192_Anitha_13565.pdf', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile] )
         assert result.success == true
+    }
+
+
+    @Test
+    void testFetchDocuments() {
+        List documents = uploadDocumentCompositeService.fetchDocuments( [actionItemId: 132, responseId: 105] )
+        assert documents.isEmpty() == true
     }
 
     /**
@@ -57,7 +68,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         }
         FileInputStream input = new FileInputStream( testFile );
         MultipartFile multipartFile = new MockMultipartFile( "file",
-                testFile.getName(), "text/plain", IOUtils.toByteArray( input ) )
+                                                             testFile.getName(), "text/plain", IOUtils.toByteArray( input ) )
         multipartFile
     }
 }

@@ -20,8 +20,19 @@ class UploadDocumentService extends ServiceBase {
     def preCreateValidation( dataMap ) {
         if (!dataMap) {
             throw new ApplicationException( UploadDocumentService, new BusinessLogicValidationException( 'preCreate.validation.insufficient.request', [] ) )
-          }
         }
     }
+    /**
+     * This method is responsible for getting list is attached documents for a response.
+     * @param pidm
+     * @param actionItemId
+     * @param responseId
+     * @return
+     */
+    def fetchDocuments( pidm, actionItemId, responseId ) {
+        UploadDocument.fetchDocuments( pidm, actionItemId, responseId )
+    }
+
+}
 
 
