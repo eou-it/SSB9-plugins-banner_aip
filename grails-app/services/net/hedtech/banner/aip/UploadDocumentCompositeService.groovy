@@ -43,7 +43,9 @@ class UploadDocumentCompositeService {
                 saveUploadDocument = uploadDocumentService.create(ud)
                 println "saveUploadDocument $saveUploadDocument"
                 println "Map file $map.file"
+                if( map.fileLocation.equals('AIP')){
                 uploadDocumentContent(saveUploadDocument.id, map.file)
+                }
                 success = true
             } catch (Exception e) {
                 println "Exception $e"
