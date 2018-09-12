@@ -4,18 +4,8 @@
 package net.hedtech.banner.aip
 
 import grails.converters.JSON
-import net.hedtech.banner.aip.common.LoggerUtility
-import net.hedtech.banner.i18n.MessageHelper
-import net.hedtech.banner.service.ServiceBase
-import org.apache.log4j.Logger
-import net.hedtech.banner.aip.UploadDocument
-import net.hedtech.banner.aip.UploadDocumentContent
-import net.hedtech.banner.general.overall.IntegrationConfiguration
 import org.springframework.web.multipart.MultipartFile
-import net.hedtech.banner.exceptions.ApplicationException
-import net.hedtech.banner.exceptions.BusinessLogicValidationException
-
-import java.text.MessageFormat
+import net.hedtech.banner.general.configuration.ConfigProperties
 
 /**
  * Class for UploadDocumentCompositeService.
@@ -24,30 +14,41 @@ class UploadDocumentCompositeService {
 
     def springSecurityService
     def uploadDocumentService
+    def uploadDocumentContentService
 
-
-    def saveUploadDocument( map ) {
-
-        def user = springSecurityService.getAuthentication()?.user
+    /**
+     * Save uploaded document details in GCRAFLU
+     * @param dataMap
+     */
+    def addUploadDocument(map) {
+        println "Entry"
+        def user = springSecurityService.getAuthentication() ?.user
         def success = false
         def message = null
         UploadDocument saveUploadDocument
-        def aipUser = AipControllerUtils.getPersonForAip( [studentId: map.studentId], user.pidm )
+        def aipUser = AipControllerUtils.getPersonForAip([studentId: map.studentId], user.pidm)
+        println "aipUser $aipUser"
         if (aipUser) {
             UploadDocument ud = new UploadDocument(
                     actionItemId: map.actionItemId,
                     responseId: map.responseId,
                     documentName: map.documentName,
                     documentUploadedDate: new Date(),
-                    fileLocation: map.fileLocation
+                    fileLocation: map.fileLocation,
+                    pidm: aipUser.pidm
             )
-        }
-        try {
-            saveUploadDocument = uploadDocumentService.create( ud )
-            uploadDocumentContent( saveUploadDocument.id, map.file )
-            success = true
-        } catch (Exception e) {
-            message = "Error"
+            println "ud $ud"
+            try {
+                println "Inside Try block"
+                saveUploadDocument = uploadDocumentService.create(ud)
+                println "saveUploadDocument $saveUploadDocument"
+                println "Map file $map.file"
+                uploadDocumentContent(saveUploadDocument.id, map.documentContent)
+                success = true
+            } catch (Exception e) {
+                println "Exception $e"
+                message = "Error"
+            }
         }
         [
                 success: success,
@@ -55,44 +56,50 @@ class UploadDocumentCompositeService {
         ]
     }
 
+    /**
+     * Save uploaded document in GCRAFCT
+     *
+     */
+    def uploadDocumentContent(id, MultipartFile file) {
 
-    def uploadDocumentContent( id, MultipartFile file ) {
+        UploadDocumentContent saveUploadDocumentContent
         try {
-            byte[] bFile = file.inputStream;
+            println "id $id"
+            byte[] bFile = file.getBytes();
+            println "bFile $bFile"
             UploadDocumentContent udc = new UploadDocumentContent(
                     fileUploadId: id,
                     documentContent: bFile
             )
-            saveUploadDocumentContent = uploadDocumentService.create( udc )
+            println "udc $udc"
+            saveUploadDocumentContent = uploadDocumentContentService.create(udc)
+            println "sudc $saveUploadDocumentContent"
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
+    /**
+     * Fetch configured restricted attachment type val
+     *
+     */
     def uploadDocumentType() {
-        String documentType = session.getAttribute( "documentType" );
         def results
-        if (documentType.equals( null )) {
-            results.documentType = IntegrationConfiguration.fetchByProcessCodeAndSettingName( 'GENERAL_SSB', 'ACTION.ITEM.FILE.TYPES' ).value
-            session.setAttribute( "documentType", results.documentType )
-        } else {
-            results.documentType = documentType
-        }
-        render results as JSON
+        ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.restricted.attachment.type', 'GENERAL_SS')
+        println 'configpro' $configProperties
+        results = [documentType: configProperties ? configProperties.configValue : null]
+        results
     }
 
-
+    /**
+     * Fetch configured allowed attachment max size val
+     *
+     */
     def uploadDocumentSize() {
-        String documentSize = session.getAttribute( "documentSize" );
         def results
-        if (documentSize.equals( null )) {
-            results.documentSize = IntegrationConfiguration.fetchByProcessCodeAndSettingName( 'GENERAL_SSB', 'ACTION.ITEM.FILE.SIZE' ).value
-            session.setAttribute( "documentSize", results.documentSize )
-        } else {
-            results.documentSize = documentSize
-        }
-        render results as JSON
+        ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.allowed.attachment.max.size', 'GENERAL_SS')
+        println 'configpro' $configProperties
+        results = [documentSize: configProperties ? configProperties.configValue : null]
+        results
     }
 
     /**
