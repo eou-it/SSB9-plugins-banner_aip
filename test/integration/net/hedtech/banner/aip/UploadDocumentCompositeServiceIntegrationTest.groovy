@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile
 import org.apache.commons.io.IOUtils
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
+import net.hedtech.banner.general.configuration.ConfigProperties
 
 
 class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestCase {
@@ -125,16 +126,25 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     @Test
     void testUploadAttachmentType() {
+        ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.restricted.attachment.type', 'GENERAL_SS')
+        assertNotNull configProperties
+        configProperties.configValue='TXT'
+        configProperties.save(flush:true,failOnError:true)
         def result =  uploadDocumentCompositeService.uploadDocumentType();
-        println 'result' $result
-        assertequals result.documentType 'EXE'
+        assertNotNull result
+        assert result.documentType == 'TXT'
     }
 
     @Test
     void testUploadAttachmentSize() {
+        ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.allowed.attachment.max.size', 'GENERAL_SS')
+        assertNotNull configProperties
+        configProperties.configValue='1024'
+        configProperties.save(flush:true,failOnError:true)
         def result =  uploadDocumentCompositeService.uploadDocumentSize();
-        println 'result' $result
-
+        println "result $result"
+        assertNotNull result
+        assert result.documentSize == '1024'
     }
 
     @Test

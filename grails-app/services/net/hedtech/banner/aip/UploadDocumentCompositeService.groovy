@@ -43,7 +43,7 @@ class UploadDocumentCompositeService {
                 saveUploadDocument = uploadDocumentService.create(ud)
                 println "saveUploadDocument $saveUploadDocument"
                 println "Map file $map.file"
-                uploadDocumentContent(saveUploadDocument.id, map.documentContent)
+                uploadDocumentContent(saveUploadDocument.id, map.file)
                 success = true
             } catch (Exception e) {
                 println "Exception $e"
