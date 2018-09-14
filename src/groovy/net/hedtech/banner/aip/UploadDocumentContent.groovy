@@ -8,14 +8,6 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import javax.persistence.*
 
-@NamedQueries(value = [
-        @NamedQuery(name = "UploadDocumentContent.fetchUploadContentById",
-                query = """
-           FROM UploadDocumentContent a
-           WHERE a.fileUploadId = :myId
-          """)
-])
-
 
 @Entity
 @Table(name = "GCRAFCT")
@@ -62,7 +54,7 @@ class UploadDocumentContent implements Serializable {
     Date lastModified
 
     /**
-     * Version of the action item
+     * Version of the upload content
      */
     @Version
     @Column(name = "GCRAFCT_VERSION")
@@ -74,18 +66,5 @@ class UploadDocumentContent implements Serializable {
         lastModifiedBy( nullable: true, maxSize: 30 )
         lastModified( nullable: true )
         version( nullable: true, maxSize: 30 )
-    }
-
-    /**
-     *
-     * @param id
-     * @return
-     */
-    static def fetchUploadContentById( Long id ) {
-
-        UploadDocumentContent.withSession { session ->
-            UploadDocumentContent uploadContentById = session.getNamedQuery('UploadDocumentContent.fetchUploadContentById').setLong('myId', id).list()[0];
-            return uploadContentById
-        }
     }
 }

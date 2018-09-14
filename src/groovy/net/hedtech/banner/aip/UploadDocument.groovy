@@ -1,3 +1,4 @@
+
 /*********************************************************************************
  Copyright 2018 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
@@ -8,18 +9,12 @@ import groovy.transform.ToString
 import javax.persistence.*
 
 @NamedQueries(value = [
-        @NamedQuery(name = "UploadDocument.fetchUploadDocumentById", query = """
-           FROM UploadDocument a
-           WHERE a.actionItemId = :actionItemId
-           AND a.responseId = :responseId
-        """),
-        @NamedQuery(name = "UploadDocument.fetchDocuments", query = """
-            FROM UploadDocument ud
-            WHERE ud.actionItemId = :actionItemId
-            AND ud.responseId = :responseId
-            AND ud.pidm = :pidm
-        """)
+        @NamedQuery(name = "UploadDocument.existsSameDocumentName",
+                query = """ select count(a.id) FROM UploadDocument a
+                    WHERE upper(a.documentName) = upper(:documentName)""")
+
 ])
+
 
 @Entity
 @Table(name = "GCRAFLU")
@@ -60,20 +55,26 @@ class UploadDocument implements Serializable {
     /**
      * Document Uploaded Date
      */
-    @Column(name = "GCRAFLU_DOCUMENT_UPLOADED_DATE")
+    @Column(name ="GCRAFLU_DOCUMENT_UPLOADED_DATE")
     Date documentUploadedDate
 
     /**
      * Document Uploaded  Location
      */
-    @Column(name = "GCRAFLU_FILE_LOCATION")
+    @Column(name ="GCRAFLU_FILE_LOCATION")
     String fileLocation
 
     /**
-     * User action item pertains to
+     *  User action item pertains to
      */
     @Column(name = "GCRAFLU_USER_ID")
     String lastModifiedBy
+
+    /**
+     * User PIDM
+     */
+    @Column(name = "GCRAFLU_PIDM")
+    Long pidm
 
     /**
      * Last activity date for the document upload
@@ -101,62 +102,24 @@ class UploadDocument implements Serializable {
     String storageDays
 
     /**
-     * Version of the action item
+     * Version of the file upload
      */
     @Version
     @Column(name = "GCRAFLU_VERSION")
     Long version
 
-    /**
-     * PIDM of the user action item
-     */
-    @Column(name = "GCRAFLU_PIDM")
-    Long pidm
-
-
     static constraints = {
         actionItemId( nullable: false, maxSize: 19 )
-        responseId( nullable: false, maxSize: 10 )
-        pidm( nullable: false, maxSize: 8 )
-        documentName( nullable: false, maxSize: 60 )
-        documentUploadedDate( nullable: false )
-        fileLocation( nullable: false, maxSize: 3 )
-        userComments( nullable: true, maxSize: 4000 )
-        deleteAfterDate( nullable: true )
-        storageDays( nullable: true, maxSize: 4 )
+        responseId( nullable: false, maxSize: 19 )
+        documentName(nullable:false,maxSize: 60)
+        documentUploadedDate(nullable:false)
+        fileLocation(nullable: false, maxSize: 3 )
+        pidm(nullable:false)
+        userComments(nullable:true, maxSize: 4000)
+        deleteAfterDate(nullable:true)
+        storageDays(nullable:true,maxSize: 4)
         lastModifiedBy( nullable: true, maxSize: 30 )
         lastModified( nullable: true )
-        version( nullable: true, maxSize: 19 )
-    }
-
-    /**
-     *
-     * @param id
-     * @return
-     */
-    static def fetchUploadDocumentById( Long id ) {
-
-        UploadDocument.withSession {session ->
-            UploadDocument uploadDocumentById = session.getNamedQuery( 'UploadDocument.fetchUploadDocumentById' ).setLong( 'actionItemId', actionItemId ).setLong( 'responseId', responseId )?.list()[0];
-            return uploadDocumentById
-        }
-    }
-
-    /**
-     * This method is responsible for getting list is attached documents for a response.
-     * @param pidm
-     * @param actionItemId
-     * @param responseId
-     * @return List of attached documents
-     */
-    static def fetchDocuments( pidm, actionItemId, responseId ) {
-        UploadDocument.withSession {session ->
-            List<UploadDocument> uploadedDocuments = session.getNamedQuery( "UploadDocument.fetchDocuments" )
-                    .setLong( "actionItemId", actionItemId )
-                    .setLong( "responseId", responseId )
-                    .setLong( "pidm", pidm )
-                    .list()
-            return uploadedDocuments
-        }
+        version( nullable: true, maxSize: 30 )
     }
 }
