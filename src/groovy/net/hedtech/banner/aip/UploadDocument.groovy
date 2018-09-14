@@ -15,7 +15,6 @@ import javax.persistence.*
 
 ])
 
-
 @Entity
 @Table(name = "GCRAFLU")
 @ToString(includeNames = true, ignoreNulls = true)
