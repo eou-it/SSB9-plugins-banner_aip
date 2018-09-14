@@ -26,7 +26,7 @@ class UploadDocumentCompositeService {
      * @param dataMap
      */
     def addUploadDocument(map) {
-        def user = springSecurityService.getAuthentication() ? .user
+        def user = springSecurityService.getAuthentication()?.user
         def success = false
         def message = null
         UploadDocument saveUploadDocument
