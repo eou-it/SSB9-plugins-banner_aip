@@ -6,6 +6,8 @@ package net.hedtech.banner.aip
 import grails.converters.JSON
 import org.springframework.web.multipart.MultipartFile
 import net.hedtech.banner.general.configuration.ConfigProperties
+import net.hedtech.banner.exceptions.ApplicationException
+import java.io.File;
 
 /**
  * Class for UploadDocumentCompositeService.
@@ -15,6 +17,8 @@ class UploadDocumentCompositeService {
     def springSecurityService
     def uploadDocumentService
     def uploadDocumentContentService
+    static final String MAX_SIZE_ERROR = '@@r1:MaxSizeError@@'
+    static final String FILE_TYPE_ERROR = '@@r1:FileTypeError@@'
 
     /**
      * Save uploaded document details in GCRAFLU
@@ -26,15 +30,17 @@ class UploadDocumentCompositeService {
         def success = false
         def message = null
         UploadDocument saveUploadDocument
+        def fileStorageLocation=uploadDocumentStorageLocation()
         def aipUser = AipControllerUtils.getPersonForAip([studentId: map.studentId], user.pidm)
         println "aipUser $aipUser"
+        fileValidation(map.documentName, map.file)
         if (aipUser) {
             UploadDocument ud = new UploadDocument(
                     actionItemId: map.actionItemId,
                     responseId: map.responseId,
                     documentName: map.documentName,
                     documentUploadedDate: new Date(),
-                    fileLocation: map.fileLocation,
+                    fileLocation:fileStorageLocation.documentStorageLocation,
                     pidm: aipUser.pidm
             )
             println "ud $ud"
@@ -43,8 +49,10 @@ class UploadDocumentCompositeService {
                 saveUploadDocument = uploadDocumentService.create(ud)
                 println "saveUploadDocument $saveUploadDocument"
                 println "Map file $map.file"
-                if( map.fileLocation.equals('AIP')){
-                uploadDocumentContent(saveUploadDocument.id, map.file)
+                println "FilLoc $fileStorageLocation.documentStorageLocation,"
+                if( fileStorageLocation.documentStorageLocation.equals('AIP')) {
+                    println "FilLoc1 $fileStorageLocation.documentStorageLocation,"
+                    uploadDocumentContent(saveUploadDocument.id, map.file)
                 }
                 success = true
             } catch (Exception e) {
@@ -87,7 +95,7 @@ class UploadDocumentCompositeService {
     def uploadDocumentType() {
         def results
         ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.restricted.attachment.type', 'GENERAL_SS')
-        println 'configpro' $configProperties
+        println "configpro $configProperties"
         results = [documentType: configProperties ? configProperties.configValue : null]
         results
     }
@@ -99,30 +107,42 @@ class UploadDocumentCompositeService {
     def uploadDocumentSize() {
         def results
         ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.allowed.attachment.max.size', 'GENERAL_SS')
-        println 'configpro' $configProperties
+        println "configpro $configProperties"
         results = [documentSize: configProperties ? configProperties.configValue : null]
         results
     }
-
     /**
-     * This method is responsible for getting list is attached documents for a response.
-     * @param map
-     * @return
+     * Fetch configured allowed attachment max size val
+     *
      */
-    def fetchDocuments( map ) {
-        def user = springSecurityService.getAuthentication()?.user
-        if (!user) {
-            throw new ApplicationException( UploadDocumentCompositeService, new BusinessLogicValidationException( 'user.id.not.valid', [] ) )
-        }
-        List<UploadDocument> results = uploadDocumentService.fetchDocuments( user.pidm, map.actionItemId, map.responseId )
-        results = results.collect {actionItem ->
-            [
-                    id                  : actionItem.id,
-                    documentName        : actionItem.documentName,
-                    documentUploadedDate: actionItem.documentUploadedDate
-            ]
-        }
+    def uploadDocumentStorageLocation() {
+        def results
+        ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.attachment.file.storage.location', 'GENERAL_SS')
+        println "configpro $configProperties"
+        results = [documentStorageLocation: configProperties ? configProperties.configValue : null]
         results
     }
+/**
+ * Validation for FileType and FileSize
+ * @param dataMap
+ */
+    def fileValidation(fileName,fileContent) {
+        println "FileValid $fileName "
+        def configureddocumentType = uploadDocumentType();
+        def configureddocumentSize = uploadDocumentSize();
+        Long convertedDocumentSize=Long.valueOf(configureddocumentSize.documentSize)
+        def documentSizeInKB= (fileContent.size / 1024);
+        println "size $documentSizeInKB"
+        String[] extnArray = fileName.split("\\.")
+        println "extnArray $extnArray"
+        def extn=extnArray[extnArray.length-1]
+        println "file exten $extn"
 
+        if (extn.equals(configureddocumentType.documentType)) {
+            throw new ApplicationException( FILE_TYPE_ERROR, 'uploadDocument.file.type.error')
+        }
+        if (documentSizeInKB > convertedDocumentSize) {
+            throw new ApplicationException( MAX_SIZE_ERROR, 'uploadDocument.max.file.size.error')
+        }
+    }
 }

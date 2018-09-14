@@ -37,21 +37,18 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     @Test
     void testTextsaveUploadDocumentService() {
-        println "service"
-        MockMultipartFile multipartFile = formFileObject()
-        println "mpf $multipartFile"
+        MockMultipartFile multipartFile = formFileObject('AIPTestFileTXT.txt')
         def result =  uploadDocumentCompositeService.addUploadDocument(
-                [ actionItemId: 132,responseId: 105, documentName: 'AIPTestFile.txt', documentUploadedDate: new Date(),fileLocation:'AIP',file:multipartFile])
+                [ actionItemId: 132,responseId: 105, documentName: 'AIPTestFileTXT.txt', documentUploadedDate: new Date(),fileLocation:'AIP',file:multipartFile])
         assert result.success == true
     }
 
     @Test
     void testPdfsaveUploadDocumentService() {
-        println "service"
-        MockMultipartFile multipartFile = formFileObject('AIPTestFile.pdf')
+        MockMultipartFile multipartFile = formFileObject('AIPTestFilePdf.pdf')
         println "mpf $multipartFile"
         def result =  uploadDocumentCompositeService.addUploadDocument(
-                [ actionItemId: 132,responseId: 105, documentName: 'AIPTestFile.pdf', documentUploadedDate: new Date(),fileLocation:'AIP',file:multipartFile])
+                [ actionItemId: 132,responseId: 105, documentName: 'AIPTestFilePdf.pdf', documentUploadedDate: new Date(),fileLocation:'AIP',file:multipartFile])
         assert result.success == true
     }
 
@@ -116,7 +113,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     }
 
     @Test
-    void testuploadDocumentContent() {
+    void testxlsuploadDocumentContent() {
         MockMultipartFile multipartFile = formFileObject('AIPTestFileXLS.xlsx')
         def result =  uploadDocumentCompositeService.addUploadDocument(
                 [ actionItemId: 132,responseId: 105, documentName: 'AIPTestFileXLS.xlsx', documentUploadedDate: new Date(),fileLocation:'AIP',file:multipartFile])
@@ -148,9 +145,15 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     }
 
     @Test
-    void testFetchDocuments() {
-        List documents = uploadDocumentCompositeService.fetchDocuments( [actionItemId: 132, responseId: 105] )
-        assert documents.isEmpty() == true
+    void testUploadAttachmentStorageLocation() {
+        ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.attachment.file.storage.location', 'GENERAL_SS')
+        assertNotNull configProperties
+        configProperties.configValue='AIP'
+        configProperties.save(flush:true,failOnError:true)
+        def result =  uploadDocumentCompositeService.uploadDocumentSize();
+        println "result $result"
+        assertNotNull result
+        assert result.documentStorageLocation == 'AIP'
     }
 
     /**
