@@ -8,6 +8,7 @@ import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.omg.CORBA.portable.ApplicationException
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.web.multipart.MultipartFile
 import org.apache.commons.io.IOUtils
@@ -33,82 +34,70 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @After
     void tearDown() {
         super.tearDown()
+        logout()
     }
 
     @Test
     void testTextsaveUploadDocumentService() {
         MockMultipartFile multipartFile = formFileObject('AIPTestFileTXT.txt')
         def result = uploadDocumentCompositeService.addUploadDocument(
-                [actionItemId: 132, responseId: 105, documentName: 'AIPTestFileTXT.txt', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
+                [actionItemId: 15, responseId: 45, documentName: 'AIPTestFileTXT.txt', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
         assert result.success == true
     }
 
     @Test
     void testPdfsaveUploadDocumentService() {
         MockMultipartFile multipartFile = formFileObject('AIPTestFilePdf.pdf')
-        println "mpf $multipartFile"
         def result = uploadDocumentCompositeService.addUploadDocument(
-                [actionItemId: 132, responseId: 105, documentName: 'AIPTestFilePdf.pdf', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
+                [actionItemId: 15, responseId: 45, documentName: 'AIPTestFilePdf.pdf', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
         assert result.success == true
     }
 
     @Test
     void testXlssaveUploadDocumentService() {
-        println "service"
         MockMultipartFile multipartFile = formFileObject('AIPTestFileXLS.xlsx')
-        println "mpf $multipartFile"
         def result = uploadDocumentCompositeService.addUploadDocument(
-                [actionItemId: 132, responseId: 105, documentName: 'AIPTestFileXLS.xlsx', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
+                [actionItemId: 15, responseId: 45, documentName: 'AIPTestFileXLS.xlsx', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
         assert result.success == true
     }
 
     @Test
     void testPptsaveUploadDocumentService() {
-        println "service"
         MockMultipartFile multipartFile = formFileObject('AIPTestFilePPT.pptx')
-        println "mpf $multipartFile"
         def result = uploadDocumentCompositeService.addUploadDocument(
-                [actionItemId: 132, responseId: 105, documentName: 'AIPTestFilePPT.pptx', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
+                [actionItemId: 15, responseId: 45, documentName: 'AIPTestFilePPT.pptx', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
         assert result.success == true
     }
 
     @Test
     void testZipsaveUploadDocumentService() {
-        println "service"
         MockMultipartFile multipartFile = formFileObject('AIPTestFileZip.zipx')
-        println "mpf $multipartFile"
         def result = uploadDocumentCompositeService.addUploadDocument(
-                [actionItemId: 132, responseId: 105, documentName: 'AIPTestFileZip.zipx', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
+                [actionItemId: 15, responseId: 45, documentName: 'AIPTestFileZip.zipx', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
         assert result.success == true
     }
 
     @Test
     void testMp3saveUploadDocumentService() {
-        println "service"
         MockMultipartFile multipartFile = formFileObject('AIPTestFileMp3.mp3')
-        println "mpf $multipartFile"
         def result = uploadDocumentCompositeService.addUploadDocument(
-                [actionItemId: 132, responseId: 105, documentName: 'AIPTestFileMp3.mp3', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
+                [actionItemId: 15, responseId: 45, documentName: 'AIPTestFileMp3.mp3', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
         assert result.success == true
     }
 
     @Test
     void testJpgsaveUploadDocumentService() {
-        println "service"
         MockMultipartFile multipartFile = formFileObject('AIPTestFileJpg.jpg')
-        println "mpf $multipartFile"
         def result = uploadDocumentCompositeService.addUploadDocument(
-                [actionItemId: 132, responseId: 105, documentName: 'AIPTestFileJpg.jpg', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
+                [actionItemId: 15, responseId: 45, documentName: 'AIPTestFileJpg.jpg', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
         assert result.success == true
     }
 
     @Test
     void testDocsaveUploadDocumentService() {
-        println "service"
         MockMultipartFile multipartFile = formFileObject('AIPTestFileDoc.docx')
-        println "mpf $multipartFile"
         def result = uploadDocumentCompositeService.addUploadDocument(
-                [actionItemId: 132, responseId: 105, documentName: 'AIPTestFileDoc.docx', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
+                [actionItemId: 15, responseId: 45, documentName: 'AIPTestFileDoc.docx', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
         assert result.success == true
     }
 
