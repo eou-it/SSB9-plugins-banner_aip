@@ -58,12 +58,11 @@ class UploadDocumentService extends ServiceBase {
     }
     /**
      * This method is responsible for getting list is attached documents for a response.
-     * @param pidm
-     * @param actionItemId
-     * @param responseId
+     * @param params
      * @return
      */
-    def fetchDocuments( pidm, actionItemId, responseId ) {
-        UploadDocument.fetchDocuments( pidm, actionItemId, responseId )
+    def fetchDocuments( params ) {
+
+        UploadDocument.fetchDocuments( params )
     }
 }

@@ -4,8 +4,13 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import grails.orm.HibernateCriteriaBuilder
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import org.hibernate.criterion.Order
+import net.hedtech.banner.general.CommunicationCommonUtility
+
+
 import javax.persistence.*
 
 @NamedQueries(value = [
@@ -120,5 +125,23 @@ class UploadDocument implements Serializable {
         lastModifiedBy( nullable: true, maxSize: 30 )
         lastModified( nullable: true )
         version( nullable: true, maxSize: 30 )
+    }
+     /**
+     *
+     * @param params
+     * @return
+     */
+    static fetchDocuments( paramsObj ) {
+        def queryCriteria = UploadDocument.createCriteria()
+        queryCriteria.list( max: paramsObj.max, offset: paramsObj.offset ) {
+            eq("actionItemId", Long.parseLong(paramsObj.actionItemId))
+            eq("responseId", Long.parseLong(paramsObj.responseId))
+            eq("pidm", paramsObj.pidm.longValue())
+            ilike( "documentName", CommunicationCommonUtility.getScrubbedInput( paramsObj.filterName ) )
+            order( (paramsObj.sortAscending ? Order.asc( paramsObj.sortColumn ) : Order.desc( paramsObj.sortColumn )).ignoreCase() )
+            if (!paramsObj.sortColumn.equals( "documentName" )) {
+                order( Order.asc( 'documentName' ).ignoreCase() )
+            }
+        }
     }
 }

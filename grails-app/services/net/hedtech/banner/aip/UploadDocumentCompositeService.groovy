@@ -135,4 +135,22 @@ class UploadDocumentCompositeService {
             throw new ApplicationException(UploadDocumentCompositeService, MAX_SIZE_ERROR, 'uploadDocument.max.file.size.error')
         }
     }
+    /**
+     * This method is responsible for getting list is attached documents for a response.
+     * @param paramsObj
+     * @return
+     */
+    def fetchDocuments( paramsObj ) {
+        def user = springSecurityService.getAuthentication()?.user
+        paramsObj.pidm = user.pidm
+        List<UploadDocument> results = uploadDocumentService.fetchDocuments( paramsObj )
+        results = results.collect {actionItem ->
+            [
+                    id                  : actionItem.id,
+                    documentName        : actionItem.documentName,
+                    documentUploadedDate: actionItem.documentUploadedDate
+            ]
+        }
+        results
+    }
 }
