@@ -17,6 +17,7 @@ class UploadDocumentCompositeService {
     def uploadDocumentService
     def uploadDocumentContentService
     static final int SIZE_IN_KB = 1024
+    static final String DEFAULT_FILE_STORAGE_SYSTEM = 'AIP'
     static final String MAX_SIZE_ERROR = '@@r1:MaxSizeError@@'
     static final String FILE_TYPE_ERROR = '@@r1:FileTypeError@@'
 
@@ -31,7 +32,9 @@ class UploadDocumentCompositeService {
         def message = null
         UploadDocument saveUploadDocument
         def fileStorageLocation = getDocumentStorageSystem()
+        println "fileStorageLocation->"+fileStorageLocation;
         def aipUser = AipControllerUtils.getPersonForAip([studentId: map.studentId], user.pidm)
+        println "aipUser->"+aipUser;
         if (aipUser) {
             UploadDocument ud = new UploadDocument(
                     actionItemId: map.actionItemId,
@@ -43,7 +46,7 @@ class UploadDocumentCompositeService {
             )
             try {
                 saveUploadDocument = uploadDocumentService.create(ud)
-                if (fileStorageLocation.documentStorageLocation.equals('AIP')) {
+                if (fileStorageLocation.documentStorageLocation.equals(DEFAULT_FILE_STORAGE_SYSTEM)) {
                     uploadDocumentContent(saveUploadDocument.id, map.file)
                 }
                 success = true
@@ -55,7 +58,8 @@ class UploadDocumentCompositeService {
         }
         [
                 success: success,
-                message: message
+                message: message,
+                uploadDocumentObject:saveUploadDocument
         ]
     }
 
@@ -107,7 +111,7 @@ class UploadDocumentCompositeService {
     def getDocumentStorageSystem() {
         def results
         ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.attachment.file.storage.location', 'GENERAL_SS')
-        results = [documentStorageLocation: configProperties ? configProperties.configValue : null]
+        results = [documentStorageLocation: configProperties ? configProperties.configValue : DEFAULT_FILE_STORAGE_SYSTEM]
         results
     }
 
