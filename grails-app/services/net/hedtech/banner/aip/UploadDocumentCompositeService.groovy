@@ -155,6 +155,32 @@ class UploadDocumentCompositeService {
                     documentUploadedDate: actionItem.documentUploadedDate
             ]
         }
-        results
+        [result: results, length: results.size()]
+
+    }
+      /**
+     * Delete's attached document and its content
+     * @param documentId
+     * @return
+     */
+    def deleteDocument( documentId ) {
+        boolean success = false
+        def message
+        try {
+            UploadDocumentContent uploadDocumentContent = UploadDocumentContent.fetchContentByFileUploadId( documentId.longValue() )
+            uploadDocumentContentService.delete( uploadDocumentContent )
+            UploadDocument uploadDocument = uploadDocumentService.get( documentId )
+            uploadDocumentService.delete( uploadDocument )
+            success = true
+            message = MessageHelper.message( 'uploadDocument.delete.success' )
+        } catch (ApplicationException e) {
+            success = false
+            message = e.message
+        }
+        [
+                success: success,
+                message: message
+        ]
+
     }
 }

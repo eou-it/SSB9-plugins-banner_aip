@@ -162,6 +162,14 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
             assertTrue(e.getDefaultMessage().toString().contains('uploadDocument.max.file.size.error'))
         }
     }
+    
+     @Test
+    void testDeleteDocument() {
+        def response = uploadDocumentCompositeService.deleteDocument( 100 ).response
+        assertEquals 200, response.status
+        def result = response.contentAsString
+        assertEquals true, result
+    }
     /**
      * Form file Object
      */
