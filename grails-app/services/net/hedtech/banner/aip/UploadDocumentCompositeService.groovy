@@ -32,7 +32,7 @@ class UploadDocumentCompositeService {
         def message = null
         UploadDocument saveUploadDocument
         def fileStorageLocation = getDocumentStorageSystem()
-        def aipUser = AipControllerUtils.getPersonForAip([studentId: map.studentId], user.pidm)+++++
+        def aipUser = AipControllerUtils.getPersonForAip([studentId: map.studentId], user.pidm)
         if (aipUser) {
             UploadDocument ud = new UploadDocument(
                     actionItemId: map.actionItemId,
