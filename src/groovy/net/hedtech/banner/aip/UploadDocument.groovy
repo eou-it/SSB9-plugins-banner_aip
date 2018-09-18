@@ -16,7 +16,13 @@ import javax.persistence.*
 @NamedQueries(value = [
         @NamedQuery(name = "UploadDocument.existsSameDocumentName",
                 query = """ select count(a.id) FROM UploadDocument a
-                    WHERE upper(a.documentName) = upper(:documentName)""")
+                    WHERE upper(a.documentName) = upper(:documentName)"""),
+        @NamedQuery(name = "UploadDocument.fetchDocumentsCount",
+                query = """SELECT COUNT(a.id) FROM UploadDocument a
+                        WHERE a.actionItemId = :actionItemId
+                        AND a.responseId = :responseId
+                        AND a.pidm = :pidm
+                        AND upper(a.documentName) like upper(:documentName)""")
 
 ])
 
@@ -144,4 +150,19 @@ class UploadDocument implements Serializable {
             }
         }
     }
+    /**
+       *
+       * @return
+       */
+      static def fetchDocumentsCount( paramsObj ) {
+          UploadDocument.withSession {session ->
+              session.getNamedQuery( 'UploadDocument.fetchDocumentsCount' )
+                      .setLong("actionItemId", Long.parseLong(paramsObj.actionItemId))
+                      .setLong("responseId", Long.parseLong(paramsObj.responseId))
+                      .setLong("pidm", paramsObj.pidm.longValue())
+                      .setString( "documentName", CommunicationCommonUtility.getScrubbedInput( paramsObj.filterName ) )
+                      .uniqueResult()
+          }
+      }
+
 }

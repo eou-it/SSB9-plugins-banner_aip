@@ -148,6 +148,7 @@ class UploadDocumentCompositeService {
         def user = springSecurityService.getAuthentication()?.user
         paramsObj.pidm = user.pidm
         List<UploadDocument> results = uploadDocumentService.fetchDocuments( paramsObj )
+        def resultCount = uploadDocumentService.fetchDocumentsCount( paramsObj )
         results = results.collect {actionItem ->
             [
                     id                  : actionItem.id,
@@ -155,7 +156,7 @@ class UploadDocumentCompositeService {
                     documentUploadedDate: actionItem.documentUploadedDate
             ]
         }
-        [result: results, length: results.size()]
+        [result: results, length: resultCount]
 
     }
       /**
