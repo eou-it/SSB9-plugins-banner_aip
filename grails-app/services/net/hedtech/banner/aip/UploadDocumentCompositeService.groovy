@@ -32,9 +32,7 @@ class UploadDocumentCompositeService {
         def message = null
         UploadDocument saveUploadDocument
         def fileStorageLocation = getDocumentStorageSystem()
-        println "fileStorageLocation->"+fileStorageLocation;
-        def aipUser = AipControllerUtils.getPersonForAip([studentId: map.studentId], user.pidm)
-        println "aipUser->"+aipUser;
+        def aipUser = AipControllerUtils.getPersonForAip([studentId: map.studentId], user.pidm)+++++
         if (aipUser) {
             UploadDocument ud = new UploadDocument(
                     actionItemId: map.actionItemId,
@@ -148,6 +146,7 @@ class UploadDocumentCompositeService {
         def user = springSecurityService.getAuthentication()?.user
         paramsObj.pidm = user.pidm
         List<UploadDocument> results = uploadDocumentService.fetchDocuments( paramsObj )
+        def resultCount = uploadDocumentService.fetchDocumentsCount( paramsObj )
         results = results.collect {actionItem ->
             [
                     id                  : actionItem.id,
@@ -155,7 +154,7 @@ class UploadDocumentCompositeService {
                     documentUploadedDate: actionItem.documentUploadedDate
             ]
         }
-        [result: results, length: results.size()]
+        [result: results, length: resultCount]
 
     }
       /**

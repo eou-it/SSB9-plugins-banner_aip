@@ -25,7 +25,7 @@ class UploadDocumentService extends ServiceBase {
      * @param dataMap
      */
     def preCreateValidation(domainModelOrMap) {
-        UploadDocument ud = (domainModelOrMap instanceof Map ? domainModelOrMap ?.domainModel : domainModelOrMap) as UploadDocument
+        UploadDocument ud = (domainModelOrMap instanceof Map ? domainModelOrMap?.domainModel : domainModelOrMap) as UploadDocument
         if (!ud.validate()) {
             def errorCodes = ud.errors.allErrors.codes[0]
             if (errorCodes.contains('uploadDocument.documentname.nullable')) {
@@ -45,10 +45,10 @@ class UploadDocumentService extends ServiceBase {
      * Validation for FileType and FileSize
      * @param dataMap
      */
-    def fileValidation(fileName,fileContent) {
+    def fileValidation(fileName, fileContent) {
         def configureddocumentType = uploadDocumentService.uploadDocumentType();
         def configureddocumentSize = uploadDocumentService.uploadDocumentSize();
-        def documentSizeInKB= (fileContent.length / 1024);
+        def documentSizeInKB = (fileContent.length / 1024);
         if (getFileExtension(fileName).equals(configureddocumentType.documentType)) {
             throw new ApplicationException(UploadDocumentService, FILE_TYPE_ERROR, 'uploadDocument.file.type.error')
         }
@@ -61,8 +61,16 @@ class UploadDocumentService extends ServiceBase {
      * @param params
      * @return
      */
-    def fetchDocuments( params ) {
+    def fetchDocuments(params) {
 
-        UploadDocument.fetchDocuments( params )
+        UploadDocument.fetchDocuments(params)
+    }
+    /**
+     *
+     * @param param
+     * @return
+     */
+    def fetchDocumentsCount(params) {
+        UploadDocument.fetchDocumentsCount(params)
     }
 }
