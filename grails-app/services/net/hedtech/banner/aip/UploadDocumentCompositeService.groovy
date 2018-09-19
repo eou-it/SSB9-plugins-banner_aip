@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile
 import net.hedtech.banner.general.configuration.ConfigProperties
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.i18n.MessageHelper
+import java.util.List
 
 /**
  * Class for UploadDocumentCompositeService.
@@ -20,6 +21,7 @@ class UploadDocumentCompositeService {
     static final String DEFAULT_FILE_STORAGE_SYSTEM = 'AIP'
     static final String MAX_SIZE_ERROR = '@@r1:MaxSizeError@@'
     static final String FILE_TYPE_ERROR = '@@r1:FileTypeError@@'
+    static final List  DEFAULT_RESTRICTED_FILE_LIST = ['exe']
 
 
     /**
@@ -56,8 +58,7 @@ class UploadDocumentCompositeService {
         }
         [
                 success: success,
-                message: message,
-                uploadDocumentObject:saveUploadDocument
+                message: message
         ]
     }
 
@@ -87,7 +88,7 @@ class UploadDocumentCompositeService {
     def getRestrictedFileTypes() {
         def results
         ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.restricted.attachment.type', 'GENERAL_SS')
-        results = [restrictedFileTypes: configProperties ? configProperties.configValue : null]
+        results = [restrictedFileTypes: configProperties ? configProperties.configValue : DEFAULT_RESTRICTED_FILE_LIST]
         results
     }
 
