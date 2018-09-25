@@ -139,15 +139,12 @@ class UploadDocument implements Serializable {
      */
     static fetchDocuments( paramsObj ) {
         def queryCriteria = UploadDocument.createCriteria()
-        queryCriteria.list( max: paramsObj.max, offset: paramsObj.offset ) {
+        queryCriteria.list {
             eq("actionItemId", Long.parseLong(paramsObj.actionItemId))
             eq("responseId", Long.parseLong(paramsObj.responseId))
             eq("pidm", paramsObj.pidm.longValue())
             ilike( "documentName", CommunicationCommonUtility.getScrubbedInput( paramsObj.filterName ) )
             order( (paramsObj.sortAscending ? Order.asc( paramsObj.sortColumn ) : Order.desc( paramsObj.sortColumn )).ignoreCase() )
-            if (!paramsObj.sortColumn.equals( "documentName" )) {
-                order( Order.asc( 'documentName' ).ignoreCase() )
-            }
         }
     }
     /**
