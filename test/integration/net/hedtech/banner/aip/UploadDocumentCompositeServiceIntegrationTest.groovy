@@ -40,7 +40,9 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @Test
     void testTextSaveUploadDocumentService() {
         Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
         Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
         def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
         assert saveResult.success == true
     }
@@ -48,7 +50,9 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @Test
     void testPdfSaveUploadDocumentService() {
         Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
         Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
         def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFilePdf.pdf')
         assert saveResult.success == true
     }
@@ -56,7 +60,9 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @Test
     void testXlssaveUploadDocumentService() {
         Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
         Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
         def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileXLS.xlsx')
         assert saveResult.success == true
     }
@@ -64,7 +70,9 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @Test
     void testPptSaveUploadDocumentService() {
         Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
         Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
         def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFilePPT.pptx')
         assert saveResult.success == true
     }
@@ -72,7 +80,9 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @Test
     void testZipSaveUploadDocumentService() {
         Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
         Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
         def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileZip.zipx')
         assert saveResult.success == true
     }
@@ -80,7 +90,9 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @Test
     void testMp3saveUploadDocumentService() {
         Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
         Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
         def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileMp3.mp3')
         assert saveResult.success == true
     }
@@ -88,7 +100,9 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @Test
     void testJpgsaveUploadDocumentService() {
         Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
         Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
         def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileJpg.jpg')
         assert saveResult.success == true
     }
@@ -96,7 +110,9 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @Test
     void testDocsaveUploadDocumentService() {
         Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
         Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
         def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileDoc.docx')
         assert saveResult.success == true
 
@@ -167,12 +183,14 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @Test
     void testFetchDocuments() {
         Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
         Long responseId = getResponseIdByActionItemId(actionItemId)
-        saveUploadDocumentService(actionItemId, responseId,'AIPTestFileTXT.txt')
+        assertNotNull responseId
+        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+        assert saveResult.success == true
         def paramsObj = [
                 actionItemId : actionItemId.toString(),
                 responseId   : responseId.toString(),
-                filterName   : "%",
                 sortColumn   : "id",
                 sortAscending: false
         ]
@@ -184,13 +202,14 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @Test
     void testDeleteDocument() {
         Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
         Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
         def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
         assert saveResult.success == true
         def paramsObj = [
                 actionItemId : actionItemId.toString(),
                 responseId   : responseId.toString(),
-                filterName   : "%",
                 sortColumn   : "id",
                 sortAscending: false
         ]
@@ -201,14 +220,14 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         assertTrue deleteResponse.success
     }
 
-    def saveUploadDocumentService(actionItemId, responseId, fileName) {
+    private def saveUploadDocumentService(actionItemId, responseId, fileName) {
         MockMultipartFile multipartFile = formFileObject(fileName)
         def result = uploadDocumentCompositeService.addUploadDocument(
                 [actionItemId: actionItemId, responseId: responseId, documentName: fileName, documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
         result
     }
 
-    Long getActionItemId() {
+    private Long getActionItemId() {
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
         def group = result.groups.find { it.title == 'Enrollment' }
         def item = group.items.find { it.name == 'Personal Information' }
@@ -216,7 +235,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         actionItemId
     }
 
-    Long getResponseIdByActionItemId(Long actionItemId) {
+    private Long getResponseIdByActionItemId(Long actionItemId) {
         List<ActionItemStatusRule> responseList = ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId(actionItemId)
         Long responseId = responseList[0].id
         responseId

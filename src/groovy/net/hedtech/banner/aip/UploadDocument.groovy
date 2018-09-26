@@ -21,8 +21,7 @@ import javax.persistence.*
                 query = """SELECT COUNT(a.id) FROM UploadDocument a
                         WHERE a.actionItemId = :actionItemId
                         AND a.responseId = :responseId
-                        AND a.pidm = :pidm
-                        AND upper(a.documentName) like upper(:documentName)""")
+                        AND a.pidm = :pidm""")
 
 ])
 
@@ -143,7 +142,6 @@ class UploadDocument implements Serializable {
             eq("actionItemId", Long.parseLong(paramsObj.actionItemId))
             eq("responseId", Long.parseLong(paramsObj.responseId))
             eq("pidm", paramsObj.pidm.longValue())
-            ilike( "documentName", CommunicationCommonUtility.getScrubbedInput( paramsObj.filterName ) )
             order( (paramsObj.sortAscending ? Order.asc( paramsObj.sortColumn ) : Order.desc( paramsObj.sortColumn )).ignoreCase() )
         }
     }
@@ -157,7 +155,6 @@ class UploadDocument implements Serializable {
                       .setLong("actionItemId", Long.parseLong(paramsObj.actionItemId))
                       .setLong("responseId", Long.parseLong(paramsObj.responseId))
                       .setLong("pidm", paramsObj.pidm.longValue())
-                      .setString( "documentName", CommunicationCommonUtility.getScrubbedInput( paramsObj.filterName ) )
                       .uniqueResult()
           }
       }
