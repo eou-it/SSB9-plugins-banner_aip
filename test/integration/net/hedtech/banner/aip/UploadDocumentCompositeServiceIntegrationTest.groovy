@@ -4,23 +4,23 @@
 
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.exceptions.ApplicationException
+import net.hedtech.banner.general.configuration.ConfigProperties
 import net.hedtech.banner.testing.BaseIntegrationTestCase
+import org.apache.commons.io.IOUtils
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.omg.CORBA.portable.ApplicationException
 import org.springframework.mock.web.MockMultipartFile
-import org.springframework.web.multipart.MultipartFile
-import org.apache.commons.io.IOUtils
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import net.hedtech.banner.general.configuration.ConfigProperties
-import net.hedtech.banner.exceptions.ApplicationException
+import org.springframework.web.multipart.MultipartFile
 
 class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestCase {
 
     def uploadDocumentCompositeService
     def selfServiceBannerAuthenticationProvider
+    def userActionItemReadOnlyCompositeService
 
     @Before
     void setUp() {
@@ -38,67 +38,84 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     }
 
     @Test
-    void testTextsaveUploadDocumentService() {
-        MockMultipartFile multipartFile = formFileObject('AIPTestFileTXT.txt')
-        def result = uploadDocumentCompositeService.addUploadDocument(
-                [actionItemId: 15, responseId: 45, documentName: 'AIPTestFileTXT.txt', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
-        assert result.success == true
+    void testTextSaveUploadDocumentService() {
+        Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
+        Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
+        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+        assert saveResult.success == true
     }
 
     @Test
-    void testPdfsaveUploadDocumentService() {
-        MockMultipartFile multipartFile = formFileObject('AIPTestFilePdf.pdf')
-        def result = uploadDocumentCompositeService.addUploadDocument(
-                [actionItemId: 15, responseId: 45, documentName: 'AIPTestFilePdf.pdf', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
-        assert result.success == true
+    void testPdfSaveUploadDocumentService() {
+        Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
+        Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
+        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFilePdf.pdf')
+        assert saveResult.success == true
     }
 
     @Test
     void testXlssaveUploadDocumentService() {
-        MockMultipartFile multipartFile = formFileObject('AIPTestFileXLS.xlsx')
-        def result = uploadDocumentCompositeService.addUploadDocument(
-                [actionItemId: 15, responseId: 45, documentName: 'AIPTestFileXLS.xlsx', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
-        assert result.success == true
+        Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
+        Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
+        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileXLS.xlsx')
+        assert saveResult.success == true
     }
 
     @Test
-    void testPptsaveUploadDocumentService() {
-        MockMultipartFile multipartFile = formFileObject('AIPTestFilePPT.pptx')
-        def result = uploadDocumentCompositeService.addUploadDocument(
-                [actionItemId: 15, responseId: 45, documentName: 'AIPTestFilePPT.pptx', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
-        assert result.success == true
+    void testPptSaveUploadDocumentService() {
+        Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
+        Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
+        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFilePPT.pptx')
+        assert saveResult.success == true
     }
 
     @Test
-    void testZipsaveUploadDocumentService() {
-        MockMultipartFile multipartFile = formFileObject('AIPTestFileZip.zipx')
-        def result = uploadDocumentCompositeService.addUploadDocument(
-                [actionItemId: 15, responseId: 45, documentName: 'AIPTestFileZip.zipx', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
-        assert result.success == true
+    void testZipSaveUploadDocumentService() {
+        Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
+        Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
+        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileZip.zipx')
+        assert saveResult.success == true
     }
 
     @Test
     void testMp3saveUploadDocumentService() {
-        MockMultipartFile multipartFile = formFileObject('AIPTestFileMp3.mp3')
-        def result = uploadDocumentCompositeService.addUploadDocument(
-                [actionItemId: 15, responseId: 45, documentName: 'AIPTestFileMp3.mp3', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
-        assert result.success == true
+        Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
+        Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
+        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileMp3.mp3')
+        assert saveResult.success == true
     }
 
     @Test
     void testJpgsaveUploadDocumentService() {
-        MockMultipartFile multipartFile = formFileObject('AIPTestFileJpg.jpg')
-        def result = uploadDocumentCompositeService.addUploadDocument(
-                [actionItemId: 15, responseId: 45, documentName: 'AIPTestFileJpg.jpg', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
-        assert result.success == true
+        Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
+        Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
+        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileJpg.jpg')
+        assert saveResult.success == true
     }
 
     @Test
     void testDocsaveUploadDocumentService() {
-        MockMultipartFile multipartFile = formFileObject('AIPTestFileDoc.docx')
-        def result = uploadDocumentCompositeService.addUploadDocument(
-                [actionItemId: 15, responseId: 45, documentName: 'AIPTestFileDoc.docx', documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
-        assert result.success == true
+        Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
+        Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
+        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileDoc.docx')
+        assert saveResult.success == true
+
     }
 
 
@@ -162,14 +179,68 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
             assertTrue(e.getDefaultMessage().toString().contains('uploadDocument.max.file.size.error'))
         }
     }
-    
-     @Test
-    void testDeleteDocument() {
-        def response = uploadDocumentCompositeService.deleteDocument( 100 ).response
-        assertEquals 200, response.status
-        def result = response.contentAsString
-        assertEquals true, result
+
+    @Test
+    void testFetchDocuments() {
+        Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
+        Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
+        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+        assert saveResult.success == true
+        def paramsObj = [
+                actionItemId : actionItemId.toString(),
+                responseId   : responseId.toString(),
+                sortColumn   : "id",
+                sortAscending: false
+        ]
+        def response = uploadDocumentCompositeService.fetchDocuments(paramsObj)
+        assert response.result.size() > 0
+        assert response.length > 0
     }
+
+    @Test
+    void testDeleteDocument() {
+        Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
+        Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
+        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+        assert saveResult.success == true
+        def paramsObj = [
+                actionItemId : actionItemId.toString(),
+                responseId   : responseId.toString(),
+                sortColumn   : "id",
+                sortAscending: false
+        ]
+        def response = uploadDocumentCompositeService.fetchDocuments(paramsObj)
+        assert response.result.size() > 0
+        assert response.length > 0
+        def deleteResponse = uploadDocumentCompositeService.deleteDocument(response.result[0].id)
+        assertTrue deleteResponse.success
+    }
+
+    private def saveUploadDocumentService(actionItemId, responseId, fileName) {
+        MockMultipartFile multipartFile = formFileObject(fileName)
+        def result = uploadDocumentCompositeService.addUploadDocument(
+                [actionItemId: actionItemId, responseId: responseId, documentName: fileName, documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
+        result
+    }
+
+    private Long getActionItemId() {
+        def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
+        def group = result.groups.find { it.title == 'Enrollment' }
+        def item = group.items.find { it.name == 'Personal Information' }
+        Long actionItemId = item.id
+        actionItemId
+    }
+
+    private Long getResponseIdByActionItemId(Long actionItemId) {
+        List<ActionItemStatusRule> responseList = ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId(actionItemId)
+        Long responseId = responseList[0].id
+        responseId
+    }
+
     /**
      * Form file Object
      */
@@ -177,7 +248,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         File testFile
         try {
             String data = " Test data for integration testing"
-            String tempPath = "test/Files"
+            String tempPath = "test/data"
             testFile = new File(tempPath, filename)
             if (!testFile.exists()) {
                 testFile.createNewFile()
