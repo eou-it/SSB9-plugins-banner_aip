@@ -17,6 +17,8 @@ class UploadDocumentCompositeService {
     def springSecurityService
     def uploadDocumentService
     def uploadDocumentContentService
+    def actionItemStatusRuleReadOnlyService
+
     static final int SIZE_IN_KB = 1024
     static final String DEFAULT_FILE_STORAGE_SYSTEM = 'AIP'
     static final String MAX_SIZE_ERROR = '@@r1:MaxSizeError@@'
@@ -115,30 +117,6 @@ class UploadDocumentCompositeService {
     }
 
     /**
-     * Validation of uploaded File Type against configured value in GUROCFG table
-     * @return
-     */
-    def fileTypeValidation(fileType) {
-        def configuredDocumentTypeList = getRestrictedFileTypes();
-        configuredDocumentTypeList.each {
-            if (it.equals(fileType)) {
-                throw new ApplicationException(UploadDocumentCompositeService, FILE_TYPE_ERROR, 'uploadDocument.file.type.error')
-            }
-        }
-    }
-    /**
-     * Validation of uploaded File Size against configured value in GUROCFG table
-     * @return
-     */
-    def fileSizeValidation(fileSize) {
-        def configuredDocumentSize = getMaxFileSize();
-        Long convertedconfiguredDocumentSize = Long.valueOf(configuredDocumentSize.maxFileSize)
-        Long ConvertedfileSize = fileSize / SIZE_IN_KB
-        if (ConvertedfileSize > convertedconfiguredDocumentSize) {
-            throw new ApplicationException(UploadDocumentCompositeService, MAX_SIZE_ERROR, 'uploadDocument.max.file.size.error')
-        }
-    }
-    /**
      * This method is responsible for getting list is attached documents for a response.
      * @param paramsObj
      * @return
@@ -182,5 +160,15 @@ class UploadDocumentCompositeService {
                 message: message
         ]
 
+    }
+
+    public boolean maximumAttachmentsValidation(paramsMapObj){
+       def actionItemStatusRule = actionItemStatusRuleReadOnlyService.getActionItemStatusRuleROById(Long.parseLong(paramsMapObj.responseId))
+        if(actionItemStatusRule.statusAllowedAttachment == 0){
+            return false
+        }else{
+            def resultCount = uploadDocumentService.fetchDocumentsCount( paramsMapObj )
+            return resultCount < actionItemStatusRule.statusAllowedAttachment
+        }
     }
 }
