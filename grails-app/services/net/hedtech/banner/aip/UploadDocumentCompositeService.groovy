@@ -17,6 +17,8 @@ class UploadDocumentCompositeService {
     def springSecurityService
     def uploadDocumentService
     def uploadDocumentContentService
+    def actionItemStatusRuleReadOnlyService
+
     static final int SIZE_IN_KB = 1024
     static final String DEFAULT_FILE_STORAGE_SYSTEM = 'AIP'
     static final String MAX_SIZE_ERROR = '@@r1:MaxSizeError@@'
@@ -182,5 +184,20 @@ class UploadDocumentCompositeService {
                 message: message
         ]
 
+    }
+
+    /**
+     * Maxumum attachments validation
+     * @param paramsMap [responseId ,actionItemId and pidm]
+     * @return validation flag
+     */
+
+    public boolean maximumAttachmentsValidation(paramsMapObj){
+       def actionItemStatusRule = actionItemStatusRuleReadOnlyService.getActionItemStatusRuleROById(Long.parseLong(paramsMapObj.responseId))
+        if(actionItemStatusRule?.statusAllowedAttachment > 0){
+            def resultCount = uploadDocumentService.fetchDocumentsCount( paramsMapObj )
+            return resultCount <= actionItemStatusRule.statusAllowedAttachment
+        }
+        return false
     }
 }

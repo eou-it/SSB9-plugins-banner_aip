@@ -15,6 +15,7 @@ import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.multipart.MultipartFile
+import net.hedtech.banner.general.person.PersonUtility
 
 class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestCase {
 
@@ -153,31 +154,25 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     }
 
     @Test
-    void testFileTypeValidation() {
-        try {
-            ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.restricted.attachment.type', 'GENERAL_SS')
-            assertNotNull configProperties
-            configProperties.configValue = '[EXE,MP3]'
-            configProperties.save(flush: true, failOnError: true)
-            uploadDocumentCompositeService.fileTypeValidation('EXE')
-        } catch (ApplicationException e) {
-            assertTrue(e.getMessage().toString().contains("@@r1:FileTypeError@@"))
-            assertTrue(e.getDefaultMessage().toString().contains('uploadDocument.file.type.error'))
-        }
+    void testMaximumAttachmentsValidation() {
+        Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
+        Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
+        def person = PersonUtility.getPerson( "CSRSTU002" )
+        Map paramsMapObj = [
+                actionItemId : ""+actionItemId,
+                responseId   : ""+responseId,
+                pidm         : person.pidm
+        ]
+        boolean isMaxAttachmentValidation = uploadDocumentCompositeService.maximumAttachmentsValidation(paramsMapObj)
+        assertEquals false, isMaxAttachmentValidation
+
     }
 
     @Test
-    void testFileSizeValidation() {
-        try {
-            ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.allowed.attachment.max.size', 'GENERAL_SS')
-            assertNotNull configProperties
-            configProperties.configValue = '1077778'
-            configProperties.save(flush: true, failOnError: true)
-            uploadDocumentCompositeService.fileSizeValidation(233421122)
-        } catch (ApplicationException e) {
-            assertTrue(e.getMessage().toString().contains("@@r1:MaxSizeError@@"))
-            assertTrue(e.getDefaultMessage().toString().contains('uploadDocument.max.file.size.error'))
-        }
+    void testMaximumAttachmentsValidationWithFalse() {
+
     }
 
     @Test
