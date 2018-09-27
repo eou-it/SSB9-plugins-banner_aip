@@ -117,6 +117,30 @@ class UploadDocumentCompositeService {
     }
 
     /**
+     * Validation of uploaded File Type against configured value in GUROCFG table
+     * @return
+     */
+    def fileTypeValidation(fileType) {
+        def configuredDocumentTypeList = getRestrictedFileTypes();
+        configuredDocumentTypeList.each {
+            if (it.equals(fileType)) {
+                throw new ApplicationException(UploadDocumentCompositeService, FILE_TYPE_ERROR, 'uploadDocument.file.type.error')
+            }
+        }
+    }
+    /**
+     * Validation of uploaded File Size against configured value in GUROCFG table
+     * @return
+     */
+    def fileSizeValidation(fileSize) {
+        def configuredDocumentSize = getMaxFileSize();
+        Long convertedconfiguredDocumentSize = Long.valueOf(configuredDocumentSize.maxFileSize)
+        Long ConvertedfileSize = fileSize / SIZE_IN_KB
+        if (ConvertedfileSize > convertedconfiguredDocumentSize) {
+            throw new ApplicationException(UploadDocumentCompositeService, MAX_SIZE_ERROR, 'uploadDocument.max.file.size.error')
+        }
+    }
+    /**
      * This method is responsible for getting list is attached documents for a response.
      * @param paramsObj
      * @return
@@ -162,13 +186,18 @@ class UploadDocumentCompositeService {
 
     }
 
+    /**
+     * Maxumum attachments validation
+     * @param paramsMap [responseId ,actionItemId and pidm]
+     * @return validation flag
+     */
+
     public boolean maximumAttachmentsValidation(paramsMapObj){
        def actionItemStatusRule = actionItemStatusRuleReadOnlyService.getActionItemStatusRuleROById(Long.parseLong(paramsMapObj.responseId))
-        if(actionItemStatusRule.statusAllowedAttachment == 0){
-            return false
-        }else{
+        if(actionItemStatusRule?.statusAllowedAttachment > 0){
             def resultCount = uploadDocumentService.fetchDocumentsCount( paramsMapObj )
-            return resultCount < actionItemStatusRule.statusAllowedAttachment
+            return resultCount <= actionItemStatusRule.statusAllowedAttachment
         }
+        return false
     }
 }
