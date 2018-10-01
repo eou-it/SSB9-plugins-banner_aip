@@ -19,6 +19,7 @@ grails.plugin.location.'banner-general-person' = "../banner_general_person.git"
 grails.plugin.location.'banner-general-common' = "../banner_general_common.git"
 grails.plugin.location.'banner-general-utility' = "../banner_general_utility.git"
 grails.plugin.location.'banner-sspb' = "../banner-sspb.git"
+grails.plugin.location.'banner-document-management' = "../banner_document_management.git"
 
 grails.project.dependency.resolver = "maven" // or maven
 
