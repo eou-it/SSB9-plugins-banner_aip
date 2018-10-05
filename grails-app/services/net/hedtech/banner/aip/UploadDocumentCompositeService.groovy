@@ -196,7 +196,7 @@ class UploadDocumentCompositeService {
        def actionItemStatusRule = actionItemStatusRuleReadOnlyService.getActionItemStatusRuleROById(Long.parseLong(paramsMapObj.responseId))
         if(actionItemStatusRule?.statusAllowedAttachment > 0){
             def resultCount = uploadDocumentService.fetchDocumentsCount( paramsMapObj )
-            return resultCount <= actionItemStatusRule.statusAllowedAttachment
+            return resultCount < actionItemStatusRule.statusAllowedAttachment
         }
         return false
     }
