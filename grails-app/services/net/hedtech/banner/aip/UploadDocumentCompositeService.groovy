@@ -200,4 +200,22 @@ class UploadDocumentCompositeService {
         }
         return false
     }
+    /**
+     * Preview of Document
+     * @param documentId
+     * @return
+     * */
+    def previewDocument( documentId ) {
+        def user = springSecurityService.getAuthentication()?.user
+        def checkFileLoc=uploadDocumentService.fetchFileLocationById(documentId,user.pidm)
+        if (checkFileLoc.equals(DEFAULT_FILE_STORAGE_SYSTEM)) {
+            def results = uploadDocumentContentService.fetchContentByFileUploadId(documentId)
+            def base64EncodedDocContent = Base64.getEncoder().encodeToString(results.documentContent)
+            def documentDetails = [:]
+            documentDetails['id'] = results.id
+            documentDetails['fileUploadId'] = results.fileUploadId
+            documentDetails['documentContent'] = base64EncodedDocContent
+            documentDetails
+        }
+    }
 }

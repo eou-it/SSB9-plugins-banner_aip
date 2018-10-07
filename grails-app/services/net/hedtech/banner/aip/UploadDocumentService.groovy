@@ -73,4 +73,12 @@ class UploadDocumentService extends ServiceBase {
     def fetchDocumentsCount(params) {
         UploadDocument.fetchDocumentsCount(params)
     }
+    /**
+     *
+     * @param id,pidm
+     * @return
+     */
+    def fetchFileLocationById(id,pidm) {
+        UploadDocument.fetchFileLocationById(id,pidm)
+    }
 }

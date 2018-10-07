@@ -21,7 +21,11 @@ import javax.persistence.*
                 query = """SELECT COUNT(a.id) FROM UploadDocument a
                         WHERE a.actionItemId = :actionItemId
                         AND a.responseId = :responseId
-                        AND a.pidm = :pidm""")
+                        AND a.pidm = :pidm"""),
+        @NamedQuery(name = "UploadDocument.checkFileLocationById",
+                query = """ select a.fileLocation FROM UploadDocument a
+                    WHERE a.id = :myId
+                    AND a.pidm = :pidm""")
 
 ])
 
@@ -158,5 +162,18 @@ class UploadDocument implements Serializable {
                       .uniqueResult()
           }
       }
+    /**
+     *
+     * @param myId,pidm
+     * @return
+     */
+    static def fetchFileLocationById( Long myId,Long pidm ) {
+        UploadDocument.withSession {session ->
+            session.getNamedQuery( 'UploadDocument.checkFileLocationById' )
+                    .setLong( 'myId', myId )
+                    .setLong("pidm", pidm.longValue())
+                    .uniqueResult()
+        }
+    }
 
 }
