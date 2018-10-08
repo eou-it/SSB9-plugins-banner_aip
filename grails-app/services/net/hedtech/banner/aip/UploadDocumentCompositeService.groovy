@@ -212,7 +212,7 @@ class UploadDocumentCompositeService {
         if (checkFileLoc.equals(DEFAULT_FILE_STORAGE_SYSTEM)) {
             def results = uploadDocumentContentService.fetchContentByFileUploadId(documentId)
            // def base64EncodedDocContent = Base64.getEncoder().encodeToString(results.documentContent)
-            def base64EncodedDocContent = Base64.encodeBase64String(results.documentContent)
+            def base64EncodedDocContent =  Base64.encodeBase64String(results.documentContent)
             def documentDetails = [:]
             documentDetails['id'] = results.id
             documentDetails['fileUploadId'] = results.fileUploadId
