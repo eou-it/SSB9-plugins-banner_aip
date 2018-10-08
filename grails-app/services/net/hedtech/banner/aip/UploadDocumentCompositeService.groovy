@@ -8,6 +8,7 @@ import net.hedtech.banner.general.configuration.ConfigProperties
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.i18n.MessageHelper
 import java.util.List
+import java.util.Base64
 
 /**
  * Class for UploadDocumentCompositeService.
