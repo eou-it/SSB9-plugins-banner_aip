@@ -283,12 +283,23 @@ class UploadDocumentCompositeService {
         boolean success
         def message
         try {
-            UploadDocumentContent uploadDocumentContent = UploadDocumentContent.fetchContentByFileUploadId(documentId.longValue())
-            uploadDocumentContentService.delete(uploadDocumentContent)
-            UploadDocument uploadDocument = uploadDocumentService.get(documentId)
-            uploadDocumentService.delete(uploadDocument)
-            success = true
-            message = MessageHelper.message('uploadDocument.delete.success')
+            def user = springSecurityService.getAuthentication()?.user
+            UploadDocument uploadDocument = uploadDocumentService.get( documentId )
+            if(uploadDocument.pidm == user.pidm){
+                if (AIPConstants.FILE_STORAGE_SYSTEM_AIP.equals(uploadDocument.fileLocation )){
+                    UploadDocumentContent uploadDocumentContent = UploadDocumentContent.fetchContentByFileUploadId( documentId.longValue() )
+                    uploadDocumentContentService.delete( uploadDocumentContent )
+                }else if (AIPConstants.FILE_STORAGE_SYSTEM_BDM.equals( uploadDocument.fileLocation )) {
+                    def documentAttributes = [:]
+                    documentAttributes.put( AIPConstants.DOCUMENT_ID, documentId )
+                    bdmAttachmentService.deleteDocument( BdmUtility.getBdmServerConfigurations(), documentAttributes, getVpdiCode() )
+                }
+                uploadDocumentService.delete( uploadDocument )
+                success = true
+                message = MessageHelper.message( 'uploadDocument.delete.success' )
+            }else{
+                throw new ApplicationException( UploadDocumentCompositeService,'@@r1:invalid user@@' )
+            }
         } catch (ApplicationException e) {
             success = false
             message = e.message
