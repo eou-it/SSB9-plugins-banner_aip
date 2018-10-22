@@ -13,13 +13,11 @@ import org.springframework.web.multipart.MultipartFile
 import grails.util.Holders
 import net.hedtech.banner.imaging.BdmUtility
 import javax.xml.ws.WebServiceException
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.context.request.RequestContextHolder
-import net.hedtech.banner.aip.common.LoggerUtility
 import net.hedtech.banner.aip.common.AIPConstants
 
 /**
- * Class for UploadDocumentCompositeService.
+ * UploadDocumentCompositeService Class for adding, preview and deleting of uploaded files.
  */
 class UploadDocumentCompositeService {
 
@@ -29,14 +27,14 @@ class UploadDocumentCompositeService {
     def actionItemStatusRuleReadOnlyService
     def bdmAttachmentService
 
-    private static final def LOGGER = Logger.getLogger( this.getClass() )
+    private static final def LOGGER = Logger.getLogger( net.hedtech.banner.aip.UploadDocumentCompositeService.class )
 
     /**
      * Save uploaded document details in GCRAFLU
      * @param dataMap
      */
     @Transactional
-    def addUploadDocument( map ) {
+    def addDocument( map ) {
         def user = springSecurityService.getAuthentication()?.user
         def success = false
         def message = null
@@ -52,18 +50,35 @@ class UploadDocumentCompositeService {
                     fileLocation: fileStorageLocation.documentStorageLocation,
                     pidm: aipUser.pidm
             )
+            def bdmInstalled = BdmUtility.isBDMInstalled()
+            LOGGER.debug( 'vpdiCode $vpdiCode bdmInstalled $bdmInstalled docType $docType')
+            if (!bdmInstalled) {
+                success = false
+                message = MessageHelper.message( AIPConstants.ERROR_MESSAGE_BDM_NOT_INSTALLED )
+                LOGGER.error( 'bdm.not.installed' )
+                throw new ApplicationException( UploadDocumentCompositeService, new BusinessLogicValidationException( AIPConstants.ERROR_MESSAGE_BDM_NOT_INSTALLED, [] ) )
+            }
             try {
                 saveUploadDocument = uploadDocumentService.create( ud )
-                if (AIPConstants.DEFAULT_FILE_STORAGE_SYSTEM_AIP.equals( ud.fileLocation  )) {
-                    uploadDocumentContent( saveUploadDocument.id, map.file )
-                } else if (AIPConstants.DEFAULT_FILE_STORAGE_SYSTEM_BDM.equals( ud.fileLocation )) {
-                    uploadDocumentToBDMServer( map, saveUploadDocument )
+                switch (ud.fileLocation) {
+                    case AIPConstants.FILE_STORAGE_SYSTEM_AIP:
+                        uploadDocumentContent( saveUploadDocument.id, map.file )
+                        success = true
+                        message = MessageHelper.message( AIPConstants.MESSAGE_BDM_SAVE )
+                        break
+                    case AIPConstants.FILE_STORAGE_SYSTEM_BDM:
+                        addDocumentToBDMServer( map, saveUploadDocument )
+                        success = true
+                        message = MessageHelper.message( AIPConstants.MESSAGE_BDM_SAVE )
+                        break
+                    default:
+                        LOGGER.error( 'File upload is not configured correctly' )
+                        success = false
+                        message = MessageHelper.message( AIPConstants.ERROR_MESSAGE_BDM_SAVE )
                 }
-                success = true
-                message = MessageHelper.message( AIPConstants.MESSAGE_BDM_SAVE)
             } catch (ApplicationException e) {
                 success = false
-                message = MessageHelper.message( AIPConstants.ERROR_MESSAGE_BDM_SAVE  )
+                message = MessageHelper.message( AIPConstants.ERROR_MESSAGE_BDM_SAVE )
             }
         }
         [
@@ -73,26 +88,18 @@ class UploadDocumentCompositeService {
     }
 
     /**
-     *  This method is responsible for uploading document to BDM server.
+     *   Uploading document to BDM server.
      * @param map
      * @param saveUploadDocument
      */
-    private uploadDocumentToBDMServer( map, UploadDocument saveUploadDocument ) {
+    private addDocumentToBDMServer( map, UploadDocument saveUploadDocument ) {
         def success, message
         String docType = AIPConstants.DEFAULT_DOCTYPE
         String vpdiCode = getVpdiCode()
-        def bdmInstalled = BdmUtility.isBDMInstalled()
-        LoggerUtility.debug( LOGGER, 'vpdiCode ' + vpdiCode + 'bdmInstalled ' + bdmInstalled + 'docType ' + docType )
-        if (!bdmInstalled) {
-            success = false
-            message = MessageHelper.message( AIPConstants.ERROR_MESSAGE_BDM_NOT_INSTALLED )
-            LoggerUtility.error( LOGGER, 'bdm.not.installed' )
-            throw new ApplicationException( UploadDocumentCompositeService, new BusinessLogicValidationException( AIPConstants.ERROR_MESSAGE_BDM_NOT_INSTALLED, [] ) )
-        }
         if (map.file?.isEmpty()) {
             success = false
             message = MessageHelper.message( AIPConstants.ERROR_BDM_FILE_UPLOAD )
-            LoggerUtility.error( LOGGER, 'Document File to upload Doc type ' + docType + ' is empty' )
+            LOGGER.error( 'Document File to upload Doc type $docType is empty' )
             throw new ApplicationException( UploadDocumentCompositeService, new BusinessLogicValidationException( AIPConstants.ERROR_BDM_FILE_UPLOAD, [] ) )
         }
         try {
@@ -100,7 +107,7 @@ class UploadDocumentCompositeService {
             uploadDocToBdmServer( saveUploadDocument.id, docType, resultMap.fileName, resultMap.absoluteFileName, vpdiCode )
             resultMap.userDir.deleteDir()
         } catch (FileNotFoundException e) {
-            LoggerUtility.error( LOGGER, 'File Not found' )
+            LOGGER.error( 'File Not found' )
             success = false
             message = MessageHelper.message( AIPConstants.ERROR_MESSAGE_BDM_SAVE )
             throw new ApplicationException( UploadDocumentCompositeService, new BusinessLogicValidationException( e.getMessage(), [] ) )
@@ -131,8 +138,7 @@ class UploadDocumentCompositeService {
         try {
             bdmAttachmentService.createDocument( getBdmParams(), absoluteFileName, encodeDocumentAttributes( documentAttributes ), vpdiCode )
         } catch (ApplicationException | WebServiceException ae) {
-            LoggerUtility.error( LOGGER, 'Error while uploading document' + ae.message )
-            println( ae.message )
+            LOGGER.error( 'Error while uploading document $ae.message' )
             throw new ApplicationException( UploadDocumentCompositeService,
                                             new BusinessLogicValidationException( AIPConstants.ERROR_MESSAGE_BDM, [] ) )
         }
@@ -144,14 +150,12 @@ class UploadDocumentCompositeService {
      */
     private LinkedHashMap getBdmParams() {
         LinkedHashMap bdmParams = new HashMap()
-        print( Holders.config.bdmserver )
         Holders.config.bdmserver.each {
-
             k, v -> bdmParams.put( k, v )
         }
         bdmParams.put( "KeyPassword", getPassword( bdmParams ) )
-        LoggerUtility.debug( LOGGER, "BDMParams :: " + bdmParams )
-        return bdmParams
+        LOGGER.debug( 'BDMParams ::  $bdmParams' )
+        bdmParams
     }
 
     /**
@@ -164,14 +168,14 @@ class UploadDocumentCompositeService {
             BdmUtility.decryptString( encryptedString )
         }
         catch (ApplicationException ae) {
-            LoggerUtility.error( LOGGER, 'Error while getting the decrypted BDM password' + ae.message )
+            LOGGER.error( 'Error while getting the decrypted BDM password. $ae.message' )
             throw new ApplicationException( UploadDocumentCompositeService,
                                             new BusinessLogicValidationException( AIPConstants.ERROR_MESSAGE_BDM, [] ) )
         }
     }
 
     /**
-     * Gets BDM Crypto Key
+     * Gets encrypted password
      * @return
      */
     private def getPassword( LinkedHashMap bdmConfig ) {
@@ -179,14 +183,14 @@ class UploadDocumentCompositeService {
             BdmUtility.getPassword( bdmConfig )
         }
         catch (ApplicationException ae) {
-            LoggerUtility.error( LOGGER, 'Error while getting BDM Crypto key.' + ae.message )
+            LOGGER.error( 'Error while getting encrypted password. $ae.message' )
             throw new ApplicationException( UploadDocumentCompositeService,
                                             new BusinessLogicValidationException( AIPConstants.ERROR_MESSAGE_BDM, [] ) )
         }
     }
 
     /**
-     * Save uploaded document in GCRAFCT
+     * Save uploaded document in GCRAFCT table
      *
      */
     def uploadDocumentContent( id, MultipartFile file ) {
@@ -200,41 +204,38 @@ class UploadDocumentCompositeService {
             )
             saveUploadDocumentContent = uploadDocumentContentService.create( udc )
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error( 'Error while uploading document content. $e.message' )
         }
     }
 
     /**
-     * Fetch configured restricted attachment type val
+     * Gets configured  restricted file types list.
      *
      */
     def getRestrictedFileTypes() {
         def results
         ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId( 'aip.restricted.attachment.type', 'GENERAL_SS' )
         results = [restrictedFileTypes: configProperties ? configProperties.configValue : AIPConstants.DEFAULT_RESTRICTED_FILE_LIST]
-        results
     }
 
     /**
-     * Fetch configured allowed attachment max size val
+     * Gets configured file size value.
      *
      */
     def getMaxFileSize() {
         def results
         ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId( 'aip.allowed.attachment.max.size', 'GENERAL_SS' )
         results = [maxFileSize: configProperties ? configProperties.configValue : null]
-        results
     }
 
     /**
-     * Fetch configured allowed attachment max size val
+     * Gets configured file storage system.
      *
      */
     def getDocumentStorageSystem() {
         def results
         ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId( 'aip.attachment.file.storage.location', 'GENERAL_SS' )
         results = [documentStorageLocation: configProperties ? configProperties.configValue : AIPConstants.DEFAULT_FILE_STORAGE_SYSTEM]
-        results
     }
 
     /**
@@ -251,8 +252,8 @@ class UploadDocumentCompositeService {
     }
 
     /**
-     * Validation of uploaded File Size against configured value in GUROCFG table
-     * @return
+     * Verify's file size validation.
+     * @param fileSize
      */
     def fileSizeValidation( fileSize ) {
         def configuredDocumentSize = getMaxFileSize();
@@ -281,7 +282,6 @@ class UploadDocumentCompositeService {
             ]
         }
         [result: results, length: resultCount]
-
     }
 
     /**
@@ -290,7 +290,7 @@ class UploadDocumentCompositeService {
      * @return
      */
     def deleteDocument( documentId ) {
-        boolean success = false
+        boolean success
         def message
         try {
             UploadDocumentContent uploadDocumentContent = UploadDocumentContent.fetchContentByFileUploadId( documentId.longValue() )
@@ -315,13 +315,14 @@ class UploadDocumentCompositeService {
      * @param paramsMap [responseId ,actionItemId and pidm]
      * @return validation flag
      */
-    public boolean maximumAttachmentsValidation( paramsMapObj ) {
+    public boolean validateMaxAttachments( paramsMapObj ) {
         def actionItemStatusRule = actionItemStatusRuleReadOnlyService.getActionItemStatusRuleROById( Long.parseLong( paramsMapObj.responseId ) )
+        boolean resultCount
         if (actionItemStatusRule?.statusAllowedAttachment > 0) {
-            def resultCount = uploadDocumentService.fetchDocumentsCount( paramsMapObj )
-            return resultCount <= actionItemStatusRule.statusAllowedAttachment
+            resultCount = uploadDocumentService.fetchDocumentsCount( paramsMapObj )
+            resultCount <= actionItemStatusRule.statusAllowedAttachment
         }
-        return false
+        resultCount
     }
 
 /**
@@ -330,8 +331,7 @@ class UploadDocumentCompositeService {
  */
     private def getVpdiCode() {
         def session = RequestContextHolder?.currentRequestAttributes()?.request?.session
-        def mepCode = session.getAttribute( 'mep' )
-        return mepCode;
+        session.getAttribute( 'mep' )
     }
 
     /**
@@ -345,6 +345,6 @@ class UploadDocumentCompositeService {
                 entry.value = entry.value.encodeAsHTML()
             }
         }
-        return documentAttributes
+        documentAttributes
     }
 }

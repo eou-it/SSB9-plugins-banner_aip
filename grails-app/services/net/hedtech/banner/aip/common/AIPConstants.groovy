@@ -12,8 +12,8 @@ class AIPConstants {
     public static final String ACTIONITEMADMIN_ROLE = 'SELFSERVICE-ACTIONITEMADMIN'
 
     public static final int SIZE_IN_KB = 1024
-    public static final String DEFAULT_FILE_STORAGE_SYSTEM_AIP = 'AIP'
-    public static final String DEFAULT_FILE_STORAGE_SYSTEM_BDM = 'BDM'
+    public static final String FILE_STORAGE_SYSTEM_AIP = 'AIP'
+    public static final String FILE_STORAGE_SYSTEM_BDM = 'BDM'
     public static final String MAX_SIZE_ERROR = '@@r1:MaxSizeError@@'
     public static final String FILE_TYPE_ERROR = '@@r1:FileTypeError@@'
     public static final List DEFAULT_RESTRICTED_FILE_LIST = ['exe']
