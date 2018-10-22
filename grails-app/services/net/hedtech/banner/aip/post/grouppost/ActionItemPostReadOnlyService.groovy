@@ -34,7 +34,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
             [it.stringOffset + ' ' + it.timezoneId, it]
         }
         def getDisplayTimeZoneInfo = { key ->
-            map.get( key )?.displayName
+            map.get( key )?.displayNameWithoutOffset
         }
         def results = ActionItemPostReadOnly.fetchJobs( params, paginationParams )
         results = results.collect {
