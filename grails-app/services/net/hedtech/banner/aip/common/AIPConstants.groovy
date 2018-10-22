@@ -18,9 +18,9 @@ class AIPConstants {
     public static final String FILE_TYPE_ERROR = '@@r1:FileTypeError@@'
     public static final List DEFAULT_RESTRICTED_FILE_LIST = ['exe']
     public static final String DEFAULT_DOCTYPE = 'AIP'
-    public static final String ERROR_MESSAGE_BDM_NOT_INSTALLED = 'bdm.not.installed'
-    public static final String ERROR_BDM_FILE_UPLOAD = 'uploaded.document.is.empty'
-    public static final String ERROR_MESSAGE_BDM = 'aip.bdm.error'
+    public static final String ERROR_MESSAGE_BDM_NOT_INSTALLED = 'uploadDocument.bdm.not.installed'
+    public static final String ERROR_BDM_FILE_UPLOAD = 'uploadDocument.document.empty.error'
+    public static final String ERROR_MESSAGE_BDM = 'uploadDocument.bdm.error'
     public static final String ERROR_MESSAGE_BDM_SAVE = 'uploadDocument.save.error'
     public static final String MESSAGE_BDM_SAVE = 'uploadDocument.save.success'
 
