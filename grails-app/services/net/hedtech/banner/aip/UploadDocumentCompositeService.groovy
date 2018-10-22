@@ -317,12 +317,11 @@ class UploadDocumentCompositeService {
      */
     public boolean validateMaxAttachments( paramsMapObj ) {
         def actionItemStatusRule = actionItemStatusRuleReadOnlyService.getActionItemStatusRuleROById( Long.parseLong( paramsMapObj.responseId ) )
-        boolean resultCount
         if (actionItemStatusRule?.statusAllowedAttachment > 0) {
-            resultCount = uploadDocumentService.fetchDocumentsCount( paramsMapObj )
-            resultCount <= actionItemStatusRule.statusAllowedAttachment
+            def resultCount = uploadDocumentService.fetchDocumentsCount( paramsMapObj )
+            return resultCount <= actionItemStatusRule.statusAllowedAttachment
         }
-        resultCount
+        return false
     }
 
 /**
