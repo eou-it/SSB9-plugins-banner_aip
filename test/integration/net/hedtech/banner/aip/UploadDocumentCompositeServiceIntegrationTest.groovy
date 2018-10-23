@@ -165,7 +165,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
                 responseId   : ""+responseId,
                 pidm         : person.pidm
         ]
-        boolean isMaxAttachmentValidation = uploadDocumentCompositeService.maximumAttachmentsValidation(paramsMapObj)
+        boolean isMaxAttachmentValidation = uploadDocumentCompositeService.validateMaxAttachments( paramsMapObj)
         assertEquals false, isMaxAttachmentValidation
 
     }
@@ -217,7 +217,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     private def saveUploadDocumentService(actionItemId, responseId, fileName) {
         MockMultipartFile multipartFile = formFileObject(fileName)
-        def result = uploadDocumentCompositeService.addUploadDocument(
+        def result = uploadDocumentCompositeService.addDocument(
                 [actionItemId: actionItemId, responseId: responseId, documentName: fileName, documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
         result
     }
