@@ -23,6 +23,7 @@ class AIPConstants {
     public static final String ERROR_MESSAGE_BDM = 'uploadDocument.bdm.error'
     public static final String ERROR_MESSAGE_BDM_SAVE = 'uploadDocument.save.error'
     public static final String MESSAGE_BDM_SAVE = 'uploadDocument.save.success'
+    public static final String ERROR_MESSAGE_BDM_DOCUMENT_NOT_FOUND = 'uploadDocument.bdm.document.not.found'
 
     public static final String DOCUMENT_ID = 'DOCUMENT ID'
     public static final String DOCUMENT_TYPE = 'DOCUMENT TYPE'

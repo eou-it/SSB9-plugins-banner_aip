@@ -95,23 +95,20 @@ class UploadDocumentCompositeService {
      * @param documentId
      * @return list of documents
      */
-    def listByDocumentId(def documentId) {
-        def bdm = new BDMManager()
-        String vpdiCode = getVpdiCode()
+    def getBDMDocumentById(def documentId) {
         def bdmInstalled = BdmUtility.isBDMInstalled()
         LOGGER.debug('vpdiCode: $vpdiCode bdmInstalled: $bdmInstalled')
         if (!bdmInstalled) {
-            success = false
-            message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_BDM_NOT_INSTALLED)
-            LOGGER.error(message)
+            LOGGER.error('BDM is not installed')
             throw new ApplicationException(UploadDocumentCompositeService, new BusinessLogicValidationException(AIPConstants.ERROR_MESSAGE_BDM_NOT_INSTALLED, []))
         }
         def criteria = [:]
         LOGGER.debug('documentId ' + documentId)
         criteria.put(AIPConstants.DOCUMENT_ID, documentId)
-        JSONObject criteriaJson = new JSONObject(criteria)
         def documentList
+        def bdm = new BDMManager()
         try {
+            JSONObject criteriaJson = new JSONObject(criteria)
             JSONObject bdmParams = new JSONObject(BdmUtility.getBdmServerConfigurations())
             documentList = bdm.getDocuments(bdmParams, criteriaJson, vpdiCode)
         } catch (ApplicationException ae) {
@@ -119,7 +116,12 @@ class UploadDocumentCompositeService {
                     new BusinessLogicValidationException(
                             AIPConstants.ERROR_MESSAGE_BDM, []))
         }
-        documentList
+        if (documentList.isEmpty()) {
+            LOGGER.error("Document not found.")
+            throw new ApplicationException(UploadDocumentCompositeService, new BusinessLogicValidationException(AIPConstants.ERROR_MESSAGE_BDM_DOCUMENT_NOT_FOUND, []))
+        } else {
+            documentList[0]
+        }
     }
 
     /**
@@ -151,9 +153,8 @@ class UploadDocumentCompositeService {
 
     /**
      * Uploads document to BDM server
-     * @param saveUploadDocument
+     * @param documentId
      * @param docType
-     * @param ownerPidm
      * @param fileName
      * @param absoluteFileName
      * @param vpdiCode
@@ -225,7 +226,7 @@ class UploadDocumentCompositeService {
     def getDocumentStorageSystem() {
         def results
         ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.attachment.file.storage.location', 'GENERAL_SS')
-        results = [documentStorageLocation: configProperties ? configProperties.configValue : AIPConstants.DEFAULT_FILE_STORAGE_SYSTEM]
+        results = [documentStorageLocation: configProperties ? configProperties.configValue : AIPConstants.FILE_STORAGE_SYSTEM_AIP]
     }
 
     /**
@@ -284,21 +285,21 @@ class UploadDocumentCompositeService {
         def message
         try {
             def user = springSecurityService.getAuthentication()?.user
-            UploadDocument uploadDocument = uploadDocumentService.get( documentId )
-            if(uploadDocument.pidm == user.pidm){
-                if (AIPConstants.FILE_STORAGE_SYSTEM_AIP.equals(uploadDocument.fileLocation )){
-                    UploadDocumentContent uploadDocumentContent = UploadDocumentContent.fetchContentByFileUploadId( documentId.longValue() )
-                    uploadDocumentContentService.delete( uploadDocumentContent )
-                }else if (AIPConstants.FILE_STORAGE_SYSTEM_BDM.equals( uploadDocument.fileLocation )) {
+            UploadDocument uploadDocument = uploadDocumentService.get(documentId)
+            if (uploadDocument.pidm == user.pidm) {
+                if (AIPConstants.FILE_STORAGE_SYSTEM_BDM.equals(uploadDocument.fileLocation)) {
                     def documentAttributes = [:]
-                    documentAttributes.put( AIPConstants.DOCUMENT_ID, documentId )
-                    bdmAttachmentService.deleteDocument( BdmUtility.getBdmServerConfigurations(), documentAttributes, getVpdiCode() )
+                    documentAttributes.put(AIPConstants.DOCUMENT_ID, documentId)
+                    bdmAttachmentService.deleteDocument(BdmUtility.getBdmServerConfigurations(), documentAttributes, getVpdiCode())
+                } else {
+                    UploadDocumentContent uploadDocumentContent = UploadDocumentContent.fetchContentByFileUploadId(documentId.longValue())
+                    uploadDocumentContentService.delete(uploadDocumentContent)
                 }
-                uploadDocumentService.delete( uploadDocument )
+                uploadDocumentService.delete(uploadDocument)
                 success = true
-                message = MessageHelper.message( 'uploadDocument.delete.success' )
-            }else{
-                throw new ApplicationException( UploadDocumentCompositeService,'@@r1:invalid user@@' )
+                message = MessageHelper.message('uploadDocument.delete.success')
+            } else {
+                throw new ApplicationException(UploadDocumentCompositeService, '@@r1:invalid user@@')
             }
         } catch (ApplicationException e) {
             success = false
@@ -356,17 +357,23 @@ class UploadDocumentCompositeService {
         def user = springSecurityService.getAuthentication()?.user
         def checkFileLoc = uploadDocumentService.fetchFileLocationById(documentId, user.pidm)
         def documentDetails = [:]
-        if (checkFileLoc.equals(AIPConstants.FILE_STORAGE_SYSTEM_AIP)) {
-            def results = uploadDocumentContentService.fetchContentByFileUploadId(documentId)
-            def base64EncodedDocContent = Base64.encodeBase64String(results.documentContent)
-            documentDetails.id = results.id
-            documentDetails.fileUploadId = results.fileUploadId
-            documentDetails.documentContent = base64EncodedDocContent
-            documentDetails
-        } else if (AIPConstants.FILE_STORAGE_SYSTEM_BDM.equals(checkFileLoc)) {
-            documentDetails.bdmDocuments = listByDocumentId(documentId)
+        try {
+            if (AIPConstants.FILE_STORAGE_SYSTEM_BDM.equals(checkFileLoc)) {
+                documentDetails.bdmDocument = getBDMDocumentById(documentId)
+            } else {
+                def results = uploadDocumentContentService.fetchContentByFileUploadId(documentId)
+                def base64EncodedDocContent = Base64.encodeBase64String(results.documentContent)
+                documentDetails.id = results.id
+                documentDetails.fileUploadId = results.fileUploadId
+                documentDetails.documentContent = base64EncodedDocContent
+
+            }
+            documentDetails.success = true
+        } catch (ApplicationException e) {
+            documentDetails.success = false
+            documentDetails.message = e.message
         }
         documentDetails
     }
-    
+
 }
