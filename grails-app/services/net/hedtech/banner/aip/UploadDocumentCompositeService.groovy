@@ -119,9 +119,9 @@ class UploadDocumentCompositeService {
         if (documentList.isEmpty()) {
             LOGGER.error("Document not found.")
             throw new ApplicationException(UploadDocumentCompositeService, new BusinessLogicValidationException(AIPConstants.ERROR_MESSAGE_BDM_DOCUMENT_NOT_FOUND, []))
-        } else {
-            documentList[0]
         }
+        documentList[0]
+
     }
 
     /**
