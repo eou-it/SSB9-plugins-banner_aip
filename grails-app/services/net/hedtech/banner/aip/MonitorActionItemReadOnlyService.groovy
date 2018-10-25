@@ -6,7 +6,7 @@ package net.hedtech.banner.aip
 import net.hedtech.banner.service.ServiceBase
 
 /**
- * Service class for MonitorrActionItemReadOnly domain
+ * Service class for MonitorActionItemReadOnly domain
  */
 class MonitorActionItemReadOnlyService extends ServiceBase {
 

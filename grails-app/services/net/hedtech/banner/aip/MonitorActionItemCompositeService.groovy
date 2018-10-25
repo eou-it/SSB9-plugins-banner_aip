@@ -3,15 +3,12 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.common.LoggerUtility
-import net.hedtech.banner.i18n.MessageHelper
 import net.hedtech.banner.service.ServiceBase
-import org.apache.log4j.Logger
 
 /**
  * Composite Service class for MonitorActionItemReadOnly domain
  */
-class MonitorActionItemReadOnlyCompositeService extends ServiceBase {
+class MonitorActionItemCompositeService extends ServiceBase {
     private static final def LOGGER = Logger.getLogger( this.class )
     def monitorActionItemReadOnlyService
 
@@ -22,8 +19,8 @@ class MonitorActionItemReadOnlyCompositeService extends ServiceBase {
     def getactionItemNames() {
         def actionItems = monitorActionItemReadOnlyService.listOfActionItemNames()
         def actionItemNamesList=[]
-         actionItems.each {
-             actionItemNamesList.add('id':it.getAt(0), 'name':it.getAt(1))
+        actionItems.each {
+            actionItemNamesList.add('id':it.getAt(0), 'name':it.getAt(1))
         }
         actionItemNamesList
     }

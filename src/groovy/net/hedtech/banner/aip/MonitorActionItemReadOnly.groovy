@@ -12,8 +12,8 @@ import javax.persistence.*
 @NamedQueries(value = [
 
         @NamedQuery(name = "MonitorActionItemReadOnly.fetchActionItemNames",
-                query = """SELECT DISTINCT id,name FROM MonitorActionItemReadOnly a
-                           ORDER BY a.id""")
+                query = """SELECT actionItemId,actionItemName FROM MonitorActionItemReadOnly a
+                           GROUP BY a.actionItemId,a.actionItemName""")
 ])
 
 @Entity
@@ -21,7 +21,7 @@ import javax.persistence.*
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
 /**
- * Class for Assigned Action Item view
+ * Class for Assigned Action Item view Details
  */
 class MonitorActionItemReadOnly implements Serializable {
 
@@ -31,13 +31,13 @@ class MonitorActionItemReadOnly implements Serializable {
 
     @Id
     @Column(name = "ACTION_ITEM_ID")
-    Long id
+    Long actionItemId
 
     /**
      * Name of the action item
      */
     @Column(name = "ACTION_ITEM_NAME")
-    String name
+    String actionItemName
 
     /**
      * Group Name of the action item associated to
@@ -90,8 +90,9 @@ class MonitorActionItemReadOnly implements Serializable {
     /**
      * Review  indicator of the action item
      */
+    @Type(type = "yes_no")
     @Column(name = "ACTION_ITEM_REVIEW_IND")
-    String reviewIndicator
+    Boolean reviewIndicator = false
 
     /**
      * Review  state of the action item
@@ -105,9 +106,9 @@ class MonitorActionItemReadOnly implements Serializable {
     Long attachments
 
 
-     /**
+    /**
      * Check the list of action item names
-     * @param pidm
+     * @param
      * @return
      */
     static def fetchActionItemNames() {

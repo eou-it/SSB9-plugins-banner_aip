@@ -4,14 +4,13 @@
 
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class MonitorActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
-
-    def monitorActionItemReadOnlyCompositeService
+class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
     void setUp() {
@@ -19,17 +18,16 @@ class MonitorActionItemReadOnlyCompositeServiceIntegrationTests extends BaseInte
         super.setUp()
     }
 
+
     @After
     void tearDown() {
         super.tearDown()
-        logout()
     }
+
 
     @Test
-    void listActionItemNames() {
-        loginSSB( 'CSRSTU004', '111111' )
-        def result =monitorActionItemReadOnlyCompositeService.getactionItemNames()
-        assert result.size() > 0
+    void testFetchActionItemNames() {
+        List<MonitorActionItemReadOnly> monitorActionItems = MonitorActionItemReadOnly.fetchActionItemNames()
+        assert monitorActionItems.size() > 0
     }
-
 }
