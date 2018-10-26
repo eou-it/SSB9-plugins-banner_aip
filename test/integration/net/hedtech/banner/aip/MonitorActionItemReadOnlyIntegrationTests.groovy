@@ -38,7 +38,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
     @Test
     void testCreateInvalidMonitorActionItemReadOnly() {
         def monitorActionItemReadOnly = newInvalidForCreateMonitorActionItemReadOnly()
-        shouldFail(UncategorizedSQLException) {
+        shouldFail(ValidationException) {
             monitorActionItemReadOnly.save(failOnError: true, flush: true)
         }
     }
