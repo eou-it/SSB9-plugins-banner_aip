@@ -84,7 +84,7 @@ class MonitorActionItemReadOnly implements Serializable {
     /**
      * Current response text of the action item
      */
-    @Column(name = "ACTION_ITEM_CURR_RESP_TEXT")
+    @Column(name = "ACTION_ITEM_CURR_RESPONSE_TEXT")
     String currentResponseText
 
     /**
