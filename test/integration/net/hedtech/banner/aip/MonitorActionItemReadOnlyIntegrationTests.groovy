@@ -4,7 +4,6 @@
 
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before

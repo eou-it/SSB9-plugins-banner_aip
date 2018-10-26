@@ -49,7 +49,7 @@ class MonitorActionItemReadOnly implements Serializable {
      * Spriden Id of the action item associated to
      */
     @Column(name = "ACTION_ITEM_SPRIDEN_ID")
-    Long spriden_id
+    String spriden_id
 
     /**
      * Group Name of the action item associated to
@@ -67,7 +67,7 @@ class MonitorActionItemReadOnly implements Serializable {
      * Last activity date for the action item
      */
     @Column(name = "ACTION_ITEM_USER_RESPONSE_DATE")
-    Date completedDate
+    Date responseDate
 
     /**
      * Display Start Date
