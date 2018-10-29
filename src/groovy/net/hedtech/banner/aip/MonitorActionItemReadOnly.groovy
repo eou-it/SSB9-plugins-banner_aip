@@ -12,8 +12,35 @@ import javax.persistence.*
 @NamedQueries(value = [
 
         @NamedQuery(name = "MonitorActionItemReadOnly.fetchActionItemNames",
-                query = """SELECT actionItemId,actionItemName FROM MonitorActionItemReadOnly a
-                           GROUP BY a.actionItemId,a.actionItemName""")
+                query = """SELECT a.actionItemId,actionItemName FROM MonitorActionItemReadOnly a
+                           GROUP BY a.actionItemId,a.actionItemName"""),
+        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName",
+                query = """ FROM  MonitorActionItemReadOnly a
+                            where a.actionItemId = :actionItemId
+                            and upper(a.actionItemPersonName) like :personName
+                            order by a.actionItemPersonName,a.spridenId,a.actionItemGroupName,a.displayStartDate
+                        """),
+        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByActionItemAndSpridenId",
+                query = """ FROM MonitorActionItemReadOnly a
+                            where a.actionItemId = :actionItemId
+                            and upper(a.spridenId) = :spridenId
+                            order by a.actionItemPersonName,a.spridenId,a.actionItemGroupName,a.displayStartDate
+                        """),
+        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByActionItemId",
+                query = """ FROM MonitorActionItemReadOnly a
+                            where a.actionItemId = :actionItemId
+                            order by a.actionItemPersonName,a.spridenId,a.actionItemGroupName,a.displayStartDate
+                        """),
+        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByPersonId",
+                query = """ FROM MonitorActionItemReadOnly a
+                            where upper(a.spridenId) = :personId
+                            order by a.actionItemPersonName,a.spridenId,a.actionItemGroupName,a.displayStartDate
+                        """),
+        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByPersonName",
+                query = """ FROM MonitorActionItemReadOnly a
+                            where upper(a.actionItemPersonName) like :personName
+                            order by a.actionItemPersonName,a.spridenId,a.actionItemGroupName,a.displayStartDate
+                        """)
 ])
 
 @Entity
@@ -26,9 +53,9 @@ import javax.persistence.*
 class MonitorActionItemReadOnly implements Serializable {
 
     /**
+     *
      *  ID for GCRAACT
      */
-
     @Id
     @Column(name = "USER_ASSIGNED_ACTION_ITEM_ID")
     Long id
@@ -54,7 +81,7 @@ class MonitorActionItemReadOnly implements Serializable {
      * Spriden Id of the action item associated to
      */
     @Column(name = "ACTION_ITEM_SPRIDEN_ID")
-    String spriden_id
+    String spridenId
 
     /**
      * Group Name of the action item associated to
@@ -121,4 +148,87 @@ class MonitorActionItemReadOnly implements Serializable {
                     .list()
         }
     }
+
+    /**
+     * Gets the list of action items based on the filter action item ID and person name
+     * @param actionItem action item ID
+     * @param personName Name of the person
+     * @return List < MonitorActionItemReadOnly >  List of Action items
+     */
+
+    static def fetchByActionItemIdAndPersonName(Long actionItem, String personName) {
+        String nameSearchParameter = personName ? personName : ""
+        nameSearchParameter = "%" + nameSearchParameter.toUpperCase() + "%"
+
+        MonitorActionItemReadOnly.withSession { session ->
+            session.getNamedQuery('MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName')
+                    .setLong("actionItemId", actionItem)
+                    .setString("personName", nameSearchParameter)
+                    .list()
+        }
+    }
+
+    /**
+     * Gets the list of action items based on the filter action item ID and Spriden ID
+     * @param actionItem action item ID
+     * @param spridenId spriden ID of the person
+     * @return List < MonitorActionItemReadOnly >  List of Action items
+     */
+
+    static def fetchByActionItemAndSpridenId(Long actionItem, String spridenId) {
+        String nameSpridenId = spridenId ? spridenId : ""
+        nameSpridenId = nameSpridenId.toUpperCase()
+
+        MonitorActionItemReadOnly.withSession { session ->
+            session.getNamedQuery('MonitorActionItemReadOnly.fetchByActionItemAndSpridenId')
+                    .setLong("actionItemId", actionItem)
+                    .setString("spridenId", nameSpridenId)
+                    .list()
+        }
+    }
+
+    /**
+     * Gets the list of action items based on the filter action item ID only
+     * @param actionItem action item ID
+     * @return List < MonitorActionItemReadOnly >  List of Action items
+     */
+    static def fetchByActionItemId(Long actionItem) {
+        MonitorActionItemReadOnly.withSession { session ->
+            session.getNamedQuery('MonitorActionItemReadOnly.fetchByActionItemId')
+                    .setLong("actionItemId", actionItem)
+                    .list()
+        }
+    }
+    /**
+     * Gets the list of action items based on the filter person ID
+     * @param spridenId spriden ID of the person
+     * @return List < MonitorActionItemReadOnly >  List of Action items
+     */
+    static def fetchByPersonId(String spridenId) {
+        String personIDparam = spridenId ? spridenId : ""
+        personIDparam = personIDparam.toUpperCase()
+
+        MonitorActionItemReadOnly.withSession { session ->
+            session.getNamedQuery('MonitorActionItemReadOnly.fetchByPersonId')
+                    .setString("personId", personIDparam)
+                    .list()
+        }
+    }
+    /**
+     * Gets the list of action items based on the filter person's name
+     * @param personName Name of the person
+     * @return List < MonitorActionItemReadOnly >  List of Action items
+     */
+    static def fetchByPersonName(String personName) {
+        String personNameParam = personName ? personName : ""
+        personNameParam = "%" + personNameParam.toUpperCase() + "%"
+
+        MonitorActionItemReadOnly.withSession { session ->
+            session.getNamedQuery('MonitorActionItemReadOnly.fetchByPersonName')
+                    .setString("personName", personNameParam)
+                    .list()
+        }
+    }
+
+
 }
