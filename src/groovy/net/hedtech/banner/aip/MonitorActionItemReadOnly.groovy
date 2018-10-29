@@ -30,6 +30,11 @@ class MonitorActionItemReadOnly implements Serializable {
      */
 
     @Id
+    @Column(name = "USER_ASSIGNED_ACTION_ITEM_ID")
+    Long id
+    /**
+     *  Action Item ID
+     */
     @Column(name = "ACTION_ITEM_ID")
     Long actionItemId
 
@@ -105,7 +110,6 @@ class MonitorActionItemReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_ATTACHMENTS")
     Long attachments
 
-
     /**
      * Check the list of action item names
      * @param
@@ -113,7 +117,7 @@ class MonitorActionItemReadOnly implements Serializable {
      */
     static def fetchActionItemNames() {
         MonitorActionItemReadOnly.withSession { session ->
-            session.getNamedQuery( 'MonitorActionItemReadOnly.fetchActionItemNames' )
+            session.getNamedQuery('MonitorActionItemReadOnly.fetchActionItemNames')
                     .list()
         }
     }
