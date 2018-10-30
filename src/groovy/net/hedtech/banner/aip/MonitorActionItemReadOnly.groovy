@@ -53,7 +53,7 @@ class MonitorActionItemReadOnly implements Serializable {
      *  ID for GCRAACT
      */
     @Id
-    @Column(name = "USER_ASSIGNED_ACTION_ITEM_ID")
+    @Column(name = "GCRAACT_SURROGATE_ID")
     Long id
     /**
      *  Action Item ID
