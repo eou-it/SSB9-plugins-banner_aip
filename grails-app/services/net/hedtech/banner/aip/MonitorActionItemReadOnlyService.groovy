@@ -27,18 +27,33 @@ class MonitorActionItemReadOnlyService extends ServiceBase {
      * @return List < MonitorActionItemReadOnly >
      */
 
-    List<MonitorActionItemReadOnly> fetchByActionItemIdAndPersonName(Long actionItem, String personName) {
-        return MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItem, personName)
+    List<MonitorActionItemReadOnly> fetchByActionItemIdAndPersonName(Long actionItem, String personName,def filterData,def pagingAndSortParams) {
+        return MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItem, personName,filterData,pagingAndSortParams)
     }
+
+
     /**
      * Lists of action items filtered by actionItem id and Person name
      * @param actionItem Long Action Item Id
      * @param spridenId Spriden Id of the person that is being searched
      * @return List < MonitorActionItemReadOnly >  list of actionItems
      */
-        List<MonitorActionItemReadOnly> fetchByActionItemAndSpridenId(Long actionItem, String spridenId) {
-        return MonitorActionItemReadOnly.fetchByActionItemAndSpridenId(actionItem, spridenId)
+        List<MonitorActionItemReadOnly> fetchByActionItemAndSpridenId(Long actionItem, String spridenId,def filterData,def pagingAndSortParams) {
+        return MonitorActionItemReadOnly.fetchByActionItemAndSpridenId(actionItem, spridenId, filterData, pagingAndSortParams)
     }
+
+
+    /**
+     * returns count of Lists of action items filtered by actionItem id and Person name
+     * @param actionItem Long Action Item Id
+     * @param spridenId Spriden Id of the person that is being searched
+     * @return List < MonitorActionItemReadOnly >  list of actionItems
+     */
+    def fetchByActionItemAndSpridenIdCount(Long actionItem, String spridenId) {
+        return MonitorActionItemReadOnly.fetchByActionItemAndSpridenIdCount(actionItem, spridenId)
+    }
+
+
     /**
      * Method to fetch Lists of action items filtered by actionItem id
      * @param actionItem Long Action Item Id
@@ -46,16 +61,32 @@ class MonitorActionItemReadOnlyService extends ServiceBase {
      * @return List < MonitorActionItemReadOnly >  list of actionItems
      */
 
-    List<MonitorActionItemReadOnly> fetchByActionItemId(Long actionItemId) {
-        return MonitorActionItemReadOnly.fetchByActionItemId(actionItemId)
+    List<MonitorActionItemReadOnly> fetchByActionItemId(Long actionItemId,def filterData,def pagingAndSortParams) {
+        return MonitorActionItemReadOnly.fetchByActionItemId(actionItemId,filterData,pagingAndSortParams)
     }
 
-    List<MonitorActionItemReadOnly> fetchByPersonName(String personName) {
+    def fetchByActionItemIdCount(Long actionItemId) {
+        return MonitorActionItemReadOnly.fetchByActionItemIdCount(actionItemId)
+    }
+
+    List<MonitorActionItemReadOnly> fetchByPersonName(String personName,def filterData,def pagingAndSortParams) {
         return MonitorActionItemReadOnly.fetchByPersonName(personName)
     }
 
-    List<MonitorActionItemReadOnly> fetchByPersonId(String spridenId) {
+    def fetchByPersonNameCount(String personName) {
+        return MonitorActionItemReadOnly.fetchByPersonNameCount(personName)
+    }
+
+    List<MonitorActionItemReadOnly> fetchByPersonId(String spridenId,def filterData,def pagingAndSortParams) {
         return MonitorActionItemReadOnly.fetchByPersonId(spridenId)
+    }
+
+    def fetchByPersonIdCount(String spridenId) {
+        return MonitorActionItemReadOnly.fetchByPersonIdCount(spridenId)
+    }
+
+    def fetchByActionItemIdAndPersonNameCount(Long actionItem, String personName){
+        return MonitorActionItemReadOnly.fetchByActionItemIdAndPersonNameCount(actionItem, personName)
     }
 
 }
