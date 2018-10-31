@@ -6,6 +6,7 @@ package net.hedtech.banner.aip
 
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.configuration.ConfigProperties
+import net.hedtech.banner.general.configuration.ConfigApplication
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.apache.commons.io.IOUtils
 import org.junit.After
@@ -24,6 +25,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     def selfServiceBannerAuthenticationProvider
     def userActionItemReadOnlyCompositeService
     def bdmEnabled = false
+    def pidm
 
     @Before
     void setUp() {
@@ -32,9 +34,22 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         def auth = selfServiceBannerAuthenticationProvider.authenticate(new UsernamePasswordAuthenticationToken('CSRSTU004', '111111'))
         SecurityContextHolder.getContext().setAuthentication(auth)
         assertNotNull auth
-        ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.attachment.file.storage.location', 'GENERAL_SS')
-        configProperties.configValue = 'AIP'
-        configProperties.save(flush: true, failOnError: true)
+        pidm = auth.pidm
+        assertNotNull pidm
+        setConfigProperties('aip.attachment.file.storage.location', 'AIP', 'string')
+        if (bdmEnabled) {
+            setConfigProperties('bdmServer.Username', 'BGAIP', 'string')
+            setConfigProperties('bdmServer.AXWebServicesURL', 'http://149.24.38.80/AppXtenderServices/axservicesinterface.asmx', 'string')
+            setConfigProperties('bdmserver.file.location', 'C:/BDM_DOCUMENTS_FOLDER', 'string')
+            setConfigProperties('bdmServer.AXWebAccessURL', 'http://149.24.38.80/appxtender/', 'string')
+            setConfigProperties('bdmServer.defaultfile.ext', '[EXE]', 'list')
+            setConfigProperties('bdmServer.defaultFileSize', '3', 'string')
+            setConfigProperties('bdmserver.BdmDataSource', 'B80H', 'string')
+            Holders.config.bdmserver.file.location = 'C:/BDM_DOCUMENTS_FOLDER'
+            Holders.config.bdmserver.defaultFileSize='3'
+            Holders.config.bdmserver.defaultfile_ext = ['EXE']
+        }
+
     }
 
     @After
@@ -54,21 +69,78 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     }
 
     @Test
-    void testTextSaveUploadDocumentServiceWithBDM() {
+    void testAIPFileLocationForDocumentUpload() {
+        Long actionItemId = getActionItemId()
+        assertNotNull actionItemId
+        Long responseId = getResponseIdByActionItemId(actionItemId)
+        assertNotNull responseId
+        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+        assert saveResult.success == true
+        def paramsObj = [
+                actionItemId : actionItemId.toString(),
+                responseId   : responseId.toString(),
+                sortColumn   : "id",
+                sortAscending: false,
+                pidm         : pidm
+        ]
+        List<UploadDocument> results = UploadDocument.fetchDocuments(paramsObj)
+        assert results.size() > 0
+        assert results[0].fileLocation == 'AIP'
+
+    }
+
+    @Test
+       void testTextSaveUploadDocumentServiceWithBDM() {
+           if (bdmEnabled) {
+               setConfigProperties('aip.attachment.file.storage.location', 'BDM', 'string')
+               Long actionItemId = getActionItemId()
+               assertNotNull actionItemId
+               Long responseId = getResponseIdByActionItemId(actionItemId)
+               assertNotNull responseId
+               def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+               assert saveResult.success == true
+
+               def paramsObj = [
+                       actionItemId : actionItemId.toString(),
+                       responseId   : responseId.toString(),
+                       sortColumn   : "id",
+                       sortAscending: false,
+                       pidm         : pidm
+               ]
+               List<UploadDocument> results = UploadDocument.fetchDocuments(paramsObj)
+               assert results.size() > 0
+               //TODO:Uncomment below line when BDM delete is working
+               //def deleteResponse = uploadDocumentCompositeService.deleteDocument(results[0].id)
+               //assertTrue deleteResponse.success
+           }
+       }
+
+    @Test
+    void testBDMFileLocationForDocumentUpload() {
         if (bdmEnabled) {
-            ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.attachment.file.storage.location', 'GENERAL_SS')
-            assertNotNull configProperties
-            configProperties.configValue = 'BDM'
-            configProperties.save(flush: true, failOnError: true)
+            setConfigProperties('aip.attachment.file.storage.location', 'BDM', 'string')
             Long actionItemId = getActionItemId()
             assertNotNull actionItemId
             Long responseId = getResponseIdByActionItemId(actionItemId)
             assertNotNull responseId
             def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
             assert saveResult.success == true
+
+            def paramsObj = [
+                    actionItemId : actionItemId.toString(),
+                    responseId   : responseId.toString(),
+                    sortColumn   : "id",
+                    sortAscending: false,
+                    pidm         : pidm
+            ]
+            List<UploadDocument> results = UploadDocument.fetchDocuments(paramsObj)
+            assert results.size() > 0
+            assert results[0].fileLocation == 'BDM'
+            //TODO:Uncomment below line when BDM delete is working
+            //def deleteResponse = uploadDocumentCompositeService.deleteDocument(results[0].id)
+            //assertTrue deleteResponse.success
         }
     }
-
     @Test
     void testAddDocumentEmptyFile() {
         Long actionItemId = getActionItemId()
@@ -78,25 +150,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
         def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIP_Empty_Text_File.txt')
         assert saveResult.success == false
-        assert saveResult.message == "Empty Document cannot be uploaded to Banner Document Management."
-    }
-
-    //@Test
-    void testBDMNotInstalled() {
-        if (!bdmEnabled) {
-            ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.attachment.file.storage.location', 'GENERAL_SS')
-            assertNotNull configProperties
-            configProperties.configValue = 'BDM'
-            configProperties.save(flush: true, failOnError: true)
-            Long actionItemId = getActionItemId()
-            assertNotNull actionItemId
-            Long responseId = getResponseIdByActionItemId(actionItemId)
-            assertNotNull responseId
-
-            def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
-            assert saveResult.success == false
-            assert saveResult.message == "BDM integration is not available. Please contact your administrator."
-        }
+        assert saveResult.message == "Save failed. Empty document can not be uploaded."
     }
 
     @Test
@@ -172,10 +226,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     @Test
     void testRestrictedFileTypes() {
-        ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.restricted.attachment.type', 'GENERAL_SS')
-        assertNotNull configProperties
-        configProperties.configValue = '[EXE, ZIP]'
-        configProperties.save(flush: true, failOnError: true)
+        setConfigProperties('aip.restricted.attachment.type', '[EXE, ZIP]', 'list')
         def result = uploadDocumentCompositeService.getRestrictedFileTypes()
         assertNotNull result
         assert result.restrictedFileTypes == '[EXE, ZIP]'
@@ -183,10 +234,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     @Test
     void testMaxFileSize() {
-        ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.allowed.attachment.max.size', 'GENERAL_SS')
-        assertNotNull configProperties
-        configProperties.configValue = '1024'
-        configProperties.save(flush: true, failOnError: true)
+        setConfigProperties('aip.allowed.attachment.max.size', '1024', 'string')
         def result = uploadDocumentCompositeService.getMaxFileSize();
         assertNotNull result
         assert result.maxFileSize == '1024'
@@ -194,10 +242,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     @Test
     void testUploadAttachmentStorageLocation() {
-        ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.attachment.file.storage.location', 'GENERAL_SS')
-        assertNotNull configProperties
-        configProperties.configValue = 'AIP'
-        configProperties.save(flush: true, failOnError: true)
+        setConfigProperties('aip.attachment.file.storage.location', 'AIP', 'string')
         def result = uploadDocumentCompositeService.getDocumentStorageSystem();
         assertNotNull result
         assert result.documentStorageLocation == 'AIP'
@@ -265,10 +310,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @Test
     void testPreviewDocumentsWithBDM() {
         if (bdmEnabled) {
-            ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.attachment.file.storage.location', 'GENERAL_SS')
-            assertNotNull configProperties
-            configProperties.configValue = 'BDM'
-            configProperties.save(flush: true, failOnError: true)
+            setConfigProperties('aip.attachment.file.storage.location', 'BDM', 'string')
             Long actionItemId = getActionItemId()
             assertNotNull actionItemId
             Long responseId = getResponseIdByActionItemId(actionItemId)
@@ -288,7 +330,10 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
             assertNotNull viewResponse.bdmDocument
             assertNotNull viewResponse.bdmDocument.viewURL
             assertTrue viewResponse.success
-            //TODO: Call BDMDeleteDocument
+
+            //TODO:Uncomment below line when BDM delete is working
+            //def deleteResponse = uploadDocumentCompositeService.deleteDocument(response.result[0].id)
+            //assertTrue deleteResponse.success
         }
     }
 
@@ -316,10 +361,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @Test
     void testDeleteDocumentWithBDM() {
         if (bdmEnabled) {
-            ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.attachment.file.storage.location', 'GENERAL_SS')
-            assertNotNull configProperties
-            configProperties.configValue = 'BDM'
-            configProperties.save(flush: true, failOnError: true)
+            setConfigProperties('aip.attachment.file.storage.location', 'BDM', 'string')
             Long actionItemId = getActionItemId()
             assertNotNull actionItemId
             Long responseId = getResponseIdByActionItemId(actionItemId)
@@ -338,6 +380,34 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
             def deleteResponse = uploadDocumentCompositeService.deleteDocument(response.result[0].id)
             assertTrue deleteResponse.success
         }
+    }
+
+    private void setConfigProperties(String configName, String configValue, String configType) {
+        ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId(configName, 'GENERAL_SS')
+        if (configProperties) {
+            configProperties.configValue = configValue
+            configProperties.save(flush: true, failOnError: true)
+        } else {
+            ConfigApplication configApplication = ConfigApplication.fetchByAppId('GENERAL_SS')
+            if (!configApplication) {
+                configApplication = new ConfigApplication(
+                        lastModified: new Date(),
+                        appName: 'BannerGeneralSsb',
+                        appId: 'GENERAL_SS'
+                )
+                configApplication.save(failOnError: true, flush: true)
+                configApplication = configApplication.refresh()
+            }
+            configProperties = new ConfigProperties(
+                    configName: configName,
+                    configType: configType,
+                    configValue: configValue,
+                    configComment: 'TEST_COMMENT'
+            )
+            configProperties.setConfigApplication(configApplication)
+            configProperties.save(failOnError: true, flush: true)
+        }
+
     }
 
     private def saveUploadDocumentService(actionItemId, responseId, fileName) {

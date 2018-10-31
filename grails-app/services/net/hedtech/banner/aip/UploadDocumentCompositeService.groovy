@@ -56,14 +56,14 @@ class UploadDocumentCompositeService {
             )
             try {
                 def bdmInstalled = BdmUtility.isBDMInstalled()
-                if (!bdmInstalled) {
+                if (AIPConstants.FILE_STORAGE_SYSTEM_BDM.equals(fileStorageLocation.documentStorageLocation) && !bdmInstalled) {
                     LOGGER.error('BDM is not installed.')
                     message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_BDM_NOT_INSTALLED)
                     throw new ApplicationException(UploadDocumentCompositeService, new BusinessLogicValidationException(message, []))
                 }
                 if (map.file?.isEmpty()) {
                     LOGGER.error('File is empty.')
-                    message = MessageHelper.message(AIPConstants.ERROR_BDM_FILE_EMPTY)
+                    message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_FILE_EMPTY)
                     throw new ApplicationException(UploadDocumentCompositeService, new BusinessLogicValidationException(message, []))
                 }
                 saveUploadDocument = uploadDocumentService.create(ud)
@@ -71,17 +71,17 @@ class UploadDocumentCompositeService {
                     case AIPConstants.FILE_STORAGE_SYSTEM_AIP:
                         uploadDocumentContent(saveUploadDocument.id, map.file)
                         success = true
-                        message = MessageHelper.message(AIPConstants.MESSAGE_BDM_SAVE)
+                        message = MessageHelper.message(AIPConstants.MESSAGE_SAVE_SUCCESS)
                         break
                     case AIPConstants.FILE_STORAGE_SYSTEM_BDM:
                         addDocumentToBDMServer(map, saveUploadDocument)
                         success = true
-                        message = MessageHelper.message(AIPConstants.MESSAGE_BDM_SAVE)
+                        message = MessageHelper.message(AIPConstants.MESSAGE_SAVE_SUCCESS)
                         break
                     default:
                         LOGGER.error('File upload is not configured correctly')
                         success = false
-                        message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_BDM_SAVE)
+                        message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_UNSUPPORTED_FILE_STORAGE)
                 }
             } catch (ApplicationException e) {
                 success = false
