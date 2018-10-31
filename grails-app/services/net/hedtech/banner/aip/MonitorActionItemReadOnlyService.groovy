@@ -70,7 +70,7 @@ class MonitorActionItemReadOnlyService extends ServiceBase {
     }
 
     List<MonitorActionItemReadOnly> fetchByPersonName(String personName,def filterData,def pagingAndSortParams) {
-        return MonitorActionItemReadOnly.fetchByPersonName(personName)
+        return MonitorActionItemReadOnly.fetchByPersonName(personName,filterData,pagingAndSortParams)
     }
 
     def fetchByPersonNameCount(String personName) {
