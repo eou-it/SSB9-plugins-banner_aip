@@ -19,10 +19,10 @@ class AIPConstants {
     public static final List DEFAULT_RESTRICTED_FILE_LIST = ['exe']
     public static final String DEFAULT_DOCTYPE = 'AIP'
     public static final String ERROR_MESSAGE_BDM_NOT_INSTALLED = 'uploadDocument.bdm.not.installed'
-    public static final String ERROR_BDM_FILE_UPLOAD = 'uploadDocument.document.empty.error'
+    public static final String ERROR_MESSAGE_FILE_EMPTY = 'uploadDocument.document.empty.error'
     public static final String ERROR_MESSAGE_BDM = 'uploadDocument.bdm.error'
-    public static final String ERROR_MESSAGE_BDM_SAVE = 'uploadDocument.save.error'
-    public static final String MESSAGE_BDM_SAVE = 'uploadDocument.save.success'
+    public static final String ERROR_MESSAGE_UNSUPPORTED_FILE_STORAGE = 'uploadDocument.invalid.file.storage.error'
+    public static final String MESSAGE_SAVE_SUCCESS = 'uploadDocument.save.success'
     public static final String ERROR_MESSAGE_BDM_DOCUMENT_NOT_FOUND = 'uploadDocument.bdm.document.not.found'
 
     public static final String DOCUMENT_ID = 'DOCUMENT ID'
