@@ -161,9 +161,17 @@ class MonitorActionItemReadOnly implements Serializable {
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             eq("actionItemId", actionItem)
             ilike("actionItemPersonName", nameSearchParameter)
-            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn).ignoreCase() : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
         }
     }
+
+    /**
+     * Count of action items based on the filter action item ID and person name
+     * @param actionItem action item ID
+     * @param personName Name of the person
+     * @return count of action items
+     */
+
 
     static def fetchByActionItemIdAndPersonNameCount(Long actionItem, String personName) {
         String nameSearchParameter = personName ? personName : ""
@@ -180,7 +188,7 @@ class MonitorActionItemReadOnly implements Serializable {
      * Gets the list of action items based on the filter action item ID and Spriden ID
      * @param actionItem action item ID
      * @param spridenId spriden ID of the person
-     * @return List < MonitorActionItemReadOnly >  List of Action items
+     * @return List of Action items
      */
 
     static def fetchByActionItemAndSpridenId(Long actionItem, String spridenId,
@@ -190,7 +198,7 @@ class MonitorActionItemReadOnly implements Serializable {
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             eq("actionItemId", actionItem)
             eq("spridenId", spridenId, [ignoreCase: true])
-            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn).ignoreCase() : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
         }
     }
 
@@ -207,7 +215,7 @@ class MonitorActionItemReadOnly implements Serializable {
     }
 
     /**
-     * Gets the list of action items based on the filter action item ID only
+     * List of action items based on the filter action item ID only
      * @param actionItem action item ID
      * @return List < MonitorActionItemReadOnly >  List of Action items
      */
@@ -215,11 +223,15 @@ class MonitorActionItemReadOnly implements Serializable {
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             eq("actionItemId", actionItem)
-            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn).ignoreCase() : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
         }
     }
 
-
+    /**
+     * count of action items based on the filter action item ID only
+     * @param actionItem action item ID
+     * @return count of Action items
+     */
     static def fetchByActionItemIdCount(Long actionItem) {
         MonitorActionItemReadOnly.withSession { session ->
             session.getNamedQuery('MonitorActionItemReadOnly.fetchByActionItemId')
@@ -230,15 +242,21 @@ class MonitorActionItemReadOnly implements Serializable {
 /**
  * Gets the list of action items based on the filter person ID
  * @param spridenId spriden ID of the person
- * @return List < MonitorActionItemReadOnly >  List of Action items
+ * @return count of Action items
  */
     static def fetchByPersonId(String spridenId, def filterData, def pagingAndSortParams) {
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             eq("spridenId", spridenId, [ignoreCase: true])
-            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn).ignoreCase() : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
         }
     }
+
+    /**
+     * count of action items based on the filter person ID
+     * @param spridenId spriden ID of the person
+     * @return count of Action items
+     */
 
     static def fetchByPersonIdCount(String spridenId) {
         String personIDparam = spridenId ? spridenId : ""
@@ -261,9 +279,16 @@ class MonitorActionItemReadOnly implements Serializable {
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             ilike("actionItemPersonName", personNameParam)
-            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn).ignoreCase() : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
         }
     }
+
+    /**
+     * count of  action items based on the filter person's name
+     * @param personName Name of the person
+     * @return count of action items
+     */
+
 
     static def fetchByPersonNameCount(String personName) {
         String personNameParam = personName ? personName : ""

@@ -17,75 +17,109 @@ class MonitorActionItemReadOnlyService extends ServiceBase {
      * @param
      * @return
      */
-    def listOfActionItemNames( ) {
+    def listOfActionItemNames() {
         return MonitorActionItemReadOnly.fetchActionItemNames()
     }
 
     /**
      * Lists of action items filtered by actionItem id and Person name
-     * @param Long actionItem,String personName
-     * @return List < MonitorActionItemReadOnly >
+     * @param actionItem ID of action item that is being searched
+     * @param personName name of the person to be searched
+     * @param filterData
+     * @param pagingAndSortParams
+     * @return List of action items
      */
-
-    List<MonitorActionItemReadOnly> fetchByActionItemIdAndPersonName(Long actionItem, String personName,def filterData,def pagingAndSortParams) {
-        return MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItem, personName,filterData,pagingAndSortParams)
+    List<MonitorActionItemReadOnly> fetchByActionItemIdAndPersonName(Long actionItem, String personName,def filterData, def pagingAndSortParams) {
+        return MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItem, personName, filterData, pagingAndSortParams)
     }
-
 
     /**
      * Lists of action items filtered by actionItem id and Person name
-     * @param actionItem Long Action Item Id
-     * @param spridenId Spriden Id of the person that is being searched
+     * @param actionItem  Action Item Id of action item to be searched
+     * @param spridenId Spriden Id of the person to be searched
      * @return List < MonitorActionItemReadOnly >  list of actionItems
      */
-        List<MonitorActionItemReadOnly> fetchByActionItemAndSpridenId(Long actionItem, String spridenId,def filterData,def pagingAndSortParams) {
-        return MonitorActionItemReadOnly.fetchByActionItemAndSpridenId(actionItem, spridenId, filterData, pagingAndSortParams)
+    List<MonitorActionItemReadOnly> fetchByActionItemAndSpridenId(Long actionItemId, String spridenId,def filterData, def pagingAndSortParams) {
+        return MonitorActionItemReadOnly.fetchByActionItemAndSpridenId(actionItemId, spridenId, filterData, pagingAndSortParams)
     }
-
 
     /**
-     * returns count of Lists of action items filtered by actionItem id and Person name
-     * @param actionItem Long Action Item Id
+     * Count of lists of action items filtered by actionItem id and Person name
+     * @param actionItemId  Action Item Id of action item to be searched
      * @param spridenId Spriden Id of the person that is being searched
-     * @return List < MonitorActionItemReadOnly >  list of actionItems
+     * @return Count of action items
      */
-    def fetchByActionItemAndSpridenIdCount(Long actionItem, String spridenId) {
-        return MonitorActionItemReadOnly.fetchByActionItemAndSpridenIdCount(actionItem, spridenId)
+    def fetchByActionItemAndSpridenIdCount(Long actionItemId, String spridenId) {
+        return MonitorActionItemReadOnly.fetchByActionItemAndSpridenIdCount(actionItemId, spridenId)
     }
-
 
     /**
-     * Method to fetch Lists of action items filtered by actionItem id
-     * @param actionItem Long Action Item Id
-     * @param spridenId Spriden Id of the person that is being searched
-     * @return List < MonitorActionItemReadOnly >  list of actionItems
+     * Lists of action items filtered by actionItem id
+     * @param actionItemId  Action Item Id of action item to be searched
+     * @param spridenId Spriden Id of the person being searched
+     * @return List of actionItems
      */
-
-    List<MonitorActionItemReadOnly> fetchByActionItemId(Long actionItemId,def filterData,def pagingAndSortParams) {
-        return MonitorActionItemReadOnly.fetchByActionItemId(actionItemId,filterData,pagingAndSortParams)
+    List<MonitorActionItemReadOnly> fetchByActionItemId(Long actionItemId, def filterData, def pagingAndSortParams) {
+        return MonitorActionItemReadOnly.fetchByActionItemId(actionItemId, filterData, pagingAndSortParams)
     }
 
+    /**
+     * Lists of action items filtered by action item id
+     * @param actionItem  Action Item Id of action item to be searched
+     * @return count of action items
+     * */
     def fetchByActionItemIdCount(Long actionItemId) {
         return MonitorActionItemReadOnly.fetchByActionItemIdCount(actionItemId)
     }
 
-    List<MonitorActionItemReadOnly> fetchByPersonName(String personName,def filterData,def pagingAndSortParams) {
-        return MonitorActionItemReadOnly.fetchByPersonName(personName,filterData,pagingAndSortParams)
+    /**
+     * Lists of action items filtered by person name
+     * @param personName name of the person to be searched
+     * @param filterData
+     * @param pagingAndSortParams
+     * @return List of action items
+     * */
+    List<MonitorActionItemReadOnly> fetchByPersonName(String personName, def filterData, def pagingAndSortParams) {
+        return MonitorActionItemReadOnly.fetchByPersonName(personName, filterData, pagingAndSortParams)
     }
 
+    /**
+     * Count of action items filtered by person Name
+     * @param personName name of the person to be searched
+     * @return count of action items
+     * */
     def fetchByPersonNameCount(String personName) {
         return MonitorActionItemReadOnly.fetchByPersonNameCount(personName)
     }
 
-    List<MonitorActionItemReadOnly> fetchByPersonId(String spridenId,def filterData,def pagingAndSortParams) {
-        return MonitorActionItemReadOnly.fetchByPersonId(spridenId)
+
+    /**
+     * Lists of action items filtered by person id
+     * @param PersonID of the person to be searched
+     * @param filterData filter data
+     * @param pagingAndSortParams pagaination and sorting parameter
+     * @return List of action items
+     * */
+    List<MonitorActionItemReadOnly> fetchByPersonId(String spridenId, def filterData, def pagingAndSortParams) {
+        return MonitorActionItemReadOnly.fetchByPersonId(spridenId, filterData, pagingAndSortParams)
     }
 
+    /**
+     * Lists of action items filtered by person id
+     * @param personID spriden id of the person
+     * @return count of action items
+     * */
     def fetchByPersonIdCount(String spridenId) {
         return MonitorActionItemReadOnly.fetchByPersonIdCount(spridenId)
     }
 
-    def fetchByActionItemIdAndPersonNameCount(Long actionItem, String personName){
+    /**
+     * Lists of action items filtered by actionItem id and Person name
+     * @param actionItem  Action Item Id of action item to be searched
+     * @param personName name of the person
+     * @return count of action items
+     * */
+    def fetchByActionItemIdAndPersonNameCount(Long actionItem, String personName) {
         return MonitorActionItemReadOnly.fetchByActionItemIdAndPersonNameCount(actionItem, personName)
     }
 
