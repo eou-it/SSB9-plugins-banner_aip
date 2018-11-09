@@ -69,8 +69,6 @@ class MonitorActionItemCompositeService extends ServiceBase {
 
         }
 
-        qryresult.each {}
-
         def resultMap = [result: result,
                          length: count];
 

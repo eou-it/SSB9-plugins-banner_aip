@@ -14,11 +14,17 @@ import static org.junit.Assert.*
 class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def monitorActionItemCompositeService
+    def pagingAndSortParams
+    def filterData
+    Map paramsMap = [:]
+    def criteriaMap = [:]
 
     @Before
     void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
+        pagingAndSortParams = [sortColumn: "actionItemName", sortDirection: "asc", max: 50, offset: 0]
+        filterData = [params: paramsMap, criteria: criteriaMap]
     }
 
     @After
@@ -29,7 +35,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Test
     void listActionItemNames() {
-        def result =monitorActionItemCompositeService.getactionItemNames()
+        def result = monitorActionItemCompositeService.getActionItemNames()
         assert result.size() > 0
     }
 
@@ -39,14 +45,19 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionId = 3L
         String personName = null
         String personId = "CSRSTU001"
+        def pagingAndSortParams = [sortColumn: "actionItemName", sortDirection: "asc", max: 5, offset: 0]
 
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionId, personName, personId)
-        assert result.size() > 0
-        assertEquals 1, result.size()
-        assertEquals 3, result[0].actionItemId
-        assertEquals "Drug and Alcohol Policy", result[0].actionItemName
-        assertEquals "Cliff Starr", result[0].actionItemPersonName
-        assertEquals "CSRSTU001", result[0].spriden_id
+        Map paramsMap = [:]
+        def criteriaMap = [:]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 1, response.result.size()
+        assertEquals 3, response.result[0].actionItemId
+        assertEquals "Drug and Alcohol Policy", response.result[0].actionItemName
+        assertEquals "CSRSTU001", response.result[0].spridenId
+        assertEquals 1, response.length
 
     }
 
@@ -56,10 +67,9 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         String personName = null
         String personId = "CSRSTABCD"
 
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionId, personName, personId)
-        assertEquals 0, result.size()
-
-
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionId, personName, personId, filterData, pagingAndSortParams)
+        assertEquals 0, response.result.size()
+        assertEquals 0, response.length
     }
 
     @Test
@@ -67,8 +77,9 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionId = 9999L
         String personName = null
         String personId = "CSRSTU001"
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionId, personName, personId)
-        assertEquals 0, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionId, personName, personId, filterData, pagingAndSortParams)
+        assertEquals 0, response.result.size()
+        assertEquals 0, response.length
     }
 
     //Action ID + Person Name Combination
@@ -77,9 +88,11 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = 3L
         String personName = "Cliff Starr"
         String personId = null
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertNotNull result
-        assertEquals 1, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 1, response.result.size()
+        assertEquals 1, response.length
+
     }
 
     @Test
@@ -87,9 +100,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = 3L
         String personName = "Osama Bin Ladden"
         String personId = null
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertNotNull result
-        assertEquals 0, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 0, response.result.size()
+        assertEquals 0, response.length
     }
 
     @Test
@@ -97,9 +111,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = 999L
         String personName = "Cliff Starr"
         String personId = null
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertNotNull result
-        assertEquals 0, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 0, response.result.size()
+        assertEquals 0, response.length
     }
 
     @Test
@@ -107,9 +122,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = 3L
         String personName = "Cliff"
         String personId = null
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertNotNull result
-        assertEquals 1, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 1, response.result.size()
+        assertEquals 1, response.length
     }
 
     //Action Item only
@@ -120,9 +136,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = 3L
         String personName = null
         String personId = null
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assert result.size() > 0
-        assertEquals 13, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 13, response.result.size()
+        assertEquals 13, response.length
     }
 
     @Test
@@ -130,8 +147,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = 399L
         String personName = null
         String personId = null
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertEquals 0, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId ,filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 0, response.result.size()
+        assertEquals 0, response.length
     }
 
     //person Id only
@@ -140,9 +159,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = null
         String personName = null
         String personId = 'CSRSTU001'
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assert result.size() > 0
-        assertEquals 5, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 5, response.result.size()
+        assertEquals 5, response.length
 
     }
 
@@ -151,9 +171,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = null
         String personName = null
         String personId = "CSRQWERTY"
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertEquals 0, result.size()
-
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 0, response.result.size()
+        assertEquals 0, response.length
     }
 
     //person name only
@@ -163,9 +184,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = null
         String personName = "Cliff Starr"
         String personId = null
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertNotNull result
-        assertEquals 5, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 5, response.result.size()
+        assertEquals 5, response.length
 
     }
 
@@ -174,9 +196,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = null
         String personName = "Cliff"
         String personId = null
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertNotNull result
-        assertEquals 6, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 6, response.result.size()
+        assertEquals 6, response.length
 
     }
 
@@ -186,9 +209,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = null
         String personId = null
 
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertNotNull result
-        assertEquals 0, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 0, response.result.size()
+        assertEquals 0, response.length
 
     }
 
