@@ -15,25 +15,25 @@ import javax.persistence.*
         @NamedQuery(name = "MonitorActionItemReadOnly.fetchActionItemNames",
                 query = """SELECT a.actionItemId,actionItemName FROM MonitorActionItemReadOnly a
                            GROUP BY a.actionItemId,a.actionItemName"""),
-        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName",
+        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByActionItemIdAndPersonNameCount",
                 query = """ select count(a.id) FROM  MonitorActionItemReadOnly a
                             where a.actionItemId = :actionItemId
                             and upper(a.actionItemPersonName) like :personName
                            """),
-        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByActionItemAndSpridenId",
+        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByActionItemAndSpridenIdCount",
                 query = """ select count(a.id) FROM MonitorActionItemReadOnly a
                             where a.actionItemId = :actionItemId
                             and upper(a.spridenId) = :spridenId
                         """),
-        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByActionItemId",
+        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByActionItemIdCount",
                 query = """ select count(a.id) FROM MonitorActionItemReadOnly a
                             where a.actionItemId = :actionItemId
                         """),
-        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByPersonId",
+        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByPersonIdCount",
                 query = """ select count(a.id) FROM MonitorActionItemReadOnly a
                             where upper(a.spridenId) = :personId
                         """),
-        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByPersonName",
+        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByPersonNameCount",
                 query = """ select count(a.id) FROM MonitorActionItemReadOnly a
                             where upper(a.actionItemPersonName) like :personName
                         """)
@@ -177,7 +177,7 @@ class MonitorActionItemReadOnly implements Serializable {
         String nameSearchParameter = personName ? personName : ""
         nameSearchParameter = "%" + nameSearchParameter.toUpperCase() + "%"
         MonitorActionItemReadOnly.withSession { session ->
-            session.getNamedQuery('MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName')
+            session.getNamedQuery('MonitorActionItemReadOnly.fetchByActionItemIdAndPersonNameCount')
                     .setLong("actionItemId", actionItem)
                     .setString("personName", nameSearchParameter)
                     .uniqueResult()
@@ -207,7 +207,7 @@ class MonitorActionItemReadOnly implements Serializable {
         nameSpridenId = nameSpridenId.toUpperCase()
 
         MonitorActionItemReadOnly.withSession { session ->
-            session.getNamedQuery('MonitorActionItemReadOnly.fetchByActionItemAndSpridenId')
+            session.getNamedQuery('MonitorActionItemReadOnly.fetchByActionItemAndSpridenIdCount')
                     .setLong("actionItemId", actionItem)
                     .setString("spridenId", nameSpridenId)
                     .uniqueResult()
@@ -234,7 +234,7 @@ class MonitorActionItemReadOnly implements Serializable {
      */
     static def fetchByActionItemIdCount(Long actionItem) {
         MonitorActionItemReadOnly.withSession { session ->
-            session.getNamedQuery('MonitorActionItemReadOnly.fetchByActionItemId')
+            session.getNamedQuery('MonitorActionItemReadOnly.fetchByActionItemIdCount')
                     .setLong("actionItemId", actionItem)
                     .uniqueResult()
         }
@@ -263,7 +263,7 @@ class MonitorActionItemReadOnly implements Serializable {
         personIDparam = personIDparam.toUpperCase()
 
         MonitorActionItemReadOnly.withSession { session ->
-            session.getNamedQuery('MonitorActionItemReadOnly.fetchByPersonId')
+            session.getNamedQuery('MonitorActionItemReadOnly.fetchByPersonIdCount')
                     .setString("personId", personIDparam)
                     .uniqueResult()
         }
@@ -295,7 +295,7 @@ class MonitorActionItemReadOnly implements Serializable {
         personNameParam = "%" + personNameParam.toUpperCase() + "%"
 
         MonitorActionItemReadOnly.withSession { session ->
-            session.getNamedQuery('MonitorActionItemReadOnly.fetchByPersonName')
+            session.getNamedQuery('MonitorActionItemReadOnly.fetchByPersonNameCount')
                     .setString("personName", personNameParam)
                     .uniqueResult()
         }
