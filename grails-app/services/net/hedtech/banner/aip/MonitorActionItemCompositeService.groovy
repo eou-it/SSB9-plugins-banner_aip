@@ -18,8 +18,24 @@ class MonitorActionItemCompositeService extends ServiceBase {
      * get Action Item
      */
     def getActionItem(Long userActionItemId) {
-        def actionItem = monitorActionItemReadOnlyService.findById(userActionItemId)
-        return actionItem
+        def userActionItemDetails = monitorActionItemReadOnlyService.findById(userActionItemId)
+        def result =
+        [id                  : userActionItemDetails.id,
+          actionItemId        : userActionItemDetails.actionItemId,
+          actionItemName      : userActionItemDetails.actionItemName,
+          actionItemGroupName : userActionItemDetails.actionItemGroupName,
+          spridenId           : userActionItemDetails.spridenId,
+          actionItemPersonName: userActionItemDetails.actionItemPersonName,
+          status              : userActionItemDetails.status,
+          responseDate        : userActionItemDetails.responseDate,
+          displayStartDate    : userActionItemDetails.displayStartDate,
+          displayEndDate      : userActionItemDetails.displayEndDate,
+          currentResponseText : userActionItemDetails.currentResponseText,
+          reviewIndicator     : userActionItemDetails.reviewIndicator,
+          reviewState         : userActionItemDetails.reviewState,
+          attachments         : userActionItemDetails.attachments]
+
+        return result
     }
 
     /**
