@@ -123,4 +123,14 @@ class MonitorActionItemReadOnlyService extends ServiceBase {
         return MonitorActionItemReadOnly.fetchByActionItemIdAndPersonNameCount(actionItem, personName)
     }
 
+    /**
+     * Get ActionItem by Id
+     * @param Id of the ActionItem to be searched
+     * @return MonitorActionItemReadOnly object
+     */
+    def findById(Long id) {
+        return MonitorActionItemReadOnly.findById(id)
+    }
+
+
 }

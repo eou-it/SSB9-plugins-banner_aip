@@ -15,6 +15,14 @@ class MonitorActionItemCompositeService extends ServiceBase {
     def monitorActionItemReadOnlyService
 
     /**
+     * get Action Item
+     */
+    def getActionItem(Long userActionItemId) {
+        def actionItem = monitorActionItemReadOnlyService.findById(userActionItemId)
+        return actionItem
+    }
+
+    /**
      * List of  action item Names
      * @return
      */
