@@ -3,6 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.service.ServiceBase
 import org.apache.log4j.Logger
 
@@ -13,7 +14,8 @@ import org.apache.log4j.Logger
 class MonitorActionItemCompositeService extends ServiceBase {
     private static final def LOGGER = Logger.getLogger(this.class)
     def monitorActionItemReadOnlyService
-
+    def configUserPreferenceService
+    def aipReviewStateService
     /**
      * List of  action item Names
      * @return
@@ -50,7 +52,10 @@ class MonitorActionItemCompositeService extends ServiceBase {
         }
 
         def result = [];
-
+        Locale userLocale = configUserPreferenceService.getUserLocale()
+        if (!userLocale) {
+            userLocale = new Locale("en_US","US")
+        }
         qryresult.each { it ->
             result.add([id                  : it.id,
                         actionItemId        : it.actionItemId,
@@ -64,7 +69,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                         displayEndDate      : it.displayEndDate,
                         currentResponseText : it.currentResponseText,
                         reviewIndicator     : it.reviewIndicator,
-                        reviewState         : it.reviewState,
+                        reviewState         : aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode, userLocale.toString()),
                         attachments         : it.attachments])
 
         }

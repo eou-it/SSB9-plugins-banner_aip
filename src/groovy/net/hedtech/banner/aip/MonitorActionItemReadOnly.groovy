@@ -110,9 +110,15 @@ class MonitorActionItemReadOnly implements Serializable {
     Date displayEndDate
 
     /**
+     * Current response ID of the action item
+     */
+    @Column(name = "ACTION_ITEM_RESPONSE_ID")
+    Long responseId
+
+    /**
      * Current response text of the action item
      */
-    @Column(name = "ACTION_ITEM_CURR_RESPONSE_TEXT")
+    @Column(name = "ACTION_ITEM_RESPONSE_TEXT")
     String currentResponseText
 
     /**
@@ -123,10 +129,10 @@ class MonitorActionItemReadOnly implements Serializable {
     Boolean reviewIndicator = false
 
     /**
-     * Review  state of the action item
+     * Code of Review state that the action item is in.
      */
-    @Column(name = "ACTION_ITEM_REVIEW_STATE")
-    String reviewState
+    @Column(name = "ACTION_ITEM_REVIEW_STATE_CDE")
+    String reviewStateCode
     /**
      * Attachments of the action item
      */

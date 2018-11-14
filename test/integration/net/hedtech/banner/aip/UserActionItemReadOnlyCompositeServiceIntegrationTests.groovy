@@ -12,6 +12,7 @@ import org.junit.Test
 class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def userActionItemReadOnlyCompositeService
+    def configUserPreferenceService
 
     @Before
     void setUp() {
@@ -23,6 +24,21 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
     void tearDown() {
         super.tearDown()
         logout()
+    }
+
+    @Test
+    void testReviewStateNameInActionItemsList() {
+        loginSSB( 'CSRSTU004', '111111' )
+        def map = [locale:'en-US']
+        def statusMap = configUserPreferenceService.saveLocale(map)
+        assert statusMap.status == 'success'
+        def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
+        assert result.groups.size() > 0
+        assert result.groups.items.size() > 0
+        def group = result.groups.find{it.title == 'Enrollment'}
+        def item = group.items.find {it.name == 'Policy Handbook'}
+        assert item.name == 'Policy Handbook'
+        assert item.currentReviewState == 'Review needed'
     }
 
     @Test

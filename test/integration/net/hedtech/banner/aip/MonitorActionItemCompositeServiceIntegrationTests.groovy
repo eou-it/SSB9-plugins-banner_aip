@@ -14,6 +14,8 @@ import static org.junit.Assert.*
 class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def monitorActionItemCompositeService
+    def userActionItemReadOnlyCompositeService
+    def configUserPreferenceService
 
     @Before
     void setUp() {
@@ -29,7 +31,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Test
     void listActionItemNames() {
-        def result =monitorActionItemCompositeService.getactionItemNames()
+        def result = monitorActionItemCompositeService.getactionItemNames()
         assert result.size() > 0
     }
 
@@ -191,5 +193,31 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         assertEquals 0, result.size()
 
     }
+
+    @Test
+    void testReviewStateNameInSearchResult() {
+        loginSSB( 'CSRSTU004', '111111' )
+        def map = [locale:'en-US']
+        def statusMap = configUserPreferenceService.saveLocale(map)
+        assert statusMap.status == 'success'
+        def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
+        def group = result.groups.find { it.title == 'Enrollment' }
+        def item = group.items.find { it.name == 'Policy Handbook' }
+        Long actionItemId = item.id
+        assertNotNull actionItemId
+        String personId = 'CSRSTU004'
+        def filterParam = 'id'
+        def paginationParams =[
+                max:10,
+                offset:0,
+                sortAscending:true,
+                sortColumn:'id'
+        ]
+        def results = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, null , personId, filterParam, paginationParams)
+        assert results.size() > 0
+        assert results[0].reviewState == "Review needed"
+        assertEquals 13, result.size()
+    }
+
 
 }
