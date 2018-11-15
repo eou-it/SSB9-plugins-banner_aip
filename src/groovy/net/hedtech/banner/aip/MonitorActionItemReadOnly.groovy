@@ -110,6 +110,12 @@ class MonitorActionItemReadOnly implements Serializable {
     Date displayEndDate
 
     /**
+     * Current response ID of the action item
+     */
+    @Column(name = "ACTION_ITEM_CURR_RESPONSE_ID")
+    Long responseId
+
+    /**
      * Current response text of the action item
      */
     @Column(name = "ACTION_ITEM_CURR_RESPONSE_TEXT")

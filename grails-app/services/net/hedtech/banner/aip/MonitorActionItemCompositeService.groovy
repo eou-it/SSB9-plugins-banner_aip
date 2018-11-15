@@ -30,6 +30,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
           responseDate        : userActionItemDetails.responseDate,
           displayStartDate    : userActionItemDetails.displayStartDate,
           displayEndDate      : userActionItemDetails.displayEndDate,
+          responseId          : userActionItemDetails.responseId,
           currentResponseText : userActionItemDetails.currentResponseText,
           reviewIndicator     : userActionItemDetails.reviewIndicator,
           reviewState         : userActionItemDetails.reviewState,
