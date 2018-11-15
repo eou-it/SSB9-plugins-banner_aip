@@ -33,7 +33,7 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
         def user = springSecurityService.getAuthentication()?.user
         Locale userLocale = configUserPreferenceService.getUserLocale()
         if(!userLocale){
-            userLocale = new Locale("en_US","US")
+            userLocale = Locale.getDefault()
         }
         def actionItems = userActionItemReadOnlyService.listActionItemByPidmWithinDate( user.pidm )
         def actionItemIds = actionItems.collect{it.id}

@@ -54,7 +54,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
         def result = [];
         Locale userLocale = configUserPreferenceService.getUserLocale()
         if (!userLocale) {
-            userLocale = new Locale("en_US","US")
+            userLocale = Locale.getDefault()
         }
         qryresult.each { it ->
             result.add([id                  : it.id,

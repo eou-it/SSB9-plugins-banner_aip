@@ -14,8 +14,9 @@ class AipReviewStateService extends ServiceBase {
 
     /**
      * Returns Review State record for the combination of code and locale.
-     * @param params
-     * @return
+     * @params code Code of Review State
+     * @params locale User locale
+     * @returns String Review State Name
      */
     String fetchReviewStateNameByCodeAndLocale(String code, String locale) {
         String reviewStateName

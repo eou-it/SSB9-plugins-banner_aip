@@ -135,12 +135,14 @@ class AipReviewState implements Serializable {
 
     /**
      *
-     * @param id
-     * @return
+     * @param code Code of review state
+     * @param locale User locale
+     * @return List of Review States
      */
     static def fetchReviewStateByCodeAndLocale(String code, String locale) {
         AipReviewState.withSession { session ->
-            session.getNamedQuery('AipReviewState.fetchReviewStateByCodeAndLocale').setString('code', code).setString('locale', locale)?.list()[0]
+            session.getNamedQuery('AipReviewState.fetchReviewStateByCodeAndLocale')
+                    .setString('code', code).setString('locale', locale)?.list()[0]
         }
     }
 
