@@ -216,4 +216,22 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     }
 
+    @Test
+    void testGetActionItem() {
+        Long actionItemId = 3L
+        String personName = "Cliff Starr"
+        String personId = null
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 1, response.result.size()
+        assertEquals 1, response.length
+
+        def actionItemDetails = monitorActionItemCompositeService.getActionItem(response.result[0].id)
+        assertNotNull actionItemDetails
+        assertEquals response.result[0].id, actionItemDetails.id
+        assertEquals response.result[0].actionItemId, actionItemDetails.actionItemId
+        assertEquals response.result[0].actionItemName, actionItemDetails.actionItemName
+        assertEquals response.result[0].actionItemPersonName, actionItemDetails.actionItemPersonName
+    }
+
 }
