@@ -12,6 +12,7 @@ import org.apache.log4j.Logger
  */
 class MonitorActionItemCompositeService extends ServiceBase {
     private static final def LOGGER = Logger.getLogger(this.class)
+    private static final String WILDCARD=".*"
     def monitorActionItemReadOnlyService
 
     /**
@@ -69,9 +70,64 @@ class MonitorActionItemCompositeService extends ServiceBase {
 
         }
 
-        def resultMap = [result: result,
+        def resultMap = [result: filterResults(result, filterData.params.searchString, actionId, personName, personId),
                          length: count];
 
         return resultMap
+    }
+
+    private def filterResults(def result, def searchParam, Long actionId, String personName, String personId) {
+        def filteredResult
+        String regexPattern
+        regexPattern = searchParam?WILDCARD+searchParam.toString().toUpperCase()+WILDCARD:WILDCARD+WILDCARD;
+        if (actionId && personName && !personId) {          // action id + person name combination
+            filteredResult = result.findAll { it ->
+                it.status.toString().toUpperCase().matches(regexPattern)                ||
+                it.currentResponseText.toString().toUpperCase().matches(regexPattern)   ||
+                it.actionItemGroupName.toString().toUpperCase().matches(regexPattern)   ||
+                it.actionItemPersonName.toString().toUpperCase().matches(regexPattern)  ||
+                it.spridenId.toString().toUpperCase().matches(regexPattern)
+                //||TODO : Uncomment below line after db change
+                //it.reviewState.toString().toUpperCase().matches(regexPattern)
+            }
+        } else if (actionId && !personName && personId) {
+            filteredResult = result.findAll { it ->
+                it.status.toString().toUpperCase().contains(searchParam.toString())     ||
+                it.currentResponseText.toString().toUpperCase().matches(regexPattern)   ||
+                it.actionItemGroupName.toString().toUpperCase().matches(regexPattern)
+                //TODO : Uncomment below line after db change
+                //||it.reviewState.toString().toUpperCase().matches(regexPattern)
+            }
+        } else if (actionId && !personName && !personId) {
+            filteredResult = result.findAll { it ->
+                it.actionItemPersonName.toString().toUpperCase().matches(regexPattern)  ||
+                it.spridenId.toString().toUpperCase().matches(regexPattern)             ||
+                it.actionItemGroupName.toString().toUpperCase().matches(regexPattern)   ||
+                it.status.toString().toUpperCase().matches(regexPattern)                ||
+                it.currentResponseText.toString().toUpperCase().matches(regexPattern)
+                //TODO : Uncomment below line after db change
+                //||it.reviewState.toString().toUpperCase().matches(regexPattern)
+            }
+        } else if (!actionId && personName && !personId) {
+            filteredResult = result.findAll { it ->
+                it.status.toString().toUpperCase().contains(searchParam.toString())     ||
+                it.currentResponseText.toString().toUpperCase().matches(regexPattern)   ||
+                it.actionItemGroupName.toString().toUpperCase().matches(regexPattern)   ||
+                it.actionItemPersonName.toString().toUpperCase().matches(regexPattern)  ||
+                it.spridenId.toString().toUpperCase().matches(regexPattern)
+                //TODO : Uncomment below line after db change
+                //||it.reviewState.toString().toUpperCase().matches(regexPattern)
+            }// search by person name
+        } else if (!actionId && !personName && personId) {
+            filteredResult = result.findAll { it ->
+                it.status.toString().toUpperCase().matches(regexPattern)                ||
+                it.currentResponseText.toString().toUpperCase().matches(regexPattern)   ||
+                it.actionItemGroupName.toString().toUpperCase().matches(regexPattern)   ||
+                it.actionItemName.toString().toUpperCase().matches(regexPattern)
+                //TODO : Uncomment below line after db change
+                //||it.reviewState.toString().toUpperCase().matches(regexPattern)
+            }// search by person id only
+        }
+        filteredResult
     }
 }
