@@ -265,4 +265,19 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
 
     }
 
+    @Test
+    void testFindById() {
+        String spridenId = "CSRSTU001"
+        def result = monitorActionItemReadOnlyService.fetchByPersonId(spridenId, filterData, pagingAndSortParams)
+        assertTrue result.size() > 0
+
+        MonitorActionItemReadOnly monitorActionItemReadOnly = monitorActionItemReadOnlyService.findById(result[0].id)
+
+        assertNotNull monitorActionItemReadOnly
+        assertEquals result[0].id, monitorActionItemReadOnly.id
+        assertEquals result[0].actionItemId, monitorActionItemReadOnly.actionItemId
+        assertEquals result[0].actionItemName, monitorActionItemReadOnly.actionItemName
+        assertEquals result[0].actionItemPersonName, monitorActionItemReadOnly.actionItemPersonName
+    }
+
 }
