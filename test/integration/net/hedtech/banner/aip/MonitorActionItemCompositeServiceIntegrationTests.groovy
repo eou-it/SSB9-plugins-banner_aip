@@ -274,7 +274,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         filterData = [params: paramsMap, criteria: criteriaMap]
         response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
-        assertEquals response.result.size(), 3
+        assertEquals 5,response.result.size()
         assertEquals 5,response.length
 
         searchparam = ""
