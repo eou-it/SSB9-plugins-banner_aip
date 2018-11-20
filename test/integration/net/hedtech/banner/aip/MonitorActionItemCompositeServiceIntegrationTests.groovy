@@ -147,7 +147,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = 399L
         String personName = null
         String personId = null
-        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId ,filterData, pagingAndSortParams)
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
         assertEquals 0, response.result.size()
         assertEquals 0, response.length
@@ -188,7 +188,6 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         assertNotNull response
         assertEquals 5, response.result.size()
         assertEquals 5, response.length
-
     }
 
     @Test
@@ -213,7 +212,170 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         assertNotNull response
         assertEquals 0, response.result.size()
         assertEquals 0, response.length
+    }
 
+    //Status,Response,Group, Person Name and Person ID,Action Item Name
+    @Test
+    void testFilterByStatus() {
+        Long actionItemId = 11L
+        String personId = null
+        String personName = null
+        String searchparam = null;
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        //checking seed data
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  5,response.result.size()
+
+        //Filtering by status
+        searchparam = "pending"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals response.result.size(), 3
+        assertEquals response.length, 5
+
+        searchparam = "completed"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals response.result.size(), 2
+        assertEquals response.length, 5
+    }
+
+    @Test
+    void testFilterByPersonName() {
+        Long actionItemId = 11L
+        String personId = null
+        String personName = null
+        String searchparam = "";
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        //checking seed data
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  5,response.result.size()
+
+        searchparam = "hank"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals response.result.size(), 1
+        assertEquals  5,response.length
+
+        searchparam = "a"//for names containing a
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 5,response.result.size()
+        assertEquals 5,response.length
+
+        searchparam = ""
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals response.result.size(), 5
+        assertEquals 5,response.length
+    }
+
+    @Test
+    void testFilterByPersonId() {
+        Long actionItemId = 11L
+        String personId = null
+        String personName = null
+        String searchparam = "";
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        //checking seed data
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  5,response.result.size()
+
+        searchparam = "CSRSTU012"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  1,response.result.size()
+        assertEquals  5,response.length
+
+        searchparam = "CSRSTU01"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 3,response.result.size()
+        assertEquals 5,response.length
+    }
+
+    @Test
+    void testFilterByActionItemName() {
+        Long actionItemId = null
+        String personId = "CSRSTU001"
+        String personName = null
+        String searchparam = "";
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  5,response.result.size()
+
+        searchparam = "drug"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  1,response.result.size()
+        assertEquals  5,response.length
+
+        searchparam = "Information"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  1,response.result.size()
+        assertEquals  5,response.length
+    }
+
+    @Test
+    void testFilterByGroup() {
+
+        Long actionItemId = null
+        String personId = "CSRSTU001"
+        String personName = null
+        String searchparam = "";
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  5,response.result.size()
+
+        searchparam = "Enrollment"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  3,response.result.size()
+        assertEquals  5,response.length
+
+        searchparam = "Students"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  1,response.result.size()
+        assertEquals  5,response.length
     }
 
     @Test
