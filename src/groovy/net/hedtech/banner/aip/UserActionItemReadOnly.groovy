@@ -197,7 +197,7 @@ class UserActionItemReadOnly implements Serializable {
     /**
      * Review state name of the action item
      */
-    @Column(name = "ACTION_ITEM_REVIEW_STATE_CODE")
+    @Column(name = "ACTION_ITEM_REVIEW_STATUS_CODE")
     String reviewStateCode
 
     /**

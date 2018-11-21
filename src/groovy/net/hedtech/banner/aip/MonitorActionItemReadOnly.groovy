@@ -129,9 +129,9 @@ class MonitorActionItemReadOnly implements Serializable {
     Boolean reviewIndicator = false
 
     /**
-     * Code of Review state that the action item is in.
+     * Code of Review status that the action item is in.
      */
-    @Column(name = "ACTION_ITEM_REVIEW_STATE_CODE")
+    @Column(name = "ACTION_ITEM_REVIEW_STATUS_CODE")
     String reviewStateCode
     /**
      * Attachments of the action item
@@ -157,7 +157,6 @@ class MonitorActionItemReadOnly implements Serializable {
      * @param personName Name of the person
      * @return List < MonitorActionItemReadOnly >  List of Action items
      */
-
     static def fetchByActionItemIdAndPersonName(Long actionItem, String personName,
                                                 def filterData, def pagingAndSortParams) {
         String nameSearchParameter = personName ? personName : ""
@@ -167,7 +166,7 @@ class MonitorActionItemReadOnly implements Serializable {
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             eq("actionItemId", actionItem)
             ilike("actionItemPersonName", nameSearchParameter)
-            
+
             order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn).ignoreCase() : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
         }
     }
@@ -178,13 +177,11 @@ class MonitorActionItemReadOnly implements Serializable {
      * @param personName Name of the person
      * @return count of action items
      */
-
-
     static def fetchByActionItemIdAndPersonNameCount(Long actionItem, String personName) {
         String nameSearchParameter = personName ? personName : ""
         nameSearchParameter = "%" + nameSearchParameter.toUpperCase() + "%"
         MonitorActionItemReadOnly.withSession { session ->
-           
+
             session.getNamedQuery('MonitorActionItemReadOnly.fetchByActionItemIdAndPersonNameCount')
                     .setLong("actionItemId", actionItem)
                     .setString("personName", nameSearchParameter)
@@ -198,7 +195,6 @@ class MonitorActionItemReadOnly implements Serializable {
      * @param spridenId spriden ID of the person
      * @return List of Action items
      */
-
     static def fetchByActionItemAndSpridenId(Long actionItem, String spridenId,
                                              def filterData, def pagingAndSortParams) {
 
@@ -247,11 +243,12 @@ class MonitorActionItemReadOnly implements Serializable {
                     .uniqueResult()
         }
     }
-/**
- * Gets the list of action items based on the filter person ID
- * @param spridenId spriden ID of the person
- * @return List < MonitorActionItemReadOnly >  List of Action items
- */
+
+    /**
+     * Gets the list of action items based on the filter person ID
+     * @param spridenId spriden ID of the person
+     * @return List < MonitorActionItemReadOnly >  List of Action items
+     */
     static def fetchByPersonId(String spridenId, def filterData, def pagingAndSortParams) {
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
@@ -276,11 +273,12 @@ class MonitorActionItemReadOnly implements Serializable {
                     .uniqueResult()
         }
     }
-/**
- * Gets the list of action items based on the filter person's name
- * @param personName Name of the person
- * @return List < MonitorActionItemReadOnly >  List of Action items
- */
+
+    /**
+     * Gets the list of action items based on the filter person's name
+     * @param personName Name of the person
+     * @return List < MonitorActionItemReadOnly >  List of Action items
+     */
     static def fetchByPersonName(String personName, def filterData, def pagingAndSortParams) {
         String personNameParam = personName ? personName : ""
         personNameParam = "%" + personNameParam + "%"
@@ -296,8 +294,6 @@ class MonitorActionItemReadOnly implements Serializable {
      * @param personName Name of the person
      * @return count of action items
      */
-
-
     static def fetchByPersonNameCount(String personName) {
         String personNameParam = personName ? personName : ""
         personNameParam = "%" + personNameParam.toUpperCase() + "%"
