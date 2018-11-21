@@ -93,6 +93,12 @@ class UserActionItem implements Serializable {
     Long groupId
 
     /**
+     * Review state Id associated with action Item reiview table
+     */
+    @Column(name = "gcraact_gcrrvst_id")
+    Long reviewStateId
+
+    /**
      * User action item pertains to
      */
     @Column(name = "GCRAACT_USER_ID")

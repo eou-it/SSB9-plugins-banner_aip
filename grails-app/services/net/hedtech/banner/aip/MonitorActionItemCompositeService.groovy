@@ -5,6 +5,9 @@ package net.hedtech.banner.aip
 
 import net.hedtech.banner.service.ServiceBase
 import org.apache.log4j.Logger
+import net.hedtech.banner.aip.UserActionItem
+import org.omg.CORBA.portable.ApplicationException
+import net.hedtech.banner.i18n.MessageHelper
 
 
 /**
@@ -13,7 +16,10 @@ import org.apache.log4j.Logger
 class MonitorActionItemCompositeService extends ServiceBase {
     private static final def LOGGER = Logger.getLogger(this.class)
     def monitorActionItemReadOnlyService
-
+    def userActionItemService
+    def actionItemReviewAuditService
+    def springSecurityService
+    def actionItemProcessingCommonService
     /**
      * get Action Item
      */
@@ -99,4 +105,89 @@ class MonitorActionItemCompositeService extends ServiceBase {
 
         return resultMap
     }
+
+
+    /**
+     * Update Action Item Review
+     * @return
+     */
+    def updateActionItemReview(requestMap){
+        boolean isActionItemReviewUpdated = false
+        Map result = null
+        String message  = ''
+        Long userActionItemId = requestMap?.userActionItemId?Long.valueOf(requestMap?.userActionItemId):null
+        UserActionItem userActionItem = UserActionItem.findById(userActionItemId)
+        if(userActionItem){
+            try{
+                if(isValuesModified(requestMap,userActionItem)){
+                    if(!validateDisplayEndDate(requestMap,userActionItem)){
+                        return [success:false,message:MessageHelper.message('aip.review.action.item.end.date.error')]
+                    }
+                    userActionItem.displayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate )
+                    userActionItem.reviewStateId = Long.valueOf(requestMap.reviewStateId)
+                    userActionItemService.update( userActionItem )
+                }
+                createActionItemReviewAuditEntry(requestMap,userActionItem)
+                isActionItemReviewUpdated = true
+                message = MessageHelper.message('aip.common.save.successful')
+            }catch (ApplicationException e){
+                isActionItemReviewUpdated = false
+                message = MessageHelper.message('aip.review.action.update.exception.error')
+            }
+        }
+        result = [success:isActionItemReviewUpdated,message:message]
+        return result
+    }
+
+
+
+    /**
+     * Is values are modified
+     * @return
+     */
+    private def isValuesModified(requestMap,userActionItem){
+        boolean isValuesChanged = false
+        Date displayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate )
+        if( displayEndDate.compareTo(userActionItem.displayEndDate) != 0){
+            isValuesChanged = true
+        }
+        if(userActionItem.reviewStateId != requestMap.reviewStateId){
+            isValuesChanged = true
+        }
+        return   isValuesChanged
+    }
+
+    /**
+     * Validate display end date
+     * @return
+     */
+    private def validateDisplayEndDate(requestMap,userActionItem){
+        Date displayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate )
+        Date currentDate = actionItemProcessingCommonService.getLocaleBasedCurrentDate()
+        if( displayEndDate.compareTo(userActionItem.displayEndDate) != 0){
+            return (displayEndDate.compareTo(userActionItem.displayEndDate) > 0 && currentDate.compareTo( displayEndDate ) > 0 )
+        }
+        return true
+    }
+
+
+    /**
+     * create action Item review audit entry
+     * @return
+     */
+    private void createActionItemReviewAuditEntry(requestMap,userActionItem){
+        def user = springSecurityService.getAuthentication()?.user
+        ActionItemReviewAudit actionItemReviewAudit = new ActionItemReviewAudit()
+        actionItemReviewAudit.actionItemId = userActionItem.actionItemId
+        actionItemReviewAudit.pidm = userActionItem.pidm
+        actionItemReviewAudit.responseId =  Long.valueOf(requestMap.responseId)
+        actionItemReviewAudit.reviewerPidm = user.pidm
+        actionItemReviewAudit.reviewDate = new Date()
+        actionItemReviewAudit.reviewDecision = Long.valueOf(requestMap.reviewStateId)
+        actionItemReviewAudit.externalCommetInd = requestMap.externalCommetInd
+        actionItemReviewAudit.reviewComments = requestMap.reviewComments
+        actionItemReviewAudit.contactInfo = requestMap.contactInfo
+        actionItemReviewAuditService.create(actionItemReviewAudit)
+    }
+
 }
