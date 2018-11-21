@@ -43,7 +43,14 @@ class AipReviewStateServiceIntegrationTests extends BaseIntegrationTestCase {
         String reviewStateName = aipReviewStateService.fetchReviewStateNameByCodeAndLocale('11','EN_US')
         assertNull( reviewStateName )
     }
-
+    @Test
+    void testFetchNonDefaultReviewStates() {
+        List<AipReviewState> reviewStateResult = aipReviewStateService.fetchNonDefaultReviewStates("en_US")
+        assert reviewStateResult.size() == 4
+        def reviewStateCodes = reviewStateResult.collect{it.reviewStateCode }
+        def list = ['20', '30', '40', '50']
+        assert reviewStateCodes==list
+    }
 
 
 }

@@ -27,19 +27,26 @@ class AipReviewStateIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
-    void testfetchReviewStateByCodeAndLocaleLowercase() {
+    void testFetchReviewStateByCodeAndLocaleLowercase() {
         AipReviewState reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale("10", "en_US")
         assert reviewStateResult.reviewStateName == "Review needed"
         assert reviewStateResult.reviewOngoingInd == "Y"
         assert reviewStateResult.reviewSuccessInd == "N"
-        assert reviewStateResult.defaultInd == "Y"
-        assert reviewStateResult.activeInd == "Y"
     }
 
     @Test
-    void testfetchReviewStateByCodeAndLocaleUppercase() {
+    void testFetchReviewStateByCodeAndLocaleUppercase() {
         AipReviewState reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale("10", "EN_US")
         assert reviewStateResult.reviewStateName == "Review needed"
+    }
+
+    @Test
+    void testFetchNonDefaultReviewStates() {
+        List<AipReviewState> reviewStateResult = AipReviewState.fetchNonDefaultReviewStates("en_US")
+        assert reviewStateResult.size() == 4
+        def reviewStateCodes = reviewStateResult.collect{it.reviewStateCode }
+        def list = ['20', '30', '40', '50']
+        assert reviewStateCodes==list
     }
 
 

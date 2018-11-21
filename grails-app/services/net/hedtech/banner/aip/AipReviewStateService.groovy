@@ -23,5 +23,15 @@ class AipReviewStateService extends ServiceBase {
         AipReviewState reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale(code, locale)
         reviewStateName = reviewStateResult?.reviewStateName
     }
+    /**
+     * Returns list of Review States without the default code.     *
+     * @params locale User locale
+     * @returns List of Review States
+     */
+    List<AipReviewState> fetchNonDefaultReviewStates(String locale) {
+        List<AipReviewState> reviewStateResult = AipReviewState.fetchNonDefaultReviewStates(locale)
+        reviewStateResult
+    }
+
 
 }

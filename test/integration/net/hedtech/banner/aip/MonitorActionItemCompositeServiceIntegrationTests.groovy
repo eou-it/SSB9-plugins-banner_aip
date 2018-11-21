@@ -195,7 +195,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
     }
 
     @Test
-    void testReviewStateNameInSearchResult() {
+        void testReviewStateNameInSearchResult() {
         loginSSB( 'CSRSTU004', '111111' )
         def map = [locale:'en-US']
         def statusMap = configUserPreferenceService.saveLocale(map)
@@ -213,10 +213,11 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
                 sortAscending:true,
                 sortColumn:'id'
         ]
-        def results = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, null , personId, filterParam, paginationParams)
-        assert results.size() > 0
-        assert results[0].reviewState == "Review needed"
-        assertEquals 13, result.size()
+        def output = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, null , personId, filterParam, paginationParams)
+        def list = output.result
+        assert output.length > 0
+        assert list.size() > 0
+        assert list[0].reviewState == "Review needed"
     }
 
 

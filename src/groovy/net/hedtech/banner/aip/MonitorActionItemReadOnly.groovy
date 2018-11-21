@@ -88,7 +88,7 @@ class MonitorActionItemReadOnly implements Serializable {
     /**
      * Status of action item
      */
-    @Column(name = "ACTION_ITEM_STATUS")
+    @Column(name = "ACTION_ITEM_STATUS_NAME")
     String status
 
     /**
@@ -131,7 +131,7 @@ class MonitorActionItemReadOnly implements Serializable {
     /**
      * Code of Review state that the action item is in.
      */
-    @Column(name = "ACTION_ITEM_REVIEW_STATE_CDE")
+    @Column(name = "ACTION_ITEM_REVIEW_STATE_CODE")
     String reviewStateCode
     /**
      * Attachments of the action item

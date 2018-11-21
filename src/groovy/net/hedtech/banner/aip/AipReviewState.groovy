@@ -14,11 +14,16 @@ import javax.persistence.*
                 query = """FROM AipReviewState a
            WHERE a.reviewStateCode = :code
            and upper(a.locale) = upper(:locale)
-          """)
+          """),
+        @NamedQuery(name = "AipReviewState.fetchNonDefaultReviewStates",
+                        query = """FROM AipReviewState a
+                   WHERE a.reviewStateCode != ( SELECT d.defReviewStateCode FROM AipDefaultReviewState d)
+                   and upper(a.locale) = upper(:locale)
+                  """)
 ])
 
 @Entity
-@Table(name = "GCVRVST")
+@Table(name = "GCRRVST")
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
 /**
@@ -28,92 +33,74 @@ import javax.persistence.*
 class AipReviewState implements Serializable {
 
     /**
-     * Surrogate ID for GCVRVST.
+     * Surrogate ID for GCRRVST.
      */
     @Id
-    @Column(name = "GCVRVST_SURROGATE_ID")
-    @SequenceGenerator(name = "GCVRVST_SEQ_GEN", allocationSize = 1, sequenceName = "GCVRVST_SURROGATE_ID_SEQUENCE")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GCVRVST_SEQ_GEN")
+    @Column(name = "GCRRVST_SURROGATE_ID")
+    @SequenceGenerator(name = "GCRRVST_SEQ_GEN", allocationSize = 1, sequenceName = "GCRRVST_SURROGATE_ID_SEQUENCE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GCRRVST_SEQ_GEN")
     Long id
 
     /**
      * Code for Review State.
      */
-    @Column(name = "GCVRVST_REVIEW_STATE_CODE")
+    @Column(name = "GCRRVST_RVST_CODE")
     String reviewStateCode
 
     /**
      * Name of the Review State.
      */
-    @Column(name = "GCVRVST_REVIEW_STATE_NAME")
+    @Column(name = "GCRRVST_RVST_NAME")
     String reviewStateName
 
     /**
      * Locale for Review State Name.
      */
-    @Column(name = "GCVRVST_LOCALE")
+    @Column(name = "GCRRVST_LOCALE")
     String locale
 
     /**
      * Review Ongoing Indicator indicates that review is in progress.
      */
-    @Column(name = "GCVRVST_REVIEW_ONGOING_IND")
+    @Column(name = "GCRRVST_REVIEW_ONGOING_IND")
     String reviewOngoingInd
 
     /**
      * Review Success Indicator indicates if review is successful.
      */
-    @Column(name = "GCVRVST_REVIEW_SUCCESS_IND")
+    @Column(name = "GCRRVST_REVIEW_SUCCESS_IND")
     String reviewSuccessInd
-
-    /**
-     * Default indicator indicates that this Review State is default.
-     */
-    @Column(name = "GCVRVST_DEFAULT_IND")
-    String defaultInd
-
-    /**
-     * Active Indicator indicates that the Review State is active.
-     */
-    @Column(name = "GCVRVST_ACTIVE_IND")
-    String activeInd
 
     /**
      * User ID that created or modified the Review State.
      */
-    @Column(name = "GCVRVST_USER_ID")
+    @Column(name = "GCRRVST_USER_ID")
     String userId
 
     /**
      * Last activity date for the Review State.
      */
-    @Column(name = "GCVRVST_ACTIVITY_DATE")
+    @Column(name = "GCRRVST_ACTIVITY_DATE")
     Date activityDate
-
-    /**
-     * Comments for the Review State.
-     */
-    @Column(name = "GCVRVST_COMMENTS")
-    String comments
 
     /**
      * Version of the Review State.
      */
     @Version
-    @Column(name = "GCVRVST_VERSION")
+    @Column(name = "GCRRVST_VERSION")
     Long version
 
     /**
      * Data Origin.
      */
 
-    @Column(name = "GCVRVST_DATA_ORIGIN")
+    @Column(name = "GCRRVST_DATA_ORIGIN")
     String dataOrigin
 
     /**
      * VPDI Code for MEP.
      */
-    @Column(name = "GCVRVST_VPDI_CODE")
+    @Column(name = "GCRRVST_VPDI_CODE")
     String vpdiCode
 
     static constraints = {
@@ -123,18 +110,15 @@ class AipReviewState implements Serializable {
         locale(nullable: false, maxSize: 20)
         reviewOngoingInd(nullable: false, maxSize: 1)
         reviewSuccessInd(nullable: false, maxSize: 1)
-        defaultInd(nullable: false, maxSize: 1)
-        activeInd(nullable: false, maxSize: 1)
         userId(nullable: false, maxSize: 30)
         activityDate(nullable: false)
-        comments(nullable: true, maxSize: 2000)
         version(nullable: true, maxSize: 19)
         dataOrigin(nullable: true, maxSize: 30)
         vpdiCode(nullable: true, maxSize: 6)
     }
 
     /**
-     *
+     * Fetch Review State for given code and locale
      * @param code Code of review state
      * @param locale User locale
      * @return List of Review States
@@ -145,5 +129,16 @@ class AipReviewState implements Serializable {
                     .setString('code', code).setString('locale', locale)?.list()[0]
         }
     }
+    /**
+     * Fetch list of review states which does not include default code
+     * @param locale User Locale
+     * @return List of review states
+     */
+    static def fetchNonDefaultReviewStates(String locale) {
+            AipReviewState.withSession { session ->
+                session.getNamedQuery('AipReviewState.fetchNonDefaultReviewStates')
+                        .setString('locale', locale)?.list()
+            }
+        }
 
 }
