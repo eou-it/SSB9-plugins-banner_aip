@@ -13,14 +13,20 @@ import static org.junit.Assert.*
 
 class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
 
-    def monitorActionItemCompositeService
-    def userActionItemReadOnlyCompositeService
+    def monitorActionItemCompositeService	
+	def userActionItemReadOnlyCompositeService
     def configUserPreferenceService
+	def pagingAndSortParams
+    def filterData
+    Map paramsMap = [:]
+    def criteriaMap = [:]
 
     @Before
     void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
+        pagingAndSortParams = [sortColumn: "actionItemName", sortDirection: "asc", max: 50, offset: 0]
+        filterData = [params: paramsMap, criteria: criteriaMap]
     }
 
     @After
@@ -31,7 +37,8 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Test
     void listActionItemNames() {
-        def result = monitorActionItemCompositeService.getactionItemNames()
+        
+		def result = monitorActionItemCompositeService.getActionItemNames()
         assert result.size() > 0
     }
 
@@ -41,14 +48,15 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionId = 3L
         String personName = null
         String personId = "CSRSTU001"
+        
 
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionId, personName, personId)
-        assert result.size() > 0
-        assertEquals 1, result.size()
-        assertEquals 3, result[0].actionItemId
-        assertEquals "Drug and Alcohol Policy", result[0].actionItemName
-        assertEquals "Cliff Starr", result[0].actionItemPersonName
-        assertEquals "CSRSTU001", result[0].spriden_id
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 1, response.result.size()
+        assertEquals 3, response.result[0].actionItemId
+        assertEquals "Drug and Alcohol Policy", response.result[0].actionItemName
+        assertEquals "CSRSTU001", response.result[0].spridenId
+        assertEquals 1, response.length
 
     }
 
@@ -58,19 +66,20 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         String personName = null
         String personId = "CSRSTABCD"
 
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionId, personName, personId)
-        assertEquals 0, result.size()
-
-
+       
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionId, personName, personId, filterData, pagingAndSortParams)
+        assertEquals 0, response.result.size()
+        assertEquals 0, response.length
     }
 
     @Test
     void fetchByActionItemIDAndPersonIdNonExistingActionID() {
         Long actionId = 9999L
         String personName = null
-        String personId = "CSRSTU001"
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionId, personName, personId)
-        assertEquals 0, result.size()
+        String personId = "CSRSTU001"        
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionId, personName, personId, filterData, pagingAndSortParams)
+        assertEquals 0, response.result.size()
+        assertEquals 0, response.length
     }
 
     //Action ID + Person Name Combination
@@ -79,9 +88,11 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = 3L
         String personName = "Cliff Starr"
         String personId = null
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertNotNull result
-        assertEquals 1, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 1, response.result.size()
+        assertEquals 1, response.length
+
     }
 
     @Test
@@ -89,9 +100,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = 3L
         String personName = "Osama Bin Ladden"
         String personId = null
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertNotNull result
-        assertEquals 0, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 0, response.result.size()
+        assertEquals 0, response.length
     }
 
     @Test
@@ -99,9 +111,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = 999L
         String personName = "Cliff Starr"
         String personId = null
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertNotNull result
-        assertEquals 0, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 0, response.result.size()
+        assertEquals 0, response.length
     }
 
     @Test
@@ -109,9 +122,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = 3L
         String personName = "Cliff"
         String personId = null
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertNotNull result
-        assertEquals 1, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 1, response.result.size()
+        assertEquals 1, response.length
     }
 
     //Action Item only
@@ -122,9 +136,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = 3L
         String personName = null
         String personId = null
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assert result.size() > 0
-        assertEquals 13, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 13, response.result.size()
+        assertEquals 13, response.length
     }
 
     @Test
@@ -132,8 +147,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = 399L
         String personName = null
         String personId = null
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertEquals 0, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 0, response.result.size()
+        assertEquals 0, response.length
     }
 
     //person Id only
@@ -142,9 +159,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = null
         String personName = null
         String personId = 'CSRSTU001'
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assert result.size() > 0
-        assertEquals 5, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 5, response.result.size()
+        assertEquals 5, response.length
 
     }
 
@@ -153,9 +171,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = null
         String personName = null
         String personId = "CSRQWERTY"
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertEquals 0, result.size()
-
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 0, response.result.size()
+        assertEquals 0, response.length
     }
 
     //person name only
@@ -165,10 +184,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = null
         String personName = "Cliff Starr"
         String personId = null
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertNotNull result
-        assertEquals 5, result.size()
-
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 5, response.result.size()
+        assertEquals 5, response.length
     }
 
     @Test
@@ -176,9 +195,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = null
         String personName = "Cliff"
         String personId = null
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertNotNull result
-        assertEquals 6, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 6, response.result.size()
+        assertEquals 6, response.length
 
     }
 
@@ -188,13 +208,195 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         Long actionItemId = null
         String personId = null
 
-        def result = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId)
-        assertNotNull result
-        assertEquals 0, result.size()
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 0, response.result.size()
+        assertEquals 0, response.length
+    }
 
+    //Status,Response,Group, Person Name and Person ID,Action Item Name
+    @Test
+    void testFilterByStatus() {
+        Long actionItemId = 11L
+        String personId = null
+        String personName = null
+        String searchparam = null;
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        //checking seed data
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  5,response.result.size()
+
+        //Filtering by status
+        searchparam = "pending"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals response.result.size(), 3
+        assertEquals response.length, 5
+
+        searchparam = "completed"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals response.result.size(), 2
+        assertEquals response.length, 5
+    }
+
+@Test
+    void testFilterByPersonName() {
+        Long actionItemId = 11L
+        String personId = null
+        String personName = null
+        String searchparam = "";
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        //checking seed data
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  5,response.result.size()
+
+        searchparam = "hank"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals response.result.size(), 1
+        assertEquals  5,response.length
+
+        searchparam = "a"//for names containing a
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 5,response.result.size()
+        assertEquals 5,response.length
+
+        searchparam = ""
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals response.result.size(), 5
+        assertEquals 5,response.length
     }
 
     @Test
+    void testFilterByPersonId() {
+        Long actionItemId = 11L
+        String personId = null
+        String personName = null
+        String searchparam = "";
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        //checking seed data
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  5,response.result.size()
+
+        searchparam = "CSRSTU012"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  1,response.result.size()
+        assertEquals  5,response.length
+
+        searchparam = "CSRSTU01"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 3,response.result.size()
+        assertEquals 5,response.length
+    }
+
+    @Test
+    void testFilterByActionItemName() {
+        Long actionItemId = null
+        String personId = "CSRSTU001"
+        String personName = null
+        String searchparam = "";
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  5,response.result.size()
+
+        searchparam = "drug"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  1,response.result.size()
+        assertEquals  5,response.length
+
+        searchparam = "Information"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  1,response.result.size()
+        assertEquals  5,response.length
+    }
+
+    @Test
+    void testFilterByGroup() {
+
+        Long actionItemId = null
+        String personId = "CSRSTU001"
+        String personName = null
+        String searchparam = "";
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  5,response.result.size()
+
+        searchparam = "Enrollment"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  3,response.result.size()
+        assertEquals  5,response.length
+
+        searchparam = "Students"
+        paramsMap = [searchString: searchparam]
+        filterData = [params: paramsMap, criteria: criteriaMap]
+        response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals  1,response.result.size()
+        assertEquals  5,response.length
+    }
+
+    @Test
+    void testGetActionItem() {
+        Long actionItemId = 3L
+        String personName = "Cliff Starr"
+        String personId = null
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 1, response.result.size()
+        assertEquals 1, response.length
+
+        def actionItemDetails = monitorActionItemCompositeService.getActionItem(response.result[0].id)
+        assertNotNull actionItemDetails
+        assertEquals response.result[0].id, actionItemDetails.id
+        assertEquals response.result[0].actionItemId, actionItemDetails.actionItemId
+        assertEquals response.result[0].actionItemName, actionItemDetails.actionItemName
+        assertEquals response.result[0].actionItemPersonName, actionItemDetails.actionItemPersonName
+    }
+
+@Test
         void testReviewStateNameInSearchResult() {
         loginSSB( 'CSRSTU004', '111111' )
         def map = [locale:'en-US']
@@ -205,20 +407,11 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         def item = group.items.find { it.name == 'Policy Handbook' }
         Long actionItemId = item.id
         assertNotNull actionItemId
-        String personId = 'CSRSTU004'
-        def filterParam = 'id'
-        def paginationParams =[
-                max:10,
-                offset:0,
-                sortAscending:true,
-                sortColumn:'id'
-        ]
-        def output = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, null , personId, filterParam, paginationParams)
+        String personId = 'CSRSTU004'        
+        def output = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, null , personId, filterData, pagingAndSortParams)
         def list = output.result
         assert output.length > 0
         assert list.size() > 0
         assert list[0].reviewState == "Review needed"
     }
-
-
 }
