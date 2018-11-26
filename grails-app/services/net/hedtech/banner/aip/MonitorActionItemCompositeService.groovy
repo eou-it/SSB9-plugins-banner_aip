@@ -115,10 +115,10 @@ class MonitorActionItemCompositeService extends ServiceBase {
         boolean isActionItemReviewUpdated = false
         Map result = null
         String message  = ''
-        Long userActionItemId = requestMap?.userActionItemId?Long.valueOf(requestMap?.userActionItemId):null
-        UserActionItem userActionItem = UserActionItem.findById(userActionItemId)
-        if(userActionItem){
-            try{
+        try{
+            Long userActionItemId = Long.valueOf(requestMap?.userActionItemId)
+            def userActionItem = monitorActionItemReadOnlyService.findById(userActionItemId)
+            if(userActionItem){
                 if(isValuesModified(requestMap,userActionItem)){
                     if(!validateDisplayEndDate(requestMap,userActionItem)){
                         return [success:false,message:MessageHelper.message('aip.review.action.item.end.date.error')]
@@ -130,11 +130,12 @@ class MonitorActionItemCompositeService extends ServiceBase {
                 createActionItemReviewAuditEntry(requestMap,userActionItem)
                 isActionItemReviewUpdated = true
                 message = MessageHelper.message('aip.common.save.successful')
+            }
             }catch (ApplicationException e){
                 isActionItemReviewUpdated = false
                 message = MessageHelper.message('aip.review.action.update.exception.error')
             }
-        }
+
         result = [success:isActionItemReviewUpdated,message:message]
         return result
     }

@@ -234,4 +234,76 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         assertEquals response.result[0].actionItemPersonName, actionItemDetails.actionItemPersonName
     }
 
+    @Test
+    void testUpdateActionItemReview() {
+        Long actionItemId = 3L
+        String personName = "Cliff Starr"
+        String personId = null
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 1, response.result.size()
+        assertEquals 1, response.length
+        def actionItemDetails = monitorActionItemCompositeService.getActionItem(response.result[0].id)
+        def requestMap = [
+                userActionItemId:actionItemDetails.id,
+                reviewStateId:2,
+                displayEndDate:actionItemDetails.displayEndDate,
+                responseId:actionItemDetails.responseId,
+                externalCommetInd:true,
+                reviewComments:'test comments',
+                contactInfo:'admin office'
+        ]
+
+        def result =  monitorActionItemCompositeService.updateActionItemReview(requestMap)
+        assertEquals true,result.success
+    }
+
+    @Test
+    void testUpdateActionItemReviewInvalidDate() {
+        Long actionItemId = 3L
+        String personName = "Cliff Starr"
+        String personId = null
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 1, response.result.size()
+        assertEquals 1, response.length
+        def actionItemDetails = monitorActionItemCompositeService.getActionItem(response.result[0].id)
+        def requestMap = [
+                userActionItemId:actionItemDetails.id,
+                reviewStateId:2,
+                displayEndDate:new Date(),
+                responseId:actionItemDetails.responseId,
+                externalCommetInd:true,
+                reviewComments:'test comments',
+                contactInfo:'admin office'
+        ]
+
+        def result =  monitorActionItemCompositeService.updateActionItemReview(requestMap)
+        assertEquals false,result.success
+    }
+
+    @Test
+    void testUpdateActionItemReviewInvalidUserActionItemId() {
+        Long actionItemId = 3L
+        String personName = "Cliff Starr"
+        String personId = null
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 1, response.result.size()
+        assertEquals 1, response.length
+        def actionItemDetails = monitorActionItemCompositeService.getActionItem(response.result[0].id)
+        def requestMap = [
+                userActionItemId:null,
+                reviewStateId:2,
+                displayEndDate:new Date(),
+                responseId:actionItemDetails.responseId,
+                externalCommetInd:true,
+                reviewComments:'test comments',
+                contactInfo:'admin office'
+        ]
+
+        def result =  monitorActionItemCompositeService.updateActionItemReview(requestMap)
+        assertEquals false,result.success
+    }
+
 }
