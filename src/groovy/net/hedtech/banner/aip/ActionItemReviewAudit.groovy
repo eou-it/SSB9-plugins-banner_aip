@@ -75,7 +75,7 @@ class ActionItemReviewAudit implements Serializable {
      */
     @Type(type = "yes_no")
     @Column(name = "GCBRAUD_EXTERNAL_COMMENT_IND")
-    Boolean externalCommetInd
+    Boolean externalCommentInd
 
     /**
      * review comments
@@ -121,7 +121,7 @@ class ActionItemReviewAudit implements Serializable {
         reviewerPidm( nullable: false, maxSize: 8 )
         reviewDate( nullable: false )
         reviewDecision( nullable: false, maxSize: 19 )
-        externalCommetInd(nullable: false, maxSize: 1)
+        externalCommentInd(nullable: false, maxSize: 1)
         reviewComments( nullable: true, maxSize: 4000 )
         contactInfo( nullable: true, maxSize: 200 )
         lastModifiedBy(nullable: true, maxSize: 30)

@@ -185,7 +185,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
         actionItemReviewAudit.reviewerPidm = user.pidm
         actionItemReviewAudit.reviewDate = new Date()
         actionItemReviewAudit.reviewDecision = Long.valueOf(requestMap.reviewStateId)
-        actionItemReviewAudit.externalCommetInd = requestMap.externalCommetInd
+        actionItemReviewAudit.externalCommentInd = requestMap.externalCommentInd
         actionItemReviewAudit.reviewComments = requestMap.reviewComments
         actionItemReviewAudit.contactInfo = requestMap.contactInfo
         actionItemReviewAuditService.create(actionItemReviewAudit)

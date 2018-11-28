@@ -236,6 +236,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Test
     void testUpdateActionItemReview() {
+        loginSSB('AIPADM001', '111111')
         Long actionItemId = 3L
         String personName = "Cliff Starr"
         String personId = null
@@ -249,7 +250,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
                 reviewStateId:2,
                 displayEndDate:actionItemDetails.displayEndDate,
                 responseId:actionItemDetails.responseId,
-                externalCommetInd:true,
+                externalCommentInd:true,
                 reviewComments:'test comments',
                 contactInfo:'admin office'
         ]
@@ -260,6 +261,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Test
     void testUpdateActionItemReviewInvalidDate() {
+        loginSSB('AIPADM001', '111111')
         Long actionItemId = 3L
         String personName = "Cliff Starr"
         String personId = null
@@ -273,7 +275,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
                 reviewStateId:2,
                 displayEndDate:new Date(),
                 responseId:actionItemDetails.responseId,
-                externalCommetInd:true,
+                externalCommentInd:true,
                 reviewComments:'test comments',
                 contactInfo:'admin office'
         ]
@@ -284,6 +286,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Test
     void testUpdateActionItemReviewInvalidUserActionItemId() {
+        loginSSB('AIPADM001', '111111')
         Long actionItemId = 3L
         String personName = "Cliff Starr"
         String personId = null
@@ -297,7 +300,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
                 reviewStateId:2,
                 displayEndDate:new Date(),
                 responseId:actionItemDetails.responseId,
-                externalCommetInd:true,
+                externalCommentInd:true,
                 reviewComments:'test comments',
                 contactInfo:'admin office'
         ]
