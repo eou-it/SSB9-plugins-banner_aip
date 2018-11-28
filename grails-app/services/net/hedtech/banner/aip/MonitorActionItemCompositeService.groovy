@@ -128,12 +128,11 @@ class MonitorActionItemCompositeService extends ServiceBase {
         filteredResult = result.findAll { it ->
                     it.actionItemName.toString().toUpperCase().matches(regexPattern) ||
                     it.status.toString().toUpperCase().matches(regexPattern) ||
-                    it.currentResponseText.toString().toUpperCase().matches(regexPattern) ||
+                    it.currentResponseText?.toString().toUpperCase().matches(regexPattern) ||
                     it.actionItemGroupName.toString().toUpperCase().matches(regexPattern) ||
                     it.actionItemPersonName.toString().toUpperCase().matches(regexPattern) ||
-                    it.spridenId.toString().toUpperCase().matches(regexPattern)
-            
-            || it.reviewState.toString().toUpperCase().matches(regexPattern)
+                    it.spridenId.toString().toUpperCase().matches(regexPattern) ||
+                    it.reviewState?.toString().toUpperCase().matches(regexPattern)
         }
         filteredResult
     }
