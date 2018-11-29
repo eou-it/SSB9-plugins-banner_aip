@@ -3,6 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.service.ServiceBase
 import org.apache.log4j.Logger
 
@@ -14,7 +15,8 @@ class MonitorActionItemCompositeService extends ServiceBase {
     private static final def LOGGER = Logger.getLogger(this.class)
     private static final String WILDCARD = ".*"
     def monitorActionItemReadOnlyService
-
+    def configUserPreferenceService
+    def aipReviewStateService
     /**
      * get Action Item
      */
@@ -85,7 +87,10 @@ class MonitorActionItemCompositeService extends ServiceBase {
         }
 
         def result = [];
-
+        Locale userLocale = configUserPreferenceService.getUserLocale()
+        if (!userLocale) {
+            userLocale = Locale.getDefault()
+        }
         qryresult.each { it ->
             result.add([id                  : it.id,
                         actionItemId        : it.actionItemId,
@@ -99,7 +104,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                         displayEndDate      : it.displayEndDate,
                         currentResponseText : it.currentResponseText,
                         reviewIndicator     : it.reviewIndicator,
-                        reviewState         : it.reviewState,
+                        reviewState         : aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode, userLocale.toString()),
                         attachments         : it.attachments])
 
         }
@@ -123,12 +128,11 @@ class MonitorActionItemCompositeService extends ServiceBase {
         filteredResult = result.findAll { it ->
                     it.actionItemName.toString().toUpperCase().matches(regexPattern) ||
                     it.status.toString().toUpperCase().matches(regexPattern) ||
-                    it.currentResponseText.toString().toUpperCase().matches(regexPattern) ||
+                    it.currentResponseText?.toString().toUpperCase().matches(regexPattern) ||
                     it.actionItemGroupName.toString().toUpperCase().matches(regexPattern) ||
                     it.actionItemPersonName.toString().toUpperCase().matches(regexPattern) ||
-                    it.spridenId.toString().toUpperCase().matches(regexPattern)
-            // TODO: below line to be uncommented once the  columns is modified  in db scripts
-            //|| it.reviewState.toString().toUpperCase().matches(regexPattern)
+                    it.spridenId.toString().toUpperCase().matches(regexPattern) ||
+                    it.reviewState?.toString().toUpperCase().matches(regexPattern)
         }
         filteredResult
     }
