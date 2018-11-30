@@ -3,6 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.aip.common.LoggerUtility
 import net.hedtech.banner.i18n.MessageHelper
 import net.hedtech.banner.service.ServiceBase
@@ -20,6 +21,8 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
     def actionItemReadOnlyService
     def actionItemStatusRuleService
     def actionItemBlockedProcessReadOnlyService
+    def configUserPreferenceService
+    def aipReviewStateService
 
 
     /**
@@ -28,6 +31,10 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
      */
     def listActionItemByPidmWithinDate() {
         def user = springSecurityService.getAuthentication()?.user
+        Locale userLocale = configUserPreferenceService.getUserLocale()
+        if(!userLocale){
+            userLocale = Locale.getDefault()
+        }
         def actionItems = userActionItemReadOnlyService.listActionItemByPidmWithinDate( user.pidm )
         def actionItemIds = actionItems.collect{it.id}
         actionItems = actionItems.collect {UserActionItemReadOnly it ->
@@ -58,7 +65,7 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
                     userId                  : it.userId,
                     userIdTmpl              : it.userIdTmpl,
                     currentResponse         : it.completedDate ? it.currentResponseText : null,
-                    currentReviewState      : it.reviewStateName
+                    currentReviewState      : aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode,userLocale.toString())
             ]
         }
         def haltProcesses = []

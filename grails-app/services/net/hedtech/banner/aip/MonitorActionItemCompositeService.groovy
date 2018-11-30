@@ -3,6 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.service.ServiceBase
 import org.apache.log4j.Logger
 import net.hedtech.banner.aip.UserActionItem
@@ -15,11 +16,15 @@ import net.hedtech.banner.i18n.MessageHelper
  */
 class MonitorActionItemCompositeService extends ServiceBase {
     private static final def LOGGER = Logger.getLogger(this.class)
+    private static final String WILDCARD = ".*"
     def monitorActionItemReadOnlyService
     def userActionItemService
     def actionItemReviewAuditService
     def springSecurityService
     def actionItemProcessingCommonService
+    def configUserPreferenceService
+    def aipReviewStateService
+
     /**
      * get Action Item
      */
@@ -58,6 +63,15 @@ class MonitorActionItemCompositeService extends ServiceBase {
         actionItemNamesList
     }
 
+    /**
+     * Performs search on monitor action items
+     * @param actionId Id of the action item
+     * @param personName Name of the person to be serached
+     * @param personId banner id of the person to be searched
+     * @param filterData filter data object
+     * @param pagingAndSortParams pagination and sorting params object
+     * @return filtered list
+     * */
     def searchMonitorActionItems(Long actionId, String personName, String personId,
                                  def filterData, def pagingAndSortParams) {
         LOGGER.debug("Action ID : {$actionId} -- PersonName :{$personName} -- PersonID :{$personId}-- ${filterData} -- ${pagingAndSortParams}")
@@ -81,7 +95,10 @@ class MonitorActionItemCompositeService extends ServiceBase {
         }
 
         def result = [];
-
+        Locale userLocale = configUserPreferenceService.getUserLocale()
+        if (!userLocale) {
+            userLocale = Locale.getDefault()
+        }
         qryresult.each { it ->
             result.add([id                  : it.id,
                         actionItemId        : it.actionItemId,
@@ -95,12 +112,12 @@ class MonitorActionItemCompositeService extends ServiceBase {
                         displayEndDate      : it.displayEndDate,
                         currentResponseText : it.currentResponseText,
                         reviewIndicator     : it.reviewIndicator,
-                        reviewState         : it.reviewState,
+                        reviewState         : aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode, userLocale.toString()),
                         attachments         : it.attachments])
 
         }
 
-        def resultMap = [result: result,
+        def resultMap = [result: filterResults(result, filterData.params.searchString),
                          length: count];
 
         return resultMap
@@ -189,6 +206,29 @@ class MonitorActionItemCompositeService extends ServiceBase {
         actionItemReviewAudit.reviewComments = requestMap.reviewComments
         actionItemReviewAudit.contactInfo = requestMap.contactInfo
         actionItemReviewAuditService.create(actionItemReviewAudit)
+    }
+
+
+    /**
+    *Filters the list of results based on the search string
+    * @param result List of result
+    * @param searchParam search string to be searched.
+    * @return filtered list
+    * */
+    private def filterResults(def result, def searchParam) {
+        def filteredResult
+        String regexPattern
+        regexPattern = searchParam ? WILDCARD + searchParam.toString().toUpperCase() + WILDCARD : WILDCARD + WILDCARD;
+        filteredResult = result.findAll { it ->
+                    it.actionItemName.toString().toUpperCase().matches(regexPattern) ||
+                    it.status.toString().toUpperCase().matches(regexPattern) ||
+                    it.currentResponseText?.toString().toUpperCase().matches(regexPattern) ||
+                    it.actionItemGroupName.toString().toUpperCase().matches(regexPattern) ||
+                    it.actionItemPersonName.toString().toUpperCase().matches(regexPattern) ||
+                    it.spridenId.toString().toUpperCase().matches(regexPattern) ||
+                    it.reviewState?.toString().toUpperCase().matches(regexPattern)
+        }
+        filteredResult
     }
 
 }
