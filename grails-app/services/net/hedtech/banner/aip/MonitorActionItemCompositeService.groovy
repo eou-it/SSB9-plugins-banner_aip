@@ -44,7 +44,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
           responseId          : userActionItemDetails.responseId,
           currentResponseText : userActionItemDetails.currentResponseText,
           reviewIndicator     : userActionItemDetails.reviewIndicator,
-          reviewState         : userActionItemDetails.reviewState,
+          reviewStateCode     : userActionItemDetails.reviewStateCode,
           attachments         : userActionItemDetails.attachments]
 
         return result
@@ -134,30 +134,42 @@ class MonitorActionItemCompositeService extends ServiceBase {
         String message  = ''
         try{
             Long userActionItemId = Long.valueOf(requestMap?.userActionItemId)
-            def userActionItem = monitorActionItemReadOnlyService.findById(userActionItemId)
+            def userActionItem = userActionItemService.getUserActionItemById(userActionItemId)
             if(userActionItem){
                 if(isValuesModified(requestMap,userActionItem)){
                     if(!validateDisplayEndDate(requestMap,userActionItem)){
                         return [success:false,message:MessageHelper.message('aip.review.action.item.end.date.error')]
                     }
                     userActionItem.displayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate )
-                    userActionItem.reviewStateId = Long.valueOf(requestMap.reviewStateId)
+                    userActionItem.reviewStateCode = requestMap.reviewStateCode
                     userActionItemService.update( userActionItem )
                 }
                 createActionItemReviewAuditEntry(requestMap,userActionItem)
                 isActionItemReviewUpdated = true
                 message = MessageHelper.message('aip.common.save.successful')
             }
-            }catch (ApplicationException e){
-                isActionItemReviewUpdated = false
-                message = MessageHelper.message('aip.review.action.update.exception.error')
-            }
+        }catch (ApplicationException e){
+            isActionItemReviewUpdated = false
+            message = MessageHelper.message('aip.review.action.update.exception.error')
+        }
 
         result = [success:isActionItemReviewUpdated,message:message]
         return result
     }
 
+    def getReviewStatusList(){
+        Locale userLocale = configUserPreferenceService.getUserLocale()
+        if (!userLocale) {
+            userLocale = Locale.getDefault()
+        }
+        def reviewStateList = []
+        def result = aipReviewStateService.fetchNonDefaultReviewStates(userLocale.toString())
+        result.each {
+            reviewStateList.add('code': it.reviewStateCode, 'name': it.reviewStateName)
+        }
+        return reviewStateList
 
+    }
 
     /**
      * Is values are modified
@@ -169,7 +181,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
         if( displayEndDate.compareTo(userActionItem.displayEndDate) != 0){
             isValuesChanged = true
         }
-        if(userActionItem.reviewStateId != requestMap.reviewStateId){
+        if(userActionItem.reviewStateCode != requestMap.reviewStateCode){
             isValuesChanged = true
         }
         return   isValuesChanged
@@ -201,7 +213,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
         actionItemReviewAudit.responseId =  Long.valueOf(requestMap.responseId)
         actionItemReviewAudit.reviewerPidm = user.pidm
         actionItemReviewAudit.reviewDate = new Date()
-        actionItemReviewAudit.reviewDecision = Long.valueOf(requestMap.reviewStateId)
+        actionItemReviewAudit.reviewStateCode = requestMap.reviewStateCode
         actionItemReviewAudit.externalCommentInd = requestMap.externalCommentInd
         actionItemReviewAudit.reviewComments = requestMap.reviewComments
         actionItemReviewAudit.contactInfo = requestMap.contactInfo
@@ -226,7 +238,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                     it.actionItemGroupName.toString().toUpperCase().matches(regexPattern) ||
                     it.actionItemPersonName.toString().toUpperCase().matches(regexPattern) ||
                     it.spridenId.toString().toUpperCase().matches(regexPattern) ||
-                    it.reviewState?.toString().toUpperCase().matches(regexPattern)
+                    it.reviewStateCode?.toString().toUpperCase().matches(regexPattern)
         }
         filteredResult
     }

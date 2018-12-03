@@ -49,7 +49,7 @@ class ActionItemReviewAudit implements Serializable {
     /**
      * ResponseID of action item
      */
-    @Column(name = "GCBRAUD_CUR_RESP_ID")
+    @Column(name = "GCBRAUD_RESPONSE_ID")
     Long responseId
 
     /**
@@ -61,14 +61,14 @@ class ActionItemReviewAudit implements Serializable {
     /**
      * review date
      */
-    @Column(name = "GCBRAUD_REV_DATETIME")
+    @Column(name = "GCBRAUD_REVIEW_DATETIME")
     Date reviewDate
 
     /**
      * review decision
      */
-    @Column(name = "GCBRAUD_REV_DECISION")
-    Long reviewDecision
+    @Column(name = "GCBRAUD_RVST_CODE")
+    String reviewStateCode
 
     /***
      * External comment Indicator
@@ -120,7 +120,7 @@ class ActionItemReviewAudit implements Serializable {
         responseId( nullable: false, maxSize: 19 )
         reviewerPidm( nullable: false, maxSize: 8 )
         reviewDate( nullable: false )
-        reviewDecision( nullable: false, maxSize: 19 )
+        reviewStateCode( nullable: false, maxSize: 10 )
         externalCommentInd(nullable: false, maxSize: 1)
         reviewComments( nullable: true, maxSize: 4000 )
         contactInfo( nullable: true, maxSize: 200 )

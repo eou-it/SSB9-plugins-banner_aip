@@ -93,10 +93,10 @@ class UserActionItem implements Serializable {
     Long groupId
 
     /**
-     * Review state Id associated with action Item reiview table
+     * Review state code associated with action Item reiview table
      */
-    @Column(name = "gcraact_gcrrvst_id")
-    Long reviewStateId
+    @Column(name = "GCRAACT_RVST_CODE")
+    String reviewStateCode
 
     /**
      * User action item pertains to
@@ -137,13 +137,14 @@ class UserActionItem implements Serializable {
 
     static constraints = {
         actionItemId( nullable: false, maxSize: 19 )
-        pidm( nullable: false, maxSize: 9 )
+        pidm( nullable: false, maxSize: 8 )
         status( nullable: false, maxSize: 30 )
         lastModifiedBy( nullable: true, maxSize: 30 )
         userResponseDate( nullable: true )
         displayStartDate( nullable: false )
         displayEndDate( nullable: false )
         groupId( nullable: false )
+        reviewStateCode(nullable: true, maxSize: 10)
         lastModified( nullable: true )
         creatorId( nullable: true, maxSize: 30 )
         createDate( nullable: true )
