@@ -3,10 +3,9 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.common.AIPConstants
+
 import net.hedtech.banner.service.ServiceBase
 import org.apache.log4j.Logger
-import net.hedtech.banner.aip.UserActionItem
 import org.omg.CORBA.portable.ApplicationException
 import net.hedtech.banner.i18n.MessageHelper
 
@@ -112,7 +111,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                         displayEndDate      : it.displayEndDate,
                         currentResponseText : it.currentResponseText,
                         reviewIndicator     : it.reviewIndicator,
-                        reviewState         : aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode, userLocale.toString()),
+                        reviewStateCode     : aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode, userLocale.toString()),
                         attachments         : it.attachments])
 
         }
@@ -126,6 +125,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
 
     /**
      * Update Action Item Review
+     * @param requestMap Action Item review request map
      * @return
      */
     def updateActionItemReview(requestMap){
@@ -172,7 +172,9 @@ class MonitorActionItemCompositeService extends ServiceBase {
     }
 
     /**
-     * Is values are modified
+     * Is Display end date and Review status values are modified
+     * @param requestMap Action Item reveiw request map
+     * @param userActionItem user Action Item object
      * @return
      */
     private def isValuesModified(requestMap,userActionItem){
@@ -189,6 +191,8 @@ class MonitorActionItemCompositeService extends ServiceBase {
 
     /**
      * Validate display end date
+     * @param requestMap Action Item reveiw request map
+     * @param userActionItem user Action Item object
      * @return
      */
     private def validateDisplayEndDate(requestMap,userActionItem){
@@ -203,6 +207,8 @@ class MonitorActionItemCompositeService extends ServiceBase {
 
     /**
      * create action Item review audit entry
+     * @param requestMap Action Item reveiw request map
+     * @param userActionItem user Action Item object
      * @return
      */
     private void createActionItemReviewAuditEntry(requestMap,userActionItem){

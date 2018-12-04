@@ -93,7 +93,7 @@ class UserActionItem implements Serializable {
     Long groupId
 
     /**
-     * Review state code associated with action Item reiview table
+     * Review status code associated with action Item review table
      */
     @Column(name = "GCRAACT_RVST_CODE")
     String reviewStateCode

@@ -65,7 +65,7 @@ class ActionItemReviewAudit implements Serializable {
     Date reviewDate
 
     /**
-     * review decision
+     * review status code
      */
     @Column(name = "GCBRAUD_RVST_CODE")
     String reviewStateCode

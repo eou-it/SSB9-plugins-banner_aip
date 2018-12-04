@@ -398,7 +398,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         def actionItemDetails = monitorActionItemCompositeService.getActionItem(response.result[0].id)
         def requestMap = [
                 userActionItemId:actionItemDetails.id,
-                reviewStateId:2,
+                reviewStateCode:20,
                 displayEndDate:actionItemDetails.displayEndDate,
                 responseId:actionItemDetails.responseId,
                 externalCommentInd:true,
@@ -423,7 +423,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         def actionItemDetails = monitorActionItemCompositeService.getActionItem(response.result[0].id)
         def requestMap = [
                 userActionItemId:actionItemDetails.id,
-                reviewStateId:2,
+                reviewStateCode:20,
                 displayEndDate:new Date(),
                 responseId:actionItemDetails.responseId,
                 externalCommentInd:true,
@@ -448,7 +448,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         def actionItemDetails = monitorActionItemCompositeService.getActionItem(response.result[0].id)
         def requestMap = [
                 userActionItemId:null,
-                reviewStateId:2,
+                reviewStateCode:20,
                 displayEndDate:new Date(),
                 responseId:actionItemDetails.responseId,
                 externalCommentInd:true,
