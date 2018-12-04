@@ -386,6 +386,81 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
     }
 
     @Test
+    void testUpdateActionItemReview() {
+        loginSSB('AIPADM001', '111111')
+        Long actionItemId = 3L
+        String personName = "Cliff Starr"
+        String personId = null
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 1, response.result.size()
+        assertEquals 1, response.length
+        def actionItemDetails = monitorActionItemCompositeService.getActionItem(response.result[0].id)
+        def requestMap = [
+                userActionItemId:actionItemDetails.id,
+                reviewStateCode:20,
+                displayEndDate:actionItemDetails.displayEndDate,
+                responseId:actionItemDetails.responseId,
+                externalCommentInd:true,
+                reviewComments:'test comments',
+                contactInfo:'admin office'
+        ]
+
+        def result =  monitorActionItemCompositeService.updateActionItemReview(requestMap)
+        assertEquals true,result.success
+    }
+
+    @Test
+    void testUpdateActionItemReviewInvalidDate() {
+        loginSSB('AIPADM001', '111111')
+        Long actionItemId = 3L
+        String personName = "Cliff Starr"
+        String personId = null
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 1, response.result.size()
+        assertEquals 1, response.length
+        def actionItemDetails = monitorActionItemCompositeService.getActionItem(response.result[0].id)
+        def requestMap = [
+                userActionItemId:actionItemDetails.id,
+                reviewStateCode:20,
+                displayEndDate:new Date(),
+                responseId:actionItemDetails.responseId,
+                externalCommentInd:true,
+                reviewComments:'test comments',
+                contactInfo:'admin office'
+        ]
+
+        def result =  monitorActionItemCompositeService.updateActionItemReview(requestMap)
+        assertEquals false,result.success
+    }
+
+    @Test
+    void testUpdateActionItemReviewInvalidUserActionItemId() {
+        loginSSB('AIPADM001', '111111')
+        Long actionItemId = 3L
+        String personName = "Cliff Starr"
+        String personId = null
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 1, response.result.size()
+        assertEquals 1, response.length
+        def actionItemDetails = monitorActionItemCompositeService.getActionItem(response.result[0].id)
+        def requestMap = [
+                userActionItemId:null,
+                reviewStateCode:20,
+                displayEndDate:new Date(),
+                responseId:actionItemDetails.responseId,
+                externalCommentInd:true,
+                reviewComments:'test comments',
+                contactInfo:'admin office'
+        ]
+
+        def result =  monitorActionItemCompositeService.updateActionItemReview(requestMap)
+        assertEquals false,result.success
+    }
+
+    @Test
     void testReviewStateNameInSearchResult() {
         loginSSB('CSRSTU004', '111111')
         def map = [locale: 'en-US']
