@@ -13,7 +13,7 @@ import javax.persistence.*
         @NamedQuery(name = "ActionItemReviewAudit.fetchReviewAuditByPidmAndActionItemId",
                 query = """
            FROM ActionItemReviewAudit a
-           WHERE a.pidm = :pidm and a.actionItemId =:actionItemId
+           WHERE a.pidm = :pidm and a.actionItemId =:actionItemId order by a.id desc
           """)
 ])
 

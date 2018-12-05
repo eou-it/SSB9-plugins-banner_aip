@@ -29,6 +29,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
      */
     def getActionItem(Long userActionItemId) {
         def userActionItemDetails = monitorActionItemReadOnlyService.findById(userActionItemId)
+        def userActionItem = userActionItemService.getUserActionItemById(userActionItemId)
         def result =
         [id                  : userActionItemDetails.id,
           actionItemId        : userActionItemDetails.actionItemId,
@@ -43,7 +44,8 @@ class MonitorActionItemCompositeService extends ServiceBase {
           responseId          : userActionItemDetails.responseId,
           currentResponseText : userActionItemDetails.currentResponseText,
           reviewIndicator     : userActionItemDetails.reviewIndicator,
-          reviewStateCode     : userActionItemDetails.reviewStateCode,
+          contactInfo         : getRecentContact(userActionItem.pidm,userActionItemDetails.actionItemId),
+          reviewStateObject   : [code:userActionItemDetails.reviewStateCode,name:aipReviewStateService.fetchReviewStateNameByCodeAndLocale(userActionItemDetails.reviewStateCode, getLocaleSting())],
           attachments         : userActionItemDetails.attachments]
 
         return result
@@ -94,10 +96,6 @@ class MonitorActionItemCompositeService extends ServiceBase {
         }
 
         def result = [];
-        Locale userLocale = configUserPreferenceService.getUserLocale()
-        if (!userLocale) {
-            userLocale = Locale.getDefault()
-        }
         qryresult.each { it ->
             result.add([id                  : it.id,
                         actionItemId        : it.actionItemId,
@@ -111,7 +109,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                         displayEndDate      : it.displayEndDate,
                         currentResponseText : it.currentResponseText,
                         reviewIndicator     : it.reviewIndicator,
-                        reviewStateCode     : aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode, userLocale.toString()),
+                        reviewStateCode     : aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode,getLocaleSting()),
                         attachments         : it.attachments])
 
         }
@@ -158,17 +156,12 @@ class MonitorActionItemCompositeService extends ServiceBase {
     }
 
     def getReviewStatusList(){
-        Locale userLocale = configUserPreferenceService.getUserLocale()
-        if (!userLocale) {
-            userLocale = Locale.getDefault()
-        }
         def reviewStateList = []
-        def result = aipReviewStateService.fetchNonDefaultReviewStates(userLocale.toString())
+        def result = aipReviewStateService.fetchNonDefaultReviewStates(getLocaleSting())
         result.each {
             reviewStateList.add('code': it.reviewStateCode, 'name': it.reviewStateName)
         }
         return reviewStateList
-
     }
 
     /**
@@ -247,6 +240,32 @@ class MonitorActionItemCompositeService extends ServiceBase {
                     it.reviewStateCode?.toString().toUpperCase().matches(regexPattern)
         }
         filteredResult
+    }
+
+    /**
+     * Getting user or default Locale string
+     * @return Locale string
+     * */
+    private def getLocaleSting(){
+        Locale userLocale = configUserPreferenceService.getUserLocale()
+        if (!userLocale) {
+            userLocale = Locale.getDefault()
+        }
+        userLocale.toString()
+    }
+
+
+    /**
+     * Getting recent contact
+     * @return Locale string
+     * */
+    private def getRecentContact(Long pidm, Long actionItemId){
+        String contactInfo = ""
+        def reviewAuditObjectList = actionItemReviewAuditService.fetchReviewAuditByPidmAndActionItemId(pidm,actionItemId)
+        if(reviewAuditObjectList && reviewAuditObjectList[0]){
+            contactInfo = reviewAuditObjectList[0].contactInfo
+        }
+        contactInfo
     }
 
 }
