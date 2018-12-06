@@ -239,7 +239,10 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         def response = uploadDocumentCompositeService.fetchDocuments(paramsObj)
         assert response.result.size() > 0
         assert response.length > 0
-        def viewResponse = uploadDocumentCompositeService.previewDocument(response.result[0].id)
+        def inputParams = [
+                documentId: response.result[0].id
+        ]
+        def viewResponse = uploadDocumentCompositeService.previewDocument(inputParams)
         assert response.result[0].id == viewResponse.fileUploadId
         assertNotNull viewResponse.documentContent
         assertTrue viewResponse.success
@@ -260,7 +263,10 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
             def response = uploadDocumentCompositeService.fetchDocuments(paramsObj)
             assert response.result.size() > 0
             assert response.length > 0
-            def viewResponse = uploadDocumentCompositeService.previewDocument(response.result[0].id)
+            def inputParams = [
+                    documentId: response.result[0].id
+            ]
+            def viewResponse = uploadDocumentCompositeService.previewDocument(inputParams)
             assertNotNull viewResponse.bdmDocument
             assertNotNull viewResponse.bdmDocument.viewURL
             assertTrue viewResponse.success
@@ -348,8 +354,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         def item = group.items.find { it.name == 'Personal Information' }
         Long actionItemId = item.id
 
-        Long user_pidm = pidm.longValue()
-        List<UserActionItem> gcraactIdList = UserActionItem.fetchUserActionItemByPidm(user_pidm)
+        List<UserActionItem> gcraactIdList = UserActionItem.fetchUserActionItemsByPidm(pidm.longValue())
         UserActionItem gcraact = gcraactIdList.find { it.actionItemId = actionItemId }
         userActionItemId = gcraact.id
 

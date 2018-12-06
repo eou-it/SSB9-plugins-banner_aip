@@ -25,6 +25,7 @@ class UploadDocumentServiceIntegrationTests extends BaseIntegrationTestCase {
     def userActionItemReadOnlyCompositeService
     def userActionItemId
     def responseId
+    def pidm
 
     @Before
     void setUp() {
@@ -33,6 +34,9 @@ class UploadDocumentServiceIntegrationTests extends BaseIntegrationTestCase {
         def auth = selfServiceBannerAuthenticationProvider.authenticate(new UsernamePasswordAuthenticationToken('CSRSTU004', '111111'))
         SecurityContextHolder.getContext().setAuthentication(auth)
         assertNotNull auth
+        pidm = auth.pidm
+        assertNotNull pidm
+        getUserActionItemIdAndResponseId()
     }
 
     @After
@@ -63,10 +67,25 @@ class UploadDocumentServiceIntegrationTests extends BaseIntegrationTestCase {
         multipartFile
     }
 
-    private def saveUploadDocumentService(actionItemId, responseId, fileName) {
+    private void getUserActionItemIdAndResponseId() {
+        def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
+        def group = result.groups.find { it.title == 'Enrollment' }
+        def item = group.items.find { it.name == 'Personal Information' }
+        Long actionItemId = item.id
+
+        List<UserActionItem> gcraactIdList = UserActionItem.fetchUserActionItemsByPidm(pidm.longValue())
+        UserActionItem gcraact = gcraactIdList.find { it.actionItemId = actionItemId }
+        userActionItemId = gcraact.id
+
+        List<ActionItemStatusRule> responsesList = ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId(actionItemId)
+        ActionItemStatusRule response = responsesList.find { it.labelText == 'Not in my life time.' }
+        responseId = response.id
+    }
+
+    private def saveUploadDocumentService(userActionItemId, responseId, fileName) {
         MockMultipartFile multipartFile = formFileObject(fileName)
         def result = uploadDocumentCompositeService.addDocument(
-                [actionItemId: actionItemId, responseId: responseId, documentName: fileName, documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
+                [userActionItemId: userActionItemId, responseId: responseId, documentName: fileName, documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
         return result
     }
 
@@ -76,7 +95,7 @@ class UploadDocumentServiceIntegrationTests extends BaseIntegrationTestCase {
         def result = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert result.success == true
         def paramsObj = [
-                actionItemId : actionItemId.toString(),
+                userActionItemId : userActionItemId.toString(),
                 responseId   : responseId.toString(),
                 filterName   : "%",
                 sortColumn   : "id",
@@ -92,7 +111,7 @@ class UploadDocumentServiceIntegrationTests extends BaseIntegrationTestCase {
         def result = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert result.success == true
         def paramsObj = [
-                actionItemId : actionItemId.toString(),
+                userActionItemId : userActionItemId.toString(),
                 responseId   : responseId.toString(),
                 filterName   : "%",
                 sortColumn   : "id",
