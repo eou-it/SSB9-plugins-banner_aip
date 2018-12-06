@@ -44,15 +44,13 @@ class UploadDocumentCompositeService {
         def message = null
         UploadDocument saveUploadDocument
         def fileStorageLocation = getDocumentStorageSystem()
-        def aipUser = AipControllerUtils.getPersonForAip( [studentId: map.studentId], user.pidm )
         if (aipUser) {
             UploadDocument ud = new UploadDocument(
-                    actionItemId: map.actionItemId,
+                    userActionItemId: map.userActionItemId,
                     responseId: map.responseId,
                     documentName: map.documentName,
                     documentUploadedDate: new Date(),
-                    fileLocation: fileStorageLocation.documentStorageLocation,
-                    pidm: aipUser.pidm
+                    fileLocation: fileStorageLocation.documentStorageLocation
             )
             try {
                 def bdmInstalled = BdmUtility.isBDMInstalled()
@@ -234,13 +232,6 @@ class UploadDocumentCompositeService {
      * @return
      */
     def fetchDocuments( paramsObj ) {
-        def user;
-        if ( paramsObj.personId ) {
-            user = PersonUtility.getPerson( paramsObj.personId )
-        } else {
-            user = springSecurityService.getAuthentication()?.user
-        }
-        paramsObj.pidm = user.pidm
         List<UploadDocument> results = uploadDocumentService.fetchDocuments( paramsObj )
         def resultCount = uploadDocumentService.fetchDocumentsCount( paramsObj )
         results = results.collect {actionItem ->
@@ -265,21 +256,17 @@ class UploadDocumentCompositeService {
         try {
             def user = springSecurityService.getAuthentication()?.user
             UploadDocument uploadDocument = uploadDocumentService.get( documentId )
-            if (uploadDocument.pidm == user.pidm) {
-                if (AIPConstants.FILE_STORAGE_SYSTEM_BDM.equals( uploadDocument.fileLocation )) {
-                    def documentAttributes = [:]
-                    documentAttributes.put( AIPConstants.DOCUMENT_ID, documentId )
-                    bdmAttachmentService.deleteDocument( BdmUtility.getBdmServerConfigurations(), documentAttributes, getVpdiCode() )
-                } else {
-                    UploadDocumentContent uploadDocumentContent = UploadDocumentContent.fetchContentByFileUploadId( documentId.longValue() )
-                    uploadDocumentContentService.delete( uploadDocumentContent )
-                }
-                uploadDocumentService.delete( uploadDocument )
-                success = true
-                message = MessageHelper.message( 'uploadDocument.delete.success' )
+            if (AIPConstants.FILE_STORAGE_SYSTEM_BDM.equals( uploadDocument.fileLocation )) {
+                def documentAttributes = [:]
+                documentAttributes.put( AIPConstants.DOCUMENT_ID, documentId )
+                bdmAttachmentService.deleteDocument( BdmUtility.getBdmServerConfigurations(), documentAttributes, getVpdiCode() )
             } else {
-                throw new ApplicationException( UploadDocumentCompositeService, '@@r1:invalid user@@' )
+                UploadDocumentContent uploadDocumentContent = UploadDocumentContent.fetchContentByFileUploadId( documentId.longValue() )
+                uploadDocumentContentService.delete( uploadDocumentContent )
             }
+            uploadDocumentService.delete( uploadDocument )
+            success = true
+            message = MessageHelper.message( 'uploadDocument.delete.success' )
         } catch (ApplicationException e) {
             success = false
             message = e.message
@@ -293,7 +280,7 @@ class UploadDocumentCompositeService {
 
     /**
      * Maxumum attachments validation
-     * @param paramsMap [responseId ,actionItemId and pidm]
+     * @param paramsMap [responseId , userActionItemId]
      * @return validation flag
      */
     public boolean validateMaxAttachments( paramsMapObj ) {
@@ -337,8 +324,7 @@ class UploadDocumentCompositeService {
         if (paramsObj.fileLocation) {
             checkFileLoc = paramsObj.fileLocation;
         } else {
-            def user = springSecurityService.getAuthentication()?.user
-            checkFileLoc = uploadDocumentService.fetchFileLocationById( paramsObj.documentId, user.pidm )
+            checkFileLoc = uploadDocumentService.fetchFileLocationById( paramsObj.documentId)
         }
         def documentDetails = [:]
         try {

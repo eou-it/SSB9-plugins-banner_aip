@@ -26,6 +26,8 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     def userActionItemReadOnlyCompositeService
     def bdmEnabled = false
     def pidm
+    def userActionItemId
+    def responseId
 
     @Before
     void setUp() {
@@ -46,9 +48,10 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
             setConfigProperties('bdmServer.defaultFileSize', '3', 'string')
             setConfigProperties('bdmserver.BdmDataSource', 'B80H', 'string')
             Holders.config.bdmserver.file.location = 'C:/BDM_DOCUMENTS_FOLDER'
-            Holders.config.bdmserver.defaultFileSize='3'
+            Holders.config.bdmserver.defaultFileSize = '3'
             Holders.config.bdmserver.defaultfile_ext = ['EXE']
         }
+        getUserActionItemIdAndResponseId()
 
     }
 
@@ -60,166 +63,115 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     @Test
     void testTextSaveUploadDocumentService() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert saveResult.success == true
     }
 
     @Test
     void testAIPFileLocationForDocumentUpload() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+
+        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert saveResult.success == true
         def paramsObj = [
-                actionItemId : actionItemId.toString(),
-                responseId   : responseId.toString(),
-                sortColumn   : "id",
-                sortAscending: false,
-                pidm         : pidm
+                userActionItemId: userActionItemId.toString(),
+                responseId      : responseId.toString(),
+                sortColumn      : "id",
+                sortAscending   : false
         ]
         List<UploadDocument> results = UploadDocument.fetchDocuments(paramsObj)
         assert results.size() > 0
         assert results[0].fileLocation == 'AIP'
-
     }
 
     @Test
-       void testTextSaveUploadDocumentServiceWithBDM() {
-           if (bdmEnabled) {
-               setConfigProperties('aip.attachment.file.storage.location', 'BDM', 'string')
-               Long actionItemId = getActionItemId()
-               assertNotNull actionItemId
-               Long responseId = getResponseIdByActionItemId(actionItemId)
-               assertNotNull responseId
-               def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
-               assert saveResult.success == true
+    void testTextSaveUploadDocumentServiceWithBDM() {
+        if (bdmEnabled) {
+            setConfigProperties('aip.attachment.file.storage.location', 'BDM', 'string')
+            def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
+            assert saveResult.success == true
 
-               def paramsObj = [
-                       actionItemId : actionItemId.toString(),
-                       responseId   : responseId.toString(),
-                       sortColumn   : "id",
-                       sortAscending: false,
-                       pidm         : pidm
-               ]
-               List<UploadDocument> results = UploadDocument.fetchDocuments(paramsObj)
-               assert results.size() > 0
-               //TODO:Uncomment below line when BDM delete is working
-               //def deleteResponse = uploadDocumentCompositeService.deleteDocument(results[0].id)
-               //assertTrue deleteResponse.success
-           }
-       }
+            def paramsObj = [
+                    userActionItemId: userActionItemId.toString(),
+                    responseId      : responseId.toString(),
+                    sortColumn      : "id",
+                    sortAscending   : false
+            ]
+            List<UploadDocument> results = UploadDocument.fetchDocuments(paramsObj)
+            assert results.size() > 0
+
+            def deleteResponse = uploadDocumentCompositeService.deleteDocument(results[0].id)
+            assertTrue deleteResponse.success
+        }
+    }
 
     @Test
     void testBDMFileLocationForDocumentUpload() {
         if (bdmEnabled) {
             setConfigProperties('aip.attachment.file.storage.location', 'BDM', 'string')
-            Long actionItemId = getActionItemId()
-            assertNotNull actionItemId
-            Long responseId = getResponseIdByActionItemId(actionItemId)
-            assertNotNull responseId
-            def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+            def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
             assert saveResult.success == true
 
             def paramsObj = [
-                    actionItemId : actionItemId.toString(),
-                    responseId   : responseId.toString(),
-                    sortColumn   : "id",
-                    sortAscending: false,
-                    pidm         : pidm
+                    userActionItemId: userActionItemId.toString(),
+                    responseId      : responseId.toString(),
+                    sortColumn      : "id",
+                    sortAscending   : false
             ]
             List<UploadDocument> results = UploadDocument.fetchDocuments(paramsObj)
             assert results.size() > 0
             assert results[0].fileLocation == 'BDM'
-            //TODO:Uncomment below line when BDM delete is working
-            //def deleteResponse = uploadDocumentCompositeService.deleteDocument(results[0].id)
-            //assertTrue deleteResponse.success
+
+            def deleteResponse = uploadDocumentCompositeService.deleteDocument(results[0].id)
+            assertTrue deleteResponse.success
         }
     }
+
     @Test
     void testAddDocumentEmptyFile() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-
-        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIP_Empty_Text_File.txt')
+        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIP_Empty_Text_File.txt')
         assert saveResult.success == false
         assert saveResult.message == "Save failed. Empty document can not be uploaded."
     }
 
     @Test
     void testPdfSaveUploadDocumentService() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFilePdf.pdf')
+        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFilePdf.pdf')
         assert saveResult.success == true
     }
 
     @Test
     void testXlssaveUploadDocumentService() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileXLS.xlsx')
+        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileXLS.xlsx')
         assert saveResult.success == true
     }
 
     @Test
     void testPptSaveUploadDocumentService() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFilePPT.pptx')
+        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFilePPT.pptx')
         assert saveResult.success == true
     }
 
     @Test
     void testZipSaveUploadDocumentService() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileZip.zipx')
+        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileZip.zipx')
         assert saveResult.success == true
     }
 
     @Test
     void testMp3saveUploadDocumentService() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileMp3.mp3')
+        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileMp3.mp3')
         assert saveResult.success == true
     }
 
     @Test
     void testJpgsaveUploadDocumentService() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileJpg.jpg')
+        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileJpg.jpg')
         assert saveResult.success == true
     }
 
     @Test
     void testDocsaveUploadDocumentService() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileDoc.docx')
+        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileDoc.docx')
         assert saveResult.success == true
 
     }
@@ -250,15 +202,9 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     @Test
     void testMaximumAttachmentsValidation() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-        def person = PersonUtility.getPerson("CSRSTU002")
         Map paramsMapObj = [
-                actionItemId: "" + actionItemId,
-                responseId  : "" + responseId,
-                pidm        : person.pidm
+                userActionItemId: "" + userActionItemId,
+                responseId      : "" + responseId
         ]
         boolean isMaxAttachmentValidation = uploadDocumentCompositeService.validateMaxAttachments(paramsMapObj)
         assertEquals false, isMaxAttachmentValidation
@@ -267,17 +213,13 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     @Test
     void testFetchDocuments() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert saveResult.success == true
         def paramsObj = [
-                actionItemId : actionItemId.toString(),
-                responseId   : responseId.toString(),
-                sortColumn   : "id",
-                sortAscending: false
+                userActionItemId: userActionItemId.toString(),
+                responseId      : responseId.toString(),
+                sortColumn      : "id",
+                sortAscending   : false
         ]
         def response = uploadDocumentCompositeService.fetchDocuments(paramsObj)
         assert response.result.size() > 0
@@ -286,17 +228,13 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     @Test
     void testPreviewDocumentsWithAIP() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert saveResult.success == true
         def paramsObj = [
-                actionItemId : actionItemId.toString(),
-                responseId   : responseId.toString(),
-                sortColumn   : "id",
-                sortAscending: false
+                userActionItemId: userActionItemId.toString(),
+                responseId      : responseId.toString(),
+                sortColumn      : "id",
+                sortAscending   : false
         ]
         def response = uploadDocumentCompositeService.fetchDocuments(paramsObj)
         assert response.result.size() > 0
@@ -311,17 +249,13 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     void testPreviewDocumentsWithBDM() {
         if (bdmEnabled) {
             setConfigProperties('aip.attachment.file.storage.location', 'BDM', 'string')
-            Long actionItemId = getActionItemId()
-            assertNotNull actionItemId
-            Long responseId = getResponseIdByActionItemId(actionItemId)
-            assertNotNull responseId
-            def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+            def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
             assert saveResult.success == true
             def paramsObj = [
-                    actionItemId : actionItemId.toString(),
-                    responseId   : responseId.toString(),
-                    sortColumn   : "id",
-                    sortAscending: false
+                    userActionItemId: userActionItemId.toString(),
+                    responseId      : responseId.toString(),
+                    sortColumn      : "id",
+                    sortAscending   : false
             ]
             def response = uploadDocumentCompositeService.fetchDocuments(paramsObj)
             assert response.result.size() > 0
@@ -331,25 +265,20 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
             assertNotNull viewResponse.bdmDocument.viewURL
             assertTrue viewResponse.success
 
-            //TODO:Uncomment below line when BDM delete is working
-            //def deleteResponse = uploadDocumentCompositeService.deleteDocument(response.result[0].id)
-            //assertTrue deleteResponse.success
+            def deleteResponse = uploadDocumentCompositeService.deleteDocument(response.result[0].id)
+            assertTrue deleteResponse.success
         }
     }
 
     @Test
     void testDeleteDocument() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-        def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert saveResult.success == true
         def paramsObj = [
-                actionItemId : actionItemId.toString(),
-                responseId   : responseId.toString(),
-                sortColumn   : "id",
-                sortAscending: false
+                userActionItemId: userActionItemId.toString(),
+                responseId      : responseId.toString(),
+                sortColumn      : "id",
+                sortAscending   : false
         ]
         def response = uploadDocumentCompositeService.fetchDocuments(paramsObj)
         assert response.result.size() > 0
@@ -362,17 +291,13 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     void testDeleteDocumentWithBDM() {
         if (bdmEnabled) {
             setConfigProperties('aip.attachment.file.storage.location', 'BDM', 'string')
-            Long actionItemId = getActionItemId()
-            assertNotNull actionItemId
-            Long responseId = getResponseIdByActionItemId(actionItemId)
-            assertNotNull responseId
-            def saveResult = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+            def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
             assert saveResult.success == true
             def paramsObj = [
-                    actionItemId : actionItemId.toString(),
-                    responseId   : responseId.toString(),
-                    sortColumn   : "id",
-                    sortAscending: false
+                    userActionItemId: userActionItemId.toString(),
+                    responseId      : responseId.toString(),
+                    sortColumn      : "id",
+                    sortAscending   : false
             ]
             def response = uploadDocumentCompositeService.fetchDocuments(paramsObj)
             assert response.result.size() > 0
@@ -410,25 +335,27 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     }
 
-    private def saveUploadDocumentService(actionItemId, responseId, fileName) {
+    private def saveUploadDocumentService(userActionItemId, responseId, fileName) {
         MockMultipartFile multipartFile = formFileObject(fileName)
         def result = uploadDocumentCompositeService.addDocument(
-                [actionItemId: actionItemId, responseId: responseId, documentName: fileName, documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
+                [userActionItemId: userActionItemId, responseId: responseId, documentName: fileName, documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
         result
     }
 
-    private Long getActionItemId() {
+    private void getUserActionItemIdAndResponseId() {
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
         def group = result.groups.find { it.title == 'Enrollment' }
         def item = group.items.find { it.name == 'Personal Information' }
         Long actionItemId = item.id
-        actionItemId
-    }
 
-    private Long getResponseIdByActionItemId(Long actionItemId) {
-        List<ActionItemStatusRule> responseList = ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId(actionItemId)
-        Long responseId = responseList[0].id
-        responseId
+        Long user_pidm = pidm.longValue()
+        List<UserActionItem> gcraactIdList = UserActionItem.fetchUserActionItemByPidm(user_pidm)
+        UserActionItem gcraact = gcraactIdList.find { it.actionItemId = actionItemId }
+        userActionItemId = gcraact.id
+
+        List<ActionItemStatusRule> responsesList = ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId(actionItemId)
+        ActionItemStatusRule response = responsesList.find { it.labelText == 'Not in my life time.' }
+        responseId = response.id
     }
 
     /**

@@ -20,6 +20,8 @@ class UploadDocumentIntegrationTests extends BaseIntegrationTestCase {
     def uploadDocumentCompositeService
     def selfServiceBannerAuthenticationProvider
     def userActionItemReadOnlyCompositeService
+    def userActionItemId
+    def responseId
 
     @Before
     void setUp() {
@@ -58,40 +60,21 @@ class UploadDocumentIntegrationTests extends BaseIntegrationTestCase {
         multipartFile
     }
 
-    private def saveUploadDocumentService(actionItemId, responseId, fileName) {
+    private def saveUploadDocumentService(userActionItemId, responseId, fileName) {
         MockMultipartFile multipartFile = formFileObject(fileName)
         def result = uploadDocumentCompositeService.addDocument(
-                [actionItemId: actionItemId, responseId: responseId, documentName: fileName, documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
+                [userActionItemId: userActionItemId, responseId: responseId, documentName: fileName, documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
         return result
-    }
-
-    private Long getActionItemId() {
-        def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
-        def group = result.groups.find { it.title == 'Enrollment' }
-        def item = group.items.find { it.name == 'Personal Information' }
-        Long actionItemId = item.id
-        actionItemId
-    }
-
-    private Long getResponseIdByActionItemId(Long actionItemId) {
-        List<ActionItemStatusRule> responseList = ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId(actionItemId)
-        Long responseId = responseList[0].id
-        responseId
     }
 
     @Test
     void testFetchDocuments() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-        def result = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+
+        def result = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert result.success == true
-        def pidm = PersonUtility.getPerson("CSRSTU004").pidm
         def paramsObj = [
-                actionItemId : actionItemId.toString(),
+                userActionItemId : userActionItemId.toString(),
                 responseId   : responseId.toString(),
-                pidm         : pidm,
                 filterName   : "%",
                 sortColumn   : "id",
                 sortAscending: false
@@ -103,19 +86,15 @@ class UploadDocumentIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testSortAscInFetchDocuments() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-        def result = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+
+        def result = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert result.success == true
-        result = saveUploadDocumentService(actionItemId, responseId, 'TestFileDoc.docx')
+        result = saveUploadDocumentService(userActionItemId, responseId, 'TestFileDoc.docx')
         assert result.success == true
         def pidm = PersonUtility.getPerson("CSRSTU004").pidm
         def paramsObj = [
-                actionItemId : actionItemId.toString(),
+                userActionItemId : userActionItemId.toString(),
                 responseId   : responseId.toString(),
-                pidm         : pidm,
                 filterName   : "%",
                 sortColumn   : "id",
                 sortAscending: true
@@ -128,19 +107,15 @@ class UploadDocumentIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testSortDescInFetchDocuments() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-        def result = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+
+        def result = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert result.success == true
-        result = saveUploadDocumentService(actionItemId, responseId, 'TestFileDoc.docx')
+        result = saveUploadDocumentService(userActionItemId, responseId, 'TestFileDoc.docx')
         assert result.success == true
         def pidm = PersonUtility.getPerson("CSRSTU004").pidm
         def paramsObj = [
-                actionItemId : actionItemId.toString(),
+                userActionItemId : userActionItemId.toString(),
                 responseId   : responseId.toString(),
-                pidm         : pidm,
                 filterName   : "%",
                 sortColumn   : "id",
                 sortAscending: false
@@ -153,17 +128,13 @@ class UploadDocumentIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void fetchDocumentsCount() {
-        Long actionItemId = getActionItemId()
-        assertNotNull actionItemId
-        Long responseId = getResponseIdByActionItemId(actionItemId)
-        assertNotNull responseId
-        def result = saveUploadDocumentService(actionItemId, responseId, 'AIPTestFileTXT.txt')
+
+        def result = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert result.success == true
         def pidm = PersonUtility.getPerson("CSRSTU004").pidm
         def paramsObj = [
-                actionItemId : actionItemId.toString(),
+                userActionItemId : userActionItemId.toString(),
                 responseId   : responseId.toString(),
-                pidm         : pidm,
                 sortColumn   : "id",
                 sortAscending: false
         ]
