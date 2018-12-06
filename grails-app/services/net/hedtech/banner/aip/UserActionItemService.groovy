@@ -32,6 +32,15 @@ class UserActionItemService extends ServiceBase {
         UserActionItem.fetchUserActionItemsByPidm( actionItemPidm )
     }
 
+    /**
+     *
+     * @param actionItemPidm
+     * @return
+     */
+    def getUserActionItemById( Long userActionItemId ) {
+        UserActionItem.findById( userActionItemId )
+    }
+
 
     def preCreate( domainModelOrMap ) {
         UserActionItem uat = (domainModelOrMap instanceof Map ? domainModelOrMap.domainModel : domainModelOrMap) as UserActionItem

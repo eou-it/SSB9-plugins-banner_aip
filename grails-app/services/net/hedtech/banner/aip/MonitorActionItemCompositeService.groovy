@@ -3,9 +3,11 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.common.AIPConstants
+
 import net.hedtech.banner.service.ServiceBase
 import org.apache.log4j.Logger
+import org.omg.CORBA.portable.ApplicationException
+import net.hedtech.banner.i18n.MessageHelper
 
 
 /**
@@ -15,13 +17,19 @@ class MonitorActionItemCompositeService extends ServiceBase {
     private static final def LOGGER = Logger.getLogger(this.class)
     private static final String WILDCARD = ".*"
     def monitorActionItemReadOnlyService
+    def userActionItemService
+    def actionItemReviewAuditService
+    def springSecurityService
+    def actionItemProcessingCommonService
     def configUserPreferenceService
     def aipReviewStateService
+
     /**
      * get Action Item
      */
     def getActionItem(Long userActionItemId) {
         def userActionItemDetails = monitorActionItemReadOnlyService.findById(userActionItemId)
+        def userActionItem = userActionItemService.getUserActionItemById(userActionItemId)
         def result =
         [id                  : userActionItemDetails.id,
           actionItemId        : userActionItemDetails.actionItemId,
@@ -36,7 +44,8 @@ class MonitorActionItemCompositeService extends ServiceBase {
           responseId          : userActionItemDetails.responseId,
           currentResponseText : userActionItemDetails.currentResponseText,
           reviewIndicator     : userActionItemDetails.reviewIndicator,
-          reviewState         : userActionItemDetails.reviewState,
+          contactInfo         : getRecentContact(userActionItem.pidm,userActionItemDetails.actionItemId),
+          reviewStateObject   : [code:userActionItemDetails.reviewStateCode,name:aipReviewStateService.fetchReviewStateNameByCodeAndLocale(userActionItemDetails.reviewStateCode, getLocaleSting())],
           attachments         : userActionItemDetails.attachments]
 
         return result
@@ -87,10 +96,6 @@ class MonitorActionItemCompositeService extends ServiceBase {
         }
 
         def result = [];
-        Locale userLocale = configUserPreferenceService.getUserLocale()
-        if (!userLocale) {
-            userLocale = Locale.getDefault()
-        }
         qryresult.each { it ->
             result.add([id                  : it.id,
                         actionItemId        : it.actionItemId,
@@ -104,7 +109,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                         displayEndDate      : it.displayEndDate,
                         currentResponseText : it.currentResponseText,
                         reviewIndicator     : it.reviewIndicator,
-                        reviewState         : aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode, userLocale.toString()),
+                        reviewStateCode     : aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode,getLocaleSting()),
                         attachments         : it.attachments])
 
         }
@@ -114,6 +119,106 @@ class MonitorActionItemCompositeService extends ServiceBase {
 
         return resultMap
     }
+
+
+    /**
+     * Update Action Item Review
+     * @param requestMap Action Item review request map
+     * @return
+     */
+    def updateActionItemReview(requestMap){
+        boolean isActionItemReviewUpdated = false
+        Map result = null
+        String message  = ''
+        try{
+            Long userActionItemId = Long.valueOf(requestMap?.userActionItemId)
+            def userActionItem = userActionItemService.getUserActionItemById(userActionItemId)
+            if(userActionItem){
+                if(isValuesModified(requestMap,userActionItem)){
+                    if(!validateDisplayEndDate(requestMap,userActionItem)){
+                        return [success:false,message:MessageHelper.message('aip.review.action.item.end.date.error')]
+                    }
+                    userActionItem.displayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate )
+                    userActionItem.reviewStateCode = requestMap.reviewStateCode
+                    userActionItemService.update( userActionItem )
+                }
+                createActionItemReviewAuditEntry(requestMap,userActionItem)
+                isActionItemReviewUpdated = true
+                message = MessageHelper.message('aip.common.save.successful')
+            }
+        }catch (ApplicationException e){
+            isActionItemReviewUpdated = false
+            message = MessageHelper.message('aip.review.action.update.exception.error')
+        }
+
+        result = [success:isActionItemReviewUpdated,message:message]
+        return result
+    }
+
+    def getReviewStatusList(){
+        def reviewStateList = []
+        def result = aipReviewStateService.fetchNonDefaultReviewStates(getLocaleSting())
+        result.each {
+            reviewStateList.add('code': it.reviewStateCode, 'name': it.reviewStateName)
+        }
+        return reviewStateList
+    }
+
+    /**
+     * Is Display end date and Review status values are modified
+     * @param requestMap Action Item reveiw request map
+     * @param userActionItem user Action Item object
+     * @return
+     */
+    private def isValuesModified(requestMap,userActionItem){
+        boolean isValuesChanged = false
+        Date displayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate )
+        if( displayEndDate.compareTo(userActionItem.displayEndDate) != 0){
+            isValuesChanged = true
+        }
+        if(userActionItem.reviewStateCode != requestMap.reviewStateCode){
+            isValuesChanged = true
+        }
+        return   isValuesChanged
+    }
+
+    /**
+     * Validate display end date
+     * @param requestMap Action Item reveiw request map
+     * @param userActionItem user Action Item object
+     * @return
+     */
+    private def validateDisplayEndDate(requestMap,userActionItem){
+        Date displayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate )
+        Date currentDate = actionItemProcessingCommonService.getLocaleBasedCurrentDate()
+        if( displayEndDate.compareTo(userActionItem.displayEndDate) != 0){
+            return (displayEndDate.compareTo(userActionItem.displayEndDate) > 0 && currentDate.compareTo( displayEndDate ) > 0 )
+        }
+        return true
+    }
+
+
+    /**
+     * create action Item review audit entry
+     * @param requestMap Action Item reveiw request map
+     * @param userActionItem user Action Item object
+     * @return
+     */
+    private void createActionItemReviewAuditEntry(requestMap,userActionItem){
+        def user = springSecurityService.getAuthentication()?.user
+        ActionItemReviewAudit actionItemReviewAudit = new ActionItemReviewAudit()
+        actionItemReviewAudit.actionItemId = userActionItem.actionItemId
+        actionItemReviewAudit.pidm = userActionItem.pidm
+        actionItemReviewAudit.responseId =  Long.valueOf(requestMap.responseId)
+        actionItemReviewAudit.reviewerPidm = user.pidm
+        actionItemReviewAudit.reviewDate = new Date()
+        actionItemReviewAudit.reviewStateCode = requestMap.reviewStateCode
+        actionItemReviewAudit.externalCommentInd = requestMap.externalCommentInd
+        actionItemReviewAudit.reviewComments = requestMap.reviewComments
+        actionItemReviewAudit.contactInfo = requestMap.contactInfo
+        actionItemReviewAuditService.create(actionItemReviewAudit)
+    }
+
 
     /**
     *Filters the list of results based on the search string
@@ -132,8 +237,35 @@ class MonitorActionItemCompositeService extends ServiceBase {
                     it.actionItemGroupName.toString().toUpperCase().matches(regexPattern) ||
                     it.actionItemPersonName.toString().toUpperCase().matches(regexPattern) ||
                     it.spridenId.toString().toUpperCase().matches(regexPattern) ||
-                    it.reviewState?.toString().toUpperCase().matches(regexPattern)
+                    it.reviewStateCode?.toString().toUpperCase().matches(regexPattern)
         }
         filteredResult
     }
+
+    /**
+     * Getting user or default Locale string
+     * @return Locale string
+     * */
+    private def getLocaleSting(){
+        Locale userLocale = configUserPreferenceService.getUserLocale()
+        if (!userLocale) {
+            userLocale = Locale.getDefault()
+        }
+        userLocale.toString()
+    }
+
+
+    /**
+     * Getting recent contact
+     * @return Locale string
+     * */
+    private def getRecentContact(Long pidm, Long actionItemId){
+        String contactInfo = ""
+        def reviewAuditObjectList = actionItemReviewAuditService.fetchReviewAuditByPidmAndActionItemId(pidm,actionItemId)
+        if(reviewAuditObjectList && reviewAuditObjectList[0]){
+            contactInfo = reviewAuditObjectList[0].contactInfo
+        }
+        contactInfo
+    }
+
 }
