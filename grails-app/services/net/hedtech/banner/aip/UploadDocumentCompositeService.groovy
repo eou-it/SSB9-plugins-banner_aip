@@ -35,7 +35,7 @@ class UploadDocumentCompositeService {
 
     /**
      * Save uploaded document details in GCRAFLU
-     * @param dataMap
+     * @param map
      */
     @Transactional
     def addDocument(map) {
@@ -54,7 +54,7 @@ class UploadDocumentCompositeService {
         )
         try {
             def bdmInstalled = BdmUtility.isBDMInstalled()
-            if (AIPConstants.FILE_STORAGE_SYSTEM_BDM.equals(fileStorageLocation.documentStorageLocation) && !bdmInstalled) {
+            if (!bdmInstalled && fileStorageLocation.documentStorageLocation == AIPConstants.FILE_STORAGE_SYSTEM_BDM ) {
                 LOGGER.error('BDM is not installed.')
                 message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_BDM_NOT_INSTALLED)
                 throw new ApplicationException(UploadDocumentCompositeService, new BusinessLogicValidationException(message, []))
@@ -91,6 +91,7 @@ class UploadDocumentCompositeService {
                 message: message
         ]
     }
+
     /**
      * View documents uploaded to BDM server
      * @param documentId
@@ -256,7 +257,7 @@ class UploadDocumentCompositeService {
         try {
             def user = springSecurityService.getAuthentication()?.user
             UploadDocument uploadDocument = uploadDocumentService.get(documentId)
-            if (AIPConstants.FILE_STORAGE_SYSTEM_BDM.equals(uploadDocument.fileLocation)) {
+            if (uploadDocument.fileLocation == AIPConstants.FILE_STORAGE_SYSTEM_BDM) {
                 def documentAttributes = [:]
                 documentAttributes.put(AIPConstants.DOCUMENT_ID, documentId)
                 bdmAttachmentService.deleteDocument(BdmUtility.getBdmServerConfigurations(), documentAttributes, getVpdiCode())
@@ -284,7 +285,7 @@ class UploadDocumentCompositeService {
      * @return validation flag
      */
     public boolean validateMaxAttachments(paramsMapObj) {
-        def actionItemStatusRule = actionItemStatusRuleReadOnlyService.getActionItemStatusRuleROById(Long.parseLong(paramsMapObj.responseId))
+        ActionItemStatusRuleReadOnly actionItemStatusRule = actionItemStatusRuleReadOnlyService.getActionItemStatusRuleROById(Long.parseLong(paramsMapObj.responseId))
         if (actionItemStatusRule?.statusAllowedAttachment > 0) {
             def resultCount = uploadDocumentService.fetchDocumentsCount(paramsMapObj)
             return resultCount <= actionItemStatusRule.statusAllowedAttachment
@@ -320,21 +321,21 @@ class UploadDocumentCompositeService {
      * @return
      */
     def previewDocument(paramsObj) {
-        def checkFileLoc;
+        def fileLocation
         if (paramsObj.fileLocation) {
-            checkFileLoc = paramsObj.fileLocation;
+            fileLocation = paramsObj.fileLocation
         } else {
-            checkFileLoc = uploadDocumentService.fetchFileLocationById(paramsObj.documentId)
+            fileLocation = uploadDocumentService.fetchFileLocationById(paramsObj.documentId)
         }
         def documentDetails = [:]
         try {
-            if (AIPConstants.FILE_STORAGE_SYSTEM_BDM.equals(checkFileLoc)) {
-                documentDetails.bdmDocument = getBDMDocumentById(documentId)
+            if (fileLocation == AIPConstants.FILE_STORAGE_SYSTEM_BDM) {
+                documentDetails.bdmDocument = getBDMDocumentById(paramsObj.documentId)
             } else {
-                def results = uploadDocumentContentService.fetchContentByFileUploadId(paramsObj.documentId)
-                def base64EncodedDocContent = Base64.encodeBase64String(results.documentContent)
-                documentDetails.id = results.id
-                documentDetails.fileUploadId = results.fileUploadId
+                UploadDocumentContent result = uploadDocumentContentService.fetchContentByFileUploadId(paramsObj.documentId)
+                def base64EncodedDocContent = Base64.encodeBase64String(result.documentContent)
+                documentDetails.id = result.id
+                documentDetails.fileUploadId = result.fileUploadId
                 documentDetails.documentContent = base64EncodedDocContent
             }
             documentDetails.success = true

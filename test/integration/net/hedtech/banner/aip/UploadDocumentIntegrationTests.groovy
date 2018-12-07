@@ -161,5 +161,26 @@ class UploadDocumentIntegrationTests extends BaseIntegrationTestCase {
         assert count == 1
     }
 
+    @Test
+    void testFetchFileLocationById() {
+
+        def result = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
+        assert result.success == true
+        def paramsObj = [
+                userActionItemId: userActionItemId.toString(),
+                responseId      : responseId.toString(),
+                filterName      : "%",
+                sortColumn      : "id",
+                sortAscending   : false
+        ]
+        List<UploadDocument> list = UploadDocument.fetchDocuments(paramsObj)
+        assert list[0].documentName == "AIPTestFileTXT.txt"
+        assert list.size() == 1
+
+        String fileLocation = UploadDocument.fetchFileLocationById(list[0].id)
+        assert fileLocation == 'AIP'
+
+    }
+
 
 }

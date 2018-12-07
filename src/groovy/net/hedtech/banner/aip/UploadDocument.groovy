@@ -22,7 +22,7 @@ import javax.persistence.*
                         AND a.responseId = :responseId"""),
         @NamedQuery(name = "UploadDocument.checkFileLocationById",
                 query = """ select a.fileLocation FROM UploadDocument a
-                    WHERE a.id = :myId""")
+                    WHERE a.id = :documentId""")
 
 ])
 
@@ -125,9 +125,9 @@ class UploadDocument implements Serializable {
         version(nullable: true, maxSize: 30)
     }
     /**
-     *
-     * @param params
-     * @return
+     * Method to fetch metadata of documents
+     * @param paramsObj Map containing userActionItemId and responseId
+     * @return List of metadata of files
      */
     static fetchDocuments(paramsObj) {
         def queryCriteria = UploadDocument.createCriteria()
@@ -138,8 +138,9 @@ class UploadDocument implements Serializable {
         }
     }
     /**
-     *
-     * @return
+     * Method to fetch count of documents
+     * @param paramsObj Map containing userActionItemId and responseId
+     * @return Count of documents
      */
     static def fetchDocumentsCount(paramsObj) {
         UploadDocument.withSession { session ->
@@ -149,15 +150,16 @@ class UploadDocument implements Serializable {
                     .uniqueResult()
         }
     }
+
     /**
-     *
-     * @param myId , pidm
-     * @return
+     * Method to fetch file storage location by Document ID
+     * @param documentId Id of the document
+     * @return File Storage Location AIP or BDM
      */
-    static def fetchFileLocationById(Long myId) {
+    static def fetchFileLocationById(Long documentId) {
         UploadDocument.withSession { session ->
             session.getNamedQuery('UploadDocument.checkFileLocationById')
-                    .setLong('myId', myId)
+                    .setLong('documentId', documentId)
                     .uniqueResult()
         }
     }

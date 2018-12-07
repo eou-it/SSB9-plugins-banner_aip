@@ -58,25 +58,25 @@ class UploadDocumentService extends ServiceBase {
     }
     /**
      * This method is responsible for getting list is attached documents for a response.
-     * @param params
-     * @return
+     * @param params Map of userActionItemId and responseId
+     * @return List of Documents metadata
      */
     def fetchDocuments(params) {
 
         UploadDocument.fetchDocuments(params)
     }
     /**
-     *
-     * @param param
-     * @return
+     * Method to fetch count of documents
+     * @param params Map of userActionItemId and responseId
+     * @return Document count
      */
     def fetchDocumentsCount(params) {
         UploadDocument.fetchDocumentsCount(params)
     }
     /**
-     *
-     * @param id,pidm
-     * @return
+     * Method to fetch file storage location by Document ID
+     * @param id Document Id
+     * @return File Storage location - AIP or BDM
      */
     def fetchFileLocationById(id) {
         UploadDocument.fetchFileLocationById(id)

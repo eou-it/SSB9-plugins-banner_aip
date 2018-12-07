@@ -95,11 +95,11 @@ class UploadDocumentServiceIntegrationTests extends BaseIntegrationTestCase {
         def result = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert result.success == true
         def paramsObj = [
-                userActionItemId : userActionItemId.toString(),
-                responseId   : responseId.toString(),
-                filterName   : "%",
-                sortColumn   : "id",
-                sortAscending: false
+                userActionItemId: userActionItemId.toString(),
+                responseId      : responseId.toString(),
+                filterName      : "%",
+                sortColumn      : "id",
+                sortAscending   : false
         ]
         List<UploadDocument> list = uploadDocumentService.fetchDocuments(paramsObj)
         assert list.size() == 1
@@ -111,14 +111,34 @@ class UploadDocumentServiceIntegrationTests extends BaseIntegrationTestCase {
         def result = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert result.success == true
         def paramsObj = [
-                userActionItemId : userActionItemId.toString(),
-                responseId   : responseId.toString(),
-                filterName   : "%",
-                sortColumn   : "id",
-                sortAscending: false
+                userActionItemId: userActionItemId.toString(),
+                responseId      : responseId.toString(),
+                filterName      : "%",
+                sortColumn      : "id",
+                sortAscending   : false
         ]
         def count = uploadDocumentService.fetchDocumentsCount(paramsObj)
         assert count == 1
+    }
+
+    @Test
+    void testFetchFileLocationById() {
+
+        def result = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
+        assert result.success == true
+        def paramsObj = [
+                userActionItemId: userActionItemId.toString(),
+                responseId      : responseId.toString(),
+                filterName      : "%",
+                sortColumn      : "id",
+                sortAscending   : false
+        ]
+        List<UploadDocument> list = uploadDocumentService.fetchDocuments(paramsObj)
+        assert list.size() == 1
+
+        String fileLocation = uploadDocumentService.fetchFileLocationById(list[0].id)
+        assert fileLocation == 'AIP'
+
     }
 
 }
