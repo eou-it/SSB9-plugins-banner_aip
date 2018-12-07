@@ -1,4 +1,3 @@
-
 /*********************************************************************************
  Copyright 2018 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
@@ -19,13 +18,11 @@ import javax.persistence.*
                     WHERE upper(a.documentName) = upper(:documentName)"""),
         @NamedQuery(name = "UploadDocument.fetchDocumentsCount",
                 query = """SELECT COUNT(a.id) FROM UploadDocument a
-                        WHERE a.actionItemId = :actionItemId
-                        AND a.responseId = :responseId
-                        AND a.pidm = :pidm"""),
+                        WHERE a.userActionItemId = :userActionItemId
+                        AND a.responseId = :responseId"""),
         @NamedQuery(name = "UploadDocument.checkFileLocationById",
                 query = """ select a.fileLocation FROM UploadDocument a
-                    WHERE a.id = :myId
-                    AND a.pidm = :pidm""")
+                    WHERE a.id = :documentId""")
 
 ])
 
@@ -50,15 +47,14 @@ class UploadDocument implements Serializable {
     /***
      * Related action item id.
      */
-    @Column(name = "GCRAFLU_GCBACTM_ID")
-    Long actionItemId
+    @Column(name = "GCRAFLU_GCRAACT_ID")
+    Long userActionItemId
 
     /**
      * Related response id
      */
     @Column(name = "GCRAFLU_GCRAISR_ID")
     Long responseId
-
     /**
      * Document Name
      */
@@ -68,13 +64,13 @@ class UploadDocument implements Serializable {
     /**
      * Document Uploaded Date
      */
-    @Column(name ="GCRAFLU_DOCUMENT_UPLOADED_DATE")
+    @Column(name = "GCRAFLU_DOCUMENT_UPLOADED_DATE")
     Date documentUploadedDate
 
     /**
      * Document Uploaded  Location
      */
-    @Column(name ="GCRAFLU_FILE_LOCATION")
+    @Column(name = "GCRAFLU_FILE_LOCATION")
     String fileLocation
 
     /**
@@ -82,12 +78,6 @@ class UploadDocument implements Serializable {
      */
     @Column(name = "GCRAFLU_USER_ID")
     String lastModifiedBy
-
-    /**
-     * User PIDM
-     */
-    @Column(name = "GCRAFLU_PIDM")
-    Long pidm
 
     /**
      * Last activity date for the document upload
@@ -122,56 +112,54 @@ class UploadDocument implements Serializable {
     Long version
 
     static constraints = {
-        actionItemId( nullable: false, maxSize: 19 )
-        responseId( nullable: false, maxSize: 19 )
-        documentName(nullable:false,maxSize: 60)
-        documentUploadedDate(nullable:false)
-        fileLocation(nullable: false, maxSize: 3 )
-        pidm(nullable:false)
-        userComments(nullable:true, maxSize: 4000)
-        deleteAfterDate(nullable:true)
-        storageDays(nullable:true,maxSize: 4)
-        lastModifiedBy( nullable: true, maxSize: 30 )
-        lastModified( nullable: true )
-        version( nullable: true, maxSize: 30 )
+        userActionItemId(nullable: false, maxSize: 19)
+        responseId(nullable: false, maxSize: 19)
+        documentName(nullable: false, maxSize: 60)
+        documentUploadedDate(nullable: false)
+        fileLocation(nullable: false, maxSize: 3)
+        userComments(nullable: true, maxSize: 4000)
+        deleteAfterDate(nullable: true)
+        storageDays(nullable: true, maxSize: 4)
+        lastModifiedBy(nullable: true, maxSize: 30)
+        lastModified(nullable: true)
+        version(nullable: true, maxSize: 30)
     }
-     /**
-     *
-     * @param params
-     * @return
+    /**
+     * Method to fetch metadata of documents
+     * @param paramsObj Map containing userActionItemId and responseId
+     * @return List of metadata of files
      */
-    static fetchDocuments( paramsObj ) {
+    static fetchDocuments(paramsObj) {
         def queryCriteria = UploadDocument.createCriteria()
         queryCriteria.list {
-            eq("actionItemId", Long.parseLong(paramsObj.actionItemId))
+            eq("userActionItemId", Long.parseLong(paramsObj.userActionItemId))
             eq("responseId", Long.parseLong(paramsObj.responseId))
-            eq("pidm", paramsObj.pidm.longValue())
-            order( (paramsObj.sortAscending ? Order.asc( paramsObj.sortColumn ) : Order.desc( paramsObj.sortColumn )).ignoreCase() )
+            order((paramsObj.sortAscending ? Order.asc(paramsObj.sortColumn) : Order.desc(paramsObj.sortColumn)).ignoreCase())
         }
     }
     /**
-       *
-       * @return
-       */
-      static def fetchDocumentsCount( paramsObj ) {
-          UploadDocument.withSession {session ->
-              session.getNamedQuery( 'UploadDocument.fetchDocumentsCount' )
-                      .setLong("actionItemId", Long.parseLong(paramsObj.actionItemId))
-                      .setLong("responseId", Long.parseLong(paramsObj.responseId))
-                      .setLong("pidm", paramsObj.pidm.longValue())
-                      .uniqueResult()
-          }
-      }
-    /**
-     *
-     * @param myId,pidm
-     * @return
+     * Method to fetch count of documents
+     * @param paramsObj Map containing userActionItemId and responseId
+     * @return Count of documents
      */
-    static def fetchFileLocationById( Long myId,Long pidm ) {
-        UploadDocument.withSession {session ->
-            session.getNamedQuery( 'UploadDocument.checkFileLocationById' )
-                    .setLong( 'myId', myId )
-                    .setLong("pidm", pidm.longValue())
+    static def fetchDocumentsCount(paramsObj) {
+        UploadDocument.withSession { session ->
+            session.getNamedQuery('UploadDocument.fetchDocumentsCount')
+                    .setLong("userActionItemId", Long.parseLong(paramsObj.userActionItemId))
+                    .setLong("responseId", Long.parseLong(paramsObj.responseId))
+                    .uniqueResult()
+        }
+    }
+
+    /**
+     * Method to fetch file storage location by Document ID
+     * @param documentId Id of the document
+     * @return File Storage Location AIP or BDM
+     */
+    static def fetchFileLocationById(Long documentId) {
+        UploadDocument.withSession { session ->
+            session.getNamedQuery('UploadDocument.checkFileLocationById')
+                    .setLong('documentId', documentId)
                     .uniqueResult()
         }
     }
