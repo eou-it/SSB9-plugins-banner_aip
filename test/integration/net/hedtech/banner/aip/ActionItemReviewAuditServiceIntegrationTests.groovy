@@ -34,8 +34,8 @@ class ActionItemReviewAuditServiceIntegrationTests extends BaseIntegrationTestCa
 
 
     @Test
-    void fetchReviewAuditByPidmAndActionItemId() {
-        List<ActionItemReviewAudit>  actionItemReviewAudit= actionItemReviewAuditService.fetchReviewAuditByPidmAndActionItemId(-1,-1)
+    void testFetchReviewAuditByUserActionItemId() {
+        List<ActionItemReviewAudit>  actionItemReviewAudit= actionItemReviewAuditService.fetchReviewAuditByUserActionItemId(-1)
         assertTrue actionItemReviewAudit.isEmpty()
     }
 

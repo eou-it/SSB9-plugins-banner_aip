@@ -26,8 +26,8 @@ class ActionItemReviewAuditIntegrationTests extends BaseIntegrationTestCase {
 
 
     @Test
-    void testfetchReviewAuditByPidmAndActionItemId() {
-        List<ActionItemReviewAudit> actionItemReviewAudit = ActionItemReviewAudit.fetchReviewAuditByPidmAndActionItemId(-1,-1)
+    void testfetchReviewAuditByUserActionItemId() {
+        List<ActionItemReviewAudit> actionItemReviewAudit = ActionItemReviewAudit.fetchReviewAuditByUserActionItemId(-1)
         assertTrue actionItemReviewAudit.isEmpty()
     }
 

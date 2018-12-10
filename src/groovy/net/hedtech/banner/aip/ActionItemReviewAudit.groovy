@@ -10,10 +10,10 @@ import org.hibernate.annotations.Type
 import javax.persistence.*
 
 @NamedQueries(value = [
-        @NamedQuery(name = "ActionItemReviewAudit.fetchReviewAuditByPidmAndActionItemId",
+        @NamedQuery(name = "ActionItemReviewAudit.fetchReviewAuditByUserActionItemId",
                 query = """
            FROM ActionItemReviewAudit a
-           WHERE a.pidm = :pidm and a.actionItemId =:actionItemId order by a.id desc
+           WHERE a.userActionItemId =:userActionItemId order by a.id desc
           """)
 ])
 
@@ -35,22 +35,11 @@ class ActionItemReviewAudit implements Serializable {
     Long id
 
     /**
-     * Related ID of the action item
+     * Related ID of the user action item
      */
-    @Column(name = "GCBRAUD_ACTION_ITEM_ID")
-    Long actionItemId
+    @Column(name = "GCBRAUD_GCRAACT_ID")
+    Long userActionItemId
 
-    /**
-     * PIDM of the user action item belongs to
-     */
-    @Column(name = "GCBRAUD_USER_PIDM")
-    Long pidm
-
-    /**
-     * ResponseID of action item
-     */
-    @Column(name = "GCBRAUD_RESPONSE_ID")
-    Long responseId
 
     /**
      * Reviewer Pidm
@@ -115,9 +104,7 @@ class ActionItemReviewAudit implements Serializable {
     String dataOrigin
 
     static constraints = {
-        actionItemId( nullable: false, maxSize: 19 )
-        pidm( nullable: false, maxSize: 8 )
-        responseId( nullable: false, maxSize: 19 )
+        userActionItemId( nullable: false, maxSize: 19 )
         reviewerPidm( nullable: false, maxSize: 8 )
         reviewDate( nullable: false )
         reviewStateCode( nullable: false, maxSize: 10 )
@@ -132,14 +119,13 @@ class ActionItemReviewAudit implements Serializable {
 
     /**
      *
-     * @param pidm,actionItemId
+     * @param userActionItemId
      * @return
      */
-    public static def fetchReviewAuditByPidmAndActionItemId(Long pidm,Long actionItemId) {
+    public static def fetchReviewAuditByUserActionItemId(Long userActionItemId) {
         ActionItemReviewAudit.withSession { session ->
-            List<ActionItemReviewAudit> actionItemReviewAuditList = session.getNamedQuery("ActionItemReviewAudit.fetchReviewAuditByPidmAndActionItemId")
-                    .setLong("pidm", pidm)
-                    .setLong("actionItemId",actionItemId)
+            List<ActionItemReviewAudit> actionItemReviewAuditList = session.getNamedQuery("ActionItemReviewAudit.fetchReviewAuditByUserActionItemId")
+                    .setLong("userActionItemId",userActionItemId)
                     .list()
             return actionItemReviewAuditList
         }

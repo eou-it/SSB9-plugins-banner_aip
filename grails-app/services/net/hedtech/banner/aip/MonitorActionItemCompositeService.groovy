@@ -29,9 +29,8 @@ class MonitorActionItemCompositeService extends ServiceBase {
      */
     def getActionItem(Long userActionItemId) {
         def userActionItemDetails = monitorActionItemReadOnlyService.findById(userActionItemId)
-        def userActionItem = userActionItemService.getUserActionItemById(userActionItemId)
         def result =
-        [id                  : userActionItemDetails.id,
+         [id                  : userActionItemDetails.id,
           actionItemId        : userActionItemDetails.actionItemId,
           actionItemName      : userActionItemDetails.actionItemName,
           actionItemGroupName : userActionItemDetails.actionItemGroupName,
@@ -44,7 +43,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
           responseId          : userActionItemDetails.responseId,
           currentResponseText : userActionItemDetails.currentResponseText,
           reviewIndicator     : userActionItemDetails.reviewIndicator,
-          contactInfo         : getRecentContact(userActionItem.pidm,userActionItemDetails.actionItemId),
+          contactInfo         : getRecentContact(userActionItemDetails.id),
           reviewStateObject   : [code:userActionItemDetails.reviewStateCode,name:aipReviewStateService.fetchReviewStateNameByCodeAndLocale(userActionItemDetails.reviewStateCode, getLocaleSting())],
           attachments         : userActionItemDetails.attachments]
 
@@ -207,15 +206,13 @@ class MonitorActionItemCompositeService extends ServiceBase {
     private void createActionItemReviewAuditEntry(requestMap,userActionItem){
         def user = springSecurityService.getAuthentication()?.user
         ActionItemReviewAudit actionItemReviewAudit = new ActionItemReviewAudit()
-        actionItemReviewAudit.actionItemId = userActionItem.actionItemId
-        actionItemReviewAudit.pidm = userActionItem.pidm
-        actionItemReviewAudit.responseId =  Long.valueOf(requestMap.responseId)
+        actionItemReviewAudit.userActionItemId = userActionItem.id
         actionItemReviewAudit.reviewerPidm = user.pidm
         actionItemReviewAudit.reviewDate = new Date()
         actionItemReviewAudit.reviewStateCode = requestMap.reviewStateCode
         actionItemReviewAudit.externalCommentInd = requestMap.externalCommentInd
         actionItemReviewAudit.reviewComments = requestMap.reviewComments
-        actionItemReviewAudit.contactInfo = requestMap.contactInfo
+        actionItemReviewAudit.contactInfo = requestMap.contactInfo?java.net.URLDecoder.decode(requestMap.contactInfo, "UTF-8"):requestMap.contactInfo
         actionItemReviewAuditService.create(actionItemReviewAudit)
     }
 
@@ -259,9 +256,9 @@ class MonitorActionItemCompositeService extends ServiceBase {
      * Getting recent contact
      * @return Locale string
      * */
-    private def getRecentContact(Long pidm, Long actionItemId){
+    private def getRecentContact(Long userActionItemId){
         String contactInfo = ""
-        def reviewAuditObjectList = actionItemReviewAuditService.fetchReviewAuditByPidmAndActionItemId(pidm,actionItemId)
+        def reviewAuditObjectList = actionItemReviewAuditService.fetchReviewAuditByUserActionItemId(userActionItemId)
         if(reviewAuditObjectList && reviewAuditObjectList[0]){
             contactInfo = reviewAuditObjectList[0].contactInfo
         }

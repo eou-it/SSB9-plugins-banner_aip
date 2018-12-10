@@ -12,11 +12,11 @@ class ActionItemReviewAuditService extends ServiceBase {
 
     /**
      *
-     * @param pidm, actionItemId
+     * @param userActionItemId
      * @return
      */
-    def fetchReviewAuditByPidmAndActionItemId( Long pidm, Long actionItemId ) {
-        ActionItemReviewAudit.fetchReviewAuditByPidmAndActionItemId( pidm ,actionItemId)
+    def fetchReviewAuditByUserActionItemId( Long userActionItemId ) {
+        ActionItemReviewAudit.fetchReviewAuditByUserActionItemId(userActionItemId)
     }
 
 }
