@@ -3,11 +3,9 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import grails.orm.HibernateCriteriaBuilder
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.hibernate.criterion.Order
-import net.hedtech.banner.general.CommunicationCommonUtility
 
 
 import javax.persistence.*

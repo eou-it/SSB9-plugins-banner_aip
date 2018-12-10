@@ -4,8 +4,6 @@
 
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.exceptions.ApplicationException
-import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.service.ServiceBase
 
 /**

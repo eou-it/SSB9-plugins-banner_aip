@@ -4,7 +4,6 @@
 package net.hedtech.banner.aip
 
 import net.hedtech.banner.service.ServiceBase
-import org.apache.log4j.Logger
 
 
 /**

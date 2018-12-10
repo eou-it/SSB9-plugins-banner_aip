@@ -17,8 +17,6 @@ import org.springframework.web.context.request.RequestContextHolder
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.bdm.services.BDMManager
 import org.json.JSONObject
-import net.hedtech.banner.general.person.PersonUtility
-import java.text.SimpleDateFormat
 
 /**
  * UploadDocumentCompositeService Class for adding, preview and deleting of uploaded files.
