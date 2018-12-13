@@ -37,7 +37,7 @@ class UploadDocumentCompositeService {
      */
     @Transactional
     def addDocument(map) {
-        def user = springSecurityService.getAuthentication()?.user
+
         def success = false
         def message = null
         UploadDocument saveUploadDocument
@@ -133,7 +133,6 @@ class UploadDocumentCompositeService {
      * @param saveUploadDocument
      */
     private addDocumentToBDMServer(map, UploadDocument saveUploadDocument) {
-        def success, message
         String docType = AIPConstants.DEFAULT_DOCTYPE
         String vpdiCode = getVpdiCode()
         try {
@@ -253,7 +252,6 @@ class UploadDocumentCompositeService {
         boolean success
         def message
         try {
-            def user = springSecurityService.getAuthentication()?.user
             UploadDocument uploadDocument = uploadDocumentService.get(documentId)
             if (uploadDocument.fileLocation == AIPConstants.FILE_STORAGE_SYSTEM_BDM) {
                 def documentAttributes = [:]

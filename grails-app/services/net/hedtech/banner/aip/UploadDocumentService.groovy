@@ -46,7 +46,6 @@ class UploadDocumentService extends ServiceBase {
      */
     def fileValidation(fileName, fileContent) {
         def configureddocumentType = uploadDocumentService.uploadDocumentType();
-        def configureddocumentSize = uploadDocumentService.uploadDocumentSize();
         def documentSizeInKB = (fileContent.length / 1024);
         if (getFileExtension(fileName).equals(configureddocumentType.documentType)) {
             throw new ApplicationException(UploadDocumentService, FILE_TYPE_ERROR, 'uploadDocument.file.type.error')
