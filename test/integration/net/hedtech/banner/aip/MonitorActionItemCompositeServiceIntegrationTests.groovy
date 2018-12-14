@@ -16,17 +16,21 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
     def monitorActionItemCompositeService
     def userActionItemReadOnlyCompositeService
     def configUserPreferenceService
-    def pagingAndSortParams
-    def filterData
-    Map paramsMap = [:]
+    def pagingAndSortParams = [sortColumn: "actionItemName", sortDirection: "asc", max: 50, offset: 0];
+    def paramsMap = [:]
     def criteriaMap = [:]
+    def filterData = [params: paramsMap, criteria: criteriaMap];
+    ActionItem drugAndAlcoholPolicyActionItem
+    ActionItem policyHandBookActionItem
 
     @Before
     void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
-        pagingAndSortParams = [sortColumn: "actionItemName", sortDirection: "asc", max: 50, offset: 0]
-        filterData = [params: paramsMap, criteria: criteriaMap]
+        drugAndAlcoholPolicyActionItem = ActionItem.findByName("Drug and Alcohol Policy")
+        assertNotNull drugAndAlcoholPolicyActionItem
+        policyHandBookActionItem = ActionItem.findByName("Policy Handbook")
+        assertNotNull policyHandBookActionItem
     }
 
     @After
@@ -44,13 +48,12 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
     //ActionID + personID test case
     @Test
     void fetchByActionItemIDAndPersonIdExisting() {
-        Long actionId = 3L
+        Long actionId = drugAndAlcoholPolicyActionItem.id
         String personName = null
         String personId = "CSRSTU001"
         def response = monitorActionItemCompositeService.searchMonitorActionItems(actionId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
         assertEquals 1, response.result.size()
-        assertEquals 3, response.result[0].actionItemId
         assertEquals "Drug and Alcohol Policy", response.result[0].actionItemName
         assertEquals "CSRSTU001", response.result[0].spridenId
         assertEquals 1, response.length
@@ -59,7 +62,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Test
     void fetchByActionItemIDAndPersonIdNonExistingPerson() {
-        Long actionId = 3L
+        Long actionId = drugAndAlcoholPolicyActionItem.id
         String personName = null
         String personId = "CSRSTABCD"
         def response = monitorActionItemCompositeService.searchMonitorActionItems(actionId, personName, personId, filterData, pagingAndSortParams)
@@ -80,7 +83,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
     //Action ID + Person Name Combination
     @Test
     void testFetchActionItemsByNameExisting() {
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = "Cliff Starr"
         String personId = null
         def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
@@ -92,7 +95,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Test
     void testFetchActionItemsByNameNonExistingName() {
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = "Osama Bin Ladden"
         String personId = null
         def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
@@ -114,7 +117,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Test
     void testFetchActionItemsByNameExistingPartialName() {
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = "Cliff"
         String personId = null
         def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
@@ -126,7 +129,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
     //Action Item only
     @Test
     void testFetchByActionItemIdOnlyExisting() {
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = null
         String personId = null
         def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
@@ -207,7 +210,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
     //Status,Response,Group, Person Name and Person ID,Action Item Name
     @Test
     void testFilterByStatus() {
-        Long actionItemId = 11L
+        Long actionItemId = policyHandBookActionItem.id
         String personId = null
         String personName = null
         String searchparam = null;
@@ -239,7 +242,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Test
     void testFilterByPersonName() {
-        Long actionItemId = 11L
+        Long actionItemId = policyHandBookActionItem.id
         String personId = null
         String personName = null
         String searchparam = "";
@@ -278,7 +281,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Test
     void testFilterByPersonId() {
-        Long actionItemId = 11L
+        Long actionItemId = policyHandBookActionItem.id
         String personId = null
         String personName = null
         String searchparam = "";
@@ -369,7 +372,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Test
     void testGetActionItem() {
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = "Cliff Starr"
         String personId = null
         def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
@@ -388,7 +391,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
     @Test
     void testUpdateActionItemReview() {
         loginSSB('AIPADM001', '111111')
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = "Cliff Starr"
         String personId = null
         def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
@@ -413,7 +416,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
     @Test
     void testUpdateActionItemReviewInvalidDate() {
         loginSSB('AIPADM001', '111111')
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = "Cliff Starr"
         String personId = null
         def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
@@ -438,7 +441,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
     @Test
     void testUpdateActionItemReviewInvalidUserActionItemId() {
         loginSSB('AIPADM001', '111111')
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = "Cliff Starr"
         String personId = null
         def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)

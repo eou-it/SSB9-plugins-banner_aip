@@ -10,18 +10,24 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+import static org.junit.Assert.assertNotNull
+
 class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase {
     def monitorActionItemReadOnlyService
 
     Map paramsMap = [:]
     def criteriaMap = [:]
-    def pagingAndSortParams = [sortColumn: "actionItemName", sortDirection: "asc", max: 50, offset: 0]
+    def pagingAndSortParamsAsc = [sortColumn: "actionItemName", sortAscending: true, max: 50, offset: 0]
+    def pagingAndSortParamsDesc = [sortColumn: "actionItemName", sortAscending: false, max: 50, offset: 0]
+    ActionItem drugAndAlcoholPolicyActionItem;
     def filterData = [params: paramsMap, criteria: criteriaMap]
 
     @Before
     void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
+        drugAndAlcoholPolicyActionItem = ActionItem.findByName("Drug and Alcohol Policy");
+        assertNotNull drugAndAlcoholPolicyActionItem
     }
 
 
@@ -38,19 +44,18 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
 
     @Test
     void testFetchActionItemsByExactPersonName() {
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = "Hank"
-        def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionItemId, personName, filterData, pagingAndSortParams)
+        def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionItemId, personName, filterData, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 1, result.size()
-        assertEquals 3, result[0].actionItemId
         assertEquals "Drug and Alcohol Policy", result[0].actionItemName
         assertEquals "CSRSTU004", result[0].spridenId
     }
 
     @Test
     void testFetchActionItemsByExactPersonNameCount() {
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = "Hank"
         def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonNameCount(actionItemId, personName)
         assertNotNull result
@@ -60,16 +65,16 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
 
     @Test
     void testFetchActionItemsByBlankName() {
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = ""
-        def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionItemId, personName, filterData, pagingAndSortParams)
+        def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionItemId, personName, filterData, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 13, result.size()
     }
 
     @Test
     void testFetchActionItemsByBlankNameCount() {
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = ""
         def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonNameCount(actionItemId, personName)
         assertNotNull result
@@ -80,7 +85,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
     void testFetchActionItemsByNonExistingActionItemId() {
         Long actionItemId = 999L
         String personName = "Hank"
-        def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionItemId, personName, filterData, pagingAndSortParams)
+        def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionItemId, personName, filterData, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 0, result.size()
     }
@@ -95,16 +100,16 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
 
     @Test
     void testFetchActionItemsByNonExistingPerson() {
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = "QAWSEDRFTGYHUJUKLIOPIPOIPIPOI"
-        def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionItemId, personName, filterData, pagingAndSortParams)
+        def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionItemId, personName, filterData, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 0, result.size()
     }
 
     @Test
     void testFetchActionItemsByNonExistingPersonCount() {
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = "QAWSEDRFTGYHUJUKLIOPIPOIPIPOI"
         def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonNameCount(actionItemId, personName)
         assertNotNull result
@@ -113,11 +118,10 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
 
     @Test
     void testFetchActionItemBySpridenId() {
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String spridenId = "CSRSTU001"
-        def result = monitorActionItemReadOnlyService.fetchByActionItemAndSpridenId(actionItemId, spridenId, filterData, pagingAndSortParams)
+        def result = monitorActionItemReadOnlyService.fetchByActionItemAndSpridenId(actionItemId, spridenId, filterData, pagingAndSortParamsAsc)
         assertEquals 1, result.size()
-        assertEquals 3, result[0].actionItemId
         assertEquals "Drug and Alcohol Policy", result[0].actionItemName
         assertEquals "Cliff Starr", result[0].actionItemPersonName
         assertEquals "CSRSTU001", result[0].spridenId
@@ -125,7 +129,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
 
     @Test
     void testFetchActionItemBySpridenIdCount() {
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String spridenId = "CSRSTU001"
         def result = monitorActionItemReadOnlyService.fetchByActionItemAndSpridenIdCount(actionItemId, spridenId)
         assertEquals 1, result
@@ -133,15 +137,15 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
 
     @Test
     void testFetchActionItemByNonExisitingSpridenId() {
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String spridenId = "CSRABCDEF"
-        def result = monitorActionItemReadOnlyService.fetchByActionItemAndSpridenId(actionItemId, spridenId, filterData, pagingAndSortParams)
+        def result = monitorActionItemReadOnlyService.fetchByActionItemAndSpridenId(actionItemId, spridenId, filterData, pagingAndSortParamsAsc)
         assertEquals 0, result.size()
     }
 
     @Test
     void testFetchActionItemByNonExisitingSpridenIdCount() {
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String spridenId = "CSRABCDEF"
         def result = monitorActionItemReadOnlyService.fetchByActionItemAndSpridenIdCount(actionItemId, spridenId)
         assertEquals 0, result
@@ -149,14 +153,14 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
 
     @Test
     void testFetchByActionItemIdOnlyExisting() {
-        Long actionItemId = 3L
-        def result = monitorActionItemReadOnlyService.fetchByActionItemId(actionItemId, filterData, pagingAndSortParams)
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
+        def result = monitorActionItemReadOnlyService.fetchByActionItemId(actionItemId, filterData, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 13, result.size()
     }
     @Test
     void testFetchByActionItemIdOnlyExistingCount() {
-        Long actionItemId = 3L
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
         def result = monitorActionItemReadOnlyService.fetchByActionItemIdCount(actionItemId)
         assertNotNull result
         assertEquals 13, result
@@ -165,7 +169,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
     @Test
     void testFetchByActionItemIdOnlyNonExisting() {
         Long actionItemId = 3999L
-        def result = monitorActionItemReadOnlyService.fetchByActionItemId(actionItemId, filterData, pagingAndSortParams)
+        def result = monitorActionItemReadOnlyService.fetchByActionItemId(actionItemId, filterData, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 0, result.size()
     }
@@ -181,7 +185,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
     @Test
     void testFetchByPersonIdExisting() {
         String spridenId = "CSRSTU001"
-        def result = monitorActionItemReadOnlyService.fetchByPersonId(spridenId, filterData, pagingAndSortParams)
+        def result = monitorActionItemReadOnlyService.fetchByPersonId(spridenId, filterData, pagingAndSortParamsAsc)
         assertEquals 5, result.size()
 
     }
@@ -196,7 +200,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
     @Test
     void testFetchByPersonIdNonExisting() {
         String spridenId = "CSRQWERTY"
-        def result = monitorActionItemReadOnlyService.fetchByPersonId(spridenId, filterData, pagingAndSortParams)
+        def result = monitorActionItemReadOnlyService.fetchByPersonId(spridenId, filterData, pagingAndSortParamsAsc)
         assertEquals 0, result.size()
 
     }
@@ -212,7 +216,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
     @Test
     void testFetchByPersonNameExact() {
         String personName = "Cliff Starr"
-        def result = monitorActionItemReadOnlyService.fetchByPersonName(personName, filterData, pagingAndSortParams)
+        def result = monitorActionItemReadOnlyService.fetchByPersonName(personName, filterData, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 5, result.size()
 
@@ -232,7 +236,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
     @Test
     void testFetchByPersonNamePartial() {
         String personName = "Cliff"
-        def result = monitorActionItemReadOnlyService.fetchByPersonName(personName, filterData, pagingAndSortParams)
+        def result = monitorActionItemReadOnlyService.fetchByPersonName(personName, filterData, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 6, result.size()
 
@@ -250,7 +254,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
     @Test
     void testFetchByPersonNameNonExisting() {
         String personName = "Osama Bin Ladden"
-        def result = monitorActionItemReadOnlyService.fetchByPersonName(personName, filterData, pagingAndSortParams)
+        def result = monitorActionItemReadOnlyService.fetchByPersonName(personName, filterData, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 0, result.size()
 
@@ -268,7 +272,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
     @Test
     void testFindById() {
         String spridenId = "CSRSTU001"
-        def result = monitorActionItemReadOnlyService.fetchByPersonId(spridenId, filterData, pagingAndSortParams)
+        def result = monitorActionItemReadOnlyService.fetchByPersonId(spridenId, filterData, pagingAndSortParamsAsc)
         assertTrue result.size() > 0
 
         MonitorActionItemReadOnly monitorActionItemReadOnly = monitorActionItemReadOnlyService.findById(result[0].id)
