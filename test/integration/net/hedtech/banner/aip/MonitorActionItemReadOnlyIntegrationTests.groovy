@@ -10,6 +10,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import static org.junit.Assert.*
+import net.hedtech.banner.general.person.PersonUtility
 
 class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
@@ -181,7 +182,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
         def student = PersonUtility.getPerson("CSRSTU001")
         assertNotNull student
 
-        def result = MonitorActionItemReadOnly.fetchByActionItemAndSpridenIdCount(actionItemId, spridenId)
+        def result = MonitorActionItemReadOnly.fetchByActionItemAndSpridenIdCount(actionItemId, student.bannerId)
         assertEquals 1, result
 
     }
@@ -299,7 +300,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
         String personName = null
         def result = MonitorActionItemReadOnly.fetchByPersonName(personName, filterData, pagingAndSortParamsAsc)
         assertNotNull result
-        assertEquals 0, result.size()
+        assertEquals 50, result.size()
 
     }
 
@@ -352,7 +353,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
         String personName = null
         def result = MonitorActionItemReadOnly.fetchByPersonNameCount(personName)
         assertNotNull result
-        assertEquals 0, result
+        assertEquals 143, result
 
     }
 }
