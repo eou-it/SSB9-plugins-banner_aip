@@ -189,9 +189,8 @@ class MonitorActionItemCompositeService extends ServiceBase {
      */
     private def validateDisplayEndDate(requestMap,userActionItem){
         Date displayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate )
-        Date currentDate = actionItemProcessingCommonService.getLocaleBasedCurrentDate()
         if( displayEndDate.compareTo(userActionItem.displayEndDate) != 0){
-            return (displayEndDate.compareTo(userActionItem.displayEndDate) > 0 && currentDate.compareTo( displayEndDate ) > 0 )
+            return (displayEndDate.compareTo(userActionItem.displayEndDate) > 0  )
         }
         return true
     }
