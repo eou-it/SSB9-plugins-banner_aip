@@ -201,6 +201,17 @@ class UploadDocumentCompositeService {
     def getRestrictedFileTypes() {
         def results
         ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.restricted.attachment.type', 'GENERAL_SS')
+
+        def configValue = configProperties.configValue?.toUpperCase()
+        if(!configValue || configValue?.length() == 0) {
+            configProperties.configValue = AIPConstants.DEFAULT_RESTRICTED_FILE_LIST
+        }
+
+        if(configValue?.length()> 0 && configValue?.indexOf("EXE") == -1) {
+            def restrictedFileTypes = configValue.substring(0, configValue.length()-1)
+            configProperties.configValue = restrictedFileTypes.concat(", EXE]")
+        }
+
         results = [restrictedFileTypes: configProperties ? configProperties.configValue : AIPConstants.DEFAULT_RESTRICTED_FILE_LIST]
     }
 
