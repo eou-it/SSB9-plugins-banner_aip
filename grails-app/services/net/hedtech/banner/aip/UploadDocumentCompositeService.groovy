@@ -206,7 +206,9 @@ class UploadDocumentCompositeService {
 
         if(configValue?.length()> 0 && configValue?.indexOf(AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE) == -1) {
             def restrictedFileTypes = configValue.substring(0, configValue.length()-1)
-            configProperties.configValue = restrictedFileTypes.concat(", EXE]")
+            restrictedFileTypes = restrictedFileTypes.concat(",")
+            restrictedFileTypes = restrictedFileTypes.concat(AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE)
+            configProperties.configValue = restrictedFileTypes.concat("]")
         }
 
         if(!configValue || configValue?.length() == 0 || configValue.equals("[]")) {

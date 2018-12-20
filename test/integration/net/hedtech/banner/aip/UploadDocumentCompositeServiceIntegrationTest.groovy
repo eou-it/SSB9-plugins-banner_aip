@@ -187,7 +187,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         setConfigProperties('aip.restricted.attachment.type', '[ZIP]', 'list')
         result = uploadDocumentCompositeService.getRestrictedFileTypes()
         assertNotNull result
-        assert result.restrictedFileTypes == '[ZIP, EXE]'
+        assert result.restrictedFileTypes == '[ZIP,EXE]'
 
         //when config value is null, need to add to the list
         setConfigProperties('aip.restricted.attachment.type', null, 'list')
