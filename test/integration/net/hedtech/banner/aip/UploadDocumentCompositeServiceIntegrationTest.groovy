@@ -178,6 +178,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     @Test
     void testRestrictedFileTypes() {
+
         setConfigProperties('aip.restricted.attachment.type', '[EXE, ZIP]', 'list')
         def result = uploadDocumentCompositeService.getRestrictedFileTypes()
         assertNotNull result
@@ -199,10 +200,15 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         setConfigProperties('aip.restricted.attachment.type', '[]', 'list')
         result = uploadDocumentCompositeService.getRestrictedFileTypes()
         assertNotNull result
-        assert result.restrictedFileTypes == 'EXE'
+        assert result.restrictedFileTypes == '[,EXE]'
 
         //when config does not have any value, need to add to the list
         setConfigProperties('aip.restricted.attachment.type', "", 'list')
+        result = uploadDocumentCompositeService.getRestrictedFileTypes()
+        assertNotNull result
+        assert result.restrictedFileTypes == 'EXE'
+
+        //configuration not done in ConfigProperties
         result = uploadDocumentCompositeService.getRestrictedFileTypes()
         assertNotNull result
         assert result.restrictedFileTypes == 'EXE'

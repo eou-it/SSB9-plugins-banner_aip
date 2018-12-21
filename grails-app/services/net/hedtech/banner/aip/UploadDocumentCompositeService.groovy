@@ -202,20 +202,20 @@ class UploadDocumentCompositeService {
         def results
         ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.restricted.attachment.type', 'GENERAL_SS')
 
-        def configValue = configProperties.configValue?.toUpperCase()
+        def configValue = configProperties?.configValue?.toUpperCase()
 
         if(configValue?.length()> 0 && configValue?.indexOf(AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE) == -1) {
             def restrictedFileTypes = configValue.substring(0, configValue.length()-1)
             restrictedFileTypes = restrictedFileTypes.concat(",")
             restrictedFileTypes = restrictedFileTypes.concat(AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE)
-            configProperties.configValue = restrictedFileTypes.concat("]")
+            configValue = restrictedFileTypes.concat("]")
         }
 
-        if(!configValue || configValue?.length() == 0 || configValue.equals("[]")) {
-            configProperties.configValue = AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE
+        if(!configValue || configValue?.length() == 0) {
+            configValue = AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE
         }
 
-        results = [restrictedFileTypes: configProperties ? configProperties.configValue : AIPConstants.DEFAULT_RESTRICTED_FILE_LIST]
+        results = [restrictedFileTypes: configValue]
     }
 
     /**
