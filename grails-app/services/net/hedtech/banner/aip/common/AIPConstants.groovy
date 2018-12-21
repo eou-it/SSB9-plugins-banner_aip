@@ -16,7 +16,7 @@ class AIPConstants {
     public static final String FILE_STORAGE_SYSTEM_BDM = 'BDM'
     public static final String MAX_SIZE_ERROR = '@@r1:MaxSizeError@@'
     public static final String FILE_TYPE_ERROR = '@@r1:FileTypeError@@'
-    public static final List DEFAULT_RESTRICTED_FILE_LIST = ['exe']
+    public static final String DEFAULT_RESTRICTED_FILE_TYPE = 'EXE'
     public static final String DEFAULT_DOCTYPE = 'AIP'
     public static final String ERROR_MESSAGE_BDM_NOT_INSTALLED = 'uploadDocument.bdm.not.installed'
     public static final String ERROR_MESSAGE_FILE_EMPTY = 'uploadDocument.document.empty.error'

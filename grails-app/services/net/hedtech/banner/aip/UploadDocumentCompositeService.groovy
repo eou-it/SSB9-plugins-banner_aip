@@ -201,7 +201,21 @@ class UploadDocumentCompositeService {
     def getRestrictedFileTypes() {
         def results
         ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.restricted.attachment.type', 'GENERAL_SS')
-        results = [restrictedFileTypes: configProperties ? configProperties.configValue : AIPConstants.DEFAULT_RESTRICTED_FILE_LIST]
+
+        def configValue = configProperties?.configValue?.toUpperCase()
+
+        if(configValue?.length()> 0 && configValue?.indexOf(AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE) == -1) {
+            def restrictedFileTypes = configValue.substring(0, configValue.length()-1)
+            restrictedFileTypes = restrictedFileTypes.concat(",")
+            restrictedFileTypes = restrictedFileTypes.concat(AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE)
+            configValue = restrictedFileTypes.concat("]")
+        }
+
+        if(!configValue || configValue?.length() == 0) {
+            configValue = AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE
+        }
+
+        results = [restrictedFileTypes: configValue]
     }
 
     /**
