@@ -182,36 +182,38 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         setConfigProperties('aip.restricted.attachment.type', '[EXE, ZIP]', 'list')
         def result = uploadDocumentCompositeService.getRestrictedFileTypes()
         assertNotNull result
-        assert result.restrictedFileTypes == '[EXE, ZIP]'
+        assert result.restrictedFileTypes.toString().indexOf("EXE") != -1
+        assert result.restrictedFileTypes.toString().indexOf("ZIP") != -1
 
         //when EXE is not in config, need to add to the list
         setConfigProperties('aip.restricted.attachment.type', '[ZIP]', 'list')
         result = uploadDocumentCompositeService.getRestrictedFileTypes()
         assertNotNull result
-        assert result.restrictedFileTypes == '[ZIP,EXE]'
+        assert result.restrictedFileTypes.toString().indexOf("EXE") != -1
+        assert result.restrictedFileTypes.toString().indexOf("ZIP") != -1
 
         //when config value is null, need to add to the list
         setConfigProperties('aip.restricted.attachment.type', null, 'list')
         result = uploadDocumentCompositeService.getRestrictedFileTypes()
         assertNotNull result
-        assert result.restrictedFileTypes == 'EXE'
+        assert result.restrictedFileTypes.toString().indexOf("EXE") != -1
 
         //when config does not have any value, need to add to the list
         setConfigProperties('aip.restricted.attachment.type', '[]', 'list')
         result = uploadDocumentCompositeService.getRestrictedFileTypes()
         assertNotNull result
-        assert result.restrictedFileTypes == '[,EXE]'
+        assert result.restrictedFileTypes.toString().indexOf("EXE") != -1
 
         //when config does not have any value, need to add to the list
         setConfigProperties('aip.restricted.attachment.type', "", 'list')
         result = uploadDocumentCompositeService.getRestrictedFileTypes()
         assertNotNull result
-        assert result.restrictedFileTypes == 'EXE'
+        assert result.restrictedFileTypes.toString().indexOf("EXE") != -1
 
         //configuration not done in ConfigProperties
         result = uploadDocumentCompositeService.getRestrictedFileTypes()
         assertNotNull result
-        assert result.restrictedFileTypes == 'EXE'
+        assert result.restrictedFileTypes.toString().indexOf("EXE") != -1
     }
 
     @Test
