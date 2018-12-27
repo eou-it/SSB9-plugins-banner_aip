@@ -15,14 +15,14 @@ class ActionItemStatusRuleReadOnlyService extends ServiceBase {
     }
 
 
-    def getActionItemStatusRuleROById( Long actionItemStatusRuleId ) {
-        ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleROById( actionItemStatusRuleId )
+    def getActionItemStatusRuleROById(Long actionItemStatusRuleId) {
+        ActionItemStatusRuleReadOnly.fetchActionItemStatusRuleROById(actionItemStatusRuleId)
     }
 
 
-    def getActionItemStatusRulesROByActionItemId( Long actionItemId ) {
-        def actionItemStatusRulesReadOnly = ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesROByActionItemId( actionItemId )
-        actionItemStatusRulesReadOnly.collect {ActionItemStatusRuleReadOnly it ->
+    def getActionItemStatusRulesROByActionItemId(Long actionItemId) {
+        def actionItemStatusRulesReadOnly = ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesROByActionItemId(actionItemId)
+        actionItemStatusRulesReadOnly.collect { ActionItemStatusRuleReadOnly it ->
             [
                     version               : it.statusRuleVersion,
                     statusRuleId          : it.statusRuleId,
@@ -35,7 +35,10 @@ class ActionItemStatusRuleReadOnlyService extends ServiceBase {
                     statusRuleActivityDate: it.statusRuleActivityDate,
                     statusRuleLabelText   : it.statusRuleLabelText,
                     statusRuleSeqOrder    : it.statusRuleSeqOrder,
-                    statusSystemRequired  : it.statusSystemRequired]
+                    statusSystemRequired  : it.statusSystemRequired,
+                    statusReviewReqInd    : it.statusReviewRequired,
+                    statusAllowedAttachment:it.statusAllowedAttachment
+            ]
         }
     }
 }

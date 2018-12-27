@@ -13,7 +13,6 @@ class BannerAipGrailsPlugin {
         "grails-app/views/error.gsp"
     ]
 
-    // TODO Fill in these fields
     def title = "Ellucian AIP Plugin" // Headline display name of the plugin
     def author = "Your name"
     def authorEmail = ""
@@ -42,23 +41,23 @@ Brief summary/description of the plugin.
 //    def scm = [ url: "http://svn.codehaus.org/grails-plugins/" ]
 
     def doWithWebDescriptor = { xml ->
-        // TODO Implement additions to web.xml (optional), this event occurs before
+        // Implement additions to web.xml (optional), this event occurs before
     }
 
     def doWithSpring = {
-        // TODO Implement runtime spring config (optional)
+        // Implement runtime spring config (optional)
     }
 
     def doWithDynamicMethods = { ctx ->
-        // TODO Implement registering dynamic methods to classes (optional)
+        // Implement registering dynamic methods to classes (optional)
     }
 
     def doWithApplicationContext = { ctx ->
         def pbConfig = grails.util.Holders.getConfig().pageBuilder
         if (pbConfig && pbConfig.locations && pbConfig.locations.page) {
-            ctx.cssUtilService.importInitially(ctx.cssUtilService.loadOverwriteExisting)
-            ctx.pageUtilService.importInitially(ctx.pageUtilService.loadOverwriteExisting)
-            ctx.virtualDomainUtilService.importInitially(ctx.virtualDomainUtilService.loadOverwriteExisting)
+            ctx.cssUtilService.importInitially(ctx.cssUtilService.loadIfNew)
+            ctx.pageUtilService.importInitially(ctx.pageUtilService.loadIfNew)
+            ctx.virtualDomainUtilService.importInitially(ctx.virtualDomainUtilService.loadIfNew)
 
             // Install metadata from configured directories
             ctx.pageUtilService.importAllFromDir(pbConfig.locations.page, ctx.pageUtilService.loadIfNew)
@@ -71,17 +70,17 @@ Brief summary/description of the plugin.
     }
 
     def onChange = { event ->
-        // TODO Implement code that is executed when any artefact that this plugin is
+        // Implement code that is executed when any artefact that this plugin is
         // watching is modified and reloaded. The event contains: event.source,
         // event.application, event.manager, event.ctx, and event.plugin.
     }
 
     def onConfigChange = { event ->
-        // TODO Implement code that is executed when the project configuration changes.
+        // Implement code that is executed when the project configuration changes.
         // The event is the same as for 'onChange'.
     }
 
     def onShutdown = { event ->
-        // TODO Implement code that is executed when the application shuts down (optional)
+        // Implement code that is executed when the application shuts down (optional)
     }
 }

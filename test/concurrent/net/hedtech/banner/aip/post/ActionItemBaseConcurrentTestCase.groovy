@@ -37,10 +37,9 @@ class ActionItemBaseConcurrentTestCase extends Assert {
 
     public static final String TEST_USER = 'BCMADMIN'
 
-    //public static final String TEST_ORACLE_ID = 'BANSECR' // TODO look this up from TEST_USER
-    public static final String TEST_ORACLE_ID = 'BCMADMIN' // TODO look this up from TEST_USER
+    public static final String TEST_ORACLE_ID = 'BCMADMIN'
     public static final String TEST_USER2 = 'AIPADM001'
-    public static final String TEST_ORACLE_ID2 = 'AIPADM001' // TODO look this up from TEST_USER
+    public static final String TEST_ORACLE_ID2 = 'AIPADM001'
 
 
     def actionItemPostMonitor

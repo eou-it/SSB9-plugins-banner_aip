@@ -14,6 +14,13 @@ import javax.persistence.*
                 query = """
            FROM ActionItemBlockedProcessReadOnly a
            WHERE a.id.actionItemId = :actionItemId
+          """),
+        @NamedQuery(name = "ActionItemBlockedProcessReadOnly.fetchByListOfActionItemIds",
+                query = """
+           SELECT a.id.actionItemId, a.processName 
+           FROM ActionItemBlockedProcessReadOnly a
+           WHERE a.id.actionItemId IN (:actionItemIds)
+           GROUP BY a.id.actionItemId, a.processName
           """)
 ])
 
@@ -126,6 +133,19 @@ class ActionItemBlockedProcessReadOnly implements Serializable {
         ActionItemBlockedProcessReadOnly.withSession {session ->
             session.getNamedQuery( 'ActionItemBlockedProcessReadOnly.fetchByActionItemId' )
                     .setLong( 'actionItemId', actionItemId )
+                    .list()
+        }
+    }
+
+    /**
+     *
+     * @param actionItemIds
+     * @return
+     */
+    static def fetchByListOfActionItemIds( List actionItemIds ) {
+        ActionItemBlockedProcessReadOnly.withSession {session ->
+            session.getNamedQuery( 'ActionItemBlockedProcessReadOnly.fetchByListOfActionItemIds' )
+                    .setParameterList('actionItemIds', actionItemIds )
                     .list()
         }
     }

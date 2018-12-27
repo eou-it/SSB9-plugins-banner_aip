@@ -5,6 +5,7 @@ package net.hedtech.banner.aip
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import org.hibernate.annotations.Type
 
 import javax.persistence.*
 
@@ -14,10 +15,6 @@ import javax.persistence.*
                 query = """
            FROM ActionItemStatusRule a
           """),
-        @NamedQuery(name = "ActionItemStatusRule.getActionItemStatusRuleNameByStatusIdAndActionItemId",
-                query = """
-                  FROM ActionItemStatusRule a WHERE a.actionItemId = :actionItemId and a.actionItemStatusId = :statusId
-                 """),
         @NamedQuery(name = "ActionItemStatusRule.fetchActionItemStatusRuleById",
                 query = """
            FROM ActionItemStatusRule a
@@ -83,6 +80,19 @@ class ActionItemStatusRule implements Serializable {
     String resubmitInd
 
     /***
+     * Review Required Indicator
+     */
+    @Type(type = "yes_no")
+    @Column(name = "GCRAISR_REV_REQ_IND")
+    Boolean reviewReqInd
+
+    /***
+     * Allowed Attachments
+     */
+    @Column(name = "GCRAISR_ALLOWED_ATTACHMENT")
+    Integer allowedAttachments
+
+    /***
      * Label for the Action Item Status Rule
      */
     @Column(name = "GCRAISR_LABEL_TEXT")
@@ -114,15 +124,17 @@ class ActionItemStatusRule implements Serializable {
     String dataOrigin
 
     static constraints = {
-        actionItemId( blank: false, nullable: false, maxSize: 19 )
-        seqOrder( blank: false, nullable: false, maxSize: 5 )
-        labelText( blank: false, nullable: false, maxSize: 150 )
-        actionItemStatusId( blank: true, nullable: true, maxSize: 19 )
-        resubmitInd( blank: true, nullable: true, maxSize: 1 )
-        lastModifiedBy( nullable: true, maxSize: 30 )
-        lastModified( nullable: true )
-        dataOrigin( nullable: true, maxSize: 30 )
-        version( nullable: true, maxSize: 30 )
+        actionItemId(blank: false, nullable: false, maxSize: 19)
+        seqOrder(blank: false, nullable: false, maxSize: 5)
+        labelText(blank: false, nullable: false, maxSize: 150)
+        actionItemStatusId(blank: true, nullable: true, maxSize: 19)
+        resubmitInd(blank: true, nullable: true, maxSize: 1)
+        reviewReqInd(blank: true, nullable: true, maxSize: 1)
+        allowedAttachments(blank:true,nullable:true,maxSize:3)
+        lastModifiedBy(nullable: true, maxSize: 30)
+        lastModified(nullable: true)
+        dataOrigin(nullable: true, maxSize: 30)
+        version(nullable: true, maxSize: 30)
     }
 
     /**
@@ -130,8 +142,8 @@ class ActionItemStatusRule implements Serializable {
      * @return
      */
     static def fetchActionItemStatusRules() {
-        ActionItemStatusRule.withSession {session ->
-            List actionItemStatusRules = session.getNamedQuery( "ActionItemStatusRule.fetchActionItemStatusRules" ).list()
+        ActionItemStatusRule.withSession { session ->
+            List actionItemStatusRules = session.getNamedQuery("ActionItemStatusRule.fetchActionItemStatusRules").list()
             return actionItemStatusRules
         }
     }
@@ -141,9 +153,9 @@ class ActionItemStatusRule implements Serializable {
      * @param id
      * @return
      */
-    static fetchActionItemStatusRuleById( Long id ) {
-        ActionItemStatusRule.withSession {session ->
-            ActionItemStatusRule actionItemStatusRule = session.getNamedQuery( "ActionItemStatusRule.fetchActionItemStatusRuleById" ).setLong( 'myId', id )?.list()[0]
+    static fetchActionItemStatusRuleById(Long id) {
+        ActionItemStatusRule.withSession { session ->
+            ActionItemStatusRule actionItemStatusRule = session.getNamedQuery("ActionItemStatusRule.fetchActionItemStatusRuleById").setLong('myId', id)?.list()[0]
             return actionItemStatusRule
         }
     }
@@ -153,9 +165,9 @@ class ActionItemStatusRule implements Serializable {
      * @param id
      * @return
      */
-    static fetchActionItemStatusRulesByActionItemId( long id ) {
-        ActionItemStatusRule.withSession {session ->
-            List<ActionItemStatusRule> actionItemStatusRules = session.getNamedQuery( "ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId" ).setLong( "myId", id ).list()
+    static fetchActionItemStatusRulesByActionItemId(long id) {
+        ActionItemStatusRule.withSession { session ->
+            List<ActionItemStatusRule> actionItemStatusRules = session.getNamedQuery("ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId").setLong("myId", id).list()
             return actionItemStatusRules
         }
     }
@@ -165,9 +177,9 @@ class ActionItemStatusRule implements Serializable {
      * @param actionItemStatusId
      * @return
      */
-    static checkIfPresent( long actionItemStatusId ) {
-        ActionItemStatusRule.withSession {session ->
-            session.getNamedQuery( "ActionItemStatusRule.checkIfPresent" ).setLong( "actionItemStatusId", actionItemStatusId ).uniqueResult() > 0
+    static checkIfPresent(long actionItemStatusId) {
+        ActionItemStatusRule.withSession { session ->
+            session.getNamedQuery("ActionItemStatusRule.checkIfPresent").setLong("actionItemStatusId", actionItemStatusId).uniqueResult() > 0
         }
     }
 

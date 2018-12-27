@@ -16,13 +16,19 @@ import org.junit.Test
 
 import java.text.SimpleDateFormat
 
+
 class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemPostWorkProcessorService
+
     def actionItemPostCompositeService
+
     def actionItemProcessingCommonService
+
     def springSecurityService
+
     def actionItemPostService
+
     def actionItemPostDetailService
 
 
@@ -40,15 +46,8 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
         logout()
     }
 
-    // TODO: try posting to bad pidm
-    // TODO: try posting to date range overlap
-    // TODO: try posting with null actionitemid
-    // TODO: post a set of valid items and verify logged info
-    // TODO: post a set of items, some violating date range rule, and verify logged info
 
-    // TODO: try posting to date range overlap
     @Test
-    // FIXME: not working
     void testPerformGroupSendItem() {
         actionItemPostWorkProcessorService.setAsynchronousBannerAuthenticationSpoofer( new AsynchronousBannerAuthenticationSpoofer() )
         def user = springSecurityService.getAuthentication()?.user
@@ -89,7 +88,7 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
                 0] )[0]
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
         def actionItemGroup = actionItemGroups[0]
-        List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
+        List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect { it.actionItemId }
         def requestMap = [:]
         requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.populationId = populationListView.id
@@ -99,6 +98,7 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
         requestMap.recalculateOnPost = false
         requestMap.displayStartDate = testingDateFormat.format( new Date() )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
+        requestMap.displayDatetimeZone = "06/21/2018 0330 (GMT+5:30) Asia/Kolkata"
         requestMap.scheduledStartDate = new Date() + 1
         requestMap.actionItemIds = actionItemIds
         def actionItemPost = actionItemPostCompositeService.getActionPostInstance( requestMap, springSecurityService.getAuthentication()?.user )

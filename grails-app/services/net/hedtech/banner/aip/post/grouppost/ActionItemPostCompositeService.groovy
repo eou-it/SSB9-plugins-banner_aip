@@ -34,16 +34,23 @@ class ActionItemPostCompositeService {
     final LOGGER = Logger.getLogger( "net.hedtech.banner.aip.post.grouppost.ActionItemPostCompositeService" )
 
     def actionItemPostService
+
     def actionItemProcessingCommonService
+
     def actionItemPostDetailService
+
     def grailsApplication
+
     def transactionManager
+
     def communicationPopulationCompositeService
+
     def asynchronousBannerAuthenticationSpoofer
 
     def schedulerJobService
 
     def sessionFactory
+
     def actionItemPostWorkService
 
     def springSecurityService
@@ -51,6 +58,7 @@ class ActionItemPostCompositeService {
     def actionItemService
 
     def actionItemGroupService
+
     def actionItemJobService
     /**
      * Initiate the posting of a actionItems to a set of prospect recipients
@@ -171,10 +179,14 @@ class ActionItemPostCompositeService {
         Date scheduledStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.scheduledStartDate )
         String scheduledStartTime = requestMap.scheduledStartTime
         String timezoneStringOffset = requestMap.timezoneStringOffset
-        Calendar scheduledStartDateCalendar = null;
+
+        String[] userEnteredValue = splitUserEnteredDateTimeZone( requestMap )
+        Calendar displayDateTimeCalendar = getDisplayDateTimeCalender( userEnteredValue )
+        Calendar scheduledStartDateCalendar = null
         if (!requestMap.postNow && scheduledStartDate && scheduledStartTime) {
-            scheduledStartDateCalendar = actionItemProcessingCommonService.getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset );
+            scheduledStartDateCalendar = actionItemProcessingCommonService.getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset )
         }
+
         new ActionItemPost(
                 populationListId: requestMap.populationId,
                 postingActionItemGroupId: requestMap.postingActionItemGroupId,
@@ -187,8 +199,36 @@ class ActionItemPostCompositeService {
                 postingDeleteIndicator: false,
                 postingCreatorId: user.oracleUserName,
                 postingCurrentState: requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New),
-                )
+                postingDisplayDateTime: displayDateTimeCalendar ? displayDateTimeCalendar.getTime() : null,
+                postingTimeZone: userEnteredValue[2] + " " + userEnteredValue[3]
 
+        )
+
+    }
+
+    /**
+     *
+     * @param requestMap
+     * @return
+     */
+    def splitUserEnteredDateTimeZone( requestMap ) {
+        requestMap.displayDatetimeZone?.split( "\\s+" )
+    }
+
+    /**
+     *
+     * @param userEnteredValue
+     * @return
+     */
+    def getDisplayDateTimeCalender( userEnteredValue ) {
+        Date displayDate = actionItemProcessingCommonService.convertToLocaleBasedDate( userEnteredValue[0] )
+        Calendar displayDateTimeCalendar = Calendar.getInstance()
+        displayDateTimeCalendar.setTime( displayDate )
+        displayDateTimeCalendar.set( java.util.Calendar.HOUR, userEnteredValue[1].substring( 0, 2 ).toInteger() )
+        displayDateTimeCalendar.set( java.util.Calendar.MINUTE, userEnteredValue[1].substring( 2 ).toInteger() )
+        displayDateTimeCalendar.set( java.util.Calendar.SECOND, 0 )
+        displayDateTimeCalendar.set( java.util.Calendar.MILLISECOND, 0 )
+        displayDateTimeCalendar
     }
 
     /**
@@ -202,10 +242,13 @@ class ActionItemPostCompositeService {
         Date scheduledStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.scheduledStartDate )
         String scheduledStartTime = requestMap.scheduledStartTime
         String timezoneStringOffset = requestMap.timezoneStringOffset
-        Calendar scheduledStartDateCalendar = null;
+        String[] userEnteredValue = splitUserEnteredDateTimeZone( requestMap )
+        Calendar displayDateTimeCalendar = getDisplayDateTimeCalender( userEnteredValue )
+        Calendar scheduledStartDateCalendar = null
         if (!requestMap.postNow && scheduledStartDate && scheduledStartTime) {
-            scheduledStartDateCalendar = actionItemProcessingCommonService.getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset );
+            scheduledStartDateCalendar = actionItemProcessingCommonService.getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset )
         }
+
         actionItemPost.populationListId = requestMap.populationId
         actionItemPost.postingActionItemGroupId = requestMap.postingActionItemGroupId
         actionItemPost.postingName = requestMap.postingName
@@ -217,7 +260,10 @@ class ActionItemPostCompositeService {
         actionItemPost.postingDeleteIndicator = false
         actionItemPost.postingCreatorId = user.oracleUserName
         actionItemPost.postingCurrentState = requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New)
+        actionItemPost.postingDisplayDateTime = displayDateTimeCalendar ? displayDateTimeCalendar.getTime() : null
+        actionItemPost.postingTimeZone = userEnteredValue[2] + " " + userEnteredValue[3]
         actionItemPost
+
     }
 
     /**
@@ -296,10 +342,10 @@ class ActionItemPostCompositeService {
 
     private static void assignPopulationCalculation( ActionItemPost groupSend, String bannerUser ) {
         CommunicationPopulationCalculation calculation = CommunicationPopulationCalculation.findLatestByPopulationIdAndCalculatedBy( groupSend
-                                                                                                                                             .getPopulationListId(), bannerUser )
+                .getPopulationListId(), bannerUser )
         if (!calculation || !calculation.status.equals( CommunicationPopulationCalculationStatus.AVAILABLE )) {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostCompositeService.class,
-                                                                         "populationNotCalculatedForUser" )
+                    "populationNotCalculatedForUser" )
         }
         groupSend.populationCalculationId = calculation.id
     }
@@ -431,16 +477,43 @@ class ActionItemPostCompositeService {
      * @return
      */
     def setHomeContext( home ) {
-        Sql sql = new Sql( sessionFactory.getCurrentSession().connection() )
-        try {
-            sql.call( "{call g\$_vpdi_security.g\$_vpdi_set_home_context(${home})}" )
+        def con = sessionFactory.getCurrentSession().connection()
+        if (isMEP( con )) {
+            Sql sql = new Sql( con )
+            try {
+                sql.call( "{call g\$_vpdi_security.g\$_vpdi_set_home_context(${home})}" )
 
+            } catch (e) {
+                log.error( "ERROR: Could not establish mif context. $e" )
+                throw e
+            } finally {
+                sql?.close()
+            }
+        }
+    }
+
+    /**
+     *
+     * @param con
+     * @return
+     */
+
+    private isMEP( con = null ) {
+        def mepEnabled
+        if (!con) {
+            con = new Sql(sessionFactory.getCurrentSession().connection())
+        }
+        Sql sql = new Sql( con )
+        try {
+            sql.call( "{$Sql.VARCHAR = call g\$_vpdi_security.g\$_is_mif_enabled_str()}" ) {mifEnabled -> mepEnabled = mifEnabled.toLowerCase().toBoolean()}
         } catch (e) {
             log.error( "ERROR: Could not establish mif context. $e" )
             throw e
         } finally {
             sql?.close()
+
         }
+        mepEnabled
     }
 
     /**
@@ -449,7 +522,9 @@ class ActionItemPostCompositeService {
      */
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
     private void generatePostItemsFiredImpl( SchedulerJobContext jobContext ) {
-        asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), jobContext.parameters.get( "mepCode" ) )
+        if (isMEP()) {
+            asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), jobContext.parameters.get( "mepCode" ) )
+        }
         markArtifactsAsPosted( jobContext.parameters.get( "groupSendId" ) as Long )
         generatePostItems( jobContext.parameters )
     }
@@ -470,7 +545,9 @@ class ActionItemPostCompositeService {
      */
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
     private void generatePostItemsFailedImpl( SchedulerErrorContext errorContext ) {
-        asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), errorContext.jobContext.parameters.get( "mepCode" ) )
+        if (isMEP()) {
+            asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), errorContext.jobContext.parameters.get( "mepCode" ) )
+        }
         scheduledPostCallbackFailed( errorContext )
     }
 
@@ -482,8 +559,6 @@ class ActionItemPostCompositeService {
             populationVersion = communicationPopulationCompositeService.createPopulationVersion( population )
             population.changesPending = false
             communicationPopulationCompositeService.updatePopulation( population )
-            // Todo: Should we delete population versions no longer in use by any group sends aside from he one we just created
-            // We would need to remove all the associated objects.
         } else {
             populationVersion = CommunicationPopulationVersion.findLatestByPopulationId( groupSend.populationListId )
         }
@@ -524,8 +599,6 @@ class ActionItemPostCompositeService {
         if (!groupSend) {
             throw new ApplicationException( "groupSend", new NotFoundException() )
         }
-        // TODO: this doesn't seem to be using the versioning mechanism properly. Just creates new
-        // TODO: not sure if this will work when we implement recurring
         if (!groupSend.postingCurrentState.isTerminal()) {
             try {
                 boolean shouldUpdateGroupSend = false
@@ -676,7 +749,7 @@ class ActionItemPostCompositeService {
             List<ActionItemPostSelectionDetailReadOnly> list = session.getNamedQuery( 'ActionItemPostSelectionDetailReadOnly.fetchSelectionIds' )
                     .setLong( 'postingId', groupSend.id )
                     .list()
-            list?.each {ActionItemPostSelectionDetailReadOnly it ->
+            list?.each { ActionItemPostSelectionDetailReadOnly it ->
                 session.createSQLQuery( """ INSERT INTO gcraiim (gcraiim_gcbapst_id, gcraiim_pidm, gcraiim_creationdatetime
                                                                    ,gcraiim_current_state, gcraiim_reference_id, gcraiim_user_id, gcraiim_activity_date,
                                                                    gcraiim_started_date) values (${groupSend.id}, ${

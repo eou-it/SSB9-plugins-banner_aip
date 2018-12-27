@@ -78,6 +78,7 @@ class ActionItemPostMonitorIntegrationTests extends BaseIntegrationTestCase {
         requestMap.postingActionItemGroupId = actionItemGroup.id
         requestMap.postNow = true
         requestMap.recalculateOnPost = false
+        requestMap.displayDatetimeZone = "06/21/2018 0330 (GMT+5:30) Asia/Kolkata"
         requestMap.displayStartDate = testingDateFormat.format( new Date() )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date() + 1

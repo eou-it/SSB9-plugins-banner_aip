@@ -27,6 +27,27 @@ class ActionItemPostWorkProcessorService {
 
     /**
      *
+     * @param con
+     * @return
+     */
+    private isMEP( con = null ) {
+        def mepEnabled
+        if (!con)
+            con = new Sql( sessionFactory.getCurrentSession().connection() )
+        Sql sql = new Sql( con )
+        try {
+            sql.call( "{$Sql.VARCHAR = call g\$_vpdi_security.g\$_is_mif_enabled_str()}" ) {mifEnabled -> mepEnabled = mifEnabled.toLowerCase().toBoolean()}
+        } catch (e) {
+            log.error( "ERROR: Could not establish mif context. $e" )
+            throw e
+        } finally {
+
+        }
+        mepEnabled
+    }
+
+    /**
+     *
      * @param home
      * @return
      */
@@ -45,7 +66,10 @@ class ActionItemPostWorkProcessorService {
 
 
     public void performPostItem( ActionItemPostWork actionItemPostWork ) {
-        setHomeContext( actionItemPostWork.mepCode )
+        if (isMEP()) {
+            setHomeContext( actionItemPostWork.mepCode )
+            asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), actionItemPostWork.mepCode )
+        }
         def groupSendItemId = actionItemPostWork.id
         log.debug( "Performing group send item id = " + groupSendItemId )
         boolean locked = lockGroupSendItem( groupSendItemId, ActionItemPostWorkExecutionState.Ready )
@@ -53,13 +77,21 @@ class ActionItemPostWorkProcessorService {
             // Do nothing
             return
         }
-        asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), actionItemPostWork.mepCode )
         actionItemPostWorkService.update( actionItemPerformPostService.postActionItems( actionItemPostWork ) )
     }
 
-
+    /**
+     *
+     * @param groupSendItemId
+     * @param errorCode
+     * @param errorText
+     */
     public void failGroupSendItem( Long groupSendItemId, String errorCode, String errorText ) {
         ActionItemPostWork groupSendItem = (ActionItemPostWork) actionItemPostWorkService.get( groupSendItemId )
+        if (isMEP()) {
+            setHomeContext( groupSendItem.mepCode )
+            asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), groupSendItem.mepCode )
+        }
         def groupSendItemParamMap = [
                 id                   : groupSendItem.id,
                 version              : groupSendItem.version,

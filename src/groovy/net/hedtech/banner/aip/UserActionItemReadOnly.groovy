@@ -189,6 +189,29 @@ class UserActionItemReadOnly implements Serializable {
     Long version
 
     /**
+     * Current response text of the action item
+     */
+    @Column(name = "ACTION_ITEM_RESPONSE_TEXT")
+    String currentResponseText
+
+    /**
+     * Review state name of the action item
+     */
+    @Column(name = "ACTION_ITEM_REVIEW_STATUS_CODE")
+    String reviewStateCode
+
+    /**
+     * Review comment of an action item
+     */
+    @Column(name = "ACTION_ITEM_REVIEW_COMMENT")
+    String reviewComment
+
+    /**
+     * Review contact information of an action item
+     */
+    @Column(name = "ACTION_ITEM_REVIEW_CONTACT")
+    String reviewContact
+    /**
      * Lists user specific action items
      * @param pidm
      * @return

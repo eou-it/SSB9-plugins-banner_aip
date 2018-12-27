@@ -41,5 +41,11 @@ Copyright 2018 Ellucian Company L.P. and its affiliates.
         <mapping class="net.hedtech.banner.aip.block.process.BlockingProcessUrls"/>
         <mapping class="net.hedtech.banner.aip.block.process.BlockingProcess"/>
         <mapping class="net.hedtech.banner.aip.block.process.ActionItemBlockedProcessReadOnly"/>
+        <mapping class="net.hedtech.banner.aip.UploadDocument"/>
+        <mapping class="net.hedtech.banner.aip.UploadDocumentContent"/>
+        <mapping class="net.hedtech.banner.aip.MonitorActionItemReadOnly"/>
+        <mapping class="net.hedtech.banner.aip.ActionItemReviewAudit"/>
+        <mapping class="net.hedtech.banner.aip.AipReviewState"/>
+        <mapping class="net.hedtech.banner.aip.AipDefaultReviewState"/>
     </session-factory>
 </hibernate-configuration>

@@ -3,7 +3,6 @@
  *********************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
-import groovy.sql.Sql
 import net.hedtech.banner.aip.common.LoggerUtility
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTask
@@ -25,7 +24,6 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
 
     def actionItemPostWorkProcessorService
     def actionItemPostWorkService
-    def sessionFactory
 
     /**
      * Used for testing purposes only.  If this is not null when a job is being
@@ -96,23 +94,7 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
         LoggerUtility.info( LOGGER, "Marking completed group send item id = " + groupSendItem.getId() + ", pidm = " + groupSendItem.recipientPidm + "." )
     }
 
-    /**
-     *
-     * @param home
-     * @return
-     */
-    def setHomeContext( home ) {
-        Sql sql = new Sql( sessionFactory.getCurrentSession().connection() )
-        try {
-            sql.call( "{call g\$_vpdi_security.g\$_vpdi_set_home_context(${home})}" )
 
-        } catch (e) {
-            log.error( "ERROR: Could not establish mif context. $e" )
-            throw e
-        } finally {
-            sql?.close()
-        }
-    }
     /**
      * Performs work for the specified job.
      * @return a boolean indicating whether the job could be processed or not.  If true, the service was
@@ -122,7 +104,6 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
     public void process( AsynchronousTask task ) throws ApplicationException {
         ActionItemPostWork actionItemWorkTask = task as ActionItemPostWork
-        setHomeContext( actionItemWorkTask.mepCode )
         LoggerUtility.info( LOGGER, "Processing group send item id = " + actionItemWorkTask.getId() + ", pidm = " + actionItemWorkTask.recipientPidm + "." )
         try {
             if (simulatedFailureException != null) {
@@ -150,7 +131,6 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
     public void markFailed( AsynchronousTask task, String errorCode, Throwable cause ) throws ApplicationException {
         ActionItemPostWork groupSendItem = (ActionItemPostWork) task
-        setHomeContext( groupSendItem.mepCode )
         actionItemPostWorkProcessorService.failGroupSendItem( groupSendItem.getId(), errorCode, StringHelper.stackTraceToString( cause ) )
         LoggerUtility.debug( LOGGER, "GroupSendItemManager.markFailed(task=" + groupSendItem.getId() + ") has marked the task as failed " )
     }

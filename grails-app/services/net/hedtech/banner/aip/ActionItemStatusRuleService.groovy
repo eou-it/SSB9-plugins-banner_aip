@@ -40,18 +40,6 @@ class ActionItemStatusRuleService extends ServiceBase {
 
     /**
      *
-     * @param actionItemStatusRuleId
-     * @return
-     */
-    def getActionItemStatusRuleNameByStatusIdAndActionItemId( Long statusId, Long actionItemId ) {
-        def list = ActionItemStatusRule.getActionItemStatusRuleNameByStatusIdAndActionItemId( statusId, actionItemId )
-        if (list) {
-            return list.get( 0 )
-        }
-    }
-
-    /**
-     *
      * @param actionItemId
      * @return
      */
