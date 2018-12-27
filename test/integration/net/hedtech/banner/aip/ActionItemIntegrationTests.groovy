@@ -127,9 +127,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         actionNew.creatorId = actionItem.creatorId
         actionNew.createDate = actionItem.createDate
         actionNew.dataOrigin = actionItem.dataOrigin
-        //
         assertFalse actionNew.validate()
-        // TODO: verify something
         assertTrue( actionNew.errors.allErrors.codes[0].contains( 'actionItem.title.nullable.error' ) )
     }
 
@@ -148,9 +146,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         actionNew.creatorId = actionItem.creatorId
         actionNew.createDate = actionItem.createDate
         actionNew.dataOrigin = actionItem.dataOrigin
-        //
         assertFalse actionNew.validate()
-        // TODO: verify something
         assertTrue( actionNew.errors.allErrors.codes[0].contains( 'actionItem.status.nullable.error' ) )
     }
 
@@ -168,9 +164,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         actionNew.creatorId = actionItem.creatorId
         actionNew.createDate = actionItem.createDate
         actionNew.dataOrigin = actionItem.dataOrigin
-        //
         assertFalse actionNew.validate()
-        // TODO: verify something
         assertTrue( actionNew.errors.allErrors.codes[0].contains( 'actionItem.folderId.nullable.error' ) )
     }
 
@@ -188,9 +182,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         actionNew.creatorId = actionItem.creatorId
         actionNew.createDate = actionItem.createDate
         actionNew.dataOrigin = actionItem.dataOrigin
-        //
         assertFalse actionNew.validate()
-        // TODO: verify something
         assertTrue( actionNew.errors.allErrors.codes[0].contains( 'actionItem.title.blank.error' ) )
     }
 }

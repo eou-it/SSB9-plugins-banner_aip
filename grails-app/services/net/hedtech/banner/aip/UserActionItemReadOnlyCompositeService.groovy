@@ -19,6 +19,10 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
     def actionItemContentService
     def actionItemReadOnlyService
     def actionItemStatusRuleService
+    def actionItemBlockedProcessReadOnlyService
+    def configUserPreferenceService
+    def aipReviewStateService
+
 
     /**
      * Lists user specific action items
@@ -26,8 +30,14 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
      */
     def listActionItemByPidmWithinDate() {
         def user = springSecurityService.getAuthentication()?.user
+        Locale userLocale = configUserPreferenceService.getUserLocale()
+        if(!userLocale){
+            userLocale = Locale.getDefault()
+        }
         def actionItems = userActionItemReadOnlyService.listActionItemByPidmWithinDate( user.pidm )
+        def actionItemIds = actionItems.collect{it.id}
         actionItems = actionItems.collect {UserActionItemReadOnly it ->
+
             [
                     id                      : it.id,
                     version                 : it.version,
@@ -53,12 +63,26 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
                     title                   : it.title,
                     userId                  : it.userId,
                     userIdTmpl              : it.userIdTmpl,
-                    currentResponse         : it.completedDate ? actionItemStatusRuleService.getActionItemStatusRuleNameByStatusIdAndActionItemId( it.statusId, it.id )?.labelText : null
+                    currentResponse         : it.completedDate ? it.currentResponseText : null,
+                    currentReviewState      : aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode,userLocale.toString()),
+                    currentContact          : it.reviewContact ,
+                    currentComment          : it.reviewComment
             ]
+        }
+        def haltProcesses = []
+        if(actionItemIds){
+            haltProcesses =  actionItemBlockedProcessReadOnlyService.fetchByListOfActionItemIds(actionItemIds)
         }
 
         def userGroupInfo = []
         actionItems.each {item ->
+            def haltProcessNamesList = haltProcesses.findAll{it[0] == item.id}.collect{it[1]}
+            def groupHalted = false
+            if(haltProcessNamesList){
+                item.haltProcesses = haltProcessNamesList
+                item.actionItemHalted = true
+                groupHalted = true
+            }
             def exist = userGroupInfo.findIndexOf {it ->
                 it.id == item.actionItemGroupID
             }
@@ -75,12 +99,16 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
                         folderId   : group.folderId,
                         folderDesc : group.folderDesc,
                         items      : [],
-                        header     : ['title', 'status', 'completedDate', 'description']
+                        header     : ['title', 'status', 'completedDate', 'description'],
+                        groupHalted: groupHalted
                 ]
                 newGroup.items.push( item )
                 userGroupInfo.push( newGroup )
             } else {
                 userGroupInfo[exist].items.push( item )
+                if(item.actionItemHalted){
+                    userGroupInfo[exist].groupHalted = groupHalted
+                }
             }
         }
         [

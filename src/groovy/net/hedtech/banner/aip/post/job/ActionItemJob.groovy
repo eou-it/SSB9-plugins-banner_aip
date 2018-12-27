@@ -24,11 +24,10 @@ import javax.persistence.*
                             WHERE job.status = :status_
                             ORDER BY job.id ASC """
         ),
-        @NamedQuery(name = "ActionItemJob.stopPendingAndDispatchedJobs",
-                query = """UPDATE ActionItemJob aij SET aij.status = :updateExecutionState,
-                                   aij.lastModified = current_date 
+        @NamedQuery(name = "ActionItemJob.findRecordsToStopPendingAndDispatchedJobs",
+                query = """from ActionItemJob aij
                                    WHERE  aij.status IN (:checkExecutionState)
-                                          and aij.referenceId in (select aiw.referenceId from ActionItemPostWork aiw 
+                                          and aij.referenceId in (select aiw.referenceId from ActionItemPostWork aiw
                                           WHERE aiw.actionItemGroupSend.id = :groupSendId and aiw.currentExecutionState = :checkPostWorkExecutionState)"""
         ),
         @NamedQuery(name = "ActionItemJob.deleteJobForAPostingId",
@@ -47,6 +46,7 @@ class ActionItemJob implements AsynchronousTask {
     /**
      * SURROGATE ID: Generated unique numeric identifier for this entity.
      */
+
     @Id
     @Column(name = "GCBAJOB_SURROGATE_ID")
     @SequenceGenerator(name = "GCBAJOB_SEQ_GEN", allocationSize = 1, sequenceName = "GCBAJOB_SURROGATE_ID_SEQUENCE")
@@ -56,19 +56,22 @@ class ActionItemJob implements AsynchronousTask {
     /**
      * SEND REFERENCE ID: The reference id of the group send item that initiated this communication.
      */
+
     @Column(name = "GCBAJOB_AIIM_REFERENCE_ID")
     String referenceId
 
     /**
      * STATUS: The final disposition of the communication send operation. SENT, ERROR.
      */
+
     @Column(name = "GCBAJOB_STATUS", nullable = false)
     @Enumerated(EnumType.STRING)
-    ActionItemJobStatus status = ActionItemJobStatus.PENDING
+    ActionItemJobStatus status
 
     /**
      * VERSION: Optimistic lock token.
      */
+
     @Version
     @Column(name = "GCBAJOB_VERSION")
     Integer version
@@ -76,6 +79,7 @@ class ActionItemJob implements AsynchronousTask {
     /**
      * ACTIVITY DATE: Date that record was created or last updated.
      */
+
     @Column(name = "GCBAJOB_ACTIVITY_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     Date lastModified
@@ -83,12 +87,14 @@ class ActionItemJob implements AsynchronousTask {
     /**
      * USER ID: The user ID of the person who inserted or last updated this record.
      */
+
     @Column(name = "GCBAJOB_USER_ID")
     String lastModifiedBy
 
     /**
      * DATA ORIGIN: Source s dystem that created or updated the data.
      */
+
     @Column(name = "GCBAJOB_DATA_ORIGIN")
     String dataOrigin
 
@@ -103,6 +109,7 @@ class ActionItemJob implements AsynchronousTask {
     /**
      * Error Code: The error code for the error scenario that failed the ActionItem Job
      */
+
     @Column(name = "GCBAJOB_ERROR_CODE")
     @Enumerated(EnumType.STRING)
     ActionItemErrorCode errorCode
@@ -127,7 +134,7 @@ class ActionItemJob implements AsynchronousTask {
      * @return
      */
     static List fetchPending( Integer max = Integer.MAX_VALUE ) {
-        ActionItemJob.withSession {session ->
+        ActionItemJob.withSession { session ->
             session.getNamedQuery( 'ActionItemJob.fetchByStatus' )
                     .setParameter( 'status_', ActionItemJobStatus.PENDING )
                     .setFirstResult( 0 )
@@ -141,7 +148,7 @@ class ActionItemJob implements AsynchronousTask {
      * @return
      */
     static List fetchCompleted() {
-        ActionItemJob.withSession {session ->
+        ActionItemJob.withSession { session ->
             session.getNamedQuery( 'ActionItemJob.fetchByStatus' )
                     .setParameter( 'status_', ActionItemJobStatus.COMPLETED )
                     .setFirstResult( 0 )
@@ -155,27 +162,26 @@ class ActionItemJob implements AsynchronousTask {
      * @param groupSendId
      * @return
      */
-    static def stopPendingAndDispatchedJobs( Long groupSendId ) {
-        ActionItemJob.withSession {session ->
-            session.getNamedQuery( 'ActionItemJob.stopPendingAndDispatchedJobs' )
+    static def findRecordsToStopPendingAndDispatchedJobs( Long groupSendId ) {
+        ActionItemJob.withSession { session ->
+            session.getNamedQuery( 'ActionItemJob.findRecordsToStopPendingAndDispatchedJobs' )
                     .setLong( 'groupSendId', groupSendId )
-                    .setParameter( 'updateExecutionState', ActionItemJobStatus.STOPPED )
                     .setParameter( 'checkPostWorkExecutionState', ActionItemPostWorkExecutionState.Complete )
                     .setParameterList( 'checkExecutionState', [ActionItemJobStatus.PENDING, ActionItemJobStatus.DISPATCHED] )
-                    .executeUpdate()
+                    .list()
         }
     }
 
     /**
-         *
-         * @param groupSendId
-         * @return
-         */
-        static def deleteJobForAPostingId( Long groupSendId ) {
-            ActionItemJob.withSession {session ->
-                session.getNamedQuery( 'ActionItemJob.deleteJobForAPostingId' )
-                        .setLong( 'groupSendId', groupSendId )
-                        .executeUpdate()
-            }
+     *
+     * @param groupSendId
+     * @return
+     */
+    static def deleteJobForAPostingId( Long groupSendId ) {
+        ActionItemJob.withSession { session ->
+            session.getNamedQuery( 'ActionItemJob.deleteJobForAPostingId' )
+                    .setLong( 'groupSendId', groupSendId )
+                    .executeUpdate()
         }
+    }
 }

@@ -70,7 +70,7 @@ def doCheckCopyrightXe(fixIt){
         }
 
         def excludedFileExts = ["rst", "properties", "svg", "scss", "ttf", "woff", "woff2", "eot", "png", "gif", "map",
-                                "jar"]
+                                "jar","docx","jpg","mp3","pdf","pptx","txt","xlsx","zipx"]
         def excludedFiles = "CheckCopyrightXe.groovy|.git|xe-ui-components|ckeditor|d3.min.js"
 
         changes.unique().each {

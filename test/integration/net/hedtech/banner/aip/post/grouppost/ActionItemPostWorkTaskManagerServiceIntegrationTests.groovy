@@ -12,10 +12,14 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+
 class ActionItemPostWorkTaskManagerServiceIntegrationTests extends BaseIntegrationTestCase {
     def actionItemPostWorkTaskManagerService
+
     def actionItemPostService
+
     def actionItemPostWorkService
+
     def springSecurityService
 
 
@@ -103,9 +107,8 @@ class ActionItemPostWorkTaskManagerServiceIntegrationTests extends BaseIntegrati
         actionItemPostWork.actionItemGroupSend = aip
         actionItemPostWork = actionItemPostWorkService.create( actionItemPostWork )
         actionItemPostWorkTaskManagerService.markComplete( actionItemPostWork )
-        /* ActionItemPostWork completedOne = actionItemPostWorkService.get( actionItemPostWork.id )
-         assert completedOne.currentExecutionState == ActionItemPostWorkExecutionState.Complete*/
-        // TODO Need to complete this
+        ActionItemPostWork completedOne = actionItemPostWorkService.get( actionItemPostWork.id )
+        assert completedOne.currentExecutionState == ActionItemPostWorkExecutionState.Ready // Still Ready as actually not implemented to mark complete
     }
 
     //@Test
@@ -181,8 +184,8 @@ class ActionItemPostWorkTaskManagerServiceIntegrationTests extends BaseIntegrati
     private def newActionItemPostWork() {
         def user = springSecurityService.getAuthentication()?.user
         new ActionItemPostWork( referenceId: 'somestringfortestinglswefhihvciewranc',
-                                currentExecutionState: ActionItemPostWorkExecutionState.Ready,
-                                creationDateTime: new Date(), recipientPidm: user.pidm )
+                currentExecutionState: ActionItemPostWorkExecutionState.Ready,
+                creationDateTime: new Date(), recipientPidm: user.pidm )
     }
 
 }
