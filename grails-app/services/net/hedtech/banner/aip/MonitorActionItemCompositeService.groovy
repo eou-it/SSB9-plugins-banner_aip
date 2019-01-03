@@ -43,7 +43,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
           responseId          : userActionItemDetails.responseId,
           currentResponseText : userActionItemDetails.currentResponseText,
           reviewIndicator     : userActionItemDetails.reviewIndicator,
-          contactInfo         : getRecentContact(userActionItemDetails.id),
+          reviewAuditObject   : getRecentReviewAuditEntry(userActionItemDetails.id),
           reviewStateObject   : [code:userActionItemDetails.reviewStateCode,name:aipReviewStateService.fetchReviewStateNameByCodeAndLocale(userActionItemDetails.reviewStateCode, getLocaleSting())],
           attachments         : userActionItemDetails.attachments]
 
@@ -255,13 +255,15 @@ class MonitorActionItemCompositeService extends ServiceBase {
      * Getting recent contact
      * @return Locale string
      * */
-    private def getRecentContact(Long userActionItemId){
-        String contactInfo = ""
+    private def getRecentReviewAuditEntry(Long userActionItemId){
+        def reviewAuditObject = null
         def reviewAuditObjectList = actionItemReviewAuditService.fetchReviewAuditByUserActionItemId(userActionItemId)
         if(reviewAuditObjectList && reviewAuditObjectList[0]){
-            contactInfo = reviewAuditObjectList[0].contactInfo
+            reviewAuditObject = reviewAuditObjectList[0]
         }
-        contactInfo
+        reviewAuditObject
     }
+
+
 
 }
