@@ -30,22 +30,22 @@ class MonitorActionItemCompositeService extends ServiceBase {
     def getActionItem(Long userActionItemId) {
         def userActionItemDetails = monitorActionItemReadOnlyService.findById(userActionItemId)
         def result =
-         [id                  : userActionItemDetails.id,
-          actionItemId        : userActionItemDetails.actionItemId,
-          actionItemName      : userActionItemDetails.actionItemName,
-          actionItemGroupName : userActionItemDetails.actionItemGroupName,
-          spridenId           : userActionItemDetails.spridenId,
-          actionItemPersonName: userActionItemDetails.actionItemPersonName,
-          status              : userActionItemDetails.status,
-          responseDate        : userActionItemDetails.responseDate,
-          displayStartDate    : userActionItemDetails.displayStartDate,
-          displayEndDate      : userActionItemDetails.displayEndDate,
-          responseId          : userActionItemDetails.responseId,
-          currentResponseText : userActionItemDetails.currentResponseText,
-          reviewIndicator     : userActionItemDetails.reviewIndicator,
-          reviewAuditObject   : getRecentReviewAuditEntry(userActionItemDetails.id),
+                [id                  : userActionItemDetails.id,
+                 actionItemId        : userActionItemDetails.actionItemId,
+                 actionItemName      : userActionItemDetails.actionItemName,
+                 actionItemGroupName : userActionItemDetails.actionItemGroupName,
+                 spridenId           : userActionItemDetails.spridenId,
+                 actionItemPersonName: userActionItemDetails.actionItemPersonName,
+                 status              : userActionItemDetails.status,
+                 responseDate        : userActionItemDetails.responseDate,
+                 displayStartDate    : userActionItemDetails.displayStartDate,
+                 displayEndDate      : userActionItemDetails.displayEndDate,
+                 responseId          : userActionItemDetails.responseId,
+                 currentResponseText : userActionItemDetails.currentResponseText,
+                 reviewIndicator     : userActionItemDetails.reviewIndicator,
+                 reviewAuditObject   : getRecentReviewAuditEntry(userActionItemDetails.id),
           reviewStateObject   : [code:userActionItemDetails.reviewStateCode,name:aipReviewStateService.fetchReviewStateNameByCodeAndLocale(userActionItemDetails.reviewStateCode, getLocaleSting())],
-          attachments         : userActionItemDetails.attachments]
+                 attachments         : userActionItemDetails.attachments]
 
         return result
     }
@@ -114,7 +114,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
         }
 
         def resultMap = [result: filterResults(result, filterData.params.searchString),
-                         length: count];
+                         length: filterData.params.searchString ? filterResults(result, filterData.params.searchString).size() : count];
 
         return resultMap
     }
@@ -218,23 +218,23 @@ class MonitorActionItemCompositeService extends ServiceBase {
 
 
     /**
-    *Filters the list of results based on the search string
-    * @param result List of result
-    * @param searchParam search string to be searched.
-    * @return filtered list
-    * */
+     *Filters the list of results based on the search string
+     * @param result List of result
+     * @param searchParam search string to be searched.
+     * @return filtered list
+     * */
     private def filterResults(def result, def searchParam) {
         def filteredResult
         String regexPattern
         regexPattern = searchParam ? WILDCARD + searchParam.toString().toUpperCase() + WILDCARD : WILDCARD + WILDCARD;
         filteredResult = result.findAll { it ->
-                    it.actionItemName.toString().toUpperCase().matches(regexPattern) ||
+            it.actionItemName.toString().toUpperCase().matches(regexPattern) ||
                     it.status.toString().toUpperCase().matches(regexPattern) ||
-                    it.currentResponseText?.toString().toUpperCase().matches(regexPattern) ||
+                    (it.currentResponseText ? it.currentResponseText?.toString() : "").toUpperCase().matches(regexPattern) ||
                     it.actionItemGroupName.toString().toUpperCase().matches(regexPattern) ||
                     it.actionItemPersonName.toString().toUpperCase().matches(regexPattern) ||
                     it.spridenId.toString().toUpperCase().matches(regexPattern) ||
-                    it.reviewStateCode?.toString().toUpperCase().matches(regexPattern)
+                    (it.reviewStateCode ? it.reviewStateCode : "").toString().toUpperCase().matches(regexPattern)
         }
         filteredResult
     }
