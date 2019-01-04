@@ -206,6 +206,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
         def user = springSecurityService.getAuthentication()?.user
         ActionItemReviewAudit actionItemReviewAudit = new ActionItemReviewAudit()
         actionItemReviewAudit.userActionItemId = userActionItem.id
+        actionItemReviewAudit.responseId = requestMap.responseId
         actionItemReviewAudit.reviewerPidm = user.pidm
         actionItemReviewAudit.reviewDate = new Date()
         actionItemReviewAudit.reviewStateCode = requestMap.reviewStateCode

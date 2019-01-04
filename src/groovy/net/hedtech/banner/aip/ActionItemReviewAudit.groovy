@@ -40,6 +40,11 @@ class ActionItemReviewAudit implements Serializable {
     @Column(name = "GCBRAUD_GCRAACT_ID")
     Long userActionItemId
 
+    /**
+     * ResponseID of action item
+     */
+    @Column(name = "GCBRAUD_GCRAISR_ID")
+    Long responseId
 
     /**
      * Reviewer Pidm
@@ -69,7 +74,7 @@ class ActionItemReviewAudit implements Serializable {
     /**
      * review comments
      */
-    @Column(name = "GCBRAUD_REV_COMMENTS")
+    @Column(name = "GCBRAUD_REVIEW_COMMENTS")
     String reviewComments
 
     /**
