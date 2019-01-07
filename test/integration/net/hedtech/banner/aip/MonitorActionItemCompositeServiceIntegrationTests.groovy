@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -228,16 +228,16 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         filterData = [params: paramsMap, criteria: criteriaMap]
         response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
-        assertEquals response.result.size(), 3
-        assertEquals response.length, 5
+        assertEquals 3,response.result.size()
+        assertEquals 3,response.length
 
         searchparam = "completed"
         paramsMap = [searchString: searchparam]
         filterData = [params: paramsMap, criteria: criteriaMap]
         response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
-        assertEquals response.result.size(), 2
-        assertEquals response.length, 5
+        assertEquals 2,response.result.size()
+        assertEquals 2,response.length
     }
 
     @Test
@@ -259,8 +259,8 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         filterData = [params: paramsMap, criteria: criteriaMap]
         response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
-        assertEquals response.result.size(), 1
-        assertEquals 5, response.length
+        assertEquals 1,response.result.size()
+        assertEquals 1, response.length
 
         searchparam = "a"//for names containing a
         paramsMap = [searchString: searchparam]
@@ -299,7 +299,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
         assertEquals 1, response.result.size()
-        assertEquals 5, response.length
+        assertEquals 1, response.length
 
         searchparam = "CSRSTU01"
         paramsMap = [searchString: searchparam]
@@ -307,7 +307,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
         assertEquals 3, response.result.size()
-        assertEquals 5, response.length
+        assertEquals 3, response.length
     }
 
     @Test
@@ -329,7 +329,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
         assertEquals 1, response.result.size()
-        assertEquals 5, response.length
+        assertEquals 1, response.length
 
         searchparam = "Information"
         paramsMap = [searchString: searchparam]
@@ -337,7 +337,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
         assertEquals 1, response.result.size()
-        assertEquals 5, response.length
+        assertEquals 1, response.length
     }
 
     @Test
@@ -359,7 +359,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
         assertEquals 3, response.result.size()
-        assertEquals 5, response.length
+        assertEquals 3, response.length
 
         searchparam = "Students"
         paramsMap = [searchString: searchparam]
@@ -367,7 +367,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
         assertEquals 1, response.result.size()
-        assertEquals 5, response.length
+        assertEquals 1, response.length
     }
 
     @Test
