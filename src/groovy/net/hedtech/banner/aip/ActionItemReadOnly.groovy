@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -171,6 +171,12 @@ class ActionItemReadOnly implements Serializable {
     @Column(name = "ACTION_ITEM_PB_TEMPLATE_NAME")
     String actionItemTemplateName
 
+    /**
+     * Name of the action item Page builder template
+     */
+    @Column(name = "ACTION_ITEM_PB_TEMPLATE_DESC")
+    String actionItemTemplateDesc
+
 
     @Column(name = "ACTION_ITEM_PAGE_NAME")
     String actionItemPageName
@@ -198,10 +204,10 @@ class ActionItemReadOnly implements Serializable {
      * @param myId
      * @return
      */
-    static def fetchActionItemROById( Long myId ) {
-        ActionItemReadOnly.withSession {session ->
-            session.getNamedQuery( 'ActionItemReadOnly.fetchActionItemROById' )
-                    .setLong( 'myId', myId )
+    static def fetchActionItemROById(Long myId) {
+        ActionItemReadOnly.withSession { session ->
+            session.getNamedQuery('ActionItemReadOnly.fetchActionItemROById')
+                    .setLong('myId', myId)
                     .list()[0]
         }
     }
@@ -211,8 +217,8 @@ class ActionItemReadOnly implements Serializable {
      * @return
      */
     static def fetchActionItemRO() {
-        ActionItemReadOnly.withSession {session ->
-            session.getNamedQuery( 'ActionItemReadOnly.fetchActionItemRO' ).list()
+        ActionItemReadOnly.withSession { session ->
+            session.getNamedQuery('ActionItemReadOnly.fetchActionItemRO').list()
         }
     }
 
@@ -220,10 +226,10 @@ class ActionItemReadOnly implements Serializable {
      *
      * @return
      */
-    static def fetchActionItemROCount( params ) {
-        ActionItemReadOnly.withSession {session ->
-            session.getNamedQuery( 'ActionItemReadOnly.fetchActionItemROCount' )
-                    .setString( 'actionItemName', CommunicationCommonUtility.getScrubbedInput( params?.name ) )
+    static def fetchActionItemROCount(params) {
+        ActionItemReadOnly.withSession { session ->
+            session.getNamedQuery('ActionItemReadOnly.fetchActionItemROCount')
+                    .setString('actionItemName', CommunicationCommonUtility.getScrubbedInput(params?.name))
                     .uniqueResult()
         }
     }
@@ -234,13 +240,13 @@ class ActionItemReadOnly implements Serializable {
      * @param pagingAndSortParams
      * @return
      */
-    static fetchWithPagingAndSortParams( filterData, pagingAndSortParams ) {
+    static fetchWithPagingAndSortParams(filterData, pagingAndSortParams) {
         def queryCriteria = ActionItemReadOnly.createCriteria()
-        queryCriteria.list( max: pagingAndSortParams.max, offset: pagingAndSortParams.offset ) {
-            ilike( "actionItemName", CommunicationCommonUtility.getScrubbedInput( filterData?.name ) )
-            order( (pagingAndSortParams.sortAscending ? Order.asc( pagingAndSortParams?.sortColumn ) : Order.desc( pagingAndSortParams?.sortColumn )).ignoreCase() )
-            if (!pagingAndSortParams?.sortColumn.equals( "actionItemName" )) {
-                order( Order.asc( 'actionItemName' ).ignoreCase() )
+        queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
+            ilike("actionItemName", CommunicationCommonUtility.getScrubbedInput(filterData?.name))
+            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+            if (!pagingAndSortParams?.sortColumn.equals("actionItemName")) {
+                order(Order.asc('actionItemName').ignoreCase())
             }
         }
     }
