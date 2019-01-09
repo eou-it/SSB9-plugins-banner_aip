@@ -481,6 +481,6 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         def list = output.result
         assert output.length > 0
         assert list.size() > 0
-        assert list[0].reviewState == "Review needed"
+        assert list[0].reviewStateCode == "Review needed"
     }
 }
