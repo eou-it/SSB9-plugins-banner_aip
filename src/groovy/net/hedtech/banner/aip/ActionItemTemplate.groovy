@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -10,11 +10,11 @@ import javax.persistence.*
 
 @NamedQueries(value = [
         @NamedQuery(name = "ActionItemTemplate.fetchActionItemTemplates",
-            query = """
+                query = """
             FROM ActionItemTemplate a
             """),
         @NamedQuery(name = "ActionItemTemplate.fetchActionItemTemplateById",
-        query = """
+                query = """
         FROM ActionItemTemplate a
         WHERE a.id = :myId
         """)
@@ -24,10 +24,10 @@ import javax.persistence.*
 @Table(name = "GCBPBTR")
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
-class ActionItemTemplate implements Serializable{
+class ActionItemTemplate implements Serializable {
 
     /**
-     * Surrogate ID for GVBPBTR
+     * Surrogate ID for GCBPBTR
      */
 
     @Id
@@ -36,12 +36,17 @@ class ActionItemTemplate implements Serializable{
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "GCBPBTR_SEQ_GEN")
     Long id
 
-
     /**
      * Name of the action item template
      */
     @Column(name = "GCBPBTR_TEMPLATE_NAME")
     String title
+
+    /**
+     * Description of the action item template
+     */
+    @Column(name = "GCBPBTR_DESCRIPTION")
+    String description
 
     /**
      *
@@ -110,7 +115,7 @@ class ActionItemTemplate implements Serializable{
      * @return
      */
     static def fetchActionItemTemplates() {
-        ActionItemTemplate.withSession {session ->
+        ActionItemTemplate.withSession { session ->
             List actionItemTemplates = session.getNamedQuery('ActionItemTemplate.fetchActionItemTemplates').list()
             return actionItemTemplates
         }
