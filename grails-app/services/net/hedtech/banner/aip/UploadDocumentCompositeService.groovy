@@ -52,6 +52,12 @@ class UploadDocumentCompositeService {
         )
         try {
             def bdmInstalled = BdmUtility.isBDMInstalled()
+            String fileName = map.documentName
+            if(fileName.length() > 60){
+                LOGGER.error('File name is too long.')
+                message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_FILENAME_TOO_LONG)
+                throw new ApplicationException(UploadDocumentCompositeService, new BusinessLogicValidationException(message, []))
+            }
             if (!bdmInstalled && fileStorageLocation.documentStorageLocation == AIPConstants.FILE_STORAGE_SYSTEM_BDM ) {
                 LOGGER.error('BDM is not installed.')
                 message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_BDM_NOT_INSTALLED)
