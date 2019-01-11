@@ -52,7 +52,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = "Hank"
 
-        def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItemId, personName, filterData, pagingAndSortParamsAsc)
+        def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItemId, personName, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 1, result.size()
         assertEquals "Drug and Alcohol Policy", result[0].actionItemName
@@ -65,7 +65,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = "Hank"
 
-        def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItemId, personName, filterData, pagingAndSortParamsDesc)
+        def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItemId, personName, pagingAndSortParamsDesc)
         assertNotNull result
         assertEquals 1, result.size()
         assertEquals "Drug and Alcohol Policy", result[0].actionItemName
@@ -89,7 +89,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
     void testFetchActionItemsByBlankName() {
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = ""
-        def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItemId, personName, filterData, pagingAndSortParamsAsc)
+        def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItemId, personName, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 13, result.size()
     }
@@ -98,7 +98,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
     void testFetchActionItemsByNullName() {
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = null;
-        def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItemId, personName, filterData, pagingAndSortParamsAsc)
+        def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItemId, personName, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 13, result.size()
     }
@@ -131,7 +131,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
     void testFetchActionItemsByNonExistingActionItemId() {
         Long actionItemId = 999L
         String personName = "Hank"
-        def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItemId, personName, filterData, pagingAndSortParamsAsc)
+        def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItemId, personName, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 0, result.size()
     }
@@ -148,7 +148,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
     void testFetchActionItemsByNonExistingPerson() {
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = "QAWSEDRFTGYHUJUKLIOPIPOIPIPOI"
-        def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItemId, personName, filterData, pagingAndSortParamsAsc)
+        def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItemId, personName, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 0, result.size()
     }
@@ -168,7 +168,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
         def student = PersonUtility.getPerson("CSRSTU001")
         assertNotNull student
 
-        def result = MonitorActionItemReadOnly.fetchByActionItemAndSpridenId(actionItemId, student.bannerId, filterData, pagingAndSortParamsAsc)
+        def result = MonitorActionItemReadOnly.fetchByActionItemAndSpridenId(actionItemId, student.bannerId, pagingAndSortParamsAsc)
         assertEquals 1, result.size()
         assertEquals "Drug and Alcohol Policy", result[0].actionItemName
         assertEquals "Cliff Starr", result[0].actionItemPersonName
@@ -191,7 +191,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
     void testFetchActionItemByNonExisitingSpridenId() {
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String spridenId = "CSRABCDEF"
-        def result = MonitorActionItemReadOnly.fetchByActionItemAndSpridenId(actionItemId, spridenId, filterData, pagingAndSortParamsAsc)
+        def result = MonitorActionItemReadOnly.fetchByActionItemAndSpridenId(actionItemId, spridenId, pagingAndSortParamsAsc)
         assertEquals 0, result.size()
     }
 
@@ -214,7 +214,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
     @Test
     void testFetchByActionItemIdOnlyExisting() {
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
-        def result = MonitorActionItemReadOnly.fetchByActionItemId(actionItemId, filterData, pagingAndSortParamsAsc)
+        def result = MonitorActionItemReadOnly.fetchByActionItemId(actionItemId, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 13, result.size()
     }
@@ -231,7 +231,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
     @Test
     void testFetchByActionItemIdOnlyNonExisting() {
         Long actionItemId = 3999L
-        def result = MonitorActionItemReadOnly.fetchByActionItemId(actionItemId, filterData, pagingAndSortParamsAsc)
+        def result = MonitorActionItemReadOnly.fetchByActionItemId(actionItemId, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 0, result.size()
     }
@@ -247,7 +247,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
     void testFetchByPersonIdExisting() {
         def student = PersonUtility.getPerson("CSRSTU001")
         assertNotNull student
-        def result = MonitorActionItemReadOnly.fetchByPersonId(student.bannerId, filterData, pagingAndSortParamsAsc)
+        def result = MonitorActionItemReadOnly.fetchByPersonId(student.bannerId, pagingAndSortParamsAsc)
         assertEquals 5, result.size()
 
     }
@@ -265,7 +265,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
     @Test
     void testFetchByPersonIdNonExisting() {
         String spridenId = "CSRQWERTY"
-        def result = MonitorActionItemReadOnly.fetchByPersonId(spridenId, filterData, pagingAndSortParamsAsc)
+        def result = MonitorActionItemReadOnly.fetchByPersonId(spridenId, pagingAndSortParamsAsc)
         assertEquals 0, result.size()
 
     }
@@ -289,7 +289,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
     @Test
     void testFetchByPersonNameExact() {
         String personName = "Cliff Starr"
-        def result = MonitorActionItemReadOnly.fetchByPersonName(personName, filterData, pagingAndSortParamsAsc)
+        def result = MonitorActionItemReadOnly.fetchByPersonName(personName, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 5, result.size()
 
@@ -298,7 +298,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
     @Test
     void testFetchByPersonNull() {
         String personName = null
-        def result = MonitorActionItemReadOnly.fetchByPersonName(personName, filterData, pagingAndSortParamsAsc)
+        def result = MonitorActionItemReadOnly.fetchByPersonName(personName, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 50, result.size()
 
@@ -316,7 +316,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
     @Test
     void testFetchByPersonNamePartial() {
         String personName = "Cliff"
-        def result = MonitorActionItemReadOnly.fetchByPersonName(personName, filterData, pagingAndSortParamsAsc)
+        def result = MonitorActionItemReadOnly.fetchByPersonName(personName, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 6, result.size()
 
@@ -334,7 +334,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
     @Test
     void testFetchByPersonNameNonExisting() {
         String personName = "Osama Bin Ladden"
-        def result = MonitorActionItemReadOnly.fetchByPersonName(personName, filterData, pagingAndSortParamsAsc)
+        def result = MonitorActionItemReadOnly.fetchByPersonName(personName, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 0, result.size()
 

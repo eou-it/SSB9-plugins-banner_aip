@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -8,7 +8,13 @@ import groovy.transform.ToString
 import org.hibernate.annotations.Type
 import org.hibernate.criterion.Order
 
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.NamedQueries
+import javax.persistence.NamedQuery
+import javax.persistence.Table
+
 
 @NamedQueries(value = [
 
@@ -49,7 +55,6 @@ import javax.persistence.*
 class MonitorActionItemReadOnly implements Serializable {
 
     /**
-     *
      *  ID for GCRAACT
      */
     @Id
@@ -158,7 +163,7 @@ class MonitorActionItemReadOnly implements Serializable {
      * @return List < MonitorActionItemReadOnly >  List of Action items
      */
     static def fetchByActionItemIdAndPersonName(Long actionItem, String personName,
-                                                def filterData, def pagingAndSortParams) {
+                                                 def pagingAndSortParams) {
         String nameSearchParameter = personName ? personName : ""
         nameSearchParameter = "%" + nameSearchParameter.toUpperCase() + "%"
 
@@ -195,8 +200,7 @@ class MonitorActionItemReadOnly implements Serializable {
      * @param spridenId spriden ID of the person
      * @return List of Action items
      */
-    static def fetchByActionItemAndSpridenId(Long actionItem, String spridenId,
-                                             def filterData, def pagingAndSortParams) {
+    static def fetchByActionItemAndSpridenId(Long actionItem, String spridenId, def pagingAndSortParams) {
 
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
@@ -223,7 +227,7 @@ class MonitorActionItemReadOnly implements Serializable {
      * @param actionItem action item ID
      * @return List < MonitorActionItemReadOnly >  List of Action items
      */
-    static def fetchByActionItemId(Long actionItem, def filterData, def pagingAndSortParams) {
+    static def fetchByActionItemId(Long actionItem, def pagingAndSortParams) {
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             eq("actionItemId", actionItem)
@@ -249,7 +253,7 @@ class MonitorActionItemReadOnly implements Serializable {
      * @param spridenId spriden ID of the person
      * @return List < MonitorActionItemReadOnly >  List of Action items
      */
-    static def fetchByPersonId(String spridenId, def filterData, def pagingAndSortParams) {
+    static def fetchByPersonId(String spridenId, def pagingAndSortParams) {
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             eq("spridenId", spridenId, [ignoreCase: true])
@@ -279,7 +283,7 @@ class MonitorActionItemReadOnly implements Serializable {
      * @param personName Name of the person
      * @return List < MonitorActionItemReadOnly >  List of Action items
      */
-    static def fetchByPersonName(String personName, def filterData, def pagingAndSortParams) {
+    static def fetchByPersonName(String personName,  def pagingAndSortParams) {
         String personNameParam = personName ? personName : ""
         personNameParam = "%" + personNameParam + "%"
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
@@ -304,6 +308,4 @@ class MonitorActionItemReadOnly implements Serializable {
                     .uniqueResult()
         }
     }
-
-
 }
