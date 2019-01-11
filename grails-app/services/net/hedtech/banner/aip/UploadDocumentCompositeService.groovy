@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -62,14 +62,15 @@ class UploadDocumentCompositeService {
                 message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_FILE_EMPTY)
                 throw new ApplicationException(UploadDocumentCompositeService, new BusinessLogicValidationException(message, []))
             }
-            saveUploadDocument = uploadDocumentService.create(ud)
             switch (ud.fileLocation) {
                 case AIPConstants.FILE_STORAGE_SYSTEM_AIP:
+                    saveUploadDocument = uploadDocumentService.create(ud)
                     uploadDocumentContent(saveUploadDocument.id, map.file)
                     success = true
                     message = MessageHelper.message(AIPConstants.MESSAGE_SAVE_SUCCESS)
                     break
                 case AIPConstants.FILE_STORAGE_SYSTEM_BDM:
+                    saveUploadDocument = uploadDocumentService.create(ud)
                     addDocumentToBDMServer(map, saveUploadDocument)
                     success = true
                     message = MessageHelper.message(AIPConstants.MESSAGE_SAVE_SUCCESS)
