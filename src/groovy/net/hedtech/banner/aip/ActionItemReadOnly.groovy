@@ -172,7 +172,7 @@ class ActionItemReadOnly implements Serializable {
     String actionItemTemplateName
 
     /**
-     * Name of the action item Page builder template
+     * Description of the action item Page builder template
      */
     @Column(name = "ACTION_ITEM_PB_TEMPLATE_DESC")
     String actionItemTemplateDesc
