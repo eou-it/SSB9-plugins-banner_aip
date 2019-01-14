@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 package net.hedtech.banner.aip.post.job
 
@@ -9,7 +9,22 @@ import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.aip.post.grouppost.ActionItemPostWorkExecutionState
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTask
 
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.Lob
+import javax.persistence.NamedQueries
+import javax.persistence.NamedQuery
+import javax.persistence.SequenceGenerator
+import javax.persistence.Table
+import javax.persistence.Temporal
+import javax.persistence.TemporalType
+import javax.persistence.Version
+
 
 /**
  * ActionItem Log. Record of individual actionItem group final status. entity.

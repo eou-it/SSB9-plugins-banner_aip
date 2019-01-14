@@ -8,7 +8,14 @@ import groovy.transform.ToString
 import net.hedtech.banner.general.CommunicationCommonUtility
 import org.hibernate.criterion.Order
 
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.NamedQueries
+import javax.persistence.NamedQuery
+import javax.persistence.Table
+import javax.persistence.Version
+
 
 
 @NamedQueries(value = [
