@@ -574,7 +574,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.referenceId = UUID.randomUUID().toString()
         requestMap.postingActionItemGroupId = actionItemGroup.id
         requestMap.postNow = true
-        requestMap.displayDatetimeZone=correspondingServerDetails;
         requestMap.recalculateOnPost = false
         requestMap.displayStartDate = testingDateFormat.format( new Date() )
         requestMap.displayEndDate = testingDateFormat.format( new Date() - 1 )
