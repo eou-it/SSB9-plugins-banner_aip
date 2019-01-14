@@ -179,9 +179,7 @@ class ActionItemPostCompositeService {
         Date scheduledStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.scheduledStartDate )
         String scheduledStartTime = requestMap.scheduledStartTime
         String timezoneStringOffset = requestMap.timezoneStringOffset
-
-        String[] userEnteredValue = splitUserEnteredDateTimeZone( requestMap )
-        Calendar displayDateTimeCalendar = getDisplayDateTimeCalender( userEnteredValue )
+        Calendar displayDateTimeCalendar = getDisplayDateTimeCalender( requestMap.displayDatetimeZone )
         Calendar scheduledStartDateCalendar = null
         if (!requestMap.postNow && scheduledStartDate && scheduledStartTime) {
             scheduledStartDateCalendar = actionItemProcessingCommonService.getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset )
@@ -200,19 +198,10 @@ class ActionItemPostCompositeService {
                 postingCreatorId: user.oracleUserName,
                 postingCurrentState: requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New),
                 postingDisplayDateTime: displayDateTimeCalendar ? displayDateTimeCalendar.getTime() : null,
-                postingTimeZone: userEnteredValue[2] + " " + userEnteredValue[3]
+                postingTimeZone: requestMap.displayDatetimeZone.timeZoneVal
 
         )
 
-    }
-
-    /**
-     *
-     * @param requestMap
-     * @return
-     */
-    def splitUserEnteredDateTimeZone( requestMap ) {
-        requestMap.displayDatetimeZone?.split( "\\s+" )
     }
 
     /**
@@ -221,11 +210,11 @@ class ActionItemPostCompositeService {
      * @return
      */
     def getDisplayDateTimeCalender( userEnteredValue ) {
-        Date displayDate = actionItemProcessingCommonService.convertToLocaleBasedDate( userEnteredValue[0] )
+        Date displayDate = actionItemProcessingCommonService.convertToLocaleBasedDate( userEnteredValue.dateVal )
         Calendar displayDateTimeCalendar = Calendar.getInstance()
         displayDateTimeCalendar.setTime( displayDate )
-        displayDateTimeCalendar.set( java.util.Calendar.HOUR, userEnteredValue[1].substring( 0, 2 ).toInteger() )
-        displayDateTimeCalendar.set( java.util.Calendar.MINUTE, userEnteredValue[1].substring( 2 ).toInteger() )
+        displayDateTimeCalendar.set( java.util.Calendar.HOUR, userEnteredValue.timeVal.substring( 0, 2 ).toInteger() )
+        displayDateTimeCalendar.set( java.util.Calendar.MINUTE, userEnteredValue.timeVal.substring( 2 ).toInteger() )
         displayDateTimeCalendar.set( java.util.Calendar.SECOND, 0 )
         displayDateTimeCalendar.set( java.util.Calendar.MILLISECOND, 0 )
         displayDateTimeCalendar
@@ -242,8 +231,7 @@ class ActionItemPostCompositeService {
         Date scheduledStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.scheduledStartDate )
         String scheduledStartTime = requestMap.scheduledStartTime
         String timezoneStringOffset = requestMap.timezoneStringOffset
-        String[] userEnteredValue = splitUserEnteredDateTimeZone( requestMap )
-        Calendar displayDateTimeCalendar = getDisplayDateTimeCalender( userEnteredValue )
+        Calendar displayDateTimeCalendar = getDisplayDateTimeCalender( requestMap.displayDatetimeZone  )
         Calendar scheduledStartDateCalendar = null
         if (!requestMap.postNow && scheduledStartDate && scheduledStartTime) {
             scheduledStartDateCalendar = actionItemProcessingCommonService.getRequestedTimezoneCalendar( scheduledStartDate, scheduledStartTime, timezoneStringOffset )
@@ -261,7 +249,7 @@ class ActionItemPostCompositeService {
         actionItemPost.postingCreatorId = user.oracleUserName
         actionItemPost.postingCurrentState = requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New)
         actionItemPost.postingDisplayDateTime = displayDateTimeCalendar ? displayDateTimeCalendar.getTime() : null
-        actionItemPost.postingTimeZone = userEnteredValue[2] + " " + userEnteredValue[3]
+        actionItemPost.postingTimeZone = requestMap.displayDatetimeZone.timeZoneVal
         actionItemPost
 
     }
@@ -771,4 +759,5 @@ class ActionItemPostCompositeService {
     String getSysGuId() {
         sessionFactory.currentSession.createSQLQuery( ' select RAWTOHEX(sys_guid()) from dual' ).uniqueResult()
     }
+
 }
