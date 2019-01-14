@@ -450,7 +450,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         def correspondingServerDetails =new JSONObject()
         correspondingServerDetails.put("dateVal","06/21/2018");
         correspondingServerDetails.put("timeVal", "0330");
-        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata)");
+        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
         requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.populationId = populationListView.id
@@ -485,7 +485,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         def correspondingServerDetails =new JSONObject()
         correspondingServerDetails.put("dateVal","06/21/2018");
         correspondingServerDetails.put("timeVal", "0330");
-        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata)");
+        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
         requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.populationId = populationListView.id
@@ -521,7 +521,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         def correspondingServerDetails =new JSONObject()
         correspondingServerDetails.put("dateVal","06/21/2018");
         correspondingServerDetails.put("timeVal", "0330");
-        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata)");
+        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
         requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.populationId = populationListView.id
@@ -567,7 +567,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         def correspondingServerDetails =new JSONObject()
         correspondingServerDetails.put("dateVal","06/21/2018");
         correspondingServerDetails.put("timeVal", "0330");
-        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata)");
+        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
         requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.populationId = populationListView.id
@@ -601,7 +601,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         def correspondingServerDetails =new JSONObject()
         correspondingServerDetails.put("dateVal","06/21/2018");
         correspondingServerDetails.put("timeVal", "0330");
-        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata)");
+        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
         requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.populationId = populationListView.id
@@ -659,7 +659,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         def correspondingServerDetails =new JSONObject()
         correspondingServerDetails.put("dateVal","06/21/2018");
         correspondingServerDetails.put("timeVal", "0330");
-        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata)");
+        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
         requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.populationId = populationListView.id
