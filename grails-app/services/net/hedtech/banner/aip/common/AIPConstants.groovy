@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2019 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip.common
 /**
@@ -30,4 +30,6 @@ class AIPConstants {
     public static final String DOCUMENT_TYPE = 'DOCUMENT TYPE'
     public static final String DOCUMENT_NAME = 'DOCUMENT NAME'
     public static final String VPDI_CODE = 'VPDI CODE'
+    public static final String DOCUMENTNAME ='documentName'
+    public static final String ERROR_DOCUMENT_NAME_MAXSIZE_EXCEEDED ='uploadDocument.documentName.maxSize.exceeded.documentName'
 }
