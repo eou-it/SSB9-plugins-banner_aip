@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -24,12 +24,11 @@ class MonitorActionItemReadOnlyService extends ServiceBase {
      * Lists of action items filtered by actionItem id and Person name
      * @param actionItem ID of action item that is being searched
      * @param personName name of the person to be searched
-     * @param filterData
      * @param pagingAndSortParams
      * @return List of action items
      */
-    List<MonitorActionItemReadOnly> fetchByActionItemIdAndPersonName(Long actionItem, String personName,def filterData, def pagingAndSortParams) {
-        return MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItem, personName, filterData, pagingAndSortParams)
+    List<MonitorActionItemReadOnly> fetchByActionItemIdAndPersonName(Long actionItem, String personName, def pagingAndSortParams) {
+        return MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItem, personName, pagingAndSortParams)
     }
 
     /**
@@ -38,8 +37,8 @@ class MonitorActionItemReadOnlyService extends ServiceBase {
      * @param spridenId Spriden Id of the person to be searched
      * @return List < MonitorActionItemReadOnly >  list of actionItems
      */
-    List<MonitorActionItemReadOnly> fetchByActionItemAndSpridenId(Long actionItemId, String spridenId,def filterData, def pagingAndSortParams) {
-        return MonitorActionItemReadOnly.fetchByActionItemAndSpridenId(actionItemId, spridenId, filterData, pagingAndSortParams)
+    List<MonitorActionItemReadOnly> fetchByActionItemAndSpridenId(Long actionItemId, String spridenId, def pagingAndSortParams) {
+        return MonitorActionItemReadOnly.fetchByActionItemAndSpridenId(actionItemId, spridenId, pagingAndSortParams)
     }
 
     /**
@@ -58,8 +57,8 @@ class MonitorActionItemReadOnlyService extends ServiceBase {
      * @param spridenId Spriden Id of the person being searched
      * @return List of actionItems
      */
-    List<MonitorActionItemReadOnly> fetchByActionItemId(Long actionItemId, def filterData, def pagingAndSortParams) {
-        return MonitorActionItemReadOnly.fetchByActionItemId(actionItemId, filterData, pagingAndSortParams)
+    List<MonitorActionItemReadOnly> fetchByActionItemId(Long actionItemId,  def pagingAndSortParams) {
+        return MonitorActionItemReadOnly.fetchByActionItemId(actionItemId, pagingAndSortParams)
     }
 
     /**
@@ -74,12 +73,11 @@ class MonitorActionItemReadOnlyService extends ServiceBase {
     /**
      * Lists of action items filtered by person name
      * @param personName name of the person to be searched
-     * @param filterData
      * @param pagingAndSortParams
      * @return List of action items
      * */
-    List<MonitorActionItemReadOnly> fetchByPersonName(String personName, def filterData, def pagingAndSortParams) {
-        return MonitorActionItemReadOnly.fetchByPersonName(personName, filterData, pagingAndSortParams)
+    List<MonitorActionItemReadOnly> fetchByPersonName(String personName,  def pagingAndSortParams) {
+        return MonitorActionItemReadOnly.fetchByPersonName(personName, pagingAndSortParams)
     }
 
     /**
@@ -95,12 +93,11 @@ class MonitorActionItemReadOnlyService extends ServiceBase {
     /**
      * Lists of action items filtered by person id
      * @param PersonID of the person to be searched
-     * @param filterData filter data
      * @param pagingAndSortParams pagaination and sorting parameter
      * @return List of action items
      * */
-    List<MonitorActionItemReadOnly> fetchByPersonId(String spridenId, def filterData, def pagingAndSortParams) {
-        return MonitorActionItemReadOnly.fetchByPersonId(spridenId, filterData, pagingAndSortParams)
+    List<MonitorActionItemReadOnly> fetchByPersonId(String spridenId,  def pagingAndSortParams) {
+        return MonitorActionItemReadOnly.fetchByPersonId(spridenId, pagingAndSortParams)
     }
 
     /**

@@ -78,19 +78,19 @@ class MonitorActionItemCompositeService extends ServiceBase {
         def qryresult
         def count
         if (actionId && personName && !personId) {          // action id + person name combination
-            qryresult = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionId, personName, filterData, pagingAndSortParams)
+            qryresult = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionId, personName, pagingAndSortParams)
             count = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonNameCount(actionId, personName)
         } else if (actionId && !personName && personId) {   //action id + person id combination
-            qryresult = monitorActionItemReadOnlyService.fetchByActionItemAndSpridenId(actionId, personId, filterData, pagingAndSortParams)
+            qryresult = monitorActionItemReadOnlyService.fetchByActionItemAndSpridenId(actionId, personId, pagingAndSortParams)
             count = monitorActionItemReadOnlyService.fetchByActionItemAndSpridenIdCount(actionId, personId)
         } else if (actionId && !personName && !personId) {  //only action item id combination
-            qryresult = monitorActionItemReadOnlyService.fetchByActionItemId(actionId, filterData, pagingAndSortParams)
+            qryresult = monitorActionItemReadOnlyService.fetchByActionItemId(actionId, pagingAndSortParams)
             count = monitorActionItemReadOnlyService.fetchByActionItemIdCount(actionId)
         } else if (!actionId && personName && !personId) {  // search by person name
-            qryresult = monitorActionItemReadOnlyService.fetchByPersonName(personName, filterData, pagingAndSortParams)
+            qryresult = monitorActionItemReadOnlyService.fetchByPersonName(personName, pagingAndSortParams)
             count = monitorActionItemReadOnlyService.fetchByPersonNameCount(personName)
         } else if (!actionId && !personName && personId) {  // search by person id only
-            qryresult = monitorActionItemReadOnlyService.fetchByPersonId(personId, filterData, pagingAndSortParams)
+            qryresult = monitorActionItemReadOnlyService.fetchByPersonId(personId, pagingAndSortParams)
             count = monitorActionItemReadOnlyService.fetchByPersonIdCount(personId)
         }
 

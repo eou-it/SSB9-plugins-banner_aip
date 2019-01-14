@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -8,7 +8,19 @@ import groovy.transform.ToString
 import org.hibernate.criterion.Order
 
 
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.NamedQueries
+import javax.persistence.NamedQuery
+import javax.persistence.SequenceGenerator
+import javax.persistence.Table
+import javax.persistence.Temporal
+import javax.persistence.TemporalType
+import javax.persistence.Version
+
 
 @NamedQueries(value = [
         @NamedQuery(name = "UploadDocument.existsSameDocumentName",
