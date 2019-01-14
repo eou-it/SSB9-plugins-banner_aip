@@ -17,8 +17,6 @@ import net.hedtech.banner.general.communication.population.CommunicationPopulati
 import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.testing.BaseIntegrationTestCase
-import net.sf.json.JSON
-import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.After
 import org.junit.Before
