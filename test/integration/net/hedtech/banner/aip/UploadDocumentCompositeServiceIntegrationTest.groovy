@@ -4,7 +4,6 @@
 
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.configuration.ConfigProperties
 import net.hedtech.banner.general.configuration.ConfigApplication
 import net.hedtech.banner.testing.BaseIntegrationTestCase
@@ -16,7 +15,6 @@ import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.multipart.MultipartFile
-import net.hedtech.banner.general.person.PersonUtility
 import grails.util.Holders
 
 class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestCase {

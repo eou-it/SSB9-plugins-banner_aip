@@ -5,8 +5,7 @@
 package net.hedtech.banner.aip
 
 import net.hedtech.banner.aip.block.process.ActionItemBlockedProcess
-import net.hedtech.banner.aip.block.process.BlockingProcess
-import net.hedtech.banner.general.communication.folder.CommunicationFolder
+
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
