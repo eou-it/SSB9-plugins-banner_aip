@@ -533,7 +533,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.displayStartDate = testingDateFormat.format( new Date() - 1 )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date()
-        requestMap.displayDatetimeZone=correspondingServerDetails;
         requestMap.actionItemIds = actionItemIds
         try {
             actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
@@ -676,6 +675,5 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         actionItemPost.populationVersionId = populationVersion.id
         actionItemPost
     }
-
 
 }
