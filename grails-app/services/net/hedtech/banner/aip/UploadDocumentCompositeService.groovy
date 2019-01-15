@@ -52,8 +52,8 @@ class UploadDocumentCompositeService {
         )
         try {
             if (!ud.validate() && ud.hasErrors() && ud.errors.hasFieldErrors( AIPConstants.DOCUMENTNAME )) {
-                String[] codes = ud.errors.getFieldError( AIPConstants.DOCUMENTNAME ).codes
-                if (codes.contains( AIPConstants.ERROR_DOCUMENT_NAME_MAXSIZE_EXCEEDED ) == true) {
+                def codes = ud.errors.getFieldError( AIPConstants.DOCUMENTNAME ).codes
+                if (codes.contains( AIPConstants.ERROR_DOCUMENT_NAME_MAXSIZE_EXCEEDED )) {
                     message = MessageHelper.message( AIPConstants.ERROR_MESSAGE_FILENAME_TOO_LONG )
                     throw new ApplicationException( UploadDocumentCompositeService, new BusinessLogicValidationException( message, [] ) )
                 }
