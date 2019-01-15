@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip.common
 /**
@@ -24,9 +24,12 @@ class AIPConstants {
     public static final String ERROR_MESSAGE_UNSUPPORTED_FILE_STORAGE = 'uploadDocument.invalid.file.storage.error'
     public static final String MESSAGE_SAVE_SUCCESS = 'uploadDocument.save.success'
     public static final String ERROR_MESSAGE_BDM_DOCUMENT_NOT_FOUND = 'uploadDocument.bdm.document.not.found'
+    public static final String ERROR_MESSAGE_FILENAME_TOO_LONG = 'aip.uploadDocument.file.name.length.error'
 
     public static final String DOCUMENT_ID = 'DOCUMENT ID'
     public static final String DOCUMENT_TYPE = 'DOCUMENT TYPE'
     public static final String DOCUMENT_NAME = 'DOCUMENT NAME'
     public static final String VPDI_CODE = 'VPDI CODE'
+    public static final String DOCUMENTNAME ='documentName'
+    public static final String ERROR_DOCUMENT_NAME_MAXSIZE_EXCEEDED ='uploadDocument.documentName.maxSize.exceeded.documentName'
 }

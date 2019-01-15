@@ -1,5 +1,5 @@
-/*******************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+    /*******************************************************************************
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
@@ -14,11 +14,11 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+
 class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemPostService
     def communicationFolderService
-
 
     @Before
     void setUp() {
@@ -166,8 +166,7 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void preCreateValidationNoPopulationName() {
-        def map = [populationId            : 1L,
-                   populationVersionId     : 1L,
+        def map = [populationVersionId     : 1L,
                    postingName             : "some name",
                    postingActionItemGroupId: 1,
                    actionItemIds           : [1, 2],
@@ -184,8 +183,7 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void preCreateValidationNoDisplayStartDate() {
-        def map = [populationId            : 1L,
-                   populationVersionId     : 1L,
+        def map = [populationVersionId     : 1L,
                    postingName             : "some name",
                    postingActionItemGroupId: 1,
                    actionItemIds           : [1, 2],
@@ -203,8 +201,7 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void preCreateValidationNoDisplayEndDate() {
-        def map = [populationId            : 1L,
-                   populationVersionId     : 1L,
+        def map = [populationVersionId     : 1L,
                    postingName             : "some name",
                    postingActionItemGroupId: 1,
                    actionItemIds           : [1, 2],
@@ -223,8 +220,7 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void preCreateValidationNoSchedule() {
-        def map = [populationId            : 1L,
-                   populationVersionId     : 1L,
+        def map = [populationVersionId     : 1L,
                    postingName             : "some name",
                    postingActionItemGroupId: 1,
                    actionItemIds           : [1, 2],
@@ -242,8 +238,7 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void preCreateValidationScheduleNoScheduleDate() {
-        def map = [populationId            : 1L,
-                   populationVersionId     : 1L,
+        def map = [populationVersionId     : 1L,
                    postingName             : "some name",
                    postingActionItemGroupId: 1,
                    actionItemIds           : [1, 2],
@@ -329,8 +324,7 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void preCreateValidationPassed() {
-        def map = [populationId            : 1L,
-                   populationVersionId     : 1L,
+        def map = [populationVersionId     : 1L,
                    postingName             : "some name",
                    postingActionItemGroupId: 1,
                    actionItemIds           : [1, 2],

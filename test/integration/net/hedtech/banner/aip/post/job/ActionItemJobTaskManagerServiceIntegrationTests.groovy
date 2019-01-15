@@ -1,11 +1,10 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip.post.job
 
 import net.hedtech.banner.exceptions.ApplicationException
-import net.hedtech.banner.general.communication.groupsend.automation.StringHelper
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.apache.commons.lang.NotImplementedException
 import org.junit.After

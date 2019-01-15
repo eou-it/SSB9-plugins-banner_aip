@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -33,7 +33,6 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
         List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemsByPidm( actionItemPidm )
         assertEquals( 10, userActionItems.size() )
-        //println userActionItems
     }
 
 
@@ -73,7 +72,6 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
         itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus().id
-        println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
         assertFalse( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
     }
 
@@ -101,7 +99,6 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
         itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus().id
-        println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
         assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
     }
 
@@ -129,7 +126,6 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
         itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus().id
-        println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
         assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
     }
 
@@ -157,7 +153,6 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
         itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus().id
-        println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
         assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
     }
     // check that new ActionItem containing existing date range returns true
@@ -183,7 +178,6 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.displayEndDate = new Date() + 15
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
-        println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
         assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
     }
 
@@ -210,7 +204,6 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.displayEndDate = new SimpleDateFormat( "dd-MM-yyyy" ).parse( "06-01-2017" )
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
-        println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
         assertFalse( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
     }
     // check that new ActionItem after existing date range returns false
@@ -236,7 +229,6 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.displayEndDate = new SimpleDateFormat( "dd-MM-yyyy" ).parse( "15-01-2017" )
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
-        println UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest )
         assertFalse( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
     }
 

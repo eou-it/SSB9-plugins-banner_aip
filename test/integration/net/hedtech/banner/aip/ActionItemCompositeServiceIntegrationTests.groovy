@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -79,7 +79,6 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         assert result.success == true
         assert result.newActionItem.description == 'description'
         assert result.message == null
-        ActionItem actionItem2 = result.newActionItem
         Map editParam = [actionItemId: actionItem1.id,
                          folderId    : CommunicationFolder.findByName('Registration').id,
                          status      : 'Active',

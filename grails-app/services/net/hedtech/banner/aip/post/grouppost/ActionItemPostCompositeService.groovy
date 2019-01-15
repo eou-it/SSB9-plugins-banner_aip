@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
@@ -13,7 +13,11 @@ import net.hedtech.banner.aip.post.exceptions.ActionItemExceptionFactory
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.exceptions.NotFoundException
-import net.hedtech.banner.general.communication.population.*
+import net.hedtech.banner.general.communication.population.CommunicationPopulation
+import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculation
+import net.hedtech.banner.general.communication.population.CommunicationPopulationCalculationStatus
+import net.hedtech.banner.general.communication.population.CommunicationPopulationQueryAssociation
+import net.hedtech.banner.general.communication.population.CommunicationPopulationVersion
 import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.general.scheduler.SchedulerJobReceipt

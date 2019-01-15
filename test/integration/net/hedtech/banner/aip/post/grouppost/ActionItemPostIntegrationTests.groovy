@@ -5,7 +5,6 @@ package net.hedtech.banner.aip.post.grouppost
 
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.post.ActionItemErrorCode
-import net.hedtech.banner.i18n.MessageHelper
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
@@ -28,12 +27,7 @@ class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
 
     def dateFormat = "dd-MM-yyyy"
 
-    @Test
-    void testActionPostConstraints() {
-        def actionItemPost = newAIP()
-        //actionItemPost.save()
 
-    }
 
 
     @Test

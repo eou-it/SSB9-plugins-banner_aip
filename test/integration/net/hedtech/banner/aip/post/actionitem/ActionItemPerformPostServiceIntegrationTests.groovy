@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 package net.hedtech.banner.aip.post.actionitem
 
@@ -62,18 +62,10 @@ class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCa
             actionItemPostDetailService.create( groupDetail )
         }
 
-        println newAip
         actionItemPostCompositeService.createPostItems( newAip )
-
-        ActionItemPostWork actionItemPostWork2 = ActionItemPostWork.fetchByGroupSend( newAip, 1 )[0]
-
-        println "post 2"
-        println actionItemPostWork2
 
         ActionItemPostWork actionItemPostWork = actionItemPostWorkService.list( [max: 1] ).get( 0 )
 
-        println "post work"
-        println actionItemPostWork
         def result = actionItemPerformPostService.postActionItems( actionItemPostWork )
         assert userActionItemService.list( [max: Integer.MAX_VALUE] ).size() > 0
         assertEquals result.id, actionItemPostWork.id

@@ -110,7 +110,6 @@ class UploadDocumentIntegrationTests extends BaseIntegrationTestCase {
         assert result.success == true
         result = saveUploadDocumentService(userActionItemId, responseId, 'TestFileDoc.docx')
         assert result.success == true
-        def pidm = PersonUtility.getPerson("CSRSTU004").pidm
         def paramsObj = [
                 userActionItemId: userActionItemId.toString(),
                 responseId      : responseId.toString(),
@@ -131,7 +130,6 @@ class UploadDocumentIntegrationTests extends BaseIntegrationTestCase {
         assert result.success == true
         result = saveUploadDocumentService(userActionItemId, responseId, 'TestFileDoc.docx')
         assert result.success == true
-        def pidm = PersonUtility.getPerson("CSRSTU004").pidm
         def paramsObj = [
                 userActionItemId: userActionItemId.toString(),
                 responseId      : responseId.toString(),
@@ -150,7 +148,6 @@ class UploadDocumentIntegrationTests extends BaseIntegrationTestCase {
 
         def result = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert result.success == true
-        def pidm = PersonUtility.getPerson("CSRSTU004").pidm
         def paramsObj = [
                 userActionItemId: userActionItemId.toString(),
                 responseId      : responseId.toString(),
