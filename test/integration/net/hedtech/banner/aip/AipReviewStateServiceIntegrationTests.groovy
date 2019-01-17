@@ -1,7 +1,8 @@
-package net.hedtech.banner.aip
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
+
+package net.hedtech.banner.aip
 
 import net.hedtech.banner.aip.ActionItemStatus
 import net.hedtech.banner.aip.UserActionItem
