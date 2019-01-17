@@ -204,17 +204,19 @@ class ActionItemPostCompositeService {
 
     }
 
-    /**
+    /**Get Display Date and Time
      *
      * @param userEnteredValue
      * @return
      */
     def getDisplayDateTimeCalender( userEnteredValue ) {
         Date displayDate = actionItemProcessingCommonService.convertToLocaleBasedDate( userEnteredValue.dateVal )
+        def  userEnteredHour= userEnteredValue.timeVal.substring( 0, 2 ).toInteger()
+        def  userEnteredMinute= userEnteredValue.timeVal.substring( 2 ).toInteger()
         Calendar displayDateTimeCalendar = Calendar.getInstance()
         displayDateTimeCalendar.setTime( displayDate )
-        displayDateTimeCalendar.set( java.util.Calendar.HOUR, userEnteredValue.timeVal.substring( 0, 2 ).toInteger() )
-        displayDateTimeCalendar.set( java.util.Calendar.MINUTE, userEnteredValue.timeVal.substring( 2 ).toInteger() )
+        displayDateTimeCalendar.set( java.util.Calendar.HOUR, userEnteredHour )
+        displayDateTimeCalendar.set( java.util.Calendar.MINUTE, userEnteredMinute )
         displayDateTimeCalendar.set( java.util.Calendar.SECOND, 0 )
         displayDateTimeCalendar.set( java.util.Calendar.MILLISECOND, 0 )
         displayDateTimeCalendar
