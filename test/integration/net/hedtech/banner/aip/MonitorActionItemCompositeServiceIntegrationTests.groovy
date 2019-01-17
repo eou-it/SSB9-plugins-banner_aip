@@ -483,4 +483,31 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         assert list.size() > 0
         assert list[0].reviewStateCode == "Review needed"
     }
+
+    @Test
+    void testReviewStateNameErrorMessage() {
+        loginSSB('CSRSTU004', '111111')
+        def map = [locale: 'gb']
+        def statusMap = configUserPreferenceService.saveLocale(map)
+        assert statusMap.status == 'success'
+
+        //Removing the default Locale en_US temporarily to check the error message scenario
+        AipReviewState reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale("10", "en_US")[0]
+        reviewStateResult.locale = 'AB'
+        reviewStateResult.save(flush: true, failOnError: true)
+
+        def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
+        def group = result.groups.find { it.title == 'Enrollment' }
+        def item = group.items.find { it.name == 'Policy Handbook' }
+        Long actionItemId = item.id
+        assertNotNull actionItemId
+
+        String personId = 'CSRSTU004'
+        def output = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, null, personId, filterData, pagingAndSortParams)
+        def list = output.result
+        assert output.length > 0
+        assert list.size() > 0
+        assert list[0].reviewStateCode == "Review status text unavailable: contact support"
+    }
+
 }

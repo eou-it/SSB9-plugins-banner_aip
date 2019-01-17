@@ -29,6 +29,11 @@ class MonitorActionItemCompositeService extends ServiceBase {
      */
     def getActionItem(Long userActionItemId) {
         def userActionItemDetails = monitorActionItemReadOnlyService.findById(userActionItemId)
+        def reviewStateName = aipReviewStateService.fetchReviewStateNameByCodeAndLocale(userActionItemDetails.reviewStateCode, getLocaleSting())
+        if(!reviewStateName) {
+            reviewStateName = MessageHelper.message('aip.review.status.text.unavailable')
+        }
+        def reviewStateObject = [code:userActionItemDetails.reviewStateCode,name:reviewStateName]
         def result =
                 [id                  : userActionItemDetails.id,
                  actionItemId        : userActionItemDetails.actionItemId,
@@ -44,7 +49,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                  currentResponseText : userActionItemDetails.currentResponseText,
                  reviewIndicator     : userActionItemDetails.reviewIndicator,
                  reviewAuditObject   : getRecentReviewAuditEntry(userActionItemDetails.id),
-          reviewStateObject   : [code:userActionItemDetails.reviewStateCode,name:aipReviewStateService.fetchReviewStateNameByCodeAndLocale(userActionItemDetails.reviewStateCode, getLocaleSting())],
+                 reviewStateObject   : reviewStateObject,
                  attachments         : userActionItemDetails.attachments]
 
         return result
@@ -96,6 +101,11 @@ class MonitorActionItemCompositeService extends ServiceBase {
 
         def result = [];
         qryresult.each { it ->
+            def reviewState = aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode,getLocaleSting())
+            if(!reviewState) {
+                reviewState = MessageHelper.message( 'aip.review.status.text.unavailable' )
+            }
+
             result.add([id                  : it.id,
                         actionItemId        : it.actionItemId,
                         actionItemName      : it.actionItemName,
@@ -108,7 +118,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                         displayEndDate      : it.displayEndDate,
                         currentResponseText : it.currentResponseText,
                         reviewIndicator     : it.reviewIndicator,
-                        reviewStateCode     : aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode,getLocaleSting()),
+                        reviewStateCode     : reviewState,
                         attachments         : it.attachments])
 
         }

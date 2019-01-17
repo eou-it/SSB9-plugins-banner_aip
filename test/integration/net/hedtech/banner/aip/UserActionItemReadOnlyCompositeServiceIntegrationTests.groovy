@@ -175,4 +175,25 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'invalid'])
         assert result1.isEmpty() == true
     }
+
+    @Test
+    void testReviewStateNameErrorMessage() {
+        loginSSB( 'CSRSTU004', '111111' )
+        def map = [locale:'gb']
+        def statusMap = configUserPreferenceService.saveLocale(map)
+        assert statusMap.status == 'success'
+
+        //Removing the default Locale en_US temporarily to check the error message scenario
+        AipReviewState reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale("10", "en_US")[0]
+        reviewStateResult.locale = 'AB'
+        reviewStateResult.save(flush: true, failOnError: true)
+
+        def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
+        assert result.groups.size() > 0
+        assert result.groups.items.size() > 0
+        def group = result.groups.find{it.title == 'Enrollment'}
+        def item = group.items.find {it.name == 'Policy Handbook'}
+        assert item.name == 'Policy Handbook'
+        assert item.currentReviewState == 'Review status text unavailable: contact support'
+    }
 }

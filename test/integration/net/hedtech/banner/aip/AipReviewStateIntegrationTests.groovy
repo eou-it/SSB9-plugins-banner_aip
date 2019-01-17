@@ -28,16 +28,36 @@ class AipReviewStateIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testFetchReviewStateByCodeAndLocaleLowercase() {
-        AipReviewState reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale("10", "en_US")
-        assert reviewStateResult.reviewStateName == "Review needed"
-        assert reviewStateResult.reviewOngoingInd == "Y"
-        assert reviewStateResult.reviewSuccessInd == "N"
+        List<AipReviewState> reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale("10", "en_US")
+        assert reviewStateResult.size() == 1
+        assert reviewStateResult[0].reviewStateName == "Review needed"
+        assert reviewStateResult[0].reviewOngoingInd == "Y"
+        assert reviewStateResult[0].reviewSuccessInd == "N"
+    }
+
+    @Test
+    void testFetchReviewStateByCodeAndLocale() {
+        //when ReviewState is fetched for a locale configured in database (for example "es") other than default locale(en_US),
+        //ReviewState of both the locales (es and en_US) is returned
+        List<AipReviewState> reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale("10", "es")
+        assert reviewStateResult.size() == 2
+        assert reviewStateResult[0].reviewStateName == "Review needed"
+        assert reviewStateResult[1].reviewStateName == "Revisi��n necesaria"
+    }
+
+    @Test
+    void testFetchReviewStateByDefaultLocale() {
+        //when for the specified locale ReviewState is not available, ReviewState of default locale (en_US) is returned
+        List<AipReviewState> reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale("10", "fr_CA")
+        assert reviewStateResult.size() == 1
+        assert reviewStateResult[0].reviewStateName == "Review needed"
+
     }
 
     @Test
     void testFetchReviewStateByCodeAndLocaleUppercase() {
-        AipReviewState reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale("10", "EN_US")
-        assert reviewStateResult.reviewStateName == "Review needed"
+        List<AipReviewState>  reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale("10", "EN_US")
+        assert reviewStateResult[0].reviewStateName == "Review needed"
     }
 
     @Test

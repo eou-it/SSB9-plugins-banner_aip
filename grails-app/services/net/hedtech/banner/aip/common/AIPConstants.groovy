@@ -32,4 +32,5 @@ class AIPConstants {
     public static final String VPDI_CODE = 'VPDI CODE'
     public static final String DOCUMENTNAME ='documentName'
     public static final String ERROR_DOCUMENT_NAME_MAXSIZE_EXCEEDED ='uploadDocument.documentName.maxSize.exceeded.documentName'
+    public static final String DEFAULT_LOCALE = 'EN_US'
 }

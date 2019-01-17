@@ -23,7 +23,7 @@ import javax.persistence.Version
         @NamedQuery(name = "AipReviewState.fetchReviewStateByCodeAndLocale",
                 query = """FROM AipReviewState a
            WHERE a.reviewStateCode = :code
-           and upper(a.locale) = upper(:locale)
+           and (upper(a.locale) = upper(:locale) or upper(a.locale) = 'EN_US')
           """),
         @NamedQuery(name = "AipReviewState.fetchNonDefaultReviewStates",
                         query = """FROM AipReviewState a
@@ -136,7 +136,7 @@ class AipReviewState implements Serializable {
     static def fetchReviewStateByCodeAndLocale(String code, String locale) {
         AipReviewState.withSession { session ->
             session.getNamedQuery('AipReviewState.fetchReviewStateByCodeAndLocale')
-                    .setString('code', code).setString('locale', locale)?.list()[0]
+                    .setString('code', code).setString('locale', locale)?.list()
         }
     }
     /**

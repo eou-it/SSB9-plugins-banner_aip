@@ -4,7 +4,8 @@
 
 package net.hedtech.banner.aip
 
-
+import net.hedtech.banner.aip.common.AIPConstants
+import net.hedtech.banner.i18n.MessageHelper
 import net.hedtech.banner.service.ServiceBase
 
 /**
@@ -18,11 +19,23 @@ class AipReviewStateService extends ServiceBase {
      * @params locale User locale
      * @returns String Review State Name
      */
-    String fetchReviewStateNameByCodeAndLocale(String code, String locale) {
-        String reviewStateName
-        AipReviewState reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale(code, locale)
-        reviewStateName = reviewStateResult?.reviewStateName
+     String fetchReviewStateNameByCodeAndLocale(String code, String locale) {
+        String reviewStateName = null
+        List<AipReviewState> reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale(code, locale)
+
+        AipReviewState aipReviewState = reviewStateResult.find(){it->
+            it.locale.toUpperCase() == locale.toUpperCase()
+        }
+
+        if(!aipReviewState) {
+            aipReviewState = reviewStateResult.find() { it ->
+                it.locale.toUpperCase() == AIPConstants.DEFAULT_LOCALE
+            }
+        }
+
+        reviewStateName = aipReviewState?.reviewStateName
     }
+
     /**
      * Returns list of Review States without the default code.     *
      * @params locale User locale
