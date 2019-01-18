@@ -28,7 +28,7 @@ import javax.persistence.Version
         @NamedQuery(name = "AipReviewState.fetchNonDefaultReviewStates",
                         query = """FROM AipReviewState a
                    WHERE a.reviewStateCode != ( SELECT d.defReviewStateCode FROM AipDefaultReviewState d)
-                   and upper(a.locale) = upper(:locale)
+                   and (upper(a.locale) = upper(:locale) or upper(a.locale) = 'EN_US')
                   """)
 ])
 

@@ -43,8 +43,18 @@ class AipReviewStateService extends ServiceBase {
      */
     List<AipReviewState> fetchNonDefaultReviewStates(String locale) {
         List<AipReviewState> reviewStateResult = AipReviewState.fetchNonDefaultReviewStates(locale)
+
+        reviewStateResult.collect() {it ->
+            it.locale.toUpperCase() == locale.toUpperCase()
+        }
+
+        if(reviewStateResult.isEmpty()) {
+            reviewStateResult = reviewStateResult.collect() {it ->
+                it.locale.toUpperCase() == AIPConstants.DEFAULT_LOCALE
+            }
+        }
+
         reviewStateResult
     }
-
 
 }
