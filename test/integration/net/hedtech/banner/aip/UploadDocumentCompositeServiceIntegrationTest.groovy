@@ -25,6 +25,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     def selfServiceBannerAuthenticationProvider
     def userActionItemReadOnlyCompositeService
     def bdmEnabled = false
+    def clamavEnabled = false
     def pidm
     def userActionItemId
     def responseId
@@ -51,6 +52,15 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
             Holders.config.bdmserver.defaultFileSize = '3'
             Holders.config.bdmserver.defaultfile_ext = ['EXE']
         }
+        Holders.config.clamav = {}
+        if (clamavEnabled) {
+            Holders.config.clamav.enabled = true
+            Holders.config.clamav.host = '127.0.0.1'
+            Holders.config.clamav.port = 3310
+            Holders.config.clamav.connectionTimeout = 20
+        } else {
+            Holders.config.clamav.enabled = false
+        }
         getUserActionItemIdAndResponseId()
 
     }
@@ -59,6 +69,33 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     void tearDown() {
         super.tearDown()
         logout()
+    }
+
+    @Test
+    void testFileScanningSuccess() {
+        if (clamavEnabled) {
+            def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
+            assert saveResult.success == true
+        }
+    }
+
+    @Test
+    void testFileScanDefaultConfigSuccess() {
+        if (clamavEnabled) {
+            Holders.config.clamav.host = null
+            Holders.config.clamav.port = null
+            def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
+            assert saveResult.success == true
+        }
+    }
+
+    @Test
+    void testFileScanningFailure() {
+        if (clamavEnabled) {
+            def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'eicar_com.zip')
+            assert saveResult.success == false
+            assert saveResult.message == "Save failed. Virus detected in uploaded file."
+        }
     }
 
     @Test

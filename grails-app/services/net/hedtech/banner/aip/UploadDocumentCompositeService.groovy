@@ -4,19 +4,23 @@
 package net.hedtech.banner.aip
 
 import grails.transaction.Transactional
+import grails.util.Holders
+import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.general.configuration.ConfigProperties
 import net.hedtech.banner.i18n.MessageHelper
-import org.apache.log4j.Logger
-import org.springframework.web.multipart.MultipartFile
 import net.hedtech.banner.imaging.BdmUtility
-import javax.xml.ws.WebServiceException
-import org.apache.commons.codec.binary.Base64
-import org.springframework.web.context.request.RequestContextHolder
-import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.bdm.services.BDMManager
+import org.apache.commons.codec.binary.Base64
+import org.apache.log4j.Logger
+import org.jenkinsci.plugins.clamav.scanner.ClamAvScanner
+import org.jenkinsci.plugins.clamav.scanner.ScanResult
 import org.json.JSONObject
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.multipart.MultipartFile
+
+import javax.xml.ws.WebServiceException
 
 /**
  * UploadDocumentCompositeService Class for adding, preview and deleting of uploaded files.
@@ -28,6 +32,7 @@ class UploadDocumentCompositeService {
     def uploadDocumentContentService
     def actionItemStatusRuleReadOnlyService
     def bdmAttachmentService
+    def aipClamavService
 
     private static final def LOGGER = Logger.getLogger(net.hedtech.banner.aip.UploadDocumentCompositeService.class)
 
@@ -40,7 +45,7 @@ class UploadDocumentCompositeService {
 
         def success = false
         def message = null
-        UploadDocument saveUploadDocument
+        UploadDocument saveUploadDocument = null
         def fileStorageLocation = getDocumentStorageSystem()
 
         UploadDocument ud = new UploadDocument(
@@ -52,13 +57,13 @@ class UploadDocumentCompositeService {
         )
         try {
             def bdmInstalled = BdmUtility.isBDMInstalled()
-            if (!bdmInstalled && fileStorageLocation.documentStorageLocation == AIPConstants.FILE_STORAGE_SYSTEM_BDM ) {
+            if (!bdmInstalled && fileStorageLocation.documentStorageLocation == AIPConstants.FILE_STORAGE_SYSTEM_BDM) {
                 LOGGER.error('BDM is not installed.')
                 message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_BDM_NOT_INSTALLED)
                 throw new ApplicationException(UploadDocumentCompositeService, new BusinessLogicValidationException(message, []))
             }
-            if (map.file?.isEmpty()) {
-                LOGGER.error('File is empty.')
+            if (!map.file || map.file?.isEmpty()) {
+                LOGGER.error('File is null or empty.')
                 message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_FILE_EMPTY)
                 throw new ApplicationException(UploadDocumentCompositeService, new BusinessLogicValidationException(message, []))
             }
@@ -81,8 +86,13 @@ class UploadDocumentCompositeService {
                     message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_UNSUPPORTED_FILE_STORAGE)
             }
         } catch (ApplicationException e) {
+            if (saveUploadDocument) {
+                //delete entry from GCRAFLU
+                uploadDocumentService.delete(saveUploadDocument)
+            }
             success = false
             message = e.message
+
         }
 
         [
@@ -183,13 +193,29 @@ class UploadDocumentCompositeService {
 
         UploadDocumentContent saveUploadDocumentContent
         try {
-            byte[] bFile = file.getBytes();
+            if (Holders.config.clamav?.enabled){
+                ClamAvScanner scanner = aipClamavService.initScanner()
+                ScanResult scanResult = aipClamavService.fileScanner(scanner, file.inputStream)
+                if (scanResult.getStatus() == ScanResult.Status.INFECTED) {
+                    LOGGER.error('Scan Result: $scanResult.getMessage()')
+                    def message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_VIRUS_FOUND)
+                    throw new ApplicationException(UploadDocumentCompositeService,
+                            new BusinessLogicValidationException(message, []))
+                }
+                if (scanResult.getStatus() == ScanResult.Status.WARNING) {
+                    LOGGER.error('Scan Result: $scanResult.getMessage()')
+                    def message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_VIRUS_FOUND)
+                    throw new ApplicationException(UploadDocumentCompositeService,
+                            new BusinessLogicValidationException(message, []))
+                }
+            }
+            byte[] bFile = file.getBytes()
             UploadDocumentContent udc = new UploadDocumentContent(
                     fileUploadId: id,
                     documentContent: bFile
             )
             saveUploadDocumentContent = uploadDocumentContentService.create(udc)
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOGGER.error('Error while uploading document content. $e.message')
             throw new ApplicationException(UploadDocumentCompositeService, new BusinessLogicValidationException(e.getMessage(), []))
         }
@@ -205,14 +231,14 @@ class UploadDocumentCompositeService {
 
         def configValue = configProperties?.configValue?.toUpperCase()
 
-        if(configValue?.length()> 0 && configValue?.indexOf(AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE) == -1) {
-            def restrictedFileTypes = configValue.substring(0, configValue.length()-1)
+        if (configValue?.length() > 0 && configValue?.indexOf(AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE) == -1) {
+            def restrictedFileTypes = configValue.substring(0, configValue.length() - 1)
             restrictedFileTypes = restrictedFileTypes.concat(",")
             restrictedFileTypes = restrictedFileTypes.concat(AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE)
             configValue = restrictedFileTypes.concat("]")
         }
 
-        if(!configValue || configValue?.length() == 0) {
+        if (!configValue || configValue?.length() == 0) {
             configValue = AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE
         }
 
