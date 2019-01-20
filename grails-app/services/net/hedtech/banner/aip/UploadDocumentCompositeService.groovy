@@ -204,7 +204,7 @@ class UploadDocumentCompositeService {
                 }
                 if (scanResult.getStatus() == ScanResult.Status.WARNING) {
                     LOGGER.error('Scan Result: $scanResult.getMessage()')
-                    def message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_VIRUS_FOUND)
+                    def message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_VIRUS_SCAN_FAILED)
                     throw new ApplicationException(UploadDocumentCompositeService,
                             new BusinessLogicValidationException(message, []))
                 }
