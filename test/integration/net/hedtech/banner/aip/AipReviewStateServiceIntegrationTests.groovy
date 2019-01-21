@@ -6,6 +6,7 @@ package net.hedtech.banner.aip
 
 import net.hedtech.banner.aip.ActionItemStatus
 import net.hedtech.banner.aip.UserActionItem
+import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.i18n.MessageHelper
@@ -36,17 +37,17 @@ class AipReviewStateServiceIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testFetchReviewStateNameByCodeAndLocale() {
         String reviewStateName = aipReviewStateService.fetchReviewStateNameByCodeAndLocale('10','EN_US')
-        assert reviewStateName == "Review needed"
+        assert "Review needed", reviewStateName
 
         reviewStateName = aipReviewStateService.fetchReviewStateNameByCodeAndLocale('10','es')
-        assert reviewStateName == "Revisi��n necesaria"
+        assert "Revisi��n necesaria", reviewStateName
     }
 
     @Test
     void testFetchReviewStateNameOfDefaultLocale() {
         //when for the specified locale ReviewState is not available, ReviewState of default locale (en_US) is returned
         String reviewStateName = aipReviewStateService.fetchReviewStateNameByCodeAndLocale('10','fr_CA')
-        assert reviewStateName == "Review needed"
+        assert "Review needed", reviewStateName
     }
 
     @Test
@@ -73,7 +74,11 @@ class AipReviewStateServiceIntegrationTests extends BaseIntegrationTestCase {
     void testFetchNonDefaultReviewStatesLocaleNotExists() {
         List<AipReviewState> reviewStateResult = aipReviewStateService.fetchNonDefaultReviewStates("ABC")
         assert reviewStateResult.size() > 0
-        def reviewStateCodes = reviewStateResult.collect{it.reviewStateCode }
+        def reviewStateCodes = reviewStateResult.collect{it->
+            if(it.locale.toUpperCase() == AIPConstants.DEFAULT_LOCALE) {
+                it.reviewStateCode
+            }
+        }
         assert reviewStateCodes.containsAll(['20', '30', '40', '50', '60', '70'])
         assertFalse (reviewStateCodes.contains('10'))
     }
