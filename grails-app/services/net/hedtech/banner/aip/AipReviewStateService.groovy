@@ -23,12 +23,12 @@ class AipReviewStateService extends ServiceBase {
         String reviewStateName = null
         List<AipReviewState> reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale(code, locale)
 
-        AipReviewState aipReviewState = reviewStateResult.find(){it->
+        AipReviewState aipReviewState = reviewStateResult.find {it->
             it.locale.toUpperCase() == locale.toUpperCase()
         }
 
         if(!aipReviewState) {
-            aipReviewState = reviewStateResult.find() { it ->
+            aipReviewState = reviewStateResult.find { it ->
                 it.locale.toUpperCase() == AIPConstants.DEFAULT_LOCALE
             }
         }

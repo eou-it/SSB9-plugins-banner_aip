@@ -65,7 +65,8 @@ class AipReviewStateIntegrationTests extends BaseIntegrationTestCase {
         List<AipReviewState> reviewStateResult = AipReviewState.fetchNonDefaultReviewStates("en_US")
         assert reviewStateResult.size() > 0
         def reviewStateCodes = reviewStateResult.collect{it.reviewStateCode }
-        assert reviewStateCodes.containsAll(['20', '30', '40', '50'])
+        assert reviewStateCodes.containsAll(['20', '30', '40', '50', '60', '70'])
+        assertFalse(reviewStateCodes.contains('10'))
     }
 
 
