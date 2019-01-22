@@ -23,7 +23,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     def selfServiceBannerAuthenticationProvider
     def userActionItemReadOnlyCompositeService
     def bdmEnabled = false
-    def clamavEnabled = true
+    def clamavEnabled = false
     def pidm
     def userActionItemId
     def responseId
@@ -50,7 +50,6 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
             Holders.config.bdmserver.defaultFileSize = '3'
             Holders.config.bdmserver.defaultfile_ext = ['EXE']
         }
-        //Holders.config.clamav = {}
         if (clamavEnabled) {
             Holders.config.clamav.enabled = true
             Holders.config.clamav.host = '127.0.0.1'
