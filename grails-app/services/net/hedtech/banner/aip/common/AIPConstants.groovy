@@ -31,4 +31,5 @@ class AIPConstants {
     public static final String DOCUMENT_NAME = 'DOCUMENT NAME'
     public static final String VPDI_CODE = 'VPDI CODE'
 	public static final String DEFAULT_CLAMAV_HOST = '127.0.0.1'
-    public static final Integer DEFAULT_CLAMAV_PORT = 3310}
+    public static final Integer DEFAULT_CLAMAV_PORT = 3310
+}
