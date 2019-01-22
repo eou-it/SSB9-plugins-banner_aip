@@ -4,18 +4,14 @@
 
 package net.hedtech.banner.aip
 
-import grails.validation.ValidationException
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import static org.junit.Assert.*
 import net.hedtech.banner.general.person.PersonUtility
 
 class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
-    def i_failure_actionItemId = "111"
-    def i_failure_actionItemName = "Test"
 
 
     Map paramsMap = [:]
@@ -24,7 +20,6 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
     def pagingAndSortParamsDesc = [sortColumn: "actionItemName", sortAscending: false, max: 50, offset: 0]
 
 
-    def filterData = [params: paramsMap, criteria: criteriaMap]
     ActionItem drugAndAlcoholPolicyActionItem;
     @Before
     void setUp() {
@@ -117,14 +112,6 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
         String personName = null;
         def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonNameCount(actionItemId, personName)
         assertEquals 13, result
-    }
-
-    private def newInvalidForCreateMonitorActionItemReadOnly() {
-        def monitorActionItemReadOnly = new MonitorActionItemReadOnly(
-                actionItemId: i_failure_actionItemId,
-                actionItemName: i_failure_actionItemName
-        )
-        return monitorActionItemReadOnly
     }
 
     @Test

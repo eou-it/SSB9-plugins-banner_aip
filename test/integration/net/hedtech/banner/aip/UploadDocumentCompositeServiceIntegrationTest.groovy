@@ -4,7 +4,6 @@
 
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.configuration.ConfigProperties
 import net.hedtech.banner.general.configuration.ConfigApplication
 import net.hedtech.banner.testing.BaseIntegrationTestCase
@@ -16,7 +15,6 @@ import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.multipart.MultipartFile
-import net.hedtech.banner.general.person.PersonUtility
 import grails.util.Holders
 
 class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestCase {
@@ -25,7 +23,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     def selfServiceBannerAuthenticationProvider
     def userActionItemReadOnlyCompositeService
     def bdmEnabled = false
-    def clamavEnabled = false
+    def clamavEnabled = true
     def pidm
     def userActionItemId
     def responseId
@@ -52,12 +50,12 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
             Holders.config.bdmserver.defaultFileSize = '3'
             Holders.config.bdmserver.defaultfile_ext = ['EXE']
         }
-        Holders.config.clamav = {}
+        //Holders.config.clamav = {}
         if (clamavEnabled) {
             Holders.config.clamav.enabled = true
             Holders.config.clamav.host = '127.0.0.1'
             Holders.config.clamav.port = 3310
-            Holders.config.clamav.connectionTimeout = 20
+            Holders.config.clamav.connectionTimeout = 2000
         } else {
             Holders.config.clamav.enabled = false
         }
@@ -97,6 +95,23 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
             assert saveResult.message == "Save failed. Virus detected in uploaded file."
         }
     }
+    @Test
+    void testFileScanDisabled() {
+        if (clamavEnabled) {
+            Holders.config.clamav.enabled = false
+            def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'eicar_com.zip')
+            assert saveResult.success == true
+        }
+    }
+    @Test
+    void testFileScanWithWarning() {
+        if (clamavEnabled) {
+            Holders.config.clamav.connectionTimeout = 2
+            def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
+            assert saveResult.success == false
+            assert saveResult.message == "Antivirus scan did not succeed. Please contact your administrator."
+        }
+    }
 
     @Test
     void testTextSaveUploadDocumentService() {
@@ -106,7 +121,6 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     @Test
     void testAIPFileLocationForDocumentUpload() {
-
         def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert saveResult.success == true
         def paramsObj = [

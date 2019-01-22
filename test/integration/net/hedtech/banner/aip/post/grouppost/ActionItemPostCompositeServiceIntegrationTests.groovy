@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
@@ -17,6 +17,7 @@ import net.hedtech.banner.general.communication.population.CommunicationPopulati
 import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.testing.BaseIntegrationTestCase
+import org.json.JSONObject
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -440,12 +441,15 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     @Test
     void sendAsynchronousPostItem() {
-        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'AIP Student Population 1' )[0]
         SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
         CommunicationPopulationListView populationListView = actionItemProcessingCommonService.fetchPopulationListForSend( 'p', [max: 10, offset: 0] )[0]
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
         def actionItemGroup = actionItemGroups[0]
         List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
+        def correspondingServerDetails =new JSONObject()
+        correspondingServerDetails.put("dateVal","06/21/2018");
+        correspondingServerDetails.put("timeVal", "0330");
+        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
         requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.populationId = populationListView.id
@@ -456,8 +460,8 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.displayStartDate = testingDateFormat.format( new Date() )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date() + 1
-        requestMap.displayDatetimeZone = "06/21/2018 0330 (GMT+5:30) Asia/Kolkata"
         requestMap.actionItemIds = actionItemIds
+        requestMap.displayDatetimeZone=correspondingServerDetails
         def result = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
         assert result.success == true
         assert result.savedJob != null
@@ -471,12 +475,15 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     @Test
     void sendAsynchronousPostItemInvalidScheduledDate() {
-        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'AIP Student Population 1' )[0]
         SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
         CommunicationPopulationListView populationListView = actionItemProcessingCommonService.fetchPopulationListForSend( 'p', [max: 10, offset: 0] )[0]
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
         def actionItemGroup = actionItemGroups[0]
         List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
+        def correspondingServerDetails =new JSONObject()
+        correspondingServerDetails.put("dateVal","06/21/2018");
+        correspondingServerDetails.put("timeVal", "0330");
+        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
         requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.populationId = populationListView.id
@@ -489,8 +496,9 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.scheduledStartDate = new Date() - 1
         requestMap.scheduledStartTime = "0900"
         requestMap.timezoneStringOffset = "Asia/Kolkata"
-        requestMap.displayDatetimeZone = "06/21/2018 0330 (GMT+5:30) Asia/Kolkata"
+        requestMap.displayDatetimeZone=correspondingServerDetails;
         requestMap.actionItemIds = actionItemIds
+        print "REM,$requestMap"
         try {
             actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
         } catch (ApplicationException e) {
@@ -502,12 +510,15 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     @Test
     void sendAsynchronousPostItemInvalidDisplayStartDate() {
-        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'AIP Student Population 1' )[0]
         SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
         CommunicationPopulationListView populationListView = actionItemProcessingCommonService.fetchPopulationListForSend( 'p', [max: 10, offset: 0] )[0]
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
         def actionItemGroup = actionItemGroups[0]
         List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
+        def correspondingServerDetails =new JSONObject()
+        correspondingServerDetails.put("dateVal","06/21/2018");
+        correspondingServerDetails.put("timeVal", "0330");
+        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
         requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.populationId = populationListView.id
@@ -515,7 +526,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.postingActionItemGroupId = actionItemGroup.id
         requestMap.postNow = true
         requestMap.recalculateOnPost = false
-        requestMap.displayDatetimeZone = "06/21/2018 0330 (GMT+5:30) Asia/Kolkata"
+        requestMap.displayDatetimeZone=correspondingServerDetails;
         requestMap.displayStartDate = testingDateFormat.format( new Date() - 1 )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date()
@@ -543,23 +554,26 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     @Test
     void sendAsynchronousPostItemInvalidDisplayEndDate() {
-        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'AIP Student Population 1' )[0]
         SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
         CommunicationPopulationListView populationListView = actionItemProcessingCommonService.fetchPopulationListForSend( 'p', [max: 10, offset: 0] )[0]
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
         def actionItemGroup = actionItemGroups[0]
         List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
+        def correspondingServerDetails =new JSONObject()
+        correspondingServerDetails.put("dateVal","06/21/2018");
+        correspondingServerDetails.put("timeVal", "0330");
+        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
         requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.populationId = populationListView.id
         requestMap.referenceId = UUID.randomUUID().toString()
         requestMap.postingActionItemGroupId = actionItemGroup.id
         requestMap.postNow = true
-        requestMap.displayDatetimeZone = "06/21/2018 0330 (GMT+5:30) Asia/Kolkata"
         requestMap.recalculateOnPost = false
         requestMap.displayStartDate = testingDateFormat.format( new Date() )
         requestMap.displayEndDate = testingDateFormat.format( new Date() - 1 )
         requestMap.scheduledStartDate = new Date() - 1
+        requestMap.displayDatetimeZone=correspondingServerDetails;
         requestMap.actionItemIds = actionItemIds
         try {
             actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
@@ -572,12 +586,15 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     @Test
     void updateAsynchronousPostItem() {
-        CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'AIP Student Population 1' )[0]
         SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
         CommunicationPopulationListView populationListView = actionItemProcessingCommonService.fetchPopulationListForSend( 'p', [max: 10, offset: 0] )[0]
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
         def actionItemGroup = actionItemGroups[0]
         List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
+        def correspondingServerDetails =new JSONObject()
+        correspondingServerDetails.put("dateVal","06/21/2018");
+        correspondingServerDetails.put("timeVal", "0330");
+        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
         requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.populationId = populationListView.id
@@ -588,7 +605,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.displayStartDate = testingDateFormat.format( new Date() )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date() + 1
-        requestMap.displayDatetimeZone = "06/21/2018 0330 (GMT+5:30) Asia/Kolkata"
+        requestMap.displayDatetimeZone=correspondingServerDetails;
         requestMap.actionItemIds = actionItemIds
         def result = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
         assert result.success == true
@@ -627,13 +644,15 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
     private getInstance() {
         CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'AIP Student Population 1' )[0]
         CommunicationPopulationVersion populationVersion = CommunicationPopulationVersion.findLatestByPopulationId( population.id )
-
         SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
-        CommunicationPopulationListView populationListView = actionItemProcessingCommonService.fetchPopulationListForSend( 'p', [max: 10, offset:
-                0] )[0]
+        CommunicationPopulationListView populationListView = actionItemProcessingCommonService.fetchPopulationListForSend( 'p', [max: 10, offset: 0] )[0]
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
         def actionItemGroup = actionItemGroups[0]
         List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
+        def correspondingServerDetails =new JSONObject()
+        correspondingServerDetails.put("dateVal","06/21/2018");
+        correspondingServerDetails.put("timeVal", "0330");
+        correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
         requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.populationId = populationListView.id
@@ -645,12 +664,11 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date() + 1
         requestMap.actionItemIds = actionItemIds
-        requestMap.displayDatetimeZone = "06/21/2018 0330 (GMT+5:30) Asia/Kolkata"
+        requestMap.displayDatetimeZone=correspondingServerDetails;
         def actionItemPost = actionItemPostCompositeService.getActionPostInstance( requestMap, springSecurityService.getAuthentication()?.user )
         actionItemPost.populationCalculationId = populationVersion.id
         actionItemPost.populationVersionId = populationVersion.id
         actionItemPost
     }
-
 
 }
