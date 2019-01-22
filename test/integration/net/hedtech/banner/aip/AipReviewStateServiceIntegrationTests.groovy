@@ -64,16 +64,22 @@ class AipReviewStateServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testFetchNonDefaultReviewStates() {
-        List<AipReviewState> reviewStateResult = aipReviewStateService.fetchNonDefaultReviewStates("en_US")
+        List<AipReviewState> reviewStateResult = aipReviewStateService.fetchNonDefaultReviewStates("pt")
         assert reviewStateResult.size() == 6
-        def reviewStateCodes = reviewStateResult.collect{it.reviewStateCode }
+        def reviewStateCodes = reviewStateResult.collect{it->
+            if(it.locale.toUpperCase() == "PT") {
+                it.reviewStateCode
+            }
+        }
+        reviewStateCodes = reviewStateResult.collect{it.reviewStateCode }
         assert reviewStateCodes.containsAll(['20', '30', '40', '50', '60', '70'])
+        assertFalse (reviewStateCodes.contains('10'))
     }
 
     @Test
     void testFetchNonDefaultReviewStatesLocaleNotExists() {
         List<AipReviewState> reviewStateResult = aipReviewStateService.fetchNonDefaultReviewStates("ABC")
-        assert reviewStateResult.size() > 0
+        assert reviewStateResult.size() == 6
         def reviewStateCodes = reviewStateResult.collect{it->
             if(it.locale.toUpperCase() == AIPConstants.DEFAULT_LOCALE) {
                 it.reviewStateCode
