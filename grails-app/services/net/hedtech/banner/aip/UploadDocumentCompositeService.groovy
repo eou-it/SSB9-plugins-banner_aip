@@ -73,7 +73,7 @@ class UploadDocumentCompositeService {
                 message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_FILE_EMPTY)
                 throw new ApplicationException(UploadDocumentCompositeService, new BusinessLogicValidationException(message, []))
             }
-            if (Holders.config.clamav?.enabled) {
+            if (aipClamavService.isClamavEnabled()) {
                 scanDocuments(map.file)
             }
             switch (ud.fileLocation) {

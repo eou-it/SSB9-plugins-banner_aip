@@ -28,10 +28,17 @@ class AipClamavService {
      * @param scanner
      * @param fileInputStream
      * @return
-     * @throws Exception
      */
     public ScanResult fileScanner(ClamAvScanner scanner, InputStream file){
         ScanResult resScan
         resScan = scanner.scan(file)
+    }
+    /**
+     * Check if clamav virus scanning is enabled
+     * @return
+     */
+    public boolean isClamavEnabled(){
+        boolean clamavEnabled
+        clamavEnabled = (Holders.config.clamav?.enabled)?Holders.config.clamav?.enabled:false
     }
 }
