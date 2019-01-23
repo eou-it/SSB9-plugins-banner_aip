@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -37,6 +37,10 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
         def actionItems = userActionItemReadOnlyService.listActionItemByPidmWithinDate( user.pidm )
         def actionItemIds = actionItems.collect{it.id}
         actionItems = actionItems.collect {UserActionItemReadOnly it ->
+            def reviewState = aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode,userLocale.toString())
+            if(!reviewState) {
+                reviewState = MessageHelper.message( 'aip.review.status.text.unavailable' )
+            }
 
             [
                     id                      : it.id,
@@ -64,7 +68,7 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
                     userId                  : it.userId,
                     userIdTmpl              : it.userIdTmpl,
                     currentResponse         : it.completedDate ? it.currentResponseText : null,
-                    currentReviewState      : aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode,userLocale.toString()),
+                    currentReviewState      : reviewState,
                     currentContact          : it.reviewContact ,
                     currentComment          : it.reviewComment
             ]

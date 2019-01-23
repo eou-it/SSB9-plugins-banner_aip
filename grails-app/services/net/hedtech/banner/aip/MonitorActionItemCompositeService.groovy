@@ -44,7 +44,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                  currentResponseText : userActionItemDetails.currentResponseText,
                  reviewIndicator     : userActionItemDetails.reviewIndicator,
                  reviewAuditObject   : getRecentReviewAuditEntry(userActionItemDetails.id),
-          reviewStateObject   : [code:userActionItemDetails.reviewStateCode,name:aipReviewStateService.fetchReviewStateNameByCodeAndLocale(userActionItemDetails.reviewStateCode, getLocaleSting())],
+                 reviewStateObject   : [code:userActionItemDetails.reviewStateCode,name:aipReviewStateService.fetchReviewStateNameByCodeAndLocale(userActionItemDetails.reviewStateCode, getLocaleSting())],
                  attachments         : userActionItemDetails.attachments]
 
         return result

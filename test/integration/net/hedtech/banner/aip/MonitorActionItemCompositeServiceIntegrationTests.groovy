@@ -483,4 +483,5 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         assert list.size() > 0
         assert list[0].reviewStateCode == "Review needed"
     }
+
 }
