@@ -25,12 +25,15 @@ class AIPConstants {
     public static final String MESSAGE_SAVE_SUCCESS = 'uploadDocument.save.success'
     public static final String ERROR_MESSAGE_BDM_DOCUMENT_NOT_FOUND = 'uploadDocument.bdm.document.not.found'
     public static final String ERROR_MESSAGE_FILENAME_TOO_LONG = 'aip.uploadDocument.file.name.length.error'
-
+	public static final String ERROR_MESSAGE_VIRUS_FOUND = 'uploadDocument.virus.found.error'
+    public static final String ERROR_MESSAGE_VIRUS_SCAN_FAILED = 'uploadDocument.virus.scan.error'
     public static final String DOCUMENT_ID = 'DOCUMENT ID'
     public static final String DOCUMENT_TYPE = 'DOCUMENT TYPE'
     public static final String DOCUMENT_NAME = 'DOCUMENT NAME'
     public static final String VPDI_CODE = 'VPDI CODE'
     public static final String DOCUMENTNAME ='documentName'
     public static final String ERROR_DOCUMENT_NAME_MAXSIZE_EXCEEDED ='uploadDocument.documentName.maxSize.exceeded.documentName'
+	public static final String DEFAULT_CLAMAV_HOST = '127.0.0.1'
+    public static final Integer DEFAULT_CLAMAV_PORT = 3310
     public static final String DEFAULT_LOCALE = 'EN_US'
 }
