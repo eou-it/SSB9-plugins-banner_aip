@@ -38,7 +38,7 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
         def actionItemIds = actionItems.collect{it.id}
         actionItems = actionItems.collect {UserActionItemReadOnly it ->
             def reviewState = aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode,userLocale.toString())
-            if(!reviewState) {
+            if(it.reviewStateCode && !reviewState) {
                 reviewState = MessageHelper.message( 'aip.review.status.text.unavailable' )
             }
 

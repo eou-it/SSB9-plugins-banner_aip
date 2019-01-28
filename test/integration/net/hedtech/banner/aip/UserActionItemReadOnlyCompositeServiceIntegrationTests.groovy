@@ -181,7 +181,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         loginSSB( 'CSRSTU004', '111111' )
         def map = [locale:'gb']
         def statusMap = configUserPreferenceService.saveLocale(map)
-        assert statusMap.status == 'success'
+        assert 'success' == statusMap.status
 
         //Removing the default Locale en_US temporarily to check the error message scenario
         AipReviewState reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale("10", "en_US")[0]
@@ -193,7 +193,28 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         assert result.groups.items.size() > 0
         def group = result.groups.find{it.title == 'Enrollment'}
         def item = group.items.find {it.name == 'Policy Handbook'}
-        assert item.name == 'Policy Handbook'
-        assert item.currentReviewState == 'Review status text unavailable: contact support'
+        assert 'Policy Handbook' == item.name
+        assert 'Review status text unavailable; contact support' == item.currentReviewState
+    }
+
+    @Test
+    void testCurrentReviewStateIsNull() {
+        loginSSB( 'CSRSTU004', '111111' )
+        def map = [locale:'gb']
+        def statusMap = configUserPreferenceService.saveLocale(map)
+        assert 'success' == statusMap.status
+
+        //Removing the default Locale en_US temporarily to check the error message scenario
+        AipReviewState reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale("10", "en_US")[0]
+        reviewStateResult.locale = 'AB'
+        reviewStateResult.save(flush: true, failOnError: true)
+
+        def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
+        assert result.groups.size() > 0
+        assert result.groups.items.size() > 0
+        def group = result.groups.find{it.title == 'Enrollment'}
+        def item = group.items.find {it.name == 'Deans List'}
+        assert 'Deans List' == item.name
+        assertNull item.currentReviewState
     }
 }
