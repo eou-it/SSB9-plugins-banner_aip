@@ -36,6 +36,4 @@ class AIPConstants {
 	public static final String DEFAULT_CLAMAV_HOST = '127.0.0.1'
     public static final Integer DEFAULT_CLAMAV_PORT = 3310
     public static final String DEFAULT_LOCALE = 'EN_US'
-    public static final String LOCALE_FRENCH_FRANCE = 'FR_FR'
-    public static final String LOCALE_FRENCH = 'FR'
 }
