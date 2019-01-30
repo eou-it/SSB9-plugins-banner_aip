@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
@@ -36,7 +36,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
         def getDisplayTimeZoneInfo = { key ->
             map.get( key )?.displayNameWithoutOffset
         }
-        
+
         def results = fetchWithPagingAndSortParams( params )
         results = results.collect {
             ActionItemPostReadOnly it ->
