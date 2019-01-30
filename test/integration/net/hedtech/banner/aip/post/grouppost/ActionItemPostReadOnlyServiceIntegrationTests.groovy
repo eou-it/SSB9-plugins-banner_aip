@@ -31,6 +31,12 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
     @Test
     void testFetchJobsNoParam() {
         def ourName = 'jsgfjdekd'
+        
+        def paramObj=[searchParam  : "",
+                      sortColumn   : "postingName",
+                      sortAscending: true,
+                      max          : 1000,
+                      offset       : 0]
 
         ActionItemPost myAip = newActionItemPost( ourName )
         myAip.save()
@@ -38,8 +44,7 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
         assert ActionItemPost.findAllByPostingName( ourName ).size() > 0
         assert ActionItemPostReadOnly.findAllByPostingName( ourName ).size() > 0
 
-        List<ActionItemPostReadOnly> actionItemReadPostOnlyList = actionItemPostReadOnlyService.listActionItemPostJobList( [searchParam: ''],
-                                                                                                                           [max: 1000, offset: 0] ).result
+        List<ActionItemPostReadOnly> actionItemReadPostOnlyList = actionItemPostReadOnlyService.listActionItemPostJobList( paramObj ).result
 
         assert actionItemReadPostOnlyList.size() > 0
     }
@@ -49,13 +54,18 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
     void testFetchJobByName() {
         def ourName = 'kdsfwkw'
 
+        def paramObj=[searchParam  : ourName,
+                      sortColumn   : "postingName",
+                      sortAscending: true,
+                      max          : 1000,
+                      offset       : 0]
+        
         ActionItemPost myAip = newActionItemPost( ourName )
         myAip.save()
 
         assert ActionItemPost.findAllByPostingName( ourName ).size() > 0
         assert ActionItemPostReadOnly.findAllByPostingName( ourName ).size() > 0
-        List<ActionItemPostReadOnly> actionItemReadPostOnlyList = actionItemPostReadOnlyService.listActionItemPostJobList( [searchParam: ourName],
-                                                                                                                           [max: 1000, offset: 0] ).result
+        List<ActionItemPostReadOnly> actionItemReadPostOnlyList = actionItemPostReadOnlyService.listActionItemPostJobList( paramObj ).result
 
         assert actionItemReadPostOnlyList.size() > 0
         assertEquals( ourName, actionItemReadPostOnlyList[0].postingName )

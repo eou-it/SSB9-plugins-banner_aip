@@ -6,6 +6,8 @@ package net.hedtech.banner.aip.post.grouppost
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.hibernate.annotations.Type
+import net.hedtech.banner.general.CommunicationCommonUtility
+import org.hibernate.criterion.Order
 
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -260,6 +262,23 @@ class ActionItemPostReadOnly implements Serializable {
         ActionItemPostReadOnly.withSession {session ->
             session.getNamedQuery( 'ActionItemPostReadOnly.fetchByPostingId' )
                     .setLong( 'postingId', postingId ).list()[0]
+        }
+    }
+    /**
+     *
+     * @param filterData
+     * @param pagingAndSortParams
+     * @return
+     */
+    static fetchWithPagingAndSortParams(filterData, pagingAndSortParams) {
+
+        def queryCriteria = ActionItemPostReadOnly.createCriteria()
+        queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
+            ilike("postingName", CommunicationCommonUtility.getScrubbedInput(filterData?.name))
+            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+            if (!pagingAndSortParams?.sortColumn.equals("postingName")) {
+                order(Order.asc('postingName').ignoreCase())
+            }
         }
     }
 }
