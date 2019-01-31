@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2019 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  ****************************************************************************** */
 package net.hedtech.banner.aip.post.grouppost
 
@@ -265,13 +265,12 @@ class ActionItemPostReadOnly implements Serializable {
         }
     }
     /**
-     *
+     * Function to fetch post action items based on params
      * @param filterData
      * @param pagingAndSortParams
      * @return
      */
     static fetchWithPagingAndSortParams(filterData, pagingAndSortParams) {
-
         def queryCriteria = ActionItemPostReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             ilike("postingName", CommunicationCommonUtility.getScrubbedInput(filterData?.name))

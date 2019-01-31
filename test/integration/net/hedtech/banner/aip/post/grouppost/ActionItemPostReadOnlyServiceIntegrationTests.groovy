@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2019 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip.post.grouppost
@@ -31,7 +31,6 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
     @Test
     void testFetchJobsNoParam() {
         def ourName = 'jsgfjdekd'
-        
         def paramObj=[searchParam  : "",
                       sortColumn   : "postingName",
                       sortAscending: true,
@@ -40,12 +39,9 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
 
         ActionItemPost myAip = newActionItemPost( ourName )
         myAip.save()
-
         assert ActionItemPost.findAllByPostingName( ourName ).size() > 0
         assert ActionItemPostReadOnly.findAllByPostingName( ourName ).size() > 0
-
         List<ActionItemPostReadOnly> actionItemReadPostOnlyList = actionItemPostReadOnlyService.listActionItemPostJobList( paramObj ).result
-
         assert actionItemReadPostOnlyList.size() > 0
     }
 
@@ -53,7 +49,6 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
     @Test
     void testFetchJobByName() {
         def ourName = 'kdsfwkw'
-
         def paramObj=[searchParam  : ourName,
                       sortColumn   : "postingName",
                       sortAscending: true,
@@ -62,11 +57,9 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
         
         ActionItemPost myAip = newActionItemPost( ourName )
         myAip.save()
-
         assert ActionItemPost.findAllByPostingName( ourName ).size() > 0
         assert ActionItemPostReadOnly.findAllByPostingName( ourName ).size() > 0
         List<ActionItemPostReadOnly> actionItemReadPostOnlyList = actionItemPostReadOnlyService.listActionItemPostJobList( paramObj ).result
-
         assert actionItemReadPostOnlyList.size() > 0
         assertEquals( ourName, actionItemReadPostOnlyList[0].postingName )
     }
