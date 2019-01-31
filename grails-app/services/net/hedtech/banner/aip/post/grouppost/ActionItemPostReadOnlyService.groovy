@@ -18,7 +18,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
     def actionItemProcessingCommonService
 
     /**
-     * Lists Group Folders
+     * Lists Post Action Items
      * @param params
      * @return
      */
