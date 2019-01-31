@@ -30,17 +30,17 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
 
     @Test
     void testFetchJobsNoParam() {
-        def ourName = 'jsgfjdekd'
+        def data = 'jsgfjdekd'
         def paramObj=[searchParam  : "",
                       sortColumn   : "postingName",
                       sortAscending: true,
                       max          : 1000,
                       offset       : 0]
 
-        ActionItemPost myAip = newActionItemPost( ourName )
-        myAip.save()
-        assert ActionItemPost.findAllByPostingName( ourName ).size() > 0
-        assert ActionItemPostReadOnly.findAllByPostingName( ourName ).size() > 0
+        ActionItemPost aiPost = newActionItemPost( data )
+        aiPost.save()
+        assert ActionItemPost.findAllByPostingName( data ).size() > 0
+        assert ActionItemPostReadOnly.findAllByPostingName( data ).size() > 0
         List<ActionItemPostReadOnly> actionItemReadPostOnlyList = actionItemPostReadOnlyService.listActionItemPostJobList( paramObj ).result
         assert actionItemReadPostOnlyList.size() > 0
     }
@@ -48,52 +48,52 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
 
     @Test
     void testFetchJobByName() {
-        def ourName = 'kdsfwkw'
+        def data = 'kdsfwkw'
         def paramObj=[searchParam  : ourName,
                       sortColumn   : "postingName",
                       sortAscending: true,
                       max          : 1000,
                       offset       : 0]
         
-        ActionItemPost myAip = newActionItemPost( ourName )
-        myAip.save()
-        assert ActionItemPost.findAllByPostingName( ourName ).size() > 0
-        assert ActionItemPostReadOnly.findAllByPostingName( ourName ).size() > 0
+        ActionItemPost aiPost = newActionItemPost( data )
+        aiPost.save()
+        assert ActionItemPost.findAllByPostingName( data ).size() > 0
+        assert ActionItemPostReadOnly.findAllByPostingName( data ).size() > 0
         List<ActionItemPostReadOnly> actionItemReadPostOnlyList = actionItemPostReadOnlyService.listActionItemPostJobList( paramObj ).result
         assert actionItemReadPostOnlyList.size() > 0
-        assertEquals( ourName, actionItemReadPostOnlyList[0].postingName )
+        assertEquals( data, actionItemReadPostOnlyList[0].postingName )
     }
 
 
     @Test
     void statusPosted() {
-        def ourName = 'kdsfwkw'
-        ActionItemPost myAip = newActionItemPost( ourName )
-        myAip = myAip.save()
-        assert ActionItemPost.findAllByPostingName( ourName ).size() > 0
-        assert ActionItemPostReadOnly.findAllByPostingName( ourName ).size() > 0
-        assert AIPConstants.NO_IND == actionItemPostReadOnlyService.statusPosted( myAip.id )
+        def data = 'kdsfwkw'
+        ActionItemPost aiPost = newActionItemPost( data )
+        aiPost = aiPost.save()
+        assert ActionItemPost.findAllByPostingName( data ).size() > 0
+        assert ActionItemPostReadOnly.findAllByPostingName( data ).size() > 0
+        assert AIPConstants.NO_IND == actionItemPostReadOnlyService.statusPosted( aiPost.id )
         assert AIPConstants.NO_IND == actionItemPostReadOnlyService.statusPosted( -99 )
     }
 
 
     @Test
     void statusPostedScheduledOne() {
-        ActionItemPost myAip = newScheduledActionItemPost( 'test_scheduled_kdsfwkw' )
-        myAip = myAip.save( flush: true )
-        assert AIPConstants.YES_IND == actionItemPostReadOnlyService.statusPosted( myAip.id )
+        ActionItemPost aiPost = newScheduledActionItemPost( 'test_scheduled_kdsfwkw' )
+        aiPost = aiPost.save( flush: true )
+        assert AIPConstants.YES_IND == actionItemPostReadOnlyService.statusPosted( aiPost.id )
     }
 
 
     @Test
     void JobDetailsByPostId() {
-        def ourName = 'kdsfwkw'
-        ActionItemPost myAip = newScheduledActionItemPost( ourName )
-        myAip = myAip.save()
-        assert ActionItemPost.findAllByPostingName( ourName ).size() > 0
-        assert ActionItemPostReadOnly.findAllByPostingName( ourName ).size() > 0
-        def result = actionItemPostReadOnlyService.JobDetailsByPostId( myAip.id )
-        assert result.postingId == myAip.id
+        def data = 'kdsfwkw'
+        ActionItemPost aiPost = newScheduledActionItemPost( data )
+        aiPost = aiPost.save()
+        assert ActionItemPost.findAllByPostingName( data ).size() > 0
+        assert ActionItemPostReadOnly.findAllByPostingName( data ).size() > 0
+        def result = actionItemPostReadOnlyService.JobDetailsByPostId( aiPost.id )
+        assert result.postingId == aiPost.id
     }
 
 
