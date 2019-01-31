@@ -27,10 +27,7 @@ class AipReviewStateService extends ServiceBase {
      * @returns String Review State Name
      */
      String fetchReviewStateNameByCodeAndLocale(String code, String locale) {
-        def primaryLocale
-        if(locale.contains("_")) {
-            primaryLocale = locale.substring(0, locale.indexOf("_"))
-        }
+        def primaryLocale = locale.split("_")[0]
 
         List<AipReviewState> reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale(code, locale, primaryLocale)
         AipReviewState aipReviewState = reviewStateResult.find {it->
@@ -65,10 +62,7 @@ class AipReviewStateService extends ServiceBase {
      * @returns List of Review States
      */
     List<AipReviewState> fetchNonDefaultReviewStates(String locale) {
-        def primaryLocale
-        if(locale.contains("_")) {
-            primaryLocale = locale.substring(0, locale.indexOf("_"))
-        }
+        def primaryLocale =  locale.split("_")[0]
 
         List<AipReviewState> reviewStateResult = AipReviewState.fetchNonDefaultReviewStates(locale, primaryLocale)
 

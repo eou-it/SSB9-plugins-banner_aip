@@ -46,7 +46,7 @@ class AipReviewStateServiceIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testFetchReviewStateNameOfDefaultLocale() {
         //when for the specified locale ReviewState is not available, ReviewState of default locale (en_US) is returned
-        String reviewStateName = aipReviewStateService.fetchReviewStateNameByCodeAndLocale('10', 'fr_CA')
+        String reviewStateName = aipReviewStateService.fetchReviewStateNameByCodeAndLocale('10', 'ABC')
         assert "Review needed", reviewStateName
     }
 
@@ -66,6 +66,9 @@ class AipReviewStateServiceIntegrationTests extends BaseIntegrationTestCase {
     void testFetchReviewStateNameForFrenchFranceLocale() {
         String reviewStateName = aipReviewStateService.fetchReviewStateNameByCodeAndLocale('10', 'fr_FR')
         assert "Révision requise", reviewStateName
+
+        reviewStateName = aipReviewStateService.fetchReviewStateNameByCodeAndLocale('10', 'es_MX')
+        assert "Revisi��n necesaria", reviewStateName
 
         AipReviewState reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale("10", "fr")[0]
         reviewStateResult.locale = 'AB'
