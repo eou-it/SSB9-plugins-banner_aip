@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -148,39 +148,6 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
 
         def actionItemStatusListObj = new ActionItemStatus()
         assertNotNull actionItemStatusListObj
-    }
-
-
-    @Test
-    void testActionItemStatusEquals() {
-
-        List<ActionItemStatus> actionItemStatuses = ActionItemStatus.fetchActionItemStatuses()
-        def actionItemStatusList = actionItemStatuses[0]
-        def actionItemStatusNewList = new ActionItemStatus(
-                actionItemStatus: actionItemStatusList.actionItemStatus,
-                actionItemStatusBlockedProcess: actionItemStatusList.actionItemStatusBlockedProcess,
-                actionItemStatusSystemRequired: actionItemStatusList.actionItemStatusSystemRequired,
-                actionItemStatusActive: actionItemStatusList.actionItemStatusActive,
-                actionItemStatusDefault: actionItemStatusList.actionItemStatusDefault )
-        long actionItemStatusListId = actionItemStatusList.id
-        long actionItemStatusListVersion = actionItemStatusList.version
-        actionItemStatusNewList.id = actionItemStatusListId
-        actionItemStatusNewList.version = actionItemStatusListVersion
-        actionItemStatusNewList.lastModifiedBy = actionItemStatusList.lastModifiedBy
-        actionItemStatusNewList.lastModified = actionItemStatusList.lastModified
-        actionItemStatusNewList.dataOrigin = actionItemStatusList.dataOrigin
-        actionItemStatusNewList.version = actionItemStatusList.version
-
-
-        def result = actionItemStatusList.equals( actionItemStatusList )
-        assertTrue result
-
-        result = actionItemStatusList.equals( actionItemStatusNewList )
-        assertTrue result
-        def actionItemStatusListNull = new ActionItem( null )
-        result = actionItemStatusList.equals( actionItemStatusListNull )
-        assertFalse result
-
     }
 
 

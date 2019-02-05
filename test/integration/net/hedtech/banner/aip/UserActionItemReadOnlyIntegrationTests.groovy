@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -72,48 +72,4 @@ class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
     }
 
-
-    @Test
-    void testUserActionItemROEquals() {
-        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItemReadOnly> userActionItemsRO = UserActionItemReadOnly.fetchUserActionItemsROByPidmDate( actionItemPidm )
-        def userActionItemListRO = userActionItemsRO[0]
-        def userActionItemRONewList = new UserActionItemReadOnly()
-        userActionItemRONewList.id = userActionItemListRO.id
-        userActionItemRONewList.title = userActionItemListRO.title
-        userActionItemRONewList.name = userActionItemListRO.name
-        userActionItemRONewList.activeTmpl = userActionItemListRO.activeTmpl
-        userActionItemRONewList.activityDateTmpl = userActionItemListRO.activityDateTmpl
-        userActionItemRONewList.userIdTmpl = userActionItemListRO.userIdTmpl
-        userActionItemRONewList.description = userActionItemListRO.description
-        userActionItemRONewList.creatorIdTmpl = userActionItemListRO.creatorIdTmpl
-        userActionItemRONewList.createDateTmpl = userActionItemListRO.createDateTmpl
-        userActionItemRONewList.versionTmpl = userActionItemListRO.versionTmpl
-        userActionItemRONewList.pidm = userActionItemListRO.pidm
-        userActionItemRONewList.statusId = userActionItemListRO.statusId
-        userActionItemRONewList.status = userActionItemListRO.status
-        userActionItemRONewList.isBlocking = userActionItemListRO.isBlocking
-        userActionItemRONewList.completedDate = userActionItemListRO.completedDate
-        userActionItemRONewList.activityDate = userActionItemListRO.activityDate
-        userActionItemRONewList.userId = userActionItemListRO.userId
-        userActionItemRONewList.creatorId = userActionItemListRO.creatorId
-        userActionItemRONewList.createDate = userActionItemListRO.createDate
-        userActionItemRONewList.version = userActionItemListRO.version
-        userActionItemRONewList.actionItemGroupID = userActionItemListRO.actionItemGroupID
-        userActionItemRONewList.actionItemGroupName = userActionItemListRO.actionItemGroupName
-        userActionItemRONewList.actionItemGroupTitle = userActionItemListRO.actionItemGroupTitle
-        userActionItemRONewList.displayStartDate = userActionItemListRO.displayStartDate
-        userActionItemRONewList.displayEndDate = userActionItemListRO.displayEndDate
-
-        def result = userActionItemRONewList.equals( userActionItemListRO )
-        assertTrue result
-
-        result = userActionItemListRO.equals( null )
-        assertFalse result
-
-        def userActionItemListNull = new UserActionItemReadOnly( null )
-        result = userActionItemListRO.equals( userActionItemListNull )
-        assertFalse result
-
-    }
 }
