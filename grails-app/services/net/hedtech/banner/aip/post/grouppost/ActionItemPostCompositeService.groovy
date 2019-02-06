@@ -471,6 +471,7 @@ class ActionItemPostCompositeService {
      * @return
      */
     def setHomeContext( home ) {
+        LOGGER.debug "Setting home context for mepcode- {$home}"
         def con = sessionFactory.getCurrentSession().connection()
         if (isMEP( con )) {
             Sql sql = new Sql( con )
@@ -507,6 +508,7 @@ class ActionItemPostCompositeService {
             sql?.close()
 
         }
+        LOGGER.debug "mepEnabled -${mepEnabled}"
         mepEnabled
     }
 
@@ -685,6 +687,7 @@ class ActionItemPostCompositeService {
             throw ActionItemExceptionFactory.createApplicationException( ActionItemPostService.class, "invalidScheduledDate" )
         }
         def mepCode = RequestContextHolder.currentRequestAttributes().request.session.getAttribute( 'mep' )
+        LOGGER.debug "Setting mepCod ${mepCode} in JobContext"
         SchedulerJobContext jobContext = new SchedulerJobContext(
                 groupSend.aSyncJobId != null ? groupSend.aSyncJobId : UUID.randomUUID().toString() )
                 .setBannerUser( bannerUser )
