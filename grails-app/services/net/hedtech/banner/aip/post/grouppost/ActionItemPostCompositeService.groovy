@@ -461,7 +461,7 @@ class ActionItemPostCompositeService {
      * @return
      */
     public ActionItemPost generatePostItemsFired( SchedulerJobContext jobContext ) {
-        setHomeContext( jobContext.parameters.get( "mepCode" ) )
+        asynchronousBannerAuthenticationSpoofer.setMepContext( sessionFactory.currentSession.connection(), jobContext.parameters.get( "mepCode" ) )
         generatePostItemsFiredImpl( jobContext )
     }
 
@@ -518,9 +518,7 @@ class ActionItemPostCompositeService {
      */
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
     private void generatePostItemsFiredImpl( SchedulerJobContext jobContext ) {
-        if (isMEP()) {
-            asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), jobContext.parameters.get( "mepCode" ) )
-        }
+            asynchronousBannerAuthenticationSpoofer.setMepContext( sessionFactory.currentSession.connection(), jobContext.parameters.get( "mepCode" ) )
         markArtifactsAsPosted( jobContext.parameters.get( "groupSendId" ) as Long )
         generatePostItems( jobContext.parameters )
     }
@@ -531,7 +529,7 @@ class ActionItemPostCompositeService {
      * @return
      */
     public ActionItemPost generatePostItemsFailed( SchedulerErrorContext errorContext ) {
-        setHomeContext( errorContext.jobContext.parameters.get( "mepCode" ) )
+        asynchronousBannerAuthenticationSpoofer.setMepContext( sessionFactory.currentSession.connection(), errorContext.jobContext.parameters.get( "mepCode" ) )
         generatePostItemsFailedImpl( errorContext )
     }
 
@@ -541,9 +539,7 @@ class ActionItemPostCompositeService {
      */
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
     private void generatePostItemsFailedImpl( SchedulerErrorContext errorContext ) {
-        if (isMEP()) {
-            asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), errorContext.jobContext.parameters.get( "mepCode" ) )
-        }
+            asynchronousBannerAuthenticationSpoofer.setMepContext( sessionFactory.currentSession.connection(), errorContext.jobContext.parameters.get( "mepCode" ) )
         scheduledPostCallbackFailed( errorContext )
     }
 

@@ -66,10 +66,9 @@ class ActionItemPostWorkProcessorService {
 
 
     public void performPostItem( ActionItemPostWork actionItemPostWork ) {
-        if (isMEP()) {
-            setHomeContext( actionItemPostWork.mepCode )
-            asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), actionItemPostWork.mepCode )
-        }
+
+        asynchronousBannerAuthenticationSpoofer.setMepContext( sessionFactory.currentSession.connection(), actionItemPostWork.mepCode )
+
         def groupSendItemId = actionItemPostWork.id
         log.debug( "Performing group send item id = " + groupSendItemId )
         boolean locked = lockGroupSendItem( groupSendItemId, ActionItemPostWorkExecutionState.Ready )
@@ -88,10 +87,9 @@ class ActionItemPostWorkProcessorService {
      */
     public void failGroupSendItem( Long groupSendItemId, String errorCode, String errorText ) {
         ActionItemPostWork groupSendItem = (ActionItemPostWork) actionItemPostWorkService.get( groupSendItemId )
-        if (isMEP()) {
-            setHomeContext( groupSendItem.mepCode )
-            asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), groupSendItem.mepCode )
-        }
+
+        asynchronousBannerAuthenticationSpoofer.setMepContext( sessionFactory.currentSession.connection(), groupSendItem.mepCode )
+
         def groupSendItemParamMap = [
                 id                   : groupSendItem.id,
                 version              : groupSendItem.version,
