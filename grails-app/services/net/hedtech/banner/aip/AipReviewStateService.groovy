@@ -5,7 +5,6 @@
 package net.hedtech.banner.aip
 
 import net.hedtech.banner.aip.common.AIPConstants
-import net.hedtech.banner.i18n.MessageHelper
 import net.hedtech.banner.service.ServiceBase
 
 /****

@@ -4,7 +4,6 @@
 package net.hedtech.banner.aip
 
 import grails.transaction.Transactional
-import grails.util.Holders
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.general.configuration.ConfigProperties
