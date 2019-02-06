@@ -61,7 +61,7 @@ class UploadDocumentContentIntegrationTests extends BaseIntegrationTestCase {
     private def saveUploadDocumentService(actionItemId, responseId, fileName) {
         MockMultipartFile multipartFile = formFileObject(fileName)
         def result = uploadDocumentCompositeService.addDocument(
-                [actionItemId: actionItemId, responseId: responseId, documentName: fileName, documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
+                [userActionItemId: actionItemId, responseId: responseId, documentName: fileName, documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
         return result
     }
 
