@@ -465,54 +465,7 @@ class ActionItemPostCompositeService {
         generatePostItemsFiredImpl( jobContext )
     }
 
-    /**
-     *
-     * @param home
-     * @return
-     */
-    def setHomeContext( home ) {
-        LOGGER.debug "Setting home context for mepcode- {$home}"
-        def con = sessionFactory.getCurrentSession().connection()
-        if (isMEP( con )) {
-            Sql sql = new Sql( con )
-            try {
-                sql.call( "{call g\$_vpdi_security.g\$_vpdi_set_home_context(${home})}" )
-
-            } catch (e) {
-                log.error( "ERROR: Could not establish mif context. $e" )
-                throw e
-            } finally {
-                sql?.close()
-            }
-        }
-    }
-
-    /**
-     *
-     * @param con
-     * @return
-     */
-
-    private isMEP( con = null ) {
-        def mepEnabled
-        if (!con) {
-            con = new Sql(sessionFactory.getCurrentSession().connection())
-        }
-        Sql sql = new Sql( con )
-        try {
-            sql.call( "{$Sql.VARCHAR = call g\$_vpdi_security.g\$_is_mif_enabled_str()}" ) {mifEnabled -> mepEnabled = mifEnabled.toLowerCase().toBoolean()}
-        } catch (e) {
-            log.error( "ERROR: Could not establish mif context. $e" )
-            throw e
-        } finally {
-            sql?.close()
-
-        }
-        LOGGER.debug "mepEnabled -${mepEnabled}"
-        mepEnabled
-    }
-
-    /**
+     /**
      *
      * @param jobContext
      */
