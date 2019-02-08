@@ -10,6 +10,7 @@ import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.i18n.MessageHelper
 import org.apache.log4j.Logger
 import net.hedtech.banner.general.overall.IntegrationConfiguration
+import net.hedtech.banner.general.configuration.ConfigProperties
 
 class ActionItemStatusCompositeService {
     private static final def LOGGER = Logger.getLogger(this.class)
@@ -227,14 +228,10 @@ class ActionItemStatusCompositeService {
     def getMaxAttachmentsValue(maxAttachment) {
         def result
         try {
-            maxAttachment = IntegrationConfiguration.fetchByProcessCodeAndSettingName('GENERAL_SSB', 'ACTION.ITEM.ATTACHMENT.MAXIMUM').value
-            if (Integer.parseInt(maxAttachment) < 0  || Integer.parseInt(maxAttachment).equals(0) ) {
-                result = [maxAttachment: 10]
-            }
-            else
-            {
-                result = [maxAttachment: Integer.parseInt(maxAttachment)]
-            }
+            ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.action.item.maximum.attachment', 'GENERAL_SS')
+            maxAttachment = (configProperties ? Integer.parseInt(configProperties.configValue) : 0)
+
+            result = [maxAttachment: (maxAttachment <= 0) ? 10 : maxAttachment]
         }
         catch(Exception e)
         {
