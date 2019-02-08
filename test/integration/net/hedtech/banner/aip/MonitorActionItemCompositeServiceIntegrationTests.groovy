@@ -450,7 +450,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         assertEquals 1, response.length
         def actionItemDetails = monitorActionItemCompositeService.getActionItem(response.result[0].id)
         def requestMap = [
-                userActionItemId:null,
+                userActionItemId:12345,
                 reviewStateCode:20,
                 displayEndDate:new Date(),
                 responseId:actionItemDetails.responseId,

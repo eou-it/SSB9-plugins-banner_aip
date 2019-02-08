@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
@@ -18,13 +18,13 @@ class ActionItemPostReadOnlyService extends ServiceBase {
     def actionItemProcessingCommonService
 
     /**
-     * Lists Group Folders
+     * Lists Post Action Items
      * @param params
      * @return
      */
-    def listActionItemPostJobList( params, paginationParams ) {
-        params.searchParam = params.searchParam ? ('%' + params.searchParam.toUpperCase() + '%') : ('%')
-        SimpleDateFormat timeFormat = new SimpleDateFormat( MessageHelper.message( "default.time.format" ) );
+    def listActionItemPostJobList(Map params ) {
+
+       SimpleDateFormat timeFormat = new SimpleDateFormat( MessageHelper.message( "default.time.format" ) );
 
         if (actionItemProcessingCommonService.is12HourClock().use12HourClock) {
             timeFormat = new SimpleDateFormat( "hh:mm a" );
@@ -36,7 +36,8 @@ class ActionItemPostReadOnlyService extends ServiceBase {
         def getDisplayTimeZoneInfo = { key ->
             map.get( key )?.displayNameWithoutOffset
         }
-        def results = ActionItemPostReadOnly.fetchJobs( params, paginationParams )
+
+        def results = fetchWithPagingAndSortParams( params )
         results = results.collect {
             ActionItemPostReadOnly it ->
                 [
@@ -144,6 +145,17 @@ class ActionItemPostReadOnlyService extends ServiceBase {
 
         }
         result
+    }
+
+    /**
+     * Function to fetch post action items based on params
+     * @param params
+     * @return
+     */
+    def fetchWithPagingAndSortParams( Map params ) {
+        ActionItemPostReadOnly.fetchWithPagingAndSortParams(
+                [name: params?.searchParam],
+                [sortColumn: params.sortColumn, sortAscending: params.sortAscending, max: params.max, offset: params.offset] )
     }
 
 }

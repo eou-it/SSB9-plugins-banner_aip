@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -63,36 +63,6 @@ class ActionItemGroupIntegrationTests extends BaseIntegrationTestCase {
         assertNotNull hashCode
     }
 
-
-    @Test
-    void testActionItemGroupEquals() {
-        List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
-        def actionItemGroup = actionItemGroups[0]
-        def actionItemGroupNewList = new ActionItemGroup()
-
-        actionItemGroupNewList.id = actionItemGroup.id
-        actionItemGroupNewList.title = actionItemGroup.title
-        actionItemGroupNewList.name = actionItemGroup.name
-        actionItemGroupNewList.folderId = actionItemGroup.folderId
-        actionItemGroupNewList.description = actionItemGroup.description
-        actionItemGroupNewList.postingInd = actionItemGroup.postingInd
-        actionItemGroupNewList.lastModifiedBy = actionItemGroup.lastModifiedBy
-        actionItemGroupNewList.lastModified = actionItemGroup.lastModified
-        actionItemGroupNewList.dataOrigin = actionItemGroup.dataOrigin
-        actionItemGroupNewList.version = actionItemGroup.version
-        actionItemGroupNewList.status = actionItemGroup.status
-
-        def result = actionItemGroupNewList.equals( actionItemGroup )
-        assertTrue result
-
-        result = actionItemGroups.equals( null )
-        assertFalse result
-
-        def actionItemsGroupListNull = new ActionItemGroup( null )
-        result = actionItemGroups.equals( actionItemsGroupListNull )
-        assertFalse result
-
-    }
 
     @Test // duplicate group name in a folder
     void testActionItemGroupConstraint() { //title and folder pair must be unique

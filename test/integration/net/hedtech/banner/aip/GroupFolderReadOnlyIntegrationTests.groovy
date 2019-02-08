@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -172,39 +172,4 @@ class GroupFolderReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         assertEquals( pendingAsFound[0], pendingAsFound.sort( false )[0] )
     }
 
-
-    @Test
-    void testGroupFolderEquals() {
-
-        List<GroupFolderReadOnly> groupFolderList = GroupFolderReadOnly.fetchGroupFolders()
-        def groupFolder = groupFolderList[0]
-        def groupFolderId = groupFolder.groupId
-        GroupFolderReadOnly groupFolderById = GroupFolderReadOnly.fetchGroupFolderById( groupFolderId )
-        def groupFolderNew = new GroupFolderReadOnly()
-
-        groupFolderNew.groupId = groupFolderById.groupId
-        groupFolderNew.groupTitle = groupFolderById.groupTitle
-        groupFolderNew.groupName = groupFolderById.groupName
-        groupFolderNew.groupDesc = groupFolderById.groupDesc
-        groupFolderNew.groupStatus = groupFolderById.groupStatus
-        groupFolderNew.groupUserId = groupFolderById.groupUserId
-        groupFolderNew.groupActivityDate = groupFolderById.groupActivityDate
-        groupFolderNew.groupVersion = groupFolderById.groupVersion
-        groupFolderNew.folderDesc = groupFolderById.folderDesc
-        groupFolderNew.folderName = groupFolderById.folderName
-        groupFolderNew.folderId = groupFolderById.folderId
-        groupFolderNew.postedInd = groupFolderById.postedInd
-
-
-        def result = groupFolderNew.equals( groupFolderById )
-        assertTrue result
-
-        result = groupFolderById.equals( null )
-        assertFalse result
-
-        def groupFolderListNull = new GroupFolderReadOnly( null )
-        result = groupFolderById.equals( groupFolderListNull )
-        assertFalse result
-
-    }
 }

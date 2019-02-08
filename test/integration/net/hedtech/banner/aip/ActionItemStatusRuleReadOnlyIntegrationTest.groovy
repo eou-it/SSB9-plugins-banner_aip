@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -70,34 +70,4 @@ class ActionItemStatusRuleReadOnlyIntegrationTest extends BaseIntegrationTestCas
         assertNotNull actinItemStatusRuleROObj
     }
 
-    @Test
-    void testActionItemStatusRuleROEquals() {
-        List<ActionItemStatusRuleReadOnly> actionItemStatusRuleReadOnlies = ActionItemStatusRuleReadOnly.fetchActionItemStatusRulesRO()
-        def actionItemStatusRuleRO = actionItemStatusRuleReadOnlies[0]
-        def newActionItemStatusRuleRO = new ActionItemStatusRuleReadOnly(
-                statusRuleSeqOrder: actionItemStatusRuleRO.statusRuleSeqOrder,
-                statusRuleLabelText: actionItemStatusRuleRO.statusRuleLabelText,
-                statusRuleActivityDate: actionItemStatusRuleRO.statusRuleActivityDate,
-                statusRuleActionItemId: actionItemStatusRuleRO.statusRuleActionItemId,
-                statusId: actionItemStatusRuleRO.statusId,
-                statusName: actionItemStatusRuleRO.statusName,
-                statusBlockProcessInd: actionItemStatusRuleRO.statusBlockProcessInd,
-                statusSystemRequired: actionItemStatusRuleRO.statusSystemRequired,
-                statusActiveInd: actionItemStatusRuleRO.statusActiveInd,
-                statusReviewRequired: actionItemStatusRuleRO.statusReviewRequired,
-                statusActivityDate: actionItemStatusRuleRO.statusActivityDate,
-                statusRuleVersion: actionItemStatusRuleRO.statusRuleVersion
-        )
-        newActionItemStatusRuleRO.statusRuleId = actionItemStatusRuleRO.statusRuleId
-
-        def result = actionItemStatusRuleRO.equals(actionItemStatusRuleRO)
-        assertTrue result
-
-        result = actionItemStatusRuleRO.equals(newActionItemStatusRuleRO)
-        assertTrue result
-
-        def actionItemStatusRuleRONull = new ActionItemStatusRuleReadOnly(null)
-        result = actionItemStatusRuleRO.equals(actionItemStatusRuleRONull)
-        assertFalse result
-    }
 }

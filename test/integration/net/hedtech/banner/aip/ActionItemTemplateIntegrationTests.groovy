@@ -1,5 +1,5 @@
 /********************************************************************************
-  Copyright 2018 Ellucian Company L.P. and its affiliates.
+  Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
 ********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -51,41 +51,6 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase {
 
         def actionItemTemplateListObj = new ActionItemTemplate()
         assertNotNull actionItemTemplateListObj
-    }
-
-
-    @Test
-    void testActionItemTemplateEquals() {
-        List<ActionItemTemplate> actionItemTemplates = ActionItemTemplate.fetchActionItemTemplates()
-        def actionItemTemplate = actionItemTemplates[0]
-        def actionItemTemplateNew = new ActionItemTemplate(
-                title: actionItemTemplate.title,
-                pageId: actionItemTemplate.pageId,
-                sourceInd: actionItemTemplate.sourceInd,
-                lastModifiedBy: actionItemTemplate.lastModifiedBy,
-                systemRequired: actionItemTemplate.systemRequired,
-                activeInd: actionItemTemplate.activeInd,
-                lastModified: actionItemTemplate.lastModified,
-                dataOrigin: actionItemTemplate.dataOrigin,
-                vpdiCode: actionItemTemplate.vpdiCode
-        )
-        long actionItemTemplateId = actionItemTemplate.id
-        long actionItemTemplateVersion = actionItemTemplate.version
-        actionItemTemplateNew.id = actionItemTemplateId
-        actionItemTemplateNew.version = actionItemTemplateVersion
-
-        def result = actionItemTemplate.equals( actionItemTemplate )
-        assertTrue result
-
-        result = actionItemTemplate.equals( actionItemTemplateNew )
-        assertTrue result
-
-        result = actionItemTemplate.equals( null )
-        assertFalse result
-
-        def actionItemTemplateNull = new ActionItemTemplate( null )
-        result = actionItemTemplate.equals( actionItemTemplateNull )
-        assertFalse result
     }
 
 
