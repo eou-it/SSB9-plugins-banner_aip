@@ -37,7 +37,7 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
 
 
     public AsynchronousTask create( AsynchronousTask job ) throws ApplicationException {
-        LoggerUtility.debug( LOGGER, "${job?.toString()}" )
+        LOGGER.trace "${job?.toString()}"
         throw new NotImplementedException()
     }
 
@@ -145,7 +145,7 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
 
     @Transactional(rollbackFor = Throwable.class)
     public AsynchronousTaskMonitorRecord updateMonitorRecord( AsynchronousTaskMonitorRecord monitorRecord ) {
-        LoggerUtility.debug( LOGGER, "${monitorRecord?.toString()}" )
+        LOGGER.trace "${monitorRecord?.toString()}"
         null
     }
 
