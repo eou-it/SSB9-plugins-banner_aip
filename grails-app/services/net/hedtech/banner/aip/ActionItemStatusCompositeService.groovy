@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -14,10 +14,12 @@ import net.hedtech.banner.general.configuration.ConfigProperties
 
 class ActionItemStatusCompositeService {
     private static final def LOGGER = Logger.getLogger(this.class)
+    private static final int defaultMaxAttachmentCount = 10
     def actionItemStatusService
     def actionItemStatusRuleService
     def springSecurityService
     def actionItemCompositeService
+    def grailsApplication
 
     /**
      * Lists Action Item status
@@ -228,14 +230,14 @@ class ActionItemStatusCompositeService {
     def getMaxAttachmentsValue(maxAttachment) {
         def result
         try {
-            ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.action.item.maximum.attachment', 'GENERAL_SS')
+            ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.action.item.maximum.attachment', grailsApplication.metadata['app.appId'])
             maxAttachment = (configProperties ? Integer.parseInt(configProperties.configValue) : 0)
 
-            result = [maxAttachment: (maxAttachment <= 0) ? 10 : maxAttachment]
+            result = [maxAttachment: (maxAttachment <= 0) ? defaultMaxAttachmentCount : maxAttachment]
         }
         catch(Exception e)
         {
-            result = [maxAttachment: 10]
+            result = [maxAttachment: defaultMaxAttachmentCount]
         }
         result
     }
