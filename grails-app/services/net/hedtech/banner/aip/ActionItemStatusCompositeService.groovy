@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -9,14 +9,16 @@ import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.i18n.MessageHelper
 import org.apache.log4j.Logger
-import net.hedtech.banner.general.overall.IntegrationConfiguration
+import net.hedtech.banner.general.configuration.ConfigProperties
 
 class ActionItemStatusCompositeService {
     private static final def LOGGER = Logger.getLogger(this.class)
+    private static final int defaultMaxAttachmentCount = 10
     def actionItemStatusService
     def actionItemStatusRuleService
     def springSecurityService
     def actionItemCompositeService
+    def grailsApplication
 
     /**
      * Lists Action Item status
@@ -227,18 +229,14 @@ class ActionItemStatusCompositeService {
     def getMaxAttachmentsValue(maxAttachment) {
         def result
         try {
-            maxAttachment = IntegrationConfiguration.fetchByProcessCodeAndSettingName('GENERAL_SSB', 'ACTION.ITEM.ATTACHMENT.MAXIMUM').value
-            if (Integer.parseInt(maxAttachment) < 0  || Integer.parseInt(maxAttachment).equals(0) ) {
-                result = [maxAttachment: 10]
-            }
-            else
-            {
-                result = [maxAttachment: Integer.parseInt(maxAttachment)]
-            }
+            ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.institution.maximum.attachment.number', grailsApplication.metadata['app.appId'])
+            maxAttachment = (configProperties ? Integer.parseInt(configProperties.configValue) : 0)
+
+            result = [maxAttachment: (maxAttachment <= 0) ? defaultMaxAttachmentCount : maxAttachment]
         }
         catch(Exception e)
         {
-            result = [maxAttachment: 10]
+            result = [maxAttachment: defaultMaxAttachmentCount]
         }
         result
     }
