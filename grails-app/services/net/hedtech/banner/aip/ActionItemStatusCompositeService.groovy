@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2019 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -9,7 +9,6 @@ import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.i18n.MessageHelper
 import org.apache.log4j.Logger
-import net.hedtech.banner.general.overall.IntegrationConfiguration
 import net.hedtech.banner.general.configuration.ConfigProperties
 
 class ActionItemStatusCompositeService {
