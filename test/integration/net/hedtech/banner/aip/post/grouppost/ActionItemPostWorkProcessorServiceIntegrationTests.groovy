@@ -10,6 +10,7 @@ import net.hedtech.banner.general.communication.population.CommunicationPopulati
 import net.hedtech.banner.general.communication.population.CommunicationPopulationListView
 import net.hedtech.banner.general.communication.population.CommunicationPopulationVersion
 import net.hedtech.banner.testing.BaseIntegrationTestCase
+import org.json.JSONObject
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -89,6 +90,10 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
         List<ActionItemGroup> actionItemGroups = ActionItemGroup.fetchActionItemGroups()
         def actionItemGroup = actionItemGroups[0]
         List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect { it.actionItemId }
+        def correspondingServerDetails =new JSONObject()
+        correspondingServerDetails.put("dateVal","06/21/2018")
+        correspondingServerDetails.put("timeVal","0330")
+        correspondingServerDetails.put("timeZoneVal","(GMT+5:30) Asia/Kolkata")
         def requestMap = [:]
         requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.populationId = populationListView.id
@@ -98,7 +103,7 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
         requestMap.recalculateOnPost = false
         requestMap.displayStartDate = testingDateFormat.format( new Date() )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
-        requestMap.displayDatetimeZone = "06/21/2018 0330 (GMT+5:30) Asia/Kolkata"
+        requestMap.displayDatetimeZone = correspondingServerDetails
         requestMap.scheduledStartDate = new Date() + 1
         requestMap.actionItemIds = actionItemIds
         def actionItemPost = actionItemPostCompositeService.getActionPostInstance( requestMap, springSecurityService.getAuthentication()?.user )

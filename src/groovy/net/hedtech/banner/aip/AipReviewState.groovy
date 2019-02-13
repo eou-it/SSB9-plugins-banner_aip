@@ -23,12 +23,12 @@ import javax.persistence.Version
         @NamedQuery(name = "AipReviewState.fetchReviewStateByCodeAndLocale",
                 query = """FROM AipReviewState a
            WHERE a.reviewStateCode = :code
-           and (upper(a.locale) = upper(:locale) or upper(a.locale) = 'EN_US')
+           and (upper(a.locale) = upper(:primaryLocale) or (upper(a.locale)= upper(:locale)) or (upper(a.locale) = 'EN_US'))
           """),
         @NamedQuery(name = "AipReviewState.fetchNonDefaultReviewStates",
                         query = """FROM AipReviewState a
                    WHERE a.reviewStateCode != ( SELECT d.defReviewStateCode FROM AipDefaultReviewState d)
-                   and (upper(a.locale) = upper(:locale) or upper(a.locale) = 'EN_US')
+                   and (upper(a.locale) = upper(:primaryLocale) or (upper(a.locale) = upper(:locale)) or upper(a.locale) = 'EN_US')
                   """)
 ])
 
@@ -133,10 +133,10 @@ class AipReviewState implements Serializable {
      * @param locale User locale
      * @return List of Review States
      */
-    static def fetchReviewStateByCodeAndLocale(String code, String locale) {
+    static def fetchReviewStateByCodeAndLocale(String code, String locale, String primaryLocale=null) {
         AipReviewState.withSession { session ->
             session.getNamedQuery('AipReviewState.fetchReviewStateByCodeAndLocale')
-                    .setString('code', code).setString('locale', locale)?.list()
+                    .setString('code', code).setString('locale', locale).setString('primaryLocale', primaryLocale)?.list()
         }
     }
     /**
@@ -144,10 +144,10 @@ class AipReviewState implements Serializable {
      * @param locale User Locale
      * @return List of review states
      */
-    static def fetchNonDefaultReviewStates(String locale) {
+    static def fetchNonDefaultReviewStates(String locale, String primaryLocale=null) {
             AipReviewState.withSession { session ->
                 session.getNamedQuery('AipReviewState.fetchNonDefaultReviewStates')
-                        .setString('locale', locale)?.list()
+                        .setString('locale', locale).setString('primaryLocale', primaryLocale)?.list()
             }
         }
 

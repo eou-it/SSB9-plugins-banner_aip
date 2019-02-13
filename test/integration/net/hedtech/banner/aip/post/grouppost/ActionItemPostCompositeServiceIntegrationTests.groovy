@@ -270,18 +270,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
 
     @Test
-    void testSetHomeContext() {
-        actionItemPostCompositeService.setHomeContext( 'TEST' )
-    }
-
-
-    @Test(expected = Exception.class)
-    void testSetHomeContextFail() {
-        actionItemPostCompositeService.setHomeContext( 'SOMETHING_DIFFERENT' )
-    }
-
-
-    @Test
     void scheduledPostCallbackFailed() {
         ActionItemPost aip = newAIP()
         aip = actionItemPostService.create( aip )
