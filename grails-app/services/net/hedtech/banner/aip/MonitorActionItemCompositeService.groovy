@@ -3,7 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-
+import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.service.ServiceBase
 import org.apache.log4j.Logger
 import org.omg.CORBA.portable.ApplicationException
@@ -81,17 +81,32 @@ class MonitorActionItemCompositeService extends ServiceBase {
             qryresult = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionId, personName, pagingAndSortParams)
             count = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonNameCount(actionId, personName)
         } else if (actionId && !personName && personId) {   //action id + person id combination
-            qryresult = monitorActionItemReadOnlyService.fetchByActionItemAndSpridenId(actionId, personId, pagingAndSortParams)
-            count = monitorActionItemReadOnlyService.fetchByActionItemAndSpridenIdCount(actionId, personId)
+            def person = PersonUtility.getPerson(personId)
+            if(person){
+                qryresult = monitorActionItemReadOnlyService.fetchByActionItemAndSpridenId(actionId, personId, pagingAndSortParams)
+                count = userActionItemService.countUserActionItemByActionItemIdAndPidm(actionId, person.pidm)
+            }else{
+                LOGGER.debug("Person does not exist")
+                qryresult=[]
+                count = 0
+            }
         } else if (actionId && !personName && !personId) {  //only action item id combination
             qryresult = monitorActionItemReadOnlyService.fetchByActionItemId(actionId, pagingAndSortParams)
-            count = monitorActionItemReadOnlyService.fetchByActionItemIdCount(actionId)
+            count = userActionItemService.countUserActionItemByActionItemId(actionId)
         } else if (!actionId && personName && !personId) {  // search by person name
             qryresult = monitorActionItemReadOnlyService.fetchByPersonName(personName, pagingAndSortParams)
             count = monitorActionItemReadOnlyService.fetchByPersonNameCount(personName)
         } else if (!actionId && !personName && personId) {  // search by person id only
-            qryresult = monitorActionItemReadOnlyService.fetchByPersonId(personId, pagingAndSortParams)
-            count = monitorActionItemReadOnlyService.fetchByPersonIdCount(personId)
+            def person = PersonUtility.getPerson(personId)
+            if(person){
+                qryresult = monitorActionItemReadOnlyService.fetchByPersonId(personId, pagingAndSortParams)
+                count = userActionItemService.countUserActionItemByPidm(person?.pidm)
+            }else{
+                LOGGER.debug("Person does not exist")
+                qryresult=[]
+                count = 0
+            }
+
         }
 
         def result = [];

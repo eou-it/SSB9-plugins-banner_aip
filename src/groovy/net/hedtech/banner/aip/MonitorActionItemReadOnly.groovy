@@ -5,6 +5,8 @@ package net.hedtech.banner.aip
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import org.hibernate.annotations.Cache
+import org.hibernate.annotations.CacheConcurrencyStrategy
 import org.hibernate.annotations.Type
 import org.hibernate.criterion.Order
 
@@ -47,6 +49,7 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "GVQ_GCRAMTR")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
 /**
