@@ -84,7 +84,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
         } else if (actionId && !personName && personId) {   //action id + person id combination
             def person = PersonUtility.getPerson(personId)
             if(person){
-                qryresult = monitorActionItemReadOnlyService.fetchByActionItemAndSpridenId(actionId, personId, pagingAndSortParams)
+                qryresult = monitorActionItemReadOnlyService.fetchByActionItemAndPidm(actionId, person.pidm, pagingAndSortParams)
                 count = userActionItemService.countUserActionItemByActionItemIdAndPidm(actionId, person.pidm)
             }else{
                 LOGGER.debug("Person does not exist")
@@ -100,7 +100,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
         } else if (!actionId && !personName && personId) {  // search by person id only
             def person = PersonUtility.getPerson(personId)
             if(person){
-                qryresult = monitorActionItemReadOnlyService.fetchByPersonId(personId, pagingAndSortParams)
+                qryresult = monitorActionItemReadOnlyService.fetchByPidm(person?.pidm, pagingAndSortParams)
                 count = userActionItemService.countUserActionItemByPidm(person?.pidm)
             }else{
                 LOGGER.debug("Person does not exist")

@@ -80,6 +80,11 @@ class MonitorActionItemReadOnly implements Serializable {
      */
     @Column(name = "ACTION_ITEM_GROUP_NAME")
     String actionItemGroupName
+    /**
+     * Name of the action item
+     */
+    @Column(name = "ACTION_ITEM_PIDM")
+    Long pidm
 
     /**
      * Spriden Id of the action item associated to
@@ -200,15 +205,15 @@ class MonitorActionItemReadOnly implements Serializable {
     /**
      * Gets the list of action items based on the filter action item ID and Spriden ID
      * @param actionItem action item ID
-     * @param spridenId spriden ID of the person
+     * @param pidm pidm of the person
      * @return List of Action items
      */
-    static def fetchByActionItemAndSpridenId(Long actionItem, String spridenId, def pagingAndSortParams) {
+    static def fetchByActionItemAndPidm(Long actionItem, Long pidm, def pagingAndSortParams) {
 
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             eq("actionItemId", actionItem)
-            eq("spridenId", spridenId, [ignoreCase: true])
+            eq("pidm", pidm)
             order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
         }
     }
@@ -253,13 +258,13 @@ class MonitorActionItemReadOnly implements Serializable {
 
     /**
      * Gets the list of action items based on the filter person ID
-     * @param spridenId spriden ID of the person
+     * @param pidm pidm of the person
      * @return List < MonitorActionItemReadOnly >  List of Action items
      */
-    static def fetchByPersonId(String spridenId, def pagingAndSortParams) {
+    static def fetchByPidm(Long pidm, def pagingAndSortParams) {
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
-            eq("spridenId", spridenId, [ignoreCase: true])
+            eq("pidm", pidm)
             order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
         }
     }

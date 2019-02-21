@@ -37,8 +37,8 @@ class MonitorActionItemReadOnlyService extends ServiceBase {
      * @param spridenId Spriden Id of the person to be searched
      * @return List < MonitorActionItemReadOnly >  list of actionItems
      */
-    List<MonitorActionItemReadOnly> fetchByActionItemAndSpridenId(Long actionItemId, String spridenId, def pagingAndSortParams) {
-        return MonitorActionItemReadOnly.fetchByActionItemAndSpridenId(actionItemId, spridenId, pagingAndSortParams)
+    List<MonitorActionItemReadOnly> fetchByActionItemAndPidm(Long actionItemId, Long pidm, def pagingAndSortParams) {
+        return MonitorActionItemReadOnly.fetchByActionItemAndPidm(actionItemId, pidm, pagingAndSortParams)
     }
 
     /**
@@ -47,14 +47,13 @@ class MonitorActionItemReadOnlyService extends ServiceBase {
      * @param spridenId Spriden Id of the person that is being searched
      * @return Count of action items
      */
-    def fetchByActionItemAndSpridenIdCount(Long actionItemId, String spridenId) {
+    def fetchByActionItemAndSpridenIdCount(Long actionItemId, Long spridenId) {
         return MonitorActionItemReadOnly.fetchByActionItemAndSpridenIdCount(actionItemId, spridenId)
     }
 
     /**
      * Lists of action items filtered by actionItem id
      * @param actionItemId  Action Item Id of action item to be searched
-     * @param spridenId Spriden Id of the person being searched
      * @return List of actionItems
      */
     List<MonitorActionItemReadOnly> fetchByActionItemId(Long actionItemId,  def pagingAndSortParams) {
@@ -92,12 +91,12 @@ class MonitorActionItemReadOnlyService extends ServiceBase {
 
     /**
      * Lists of action items filtered by person id
-     * @param PersonID of the person to be searched
+     * @param Pidm of the person to be searched
      * @param pagingAndSortParams pagaination and sorting parameter
      * @return List of action items
      * */
-    List<MonitorActionItemReadOnly> fetchByPersonId(String spridenId,  def pagingAndSortParams) {
-        return MonitorActionItemReadOnly.fetchByPersonId(spridenId, pagingAndSortParams)
+    List<MonitorActionItemReadOnly> fetchByPidm(Long pidm,  def pagingAndSortParams) {
+        return MonitorActionItemReadOnly.fetchByPidm(pidm, pagingAndSortParams)
     }
 
     /**
