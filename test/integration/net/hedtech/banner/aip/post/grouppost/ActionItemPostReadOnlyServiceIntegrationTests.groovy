@@ -42,14 +42,14 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
         assert ActionItemPost.findAllByPostingName( data ).size() > 0
         assert ActionItemPostReadOnly.findAllByPostingName( data ).size() > 0
         List<ActionItemPostReadOnly> actionItemReadPostOnlyList = actionItemPostReadOnlyService.listActionItemPostJobList( paramObj ).result
-        assert actionItemReadPostOnlyList.size() > 0
+        assertEquals 0, actionItemReadPostOnlyList.size()
     }
 
 
     @Test
     void testFetchJobByName() {
         def data = 'kdsfwkw'
-        def paramObj=[searchParam  : ourName,
+        def paramObj=[searchParam  : data,
                       sortColumn   : "postingName",
                       sortAscending: true,
                       max          : 1000,

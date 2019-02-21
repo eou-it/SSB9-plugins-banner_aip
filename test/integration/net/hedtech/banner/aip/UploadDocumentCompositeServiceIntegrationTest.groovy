@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -284,6 +284,18 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     @Test
     void testMaximumAttachmentsValidation() {
+        def saveResult1 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFilePdf.pdf')
+        assertTrue saveResult1.success
+        def saveResult2 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileDoc.docx')
+        assertTrue saveResult2.success
+        def saveResult3 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileJpg.jpg')
+        assertTrue saveResult3.success
+        def saveResult4 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileJpg.jpg')
+        assertTrue saveResult4.success
+        def saveResult5 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFilePPT.pptx')
+        assertTrue saveResult5.success
+        def saveResult6 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileXLS.xlsx')
+        assertTrue saveResult6.success
         Map paramsMapObj = [
                 userActionItemId: "" + userActionItemId,
                 responseId      : "" + responseId
@@ -452,7 +464,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         File testFile
         try {
             String data = " Test data for integration testing"
-            String tempPath = "test/data"
+            String tempPath = "test"+File.separator+"data"
             testFile = new File(tempPath, filename)
             if (!testFile.exists()) {
                 testFile.createNewFile()
