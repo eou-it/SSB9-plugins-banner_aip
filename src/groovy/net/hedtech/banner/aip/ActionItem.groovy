@@ -29,6 +29,10 @@ import javax.persistence.Version
            FROM ActionItem a
            WHERE a.id = :myId
           """),
+        @NamedQuery(name = "ActionItem.fetchActionItemIdAndName",
+                query = """select a.id, a.name
+                   FROM ActionItem a
+                  """),
         @NamedQuery(name = "ActionItem.existsSameNameInFolder",
                 query = """ select count(a.id) FROM ActionItem a
                     WHERE upper(a.name) = upper(:name)
@@ -127,23 +131,29 @@ class ActionItem implements Serializable {
     String dataOrigin
 
     static constraints = {
-        folderId( blank: false, nullable: false, maxSize: 19 )
-        title( blank: false, nullable: false, maxSize: 2048 )
-        name( blank: false, nullable: false, maxSize: 60 )
-        status( blank: false, nullable: false, maxSize: 1 )
-        postedIndicator( nullable: false, maxSize: 1 )
-        lastModifiedBy( nullable: true, maxSize: 30 )
-        lastModified( nullable: true)
-        description( nullable: true ) //summary length only for now
-        creatorId( nullable: true, maxSize: 30 )
-        createDate( nullable: true )
-        dataOrigin( nullable: true, maxSize: 19 )
+        folderId(blank: false, nullable: false, maxSize: 19)
+        title(blank: false, nullable: false, maxSize: 2048)
+        name(blank: false, nullable: false, maxSize: 60)
+        status(blank: false, nullable: false, maxSize: 1)
+        postedIndicator(nullable: false, maxSize: 1)
+        lastModifiedBy(nullable: true, maxSize: 30)
+        lastModified(nullable: true)
+        description(nullable: true) //summary length only for now
+        creatorId(nullable: true, maxSize: 30)
+        createDate(nullable: true)
+        dataOrigin(nullable: true, maxSize: 19)
     }
 
 
     static def fetchActionItems() {
-        ActionItem.withSession {session ->
-            session.getNamedQuery( 'ActionItem.fetchActionItems' ).list()
+        ActionItem.withSession { session ->
+            session.getNamedQuery('ActionItem.fetchActionItems').list()
+        }
+    }
+
+    static def fetchActionItemIdAndName() {
+        ActionItem.withSession { session ->
+            session.getNamedQuery('ActionItem.fetchActionItemIdAndName').list()
         }
     }
 
@@ -153,9 +163,9 @@ class ActionItem implements Serializable {
      * @return
      */
     // ReadOnly View?
-    static def fetchActionItemById( Long myId ) {
-        ActionItem.withSession {session ->
-            session.getNamedQuery( 'ActionItem.fetchActionItemById' ).setLong( 'myId', myId )?.list()[0]
+    static def fetchActionItemById(Long myId) {
+        ActionItem.withSession { session ->
+            session.getNamedQuery('ActionItem.fetchActionItemById').setLong('myId', myId)?.list()[0]
         }
     }
 
@@ -166,17 +176,17 @@ class ActionItem implements Serializable {
      * @return
      */
     // Check constraint requirement that a Name in a folder must be unique
-    static Boolean existsSameNameInFolder( Long folderId, String name ) {
+    static Boolean existsSameNameInFolder(Long folderId, String name) {
         def count
-        ActionItem.withSession {session ->
-            session.setFlushMode( FlushMode.MANUAL )
+        ActionItem.withSession { session ->
+            session.setFlushMode(FlushMode.MANUAL)
             try {
-                count = session.getNamedQuery( 'ActionItem.existsSameNameInFolder' )
-                        .setString( 'name', name )
-                        .setLong( 'folderId', folderId )
+                count = session.getNamedQuery('ActionItem.existsSameNameInFolder')
+                        .setString('name', name)
+                        .setLong('folderId', folderId)
                         .uniqueResult()
             } finally {
-                session.setFlushMode( FlushMode.AUTO )
+                session.setFlushMode(FlushMode.AUTO)
             }
         }
         count > 0

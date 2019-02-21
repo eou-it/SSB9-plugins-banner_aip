@@ -175,7 +175,7 @@ class MonitorActionItemReadOnly implements Serializable {
             eq("actionItemId", actionItem)
             ilike("actionItemPersonName", nameSearchParameter)
 
-            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn).ignoreCase() : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
         }
     }
 
@@ -209,7 +209,7 @@ class MonitorActionItemReadOnly implements Serializable {
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             eq("actionItemId", actionItem)
             eq("spridenId", spridenId, [ignoreCase: true])
-            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn).ignoreCase() : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
         }
     }
 
@@ -234,7 +234,7 @@ class MonitorActionItemReadOnly implements Serializable {
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             eq("actionItemId", actionItem)
-            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn).ignoreCase() : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
         }
     }
 
@@ -260,7 +260,7 @@ class MonitorActionItemReadOnly implements Serializable {
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             eq("spridenId", spridenId, [ignoreCase: true])
-            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn).ignoreCase() : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
         }
     }
 
@@ -292,7 +292,7 @@ class MonitorActionItemReadOnly implements Serializable {
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             ilike("actionItemPersonName", personNameParam)
-            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn).ignoreCase() : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
         }
     }
 

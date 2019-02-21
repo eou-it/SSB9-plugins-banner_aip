@@ -23,6 +23,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
     def actionItemProcessingCommonService
     def configUserPreferenceService
     def aipReviewStateService
+    def actionItemService
 
     /**
      * get Action Item
@@ -55,7 +56,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
      * @return
      */
     def getActionItemNames() {
-        def actionItems = monitorActionItemReadOnlyService.listOfActionItemNames()
+        def actionItems = actionItemService.listActionItemsIdAndName()
         def actionItemNamesList = []
         actionItems.each {
             actionItemNamesList.add('id': it.getAt(0), 'name': it.getAt(1))
