@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
@@ -25,51 +25,10 @@ class ActionItemPostWorkProcessorService {
 
     private static final int noWaitErrorCode = 54
 
-    /**
-     *
-     * @param con
-     * @return
-     */
-    private isMEP( con = null ) {
-        def mepEnabled
-        if (!con)
-            con = new Sql( sessionFactory.getCurrentSession().connection() )
-        Sql sql = new Sql( con )
-        try {
-            sql.call( "{$Sql.VARCHAR = call g\$_vpdi_security.g\$_is_mif_enabled_str()}" ) {mifEnabled -> mepEnabled = mifEnabled.toLowerCase().toBoolean()}
-        } catch (e) {
-            log.error( "ERROR: Could not establish mif context. $e" )
-            throw e
-        } finally {
-
-        }
-        mepEnabled
-    }
-
-    /**
-     *
-     * @param home
-     * @return
-     */
-    def setHomeContext( home ) {
-        Sql sql = new Sql( sessionFactory.getCurrentSession().connection() )
-        try {
-            sql.call( "{call g\$_vpdi_security.g\$_vpdi_set_home_context(${home})}" )
-
-        } catch (e) {
-            log.error( "ERROR: Could not establish mif context. $e" )
-            throw e
-        } finally {
-            sql?.close()
-        }
-    }
-
-
     public void performPostItem( ActionItemPostWork actionItemPostWork ) {
-        if (isMEP()) {
-            setHomeContext( actionItemPostWork.mepCode )
-            asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), actionItemPostWork.mepCode )
-        }
+
+        asynchronousBannerAuthenticationSpoofer.setMepContext( sessionFactory.currentSession.connection(), actionItemPostWork.mepCode )
+
         def groupSendItemId = actionItemPostWork.id
         log.debug( "Performing group send item id = " + groupSendItemId )
         boolean locked = lockGroupSendItem( groupSendItemId, ActionItemPostWorkExecutionState.Ready )
@@ -88,10 +47,9 @@ class ActionItemPostWorkProcessorService {
      */
     public void failGroupSendItem( Long groupSendItemId, String errorCode, String errorText ) {
         ActionItemPostWork groupSendItem = (ActionItemPostWork) actionItemPostWorkService.get( groupSendItemId )
-        if (isMEP()) {
-            setHomeContext( groupSendItem.mepCode )
-            asynchronousBannerAuthenticationSpoofer.setMepProcessContext( sessionFactory.currentSession.connection(), groupSendItem.mepCode )
-        }
+
+        asynchronousBannerAuthenticationSpoofer.setMepContext( sessionFactory.currentSession.connection(), groupSendItem.mepCode )
+
         def groupSendItemParamMap = [
                 id                   : groupSendItem.id,
                 version              : groupSendItem.version,

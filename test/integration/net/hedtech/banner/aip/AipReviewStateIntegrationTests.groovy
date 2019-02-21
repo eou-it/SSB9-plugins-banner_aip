@@ -42,7 +42,7 @@ class AipReviewStateIntegrationTests extends BaseIntegrationTestCase {
         List<AipReviewState> reviewStateResult = AipReviewState.fetchReviewStateByCodeAndLocale("10", "es")
         assertEquals 2,  reviewStateResult.size()
         assertEquals "Review needed",  reviewStateResult[0].reviewStateName
-        assertEquals "Revisi��n necesaria", reviewStateResult[1].reviewStateName
+        assertEquals "Revisión necesaria", reviewStateResult[1].reviewStateName
     }
 
     @Test

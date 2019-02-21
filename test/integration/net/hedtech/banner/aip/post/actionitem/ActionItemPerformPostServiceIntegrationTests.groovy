@@ -13,6 +13,7 @@ import net.hedtech.banner.general.communication.population.CommunicationPopulati
 import net.hedtech.banner.general.communication.population.CommunicationPopulationListView
 import net.hedtech.banner.general.communication.population.CommunicationPopulationVersion
 import net.hedtech.banner.testing.BaseIntegrationTestCase
+import org.json.JSONObject
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -80,6 +81,10 @@ class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCa
         CommunicationPopulationVersion populationVersion = CommunicationPopulationVersion.findLatestByPopulationId( population.id )
         SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
         CommunicationPopulationListView populationListView = actionItemProcessingCommonService.fetchPopulationListForSend( 'p', [max: 10, offset: 0] )[0]
+        def correspondingServerDetails =new JSONObject()
+        correspondingServerDetails.put("dateVal","06/21/2018")
+        correspondingServerDetails.put("timeVal","0330")
+        correspondingServerDetails.put("timeZoneVal","(GMT+5:30) Asia/Kolkata")
         def requestMap = [:]
         requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
         requestMap.populationId = populationListView.id
@@ -87,7 +92,7 @@ class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCa
         requestMap.postingActionItemGroupId = ActionItemGroup.fetchActionItemGroups()[0].id
         requestMap.postNow = true
         requestMap.recalculateOnPost = false
-        requestMap.displayDatetimeZone = "06/21/2018 0330 (GMT+5:30) Asia/Kolkata"
+        requestMap.displayDatetimeZone = correspondingServerDetails
         requestMap.displayStartDate = testingDateFormat.format( new Date() )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date()

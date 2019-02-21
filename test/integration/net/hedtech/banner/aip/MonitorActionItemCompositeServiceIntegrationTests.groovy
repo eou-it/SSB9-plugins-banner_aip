@@ -391,13 +391,13 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
     @Test
     void testUpdateActionItemReview() {
         loginSSB('AIPADM001', '111111')
-        Long actionItemId = drugAndAlcoholPolicyActionItem.id
-        String personName = "Cliff Starr"
-        String personId = null
+        Long actionItemId = policyHandBookActionItem.id
+        String personName = null
+        String personId = "CSRSTU004"
         def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
-        assertEquals 1, response.result.size()
-        assertEquals 1, response.length
+        assertTrue response.result.size() > 0
+        assertTrue response.length > 0
         def actionItemDetails = monitorActionItemCompositeService.getActionItem(response.result[0].id)
         def requestMap = [
                 userActionItemId:actionItemDetails.id,
@@ -450,7 +450,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         assertEquals 1, response.length
         def actionItemDetails = monitorActionItemCompositeService.getActionItem(response.result[0].id)
         def requestMap = [
-                userActionItemId:null,
+                userActionItemId:12345,
                 reviewStateCode:20,
                 displayEndDate:new Date(),
                 responseId:actionItemDetails.responseId,

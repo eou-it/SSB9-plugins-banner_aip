@@ -163,7 +163,8 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
                 status             : ActionItemStatus.findByActionItemStatus('Completed'),
                 statusRuleLabelText: "sas",
                 statusRuleSeqOrder : 0,
-                reviewReqInd       : false
+                reviewReqInd       : false,
+                allowedAttachments : 0
         ]
         def ruleList = [rules]
         Map params1 = [rules: ruleList, actionItemId: ActionItem.findByName('Personal Information').id]

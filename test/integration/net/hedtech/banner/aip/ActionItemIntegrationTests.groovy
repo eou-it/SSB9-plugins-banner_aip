@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -53,45 +53,6 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
 
         def actionItemListObj = new ActionItem()
         assertNotNull actionItemListObj
-    }
-
-
-    @Test
-    void testActionItemsEquals() {
-
-        List<ActionItem> actionItems = ActionItem.fetchActionItems()
-        def actionItem = actionItems[0]
-        def actionItemNew = new ActionItem(
-                status: actionItem.status,
-                createDate: actionItem.createDate,
-                creatorId: actionItem.creatorId,
-                folderId: actionItem.folderId,
-                description: actionItem.description,
-                postedIndicator: actionItem.postedIndicator,
-                lastModified: actionItem.lastModified,
-                lastModifiedBy: actionItem.lastModifiedBy,
-                dataOrigin: actionItem.dataOrigin,
-                version: actionItem.version,
-                name: actionItem.name,
-                title: actionItem.title)
-        long actionItemListId = actionItem.id
-        long actionItemListVersion = actionItem.version
-        actionItemNew.id = actionItemListId
-        actionItemNew.version = actionItemListVersion
-
-        def result = actionItem.equals( actionItem )
-        assertTrue result
-
-        result = actionItem.equals( actionItemNew )
-        assertTrue result
-
-        result = actionItem.equals( null )
-        assertFalse result
-
-        def actionItemsListNull = new ActionItem( null )
-        result = actionItem.equals( actionItemsListNull )
-        assertFalse result
-
     }
 
 

@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
@@ -76,40 +76,6 @@ class ActionItemStatusRuleIntegrationTests extends BaseIntegrationTestCase {
 
         def actionItemStatusRuleObj = new ActionItemStatusRule()
         assertNotNull actionItemStatusRuleObj
-    }
-
-
-    @Test
-    void testActionItemStatusRuleEquals() {
-        List<ActionItemStatusRule> actionItemStatusRules = ActionItemStatusRule.fetchActionItemStatusRules()
-        def actionItemStatusRule = actionItemStatusRules[0]
-        def newActionItemStatusRule = new ActionItemStatusRule(
-                actionItemId: actionItemStatusRule.actionItemId,
-                seqOrder: actionItemStatusRule.seqOrder,
-                actionItemStatusId: actionItemStatusRule.actionItemStatusId,
-                resubmitInd: actionItemStatusRule.resubmitInd,
-                reviewReqInd: actionItemStatusRule.reviewReqInd,
-                lastModified: actionItemStatusRule.lastModified,
-                lastModifiedBy: actionItemStatusRule.lastModifiedBy,
-                version: actionItemStatusRule.version,
-                dataOrigin: actionItemStatusRule.dataOrigin,
-                labelText: actionItemStatusRule.labelText
-        )
-        newActionItemStatusRule.id = actionItemStatusRule.id
-        newActionItemStatusRule.version = actionItemStatusRule.version
-
-        def result = actionItemStatusRule.equals(actionItemStatusRule)
-        assertTrue result
-
-        result = actionItemStatusRule.equals(newActionItemStatusRule)
-        assertTrue result
-
-        result = actionItemStatusRule.equals(null)
-        assertFalse result
-
-        def actionItemStatusRuleNull = new ActionItemStatusRule(null)
-        result = actionItemStatusRule.equals(actionItemStatusRuleNull)
-        assertFalse result
     }
 
 

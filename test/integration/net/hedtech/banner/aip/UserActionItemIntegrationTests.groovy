@@ -251,45 +251,6 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     }
 
 
-    @Test
-    void testUserActionItemEquals() {
-
-        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemsByPidm( actionItemPidm )
-
-        def userActionItemId = userActionItems[0].id
-        UserActionItem userActionItem = UserActionItem.fetchUserActionItemById( userActionItemId )
-
-        def userActionItemNewList = new UserActionItem()
-
-        userActionItemNewList.id = userActionItem.id
-        userActionItemNewList.actionItemId = userActionItem.actionItemId
-        userActionItemNewList.pidm = userActionItem.pidm
-        userActionItemNewList.status = userActionItem.status
-        userActionItemNewList.userResponseDate = userActionItem.userResponseDate
-        userActionItemNewList.displayStartDate = userActionItem.displayStartDate
-        userActionItemNewList.displayEndDate = userActionItem.displayEndDate
-        userActionItemNewList.groupId = userActionItem.groupId
-        userActionItemNewList.creatorId = userActionItem.creatorId
-        userActionItemNewList.createDate = userActionItem.createDate
-        userActionItemNewList.lastModifiedBy = userActionItem.lastModifiedBy
-        userActionItemNewList.lastModified = userActionItem.lastModified
-        userActionItemNewList.version = userActionItem.version
-        userActionItemNewList.dataOrigin = userActionItem.dataOrigin
-
-        def result = userActionItemNewList.equals( userActionItem )
-        assertTrue result
-
-        result = userActionItem.equals( '' )
-        assertFalse result
-
-        def userActionItemNull = new UserActionItem( null )
-        result = userActionItem.equals( userActionItemNull )
-        assertFalse result
-
-    }
-
-
     private UserActionItem newActionItem() {
         def userActionItemNew = new UserActionItem()
         userActionItemNew.actionItemId = 1

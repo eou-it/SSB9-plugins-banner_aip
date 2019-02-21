@@ -188,7 +188,8 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
                 actionItemId: ai.id,
                 seqOrder: 1,
                 labelText: 'Text',
-                reviewReqInd: false
+                reviewReqInd: false,
+                allowedAttachments: 0
         ))
         result = actionItemCompositeService.deleteActionItem(ai.id)
         assert result.success == true
@@ -219,7 +220,8 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
                 actionItemId: ai.id,
                 seqOrder: 1,
                 labelText: 'Text',
-                reviewReqInd: false
+                reviewReqInd: false,
+                allowedAttachments: 0
         ))
         assertNotNull(savedActionItemStatusRule.id)
         assertEquals(savedActionItemStatusRule.actionItemId, ai.id)
