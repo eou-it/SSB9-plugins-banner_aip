@@ -117,7 +117,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                         actionItemName      : it.actionItemName,
                         actionItemGroupName : it.actionItemGroupName,
                         spridenId           : it.spridenId,
-                        actionItemPersonName: it.actionItemPersonName,
+                        actionItemPersonName:  formatPersonName(it),
                         status              : it.status,
                         responseDate        : it.responseDate,
                         displayStartDate    : it.displayStartDate,
@@ -280,7 +280,12 @@ class MonitorActionItemCompositeService extends ServiceBase {
         }
         reviewAuditObject
     }
-
-
+    private String formatPersonName(monitorActionItemObj){
+        String formattedName = ""
+        formattedName = monitorActionItemObj.personLastName? monitorActionItemObj.personLastName+",":""
+        formattedName = formattedName + monitorActionItemObj.personFirstName?monitorActionItemObj.personFirstName:""
+        formattedName = formattedName + monitorActionItemObj.personMiddleName?" "+monitorActionItemObj.personMiddleName:""
+        formattedName = formattedName?.trim()
+    }
 
 }

@@ -20,30 +20,19 @@ import javax.persistence.Table
 
 @NamedQueries(value = [
 
-        @NamedQuery(name = "MonitorActionItemReadOnly.fetchActionItemNames",
-                query = """SELECT a.actionItemId,actionItemName FROM MonitorActionItemReadOnly a
-                           GROUP BY a.actionItemId,a.actionItemName"""),
         @NamedQuery(name = "MonitorActionItemReadOnly.fetchByActionItemIdAndPersonNameCount",
                 query = """ select count(a.id) FROM  MonitorActionItemReadOnly a
-                            where a.actionItemId = :actionItemId
-                            and upper(a.actionItemPersonName) like :personName
+                            where a.actionItemId = :actionItemId and
+                           (a.personSearchLastName like :personName 
+                           or a.personSearchFirstName like :personName 
+                           or a.personSearchMiddleName like :personName)
                            """),
-        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByActionItemAndSpridenIdCount",
-                query = """ select count(a.id) FROM MonitorActionItemReadOnly a
-                            where a.actionItemId = :actionItemId
-                            and upper(a.spridenId) = :spridenId
-                        """),
-        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByActionItemIdCount",
-                query = """ select count(a.id) FROM MonitorActionItemReadOnly a
-                            where a.actionItemId = :actionItemId
-                        """),
-        @NamedQuery(name = "MonitorActionItemReadOnly.fetchByPersonIdCount",
-                query = """ select count(a.id) FROM MonitorActionItemReadOnly a
-                            where upper(a.spridenId) = :personId
-                        """),
+
         @NamedQuery(name = "MonitorActionItemReadOnly.fetchByPersonNameCount",
                 query = """ select count(a.id) FROM MonitorActionItemReadOnly a
-                            where upper(a.actionItemPersonName) like :personName
+                            where a.personSearchLastName like :personName 
+                               or a.personSearchFirstName like :personName 
+                               or a.personSearchMiddleName like :personName
                         """)
 ])
 
@@ -66,6 +55,7 @@ class MonitorActionItemReadOnly implements Serializable {
     /**
      *  Action Item ID
      */
+
     @Column(name = "ACTION_ITEM_ID")
     Long actionItemId
 
@@ -80,6 +70,7 @@ class MonitorActionItemReadOnly implements Serializable {
      */
     @Column(name = "ACTION_ITEM_GROUP_NAME")
     String actionItemGroupName
+
     /**
      * Name of the action item
      */
@@ -93,10 +84,40 @@ class MonitorActionItemReadOnly implements Serializable {
     String spridenId
 
     /**
-     * Group Name of the action item associated to
+     * Person Last Name
      */
-    @Column(name = "ACTION_ITEM_PERSON_NAME")
-    String actionItemPersonName
+    @Column(name = "ACTION_ITEM_PERSON_LAST_NAME")
+    String personLastName
+
+    /**
+     * Person First Name
+     */
+    @Column(name = "ACTION_ITEM_PERSON_FIRST_NAME")
+    String personFirstName
+
+    /**
+     * Person Middle Name
+     */
+    @Column(name = "ACTION_ITEM_PERSON_MI_NAME")
+    String personMiddleName
+
+    /**
+     * Search Person Last Name
+     */
+    @Column(name = "PERSON_SEARCH_LAST_NAME")
+    String personSearchLastName
+
+    /**
+     * Search Person First Name
+     */
+    @Column(name = "PERSON_SEARCH_FIRST_NAME")
+    String personSearchFirstName
+
+    /**
+     * Search Person Middle Name
+     */
+    @Column(name = "PERSON_SEARCH_MI_NAME")
+    String personSearchMiddleName
 
     /**
      * Status of action item
@@ -149,20 +170,9 @@ class MonitorActionItemReadOnly implements Serializable {
     /**
      * Attachments of the action item
      */
+    @Type(type = "yes_no")
     @Column(name = "ACTION_ITEM_ATTACHMENTS")
-    Long attachments
-
-    /**
-     * Check the list of action item names
-     * @param
-     * @return
-     */
-    static def fetchActionItemNames() {
-        MonitorActionItemReadOnly.withSession { session ->
-            session.getNamedQuery('MonitorActionItemReadOnly.fetchActionItemNames')
-                    .list()
-        }
-    }
+    Boolean attachments = false
 
     /**
      * Gets the list of action items based on the filter action item ID and person name
@@ -171,15 +181,20 @@ class MonitorActionItemReadOnly implements Serializable {
      * @return List < MonitorActionItemReadOnly >  List of Action items
      */
     static def fetchByActionItemIdAndPersonName(Long actionItem, String personName,
-                                                 def pagingAndSortParams) {
+                                                def pagingAndSortParams) {
         String nameSearchParameter = personName ? personName : ""
         nameSearchParameter = "%" + nameSearchParameter.toUpperCase() + "%"
 
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
-            eq("actionItemId", actionItem)
-            ilike("actionItemPersonName", nameSearchParameter)
-
+            and {
+                eq("actionItemId", actionItem)
+                or {
+                    like("personSearchLastName", nameSearchParameter)
+                    like("personSearchFirstName", nameSearchParameter)
+                    like("personSearchMiddleName", nameSearchParameter)
+                }
+            }
             order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
         }
     }
@@ -218,18 +233,6 @@ class MonitorActionItemReadOnly implements Serializable {
         }
     }
 
-    static def fetchByActionItemAndSpridenIdCount(Long actionItem, String spridenId) {
-        String nameSpridenId = spridenId ? spridenId : ""
-        nameSpridenId = nameSpridenId.toUpperCase()
-
-        MonitorActionItemReadOnly.withSession { session ->
-            session.getNamedQuery('MonitorActionItemReadOnly.fetchByActionItemAndSpridenIdCount')
-                    .setLong("actionItemId", actionItem)
-                    .setString("spridenId", nameSpridenId)
-                    .uniqueResult()
-        }
-    }
-
     /**
      * List of action items based on the filter action item ID only
      * @param actionItem action item ID
@@ -240,19 +243,6 @@ class MonitorActionItemReadOnly implements Serializable {
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             eq("actionItemId", actionItem)
             order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
-        }
-    }
-
-    /**
-     * count of action items based on the filter action item ID only
-     * @param actionItem action item ID
-     * @return count of Action items
-     */
-    static def fetchByActionItemIdCount(Long actionItem) {
-        MonitorActionItemReadOnly.withSession { session ->
-            session.getNamedQuery('MonitorActionItemReadOnly.fetchByActionItemIdCount')
-                    .setLong("actionItemId", actionItem)
-                    .uniqueResult()
         }
     }
 
@@ -270,33 +260,20 @@ class MonitorActionItemReadOnly implements Serializable {
     }
 
     /**
-     * count of action items based on the filter person ID
-     * @param spridenId spriden ID of the person
-     * @return count of Action items
-     */
-
-    static def fetchByPersonIdCount(String spridenId) {
-        String personIDparam = spridenId ? spridenId : ""
-        personIDparam = personIDparam.toUpperCase()
-
-        MonitorActionItemReadOnly.withSession { session ->
-            session.getNamedQuery('MonitorActionItemReadOnly.fetchByPersonIdCount')
-                    .setString("personId", personIDparam)
-                    .uniqueResult()
-        }
-    }
-
-    /**
      * Gets the list of action items based on the filter person's name
      * @param personName Name of the person
      * @return List < MonitorActionItemReadOnly >  List of Action items
      */
-    static def fetchByPersonName(String personName,  def pagingAndSortParams) {
+    static def fetchByPersonName(String personName, def pagingAndSortParams) {
         String personNameParam = personName ? personName : ""
         personNameParam = "%" + personNameParam + "%"
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
-            ilike("actionItemPersonName", personNameParam)
+            or {
+                like("personSearchLastName", personNameParam)
+                like("personSearchFirstName", personNameParam)
+                like("personSearchMiddleName", personNameParam)
+            }
             order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
         }
     }

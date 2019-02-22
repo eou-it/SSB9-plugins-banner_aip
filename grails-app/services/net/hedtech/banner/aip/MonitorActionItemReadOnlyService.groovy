@@ -11,14 +11,6 @@ import net.hedtech.banner.service.ServiceBase
  */
 class MonitorActionItemReadOnlyService extends ServiceBase {
 
-    /**
-     * Lists of action items
-     * @param
-     * @return
-     */
-    def listOfActionItemNames() {
-        return MonitorActionItemReadOnly.fetchActionItemNames()
-    }
 
     /**
      * Lists of action items filtered by actionItem id and Person name
@@ -42,31 +34,12 @@ class MonitorActionItemReadOnlyService extends ServiceBase {
     }
 
     /**
-     * Count of lists of action items filtered by actionItem id and Person name
-     * @param actionItemId  Action Item Id of action item to be searched
-     * @param spridenId Spriden Id of the person that is being searched
-     * @return Count of action items
-     */
-    def fetchByActionItemAndSpridenIdCount(Long actionItemId, Long spridenId) {
-        return MonitorActionItemReadOnly.fetchByActionItemAndSpridenIdCount(actionItemId, spridenId)
-    }
-
-    /**
      * Lists of action items filtered by actionItem id
      * @param actionItemId  Action Item Id of action item to be searched
      * @return List of actionItems
      */
     List<MonitorActionItemReadOnly> fetchByActionItemId(Long actionItemId,  def pagingAndSortParams) {
         return MonitorActionItemReadOnly.fetchByActionItemId(actionItemId, pagingAndSortParams)
-    }
-
-    /**
-     * Lists of action items filtered by action item id
-     * @param actionItem  Action Item Id of action item to be searched
-     * @return count of action items
-     * */
-    def fetchByActionItemIdCount(Long actionItemId) {
-        return MonitorActionItemReadOnly.fetchByActionItemIdCount(actionItemId)
     }
 
     /**
@@ -88,7 +61,6 @@ class MonitorActionItemReadOnlyService extends ServiceBase {
         return MonitorActionItemReadOnly.fetchByPersonNameCount(personName)
     }
 
-
     /**
      * Lists of action items filtered by person id
      * @param Pidm of the person to be searched
@@ -97,15 +69,6 @@ class MonitorActionItemReadOnlyService extends ServiceBase {
      * */
     List<MonitorActionItemReadOnly> fetchByPidm(Long pidm,  def pagingAndSortParams) {
         return MonitorActionItemReadOnly.fetchByPidm(pidm, pagingAndSortParams)
-    }
-
-    /**
-     * Lists of action items filtered by person id
-     * @param personID spriden id of the person
-     * @return count of action items
-     * */
-    def fetchByPersonIdCount(String spridenId) {
-        return MonitorActionItemReadOnly.fetchByPersonIdCount(spridenId)
     }
 
     /**
