@@ -25,6 +25,11 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         super.tearDown()
     }
 
+    @Test
+    void testFetchActionItemNames() {
+        List<ActionItem> actionItems = ActionItem.fetchActionItemIdAndName()
+        assert actionItems.size() > 0
+    }
 
     @Test
     void testFetchActionItemsString() {

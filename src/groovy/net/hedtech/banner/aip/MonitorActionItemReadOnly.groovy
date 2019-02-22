@@ -189,10 +189,12 @@ class MonitorActionItemReadOnly implements Serializable {
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             and {
                 eq("actionItemId", actionItem)
-                or {
-                    like("personSearchLastName", nameSearchParameter)
-                    like("personSearchFirstName", nameSearchParameter)
-                    like("personSearchMiddleName", nameSearchParameter)
+                and {
+                    or {
+                        ilike("personSearchLastName", nameSearchParameter)
+                        ilike("personSearchFirstName", nameSearchParameter)
+                        ilike("personSearchMiddleName", nameSearchParameter)
+                    }
                 }
             }
             order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
@@ -269,11 +271,14 @@ class MonitorActionItemReadOnly implements Serializable {
         personNameParam = "%" + personNameParam + "%"
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
-            or {
-                like("personSearchLastName", personNameParam)
-                like("personSearchFirstName", personNameParam)
-                like("personSearchMiddleName", personNameParam)
+            and {
+                or {
+                    ilike("personSearchLastName", personNameParam)
+                    ilike("personSearchFirstName", personNameParam)
+                    ilike("personSearchMiddleName", personNameParam)
+                }
             }
+
             order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
         }
     }

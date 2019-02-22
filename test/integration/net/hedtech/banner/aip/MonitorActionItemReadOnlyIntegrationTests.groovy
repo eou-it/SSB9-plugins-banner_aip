@@ -37,12 +37,6 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
 
 
     @Test
-    void testFetchActionItemNames() {
-        List<MonitorActionItemReadOnly> monitorActionItems = MonitorActionItemReadOnly.fetchActionItemNames()
-        assert monitorActionItems.size() > 0
-    }
-
-    @Test
     void testFetchActionItemsByExactPersonName() {
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = "Hank"
