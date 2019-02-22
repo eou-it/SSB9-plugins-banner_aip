@@ -36,17 +36,26 @@ class AipPageBuilderCompositeService {
     def page( pageId ) {
         def html
         def data = pageService.get( pageId )
+        println "data is >>>>" +data
         def validateResult = compileService.preparePage( data.modelView )
         def pageName = jsonSlurper.parseText( data.modelView ).name
         if (validateResult.valid) {
             def compiledView = compileService.compile2page( validateResult.pageComponent )
+            println "compiledView >>>> "+compiledView
             def compiledJSCode = compileService.compileController( validateResult.pageComponent )
+            println "compiledView >>>> "+compiledJSCode
             if (data && compiledView && compiledJSCode) {
                 html = compileService.assembleFinalPage( compiledView, compiledJSCode )
             }
             def output = new StringWriter()
-            groovyPagesTemplateEngine.clearPageCache()
-            groovyPagesTemplateEngine.createTemplate( compiledView, 'test' ).make().writeTo( output )
+            try{
+                groovyPagesTemplateEngine.clearPageCache()
+                groovyPagesTemplateEngine.createTemplate( compiledView, 'test' ).make().writeTo( output )
+            }catch(Exception exp){
+                println " Error while creating the template compiledView >>>>"+compiledView
+                println "Error while creating the template Exception >>>>" +exp
+            }
+
             return ['html': output.toString(), 'pageName': pageName, 'script': compiledJSCode.toString(), 'compiled': html]
         }
     }
