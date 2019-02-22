@@ -170,9 +170,8 @@ class MonitorActionItemReadOnly implements Serializable {
     /**
      * Attachments of the action item
      */
-    @Type(type = "yes_no")
     @Column(name = "ACTION_ITEM_ATTACHMENTS")
-    Boolean attachments = false
+    Long attachments
 
     /**
      * Gets the list of action items based on the filter action item ID and person name
