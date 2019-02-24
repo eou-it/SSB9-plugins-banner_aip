@@ -3,7 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-
+import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.service.ServiceBase
 import org.apache.log4j.Logger
 import org.omg.CORBA.portable.ApplicationException
@@ -23,6 +23,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
     def actionItemProcessingCommonService
     def configUserPreferenceService
     def aipReviewStateService
+    def actionItemService
 
     /**
      * get Action Item
@@ -35,7 +36,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                  actionItemName      : userActionItemDetails.actionItemName,
                  actionItemGroupName : userActionItemDetails.actionItemGroupName,
                  spridenId           : userActionItemDetails.spridenId,
-                 actionItemPersonName: userActionItemDetails.actionItemPersonName,
+                 actionItemPersonName: formatPersonName(userActionItemDetails),
                  status              : userActionItemDetails.status,
                  responseDate        : userActionItemDetails.responseDate,
                  displayStartDate    : userActionItemDetails.displayStartDate,
@@ -44,7 +45,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                  currentResponseText : userActionItemDetails.currentResponseText,
                  reviewIndicator     : userActionItemDetails.reviewIndicator,
                  reviewAuditObject   : getRecentReviewAuditEntry(userActionItemDetails.id),
-                 reviewStateObject   : [code:userActionItemDetails.reviewStateCode,name:aipReviewStateService.fetchReviewStateNameByCodeAndLocale(userActionItemDetails.reviewStateCode, getLocaleSting())],
+                 reviewStateObject   : [code: userActionItemDetails.reviewStateCode, name: aipReviewStateService.fetchReviewStateNameByCodeAndLocale(userActionItemDetails.reviewStateCode, getLocaleSting())],
                  attachments         : userActionItemDetails.attachments]
 
         return result
@@ -55,7 +56,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
      * @return
      */
     def getActionItemNames() {
-        def actionItems = monitorActionItemReadOnlyService.listOfActionItemNames()
+        def actionItems = actionItemService.listActionItemsIdAndName()
         def actionItemNamesList = []
         actionItems.each {
             actionItemNamesList.add('id': it.getAt(0), 'name': it.getAt(1))
@@ -81,17 +82,32 @@ class MonitorActionItemCompositeService extends ServiceBase {
             qryresult = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionId, personName, pagingAndSortParams)
             count = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonNameCount(actionId, personName)
         } else if (actionId && !personName && personId) {   //action id + person id combination
-            qryresult = monitorActionItemReadOnlyService.fetchByActionItemAndSpridenId(actionId, personId, pagingAndSortParams)
-            count = monitorActionItemReadOnlyService.fetchByActionItemAndSpridenIdCount(actionId, personId)
+            def person = PersonUtility.getPerson(personId)
+            if (person) {
+                qryresult = monitorActionItemReadOnlyService.fetchByActionItemAndPidm(actionId, person.pidm, pagingAndSortParams)
+                count = userActionItemService.countUserActionItemByActionItemIdAndPidm(actionId, person.pidm)
+            } else {
+                LOGGER.debug("Person does not exist")
+                qryresult = []
+                count = 0
+            }
         } else if (actionId && !personName && !personId) {  //only action item id combination
             qryresult = monitorActionItemReadOnlyService.fetchByActionItemId(actionId, pagingAndSortParams)
-            count = monitorActionItemReadOnlyService.fetchByActionItemIdCount(actionId)
+            count = userActionItemService.countUserActionItemByActionItemId(actionId)
         } else if (!actionId && personName && !personId) {  // search by person name
             qryresult = monitorActionItemReadOnlyService.fetchByPersonName(personName, pagingAndSortParams)
             count = monitorActionItemReadOnlyService.fetchByPersonNameCount(personName)
         } else if (!actionId && !personName && personId) {  // search by person id only
-            qryresult = monitorActionItemReadOnlyService.fetchByPersonId(personId, pagingAndSortParams)
-            count = monitorActionItemReadOnlyService.fetchByPersonIdCount(personId)
+            def person = PersonUtility.getPerson(personId)
+            if (person) {
+                qryresult = monitorActionItemReadOnlyService.fetchByPidm(person?.pidm, pagingAndSortParams)
+                count = userActionItemService.countUserActionItemByPidm(person?.pidm)
+            } else {
+                LOGGER.debug("Person does not exist")
+                qryresult = []
+                count = 0
+            }
+
         }
 
         def result = [];
@@ -101,14 +117,14 @@ class MonitorActionItemCompositeService extends ServiceBase {
                         actionItemName      : it.actionItemName,
                         actionItemGroupName : it.actionItemGroupName,
                         spridenId           : it.spridenId,
-                        actionItemPersonName: it.actionItemPersonName,
+                        actionItemPersonName: formatPersonName(it),
                         status              : it.status,
                         responseDate        : it.responseDate,
                         displayStartDate    : it.displayStartDate,
                         displayEndDate      : it.displayEndDate,
                         currentResponseText : it.currentResponseText,
                         reviewIndicator     : it.reviewIndicator,
-                        reviewStateCode     : aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode,getLocaleSting()),
+                        reviewStateCode     : aipReviewStateService.fetchReviewStateNameByCodeAndLocale(it.reviewStateCode, getLocaleSting()),
                         attachments         : it.attachments])
 
         }
@@ -119,42 +135,41 @@ class MonitorActionItemCompositeService extends ServiceBase {
         return resultMap
     }
 
-
     /**
      * Update Action Item Review
      * @param requestMap Action Item review request map
      * @return
      */
-    def updateActionItemReview(requestMap){
+    def updateActionItemReview(requestMap) {
         boolean isActionItemReviewUpdated = false
         Map result = null
-        String message  = ''
-        try{
+        String message = ''
+        try {
             Long userActionItemId = Long.valueOf(requestMap?.userActionItemId)
             def userActionItem = userActionItemService.getUserActionItemById(userActionItemId)
-            if(userActionItem){
-                if(isValuesModified(requestMap,userActionItem)){
-                    if(!validateDisplayEndDate(requestMap,userActionItem)){
-                        return [success:false,message:MessageHelper.message('aip.review.action.item.end.date.error')]
+            if (userActionItem) {
+                if (isValuesModified(requestMap, userActionItem)) {
+                    if (!validateDisplayEndDate(requestMap, userActionItem)) {
+                        return [success: false, message: MessageHelper.message('aip.review.action.item.end.date.error')]
                     }
-                    userActionItem.displayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate )
+                    userActionItem.displayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.displayEndDate)
                     userActionItem.reviewStateCode = requestMap.reviewStateCode
-                    userActionItemService.update( userActionItem )
+                    userActionItemService.update(userActionItem)
                 }
-                createActionItemReviewAuditEntry(requestMap,userActionItem)
+                createActionItemReviewAuditEntry(requestMap, userActionItem)
                 isActionItemReviewUpdated = true
                 message = MessageHelper.message('aip.common.save.successful')
             }
-        }catch (ApplicationException e){
+        } catch (ApplicationException e) {
             isActionItemReviewUpdated = false
             message = MessageHelper.message('aip.review.action.update.exception.error')
         }
 
-        result = [success:isActionItemReviewUpdated,message:message]
+        result = [success: isActionItemReviewUpdated, message: message]
         return result
     }
 
-    def getReviewStatusList(){
+    def getReviewStatusList() {
         def reviewStateList = []
         def result = aipReviewStateService.fetchNonDefaultReviewStates(getLocaleSting())
         result.each {
@@ -169,16 +184,16 @@ class MonitorActionItemCompositeService extends ServiceBase {
      * @param userActionItem user Action Item object
      * @return
      */
-    private def isValuesModified(requestMap,userActionItem){
+    private def isValuesModified(requestMap, userActionItem) {
         boolean isValuesChanged = false
-        Date displayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate )
-        if( displayEndDate.compareTo(userActionItem.displayEndDate) != 0){
+        Date displayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.displayEndDate)
+        if (displayEndDate.compareTo(userActionItem.displayEndDate) != 0) {
             isValuesChanged = true
         }
-        if(userActionItem.reviewStateCode != requestMap.reviewStateCode){
+        if (userActionItem.reviewStateCode != requestMap.reviewStateCode) {
             isValuesChanged = true
         }
-        return   isValuesChanged
+        return isValuesChanged
     }
 
     /**
@@ -187,14 +202,13 @@ class MonitorActionItemCompositeService extends ServiceBase {
      * @param userActionItem user Action Item object
      * @return
      */
-    private def validateDisplayEndDate(requestMap,userActionItem){
-        Date displayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate )
-        if( displayEndDate.compareTo(userActionItem.displayEndDate) != 0){
-            return (displayEndDate.compareTo(userActionItem.displayEndDate) > 0  )
+    private def validateDisplayEndDate(requestMap, userActionItem) {
+        Date displayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.displayEndDate)
+        if (displayEndDate.compareTo(userActionItem.displayEndDate) != 0) {
+            return (displayEndDate.compareTo(userActionItem.displayEndDate) > 0)
         }
         return true
     }
-
 
     /**
      * create action Item review audit entry
@@ -202,7 +216,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
      * @param userActionItem user Action Item object
      * @return
      */
-    private void createActionItemReviewAuditEntry(requestMap,userActionItem){
+    private void createActionItemReviewAuditEntry(requestMap, userActionItem) {
         def user = springSecurityService.getAuthentication()?.user
         ActionItemReviewAudit actionItemReviewAudit = new ActionItemReviewAudit()
         actionItemReviewAudit.userActionItemId = userActionItem.id
@@ -212,13 +226,12 @@ class MonitorActionItemCompositeService extends ServiceBase {
         actionItemReviewAudit.reviewStateCode = requestMap.reviewStateCode
         actionItemReviewAudit.externalCommentInd = requestMap.externalCommentInd
         actionItemReviewAudit.reviewComments = requestMap.reviewComments
-        actionItemReviewAudit.contactInfo = requestMap.contactInfo?java.net.URLDecoder.decode(requestMap.contactInfo, "UTF-8"):requestMap.contactInfo
+        actionItemReviewAudit.contactInfo = requestMap.contactInfo ? java.net.URLDecoder.decode(requestMap.contactInfo, "UTF-8") : requestMap.contactInfo
         actionItemReviewAuditService.create(actionItemReviewAudit)
     }
 
-
     /**
-     *Filters the list of results based on the search string
+     * Filters the list of results based on the search string
      * @param result List of result
      * @param searchParam search string to be searched.
      * @return filtered list
@@ -243,7 +256,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
      * Getting user or default Locale string
      * @return Locale string
      * */
-    private def getLocaleSting(){
+    private def getLocaleSting() {
         Locale userLocale = configUserPreferenceService.getUserLocale()
         if (!userLocale) {
             userLocale = Locale.getDefault()
@@ -251,20 +264,33 @@ class MonitorActionItemCompositeService extends ServiceBase {
         userLocale.toString()
     }
 
-
     /**
      * Getting recent contact
      * @return Locale string
      * */
-    private def getRecentReviewAuditEntry(Long userActionItemId){
+    private def getRecentReviewAuditEntry(Long userActionItemId) {
         def reviewAuditObject = null
         def reviewAuditObjectList = actionItemReviewAuditService.fetchReviewAuditByUserActionItemId(userActionItemId)
-        if(reviewAuditObjectList && reviewAuditObjectList[0]){
+        if (reviewAuditObjectList && reviewAuditObjectList[0]) {
             reviewAuditObject = reviewAuditObjectList[0]
         }
         reviewAuditObject
     }
 
-
-
+    private String formatPersonName(monitorActionItemObj) {
+        String personLastName = monitorActionItemObj.personLastName ?: ''
+        String personFirstName = monitorActionItemObj.personFirstName ?: ''
+        String personMiddleName = monitorActionItemObj.personMiddleName ?: ''
+        String displayName
+        if (personLastName && personFirstName) {
+            displayName = personLastName + ", " + personFirstName + " " + personMiddleName
+        }
+        if(!personFirstName){
+            displayName = personLastName + ", " + personMiddleName
+        }
+        if(!personFirstName && !personMiddleName){
+            displayName = personLastName
+        }
+        displayName = displayName?.trim()
+    }
 }

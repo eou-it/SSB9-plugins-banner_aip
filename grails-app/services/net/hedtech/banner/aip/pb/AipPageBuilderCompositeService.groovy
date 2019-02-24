@@ -45,8 +45,13 @@ class AipPageBuilderCompositeService {
                 html = compileService.assembleFinalPage( compiledView, compiledJSCode )
             }
             def output = new StringWriter()
-            groovyPagesTemplateEngine.clearPageCache()
-            groovyPagesTemplateEngine.createTemplate( compiledView, 'test' ).make().writeTo( output )
+            try{
+                groovyPagesTemplateEngine.clearPageCache()
+                groovyPagesTemplateEngine.createTemplate( compiledView, 'test' ).make().writeTo( output )
+            }catch(Exception exp){
+                println " Error while creating the template compiledView >>>>"+compiledView
+                println "Error while creating the template Exception >>>>" +exp
+            }
             return ['html': output.toString(), 'pageName': pageName, 'script': compiledJSCode.toString(), 'compiled': html]
         }
     }
