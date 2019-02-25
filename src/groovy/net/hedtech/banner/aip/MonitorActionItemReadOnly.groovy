@@ -26,13 +26,15 @@ import javax.persistence.Table
                            (a.personSearchLastName like :personName 
                            or a.personSearchFirstName like :personName 
                            or a.personSearchMiddleName like :personName)
+                           and a.spridenChangeInd IS NULL
                            """),
 
         @NamedQuery(name = "MonitorActionItemReadOnly.fetchByPersonNameCount",
                 query = """ select count(a.id) FROM MonitorActionItemReadOnly a
-                            where a.personSearchLastName like :personName 
+                            where (a.personSearchLastName like :personName 
                                or a.personSearchFirstName like :personName 
-                               or a.personSearchMiddleName like :personName
+                               or a.personSearchMiddleName like :personName)
+                               and a.spridenChangeInd IS NULL
                         """)
 ])
 
@@ -118,6 +120,11 @@ class MonitorActionItemReadOnly implements Serializable {
      */
     @Column(name = "PERSON_SEARCH_MI_NAME")
     String personSearchMiddleName
+    /**
+     * Search Person Middle Name
+     */
+    @Column(name = "SPRIDEN_CHANGE_IND")
+    String spridenChangeInd
 
     /**
      * Status of action item
@@ -195,6 +202,7 @@ class MonitorActionItemReadOnly implements Serializable {
                         ilike("personSearchMiddleName", nameSearchParameter)
                     }
                 }
+                isNull("spridenChangeInd")
             }
             order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
         }
@@ -230,6 +238,7 @@ class MonitorActionItemReadOnly implements Serializable {
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             eq("actionItemId", actionItem)
             eq("pidm", pidm)
+            isNull("spridenChangeInd")
             order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
         }
     }
@@ -243,6 +252,7 @@ class MonitorActionItemReadOnly implements Serializable {
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             eq("actionItemId", actionItem)
+            isNull("spridenChangeInd")
             order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
         }
     }
@@ -256,6 +266,7 @@ class MonitorActionItemReadOnly implements Serializable {
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             eq("pidm", pidm)
+            isNull("spridenChangeInd")
             order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
         }
     }
@@ -277,7 +288,7 @@ class MonitorActionItemReadOnly implements Serializable {
                     ilike("personSearchMiddleName", personNameParam)
                 }
             }
-
+            isNull("spridenChangeInd")
             order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
         }
     }
