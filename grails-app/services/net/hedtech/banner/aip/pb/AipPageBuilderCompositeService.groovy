@@ -5,11 +5,13 @@
 package net.hedtech.banner.aip.pb
 
 import groovy.json.JsonSlurper
+import org.apache.log4j.Logger
 
 /**
  * Service class for Action item Processing Page Builder
  */
 class AipPageBuilderCompositeService {
+    private static final def LOGGER = Logger.getLogger( this.class )
     def pageService
     def jsonSlurper = new JsonSlurper()
     def compileService
@@ -49,8 +51,8 @@ class AipPageBuilderCompositeService {
                 groovyPagesTemplateEngine.clearPageCache()
                 groovyPagesTemplateEngine.createTemplate( compiledView, 'test' ).make().writeTo( output )
             }catch(Exception exp){
-                println " Error while creating the template compiledView >>>>"+compiledView
-                println "Error while creating the template Exception >>>>" +exp
+                LOGGER.debug("Error while creating the template compiledView >>>>"+compiledView)
+                LOGGER.debug("Error while creating the template Exception >>>>" +exp)
             }
             return ['html': output.toString(), 'pageName': pageName, 'script': compiledJSCode.toString(), 'compiled': html]
         }
