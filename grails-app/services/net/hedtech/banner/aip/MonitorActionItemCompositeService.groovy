@@ -82,7 +82,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
             qryresult = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionId, personName, pagingAndSortParams)
             count = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonNameCount(actionId, personName)
         } else if (actionId && !personName && personId) {   //action id + person id combination
-            def person = PersonUtility.getPerson(personId)
+            def person = PersonUtility.getPerson(personId.toUpperCase())
             if (person) {
                 qryresult = monitorActionItemReadOnlyService.fetchByActionItemAndPidm(actionId, person.pidm, pagingAndSortParams)
                 count = userActionItemService.countUserActionItemByActionItemIdAndPidm(actionId, person.pidm)
@@ -98,7 +98,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
             qryresult = monitorActionItemReadOnlyService.fetchByPersonName(personName, pagingAndSortParams)
             count = monitorActionItemReadOnlyService.fetchByPersonNameCount(personName)
         } else if (!actionId && !personName && personId) {  // search by person id only
-            def person = PersonUtility.getPerson(personId)
+            def person = PersonUtility.getPerson(personId.toUpperCase())
             if (person) {
                 qryresult = monitorActionItemReadOnlyService.fetchByPidm(person?.pidm, pagingAndSortParams)
                 count = userActionItemService.countUserActionItemByPidm(person?.pidm)
