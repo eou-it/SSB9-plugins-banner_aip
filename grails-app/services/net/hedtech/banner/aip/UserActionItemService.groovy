@@ -58,11 +58,19 @@ class UserActionItemService extends ServiceBase {
 
     /**
      *
-     * @param actionItemPidm
+     * @param userActionItemId
      * @return
      */
     def getUserActionItemById(Long userActionItemId) {
         UserActionItem.findById(userActionItemId)
+    }
+    /**
+     *
+     * @param userActionItemId
+     * @return
+     */
+    def getUserActionItemPidmById(Long userActionItemId) {
+        UserActionItem.fetchUserActionItemPidmById(userActionItemId)
     }
 
 

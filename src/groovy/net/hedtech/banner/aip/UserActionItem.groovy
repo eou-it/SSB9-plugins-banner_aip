@@ -24,6 +24,11 @@ import javax.persistence.Version
            FROM UserActionItem a
            WHERE a.id = :myId
           """),
+        @NamedQuery(name = "UserActionItem.fetchUserActionItemPidmById",
+                query = """select a.pidm
+                  FROM UserActionItem a
+                  WHERE a.id = :myId
+                 """),
         @NamedQuery(name = "UserActionItem.countUserActionItemByActionItemId",
                 query = """select count(a.id)
            FROM UserActionItem a
@@ -40,7 +45,7 @@ import javax.persistence.Version
                WHERE a.pidm = :myPidm
               """),
         @NamedQuery(name = "UserActionItem.countUserActionItemByActionItemIdAndPidm",
-                        query = """select count(a.id)
+                query = """select count(a.id)
                        FROM UserActionItem a
                        WHERE a.actionItemId = :myActionItemId AND a.pidm = :myPidm
                       """),
@@ -226,6 +231,16 @@ class UserActionItem implements Serializable {
     static def fetchUserActionItemsByPidm(Long pidm) {
         UserActionItem.withSession { session ->
             session.getNamedQuery('UserActionItem.fetchUserActionItemByPidm').setLong('myPidm', pidm).list()
+        }
+    }
+    /**
+     *
+     * @param id
+     * @return
+     */
+    static def fetchUserActionItemPidmById(Long id) {
+        UserActionItem.withSession { session ->
+            session.getNamedQuery('UserActionItem.fetchUserActionItemPidmById').setLong('myId', id).list()[0]
         }
     }
 
