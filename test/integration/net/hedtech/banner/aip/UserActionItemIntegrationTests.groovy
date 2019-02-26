@@ -44,28 +44,10 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     }
 
     @Test
-    void testFetchByActionItemIdOnlyNonExistingCount() {
-        Long actionItemId = 3999L
-        def result = UserActionItem.countUserActionItemByActionItemId(actionItemId)
-        assertEquals 0, result
-    }
-
-    @Test
-    void testCountUserActionItemByPidm() {
-        def student = PersonUtility.getPerson("CSRSTU001")
-        assertNotNull student
-
-        def result = UserActionItem.countUserActionItemByPidm(student.pidm)
-        assertEquals 1, result
-
-    }
-
-    @Test
-    void testFetchActionItemByPidmCount() {
+    void testCountUserActionItemByActionItemId() {
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
-
         def result = UserActionItem.countUserActionItemByActionItemId(actionItemId)
-        assertEquals 1, result
+        assertEquals 13, result
 
     }
 
@@ -89,7 +71,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     void testFetchActionItemByNonExisitingPidmCount() {
         Long pidm = 99999999L
         def result = UserActionItem.fetchUserActionItemsByPidm(pidm)
-        assertEquals 0, result
+        assertEquals 0, result.size()
     }
 
     @Test

@@ -84,11 +84,12 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
         assertNotNull result
         assertEquals 0, result.size()
     }
+
     @Test
     void testFetchActionItemsByNonExistingActionItemIdCount() {
         Long actionItemId = 999L
         String personName = "Hank"
-        def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonNameCount(actionItemId,personName)
+        def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonNameCount(actionItemId, personName)
         assertNotNull result
         assertEquals 0, result
     }
@@ -114,11 +115,11 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
     @Test
     void testFetchActionItemBySpridenId() {
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
-        def pidm = PersonUtility.getPerson( "CSRSTU001" ).pidm
+        def pidm = PersonUtility.getPerson("CSRSTU001").pidm
         def result = monitorActionItemReadOnlyService.fetchByActionItemAndPidm(actionItemId, pidm, pagingAndSortParamsAsc)
         assertEquals 1, result.size()
         assertEquals "Drug and Alcohol Policy", result[0].actionItemName
-        assertEquals "Cliff Starr", result[0].actionItemPersonName
+        assertEquals "CLIFF", result[0].personSearchFirstName
         assertEquals "CSRSTU001", result[0].spridenId
     }
 
@@ -149,7 +150,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
 
     @Test
     void testFetchByPersonIdExisting() {
-        def pidm = PersonUtility.getPerson( "CSRSTU001" ).pidm
+        def pidm = PersonUtility.getPerson("CSRSTU001").pidm
         def result = monitorActionItemReadOnlyService.fetchByPidm(pidm, pagingAndSortParamsAsc)
         assertEquals 5, result.size()
 
@@ -162,23 +163,52 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
         assertEquals 0, result.size()
 
     }
-
+//Exact name search not supported
     @Test
     void testFetchByPersonNameExact() {
-        String personName = "Cliff Starr"
+        //String personName = "Cliff Starr"
+        String personName = "Starr"
         def result = monitorActionItemReadOnlyService.fetchByPersonName(personName, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 5, result.size()
 
     }
 
-
+//Exact Name Search not supported in General SSB 9.3
     @Test
     void testFetchByPersonNameExactCount() {
-        String personName = "Cliff Starr"
+        //String personName = "Cliff Starr"
+        String personName = "Starr"
         def result = monitorActionItemReadOnlyService.fetchByPersonNameCount(personName)
         assertNotNull result
         assertEquals 5, result
+
+    }
+
+    @Test
+    void testFetchByPersonLastNameCount() {
+        String personName = "Doll"
+        def result = monitorActionItemReadOnlyService.fetchByPersonNameCount(personName)
+        assertNotNull result
+        assertEquals 2, result
+
+    }
+
+    @Test
+    void testFetchByPersonFirstNameCount() {
+        String personName = "CORDELL"
+        def result = monitorActionItemReadOnlyService.fetchByPersonNameCount(personName)
+        assertNotNull result
+        assertEquals 2, result
+
+    }
+
+    @Test
+    void testFetchByPersonMiddleNameCount() {
+        String personName = "Bfghfh"
+        def result = monitorActionItemReadOnlyService.fetchByPersonNameCount(personName)
+        assertNotNull result
+        assertEquals 1, result
 
     }
 
@@ -191,6 +221,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
         assertEquals 6, result.size()
 
     }
+
     @Test
     void testFetchByPersonNamePartialCount() {
         String personName = "Cliff"
@@ -221,7 +252,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
 
     @Test
     void testFindById() {
-        def pidm = PersonUtility.getPerson( "CSRSTU001" ).pidm
+        def pidm = PersonUtility.getPerson("CSRSTU001").pidm
         def result = monitorActionItemReadOnlyService.fetchByPidm(pidm, pagingAndSortParamsAsc)
         assertTrue result.size() > 0
 
@@ -231,7 +262,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
         assertEquals result[0].id, monitorActionItemReadOnly.id
         assertEquals result[0].actionItemId, monitorActionItemReadOnly.actionItemId
         assertEquals result[0].actionItemName, monitorActionItemReadOnly.actionItemName
-        assertEquals result[0].actionItemPersonName, monitorActionItemReadOnly.actionItemPersonName
+        assertEquals result[0].spridenId, monitorActionItemReadOnly.spridenId
     }
 
 }
