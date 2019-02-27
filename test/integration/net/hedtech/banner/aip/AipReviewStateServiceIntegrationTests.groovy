@@ -219,4 +219,16 @@ class AipReviewStateServiceIntegrationTests extends BaseIntegrationTestCase {
         assert reviewStateResult.isEmpty()
     }
 
+    @Test
+    void testFetchNonDefaultReviewStatesWithoutPrimaryLocale() {
+        List<AipReviewState> reviewStateResult = aipReviewStateService.fetchNonDefaultReviewStates("")
+        assert reviewStateResult.size() == 6
+        def reviewStateCodes = reviewStateResult.collect { it ->
+            if (it.locale.toUpperCase() == AIPConstants.DEFAULT_LOCALE) {
+                it.reviewStateCode
+            }
+        }
+        assert reviewStateCodes.containsAll(['20', '30', '40', '50', '60', '70'])
+        assertFalse(reviewStateCodes.contains('10'))
+    }
 }
