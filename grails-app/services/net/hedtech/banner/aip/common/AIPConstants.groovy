@@ -10,6 +10,7 @@ class AIPConstants {
     public static final String NO_IND = 'N'
     public static final Map STATUS_MAP = ['Draft': 'D', 'Active': 'A', 'Inactive': 'I']
     public static final String ACTIONITEMADMIN_ROLE = 'SELFSERVICE-ACTIONITEMADMIN'
+    public static final String ACTIONITEMREVIEWER_ROLE = 'SELFSERVICE-ACTIONITEMREVIEWER'
 
     public static final int SIZE_IN_KB = 1024
     public static final String FILE_STORAGE_SYSTEM_AIP = 'AIP'
