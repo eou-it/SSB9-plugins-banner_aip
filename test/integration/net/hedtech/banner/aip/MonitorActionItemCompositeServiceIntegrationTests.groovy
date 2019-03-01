@@ -486,4 +486,14 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         assert list[0].reviewStateCode == "Review needed"
     }
 
+    @Test
+    void testGetReviewStatusList() {
+        loginSSB('CSRSTU004', '111111')
+        def map = [locale: 'en-US']
+        def statusMap = configUserPreferenceService.saveLocale(map)
+        assertEquals 'success',statusMap.status
+        def output = monitorActionItemCompositeService.getReviewStatusList()
+        assertNotNull output
+    }
+
 }

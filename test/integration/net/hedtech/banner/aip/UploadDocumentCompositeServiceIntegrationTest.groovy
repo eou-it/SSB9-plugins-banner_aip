@@ -342,8 +342,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         assertTrue saveResult4.success
         def saveResult5 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFilePPT.pptx')
         assertTrue saveResult5.success
-        def saveResult6 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileXLS.xlsx')
-        assertTrue saveResult6.success
+
         Map paramsMapObj = [
                 userActionItemId: "" + userActionItemId,
                 responseId      : "" + responseId
