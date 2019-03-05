@@ -3,7 +3,7 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
-import groovy.sql.Sql
+
 import net.hedtech.banner.aip.ActionItem
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.common.AIPConstants
