@@ -55,9 +55,9 @@ Brief summary/description of the plugin.
     def doWithApplicationContext = { ctx ->
         def pbConfig = grails.util.Holders.getConfig().pageBuilder
         if (pbConfig && pbConfig.locations && pbConfig.locations.page) {
-            ctx.cssUtilService.importInitially(ctx.cssUtilService.loadIfNew)
+            /*ctx.cssUtilService.importInitially(ctx.cssUtilService.loadIfNew)
             ctx.pageUtilService.importInitially(ctx.pageUtilService.loadIfNew)
-            ctx.virtualDomainUtilService.importInitially(ctx.virtualDomainUtilService.loadIfNew)
+            ctx.virtualDomainUtilService.importInitially(ctx.virtualDomainUtilService.loadIfNew)*/
 
             // Install metadata from configured directories
             ctx.pageUtilService.importAllFromDir(pbConfig.locations.page, ctx.pageUtilService.loadIfNew)

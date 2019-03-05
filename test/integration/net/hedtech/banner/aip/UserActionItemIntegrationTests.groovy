@@ -6,6 +6,7 @@ package net.hedtech.banner.aip
 
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.testing.BaseIntegrationTestCase
+import net.zorched.test.User
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -14,11 +15,14 @@ import java.text.SimpleDateFormat
 
 
 class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
+    ActionItem drugAndAlcoholPolicyActionItem
 
     @Before
     void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
+        drugAndAlcoholPolicyActionItem = ActionItem.findByName("Drug and Alcohol Policy");
+        assertNotNull drugAndAlcoholPolicyActionItem
     }
 
 
@@ -27,33 +31,74 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         super.tearDown()
     }
 
+    @Test
+    void testFetchActionItemByActionItemAndPidmCount() {
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
+
+        def student = PersonUtility.getPerson("CSRSTU001")
+        assertNotNull student
+
+        def result = UserActionItem.countUserActionItemByActionItemIdAndPidm(actionItemId, student.pidm)
+        assertEquals 1, result
+
+    }
+
+    @Test
+    void testCountUserActionItemByActionItemId() {
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
+        def result = UserActionItem.countUserActionItemByActionItemId(actionItemId)
+        assertEquals 13, result
+
+    }
+
+    @Test
+    void testFetchByPidmExistingCount() {
+        def student = PersonUtility.getPerson("CSRSTU001")
+        assertNotNull student
+        def result = UserActionItem.countUserActionItemByPidm(student.pidm)
+        assertEquals 5, result
+    }
+
+    @Test
+    void testFetchByActionItemIdOnlyExistingCount() {
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
+        def result = UserActionItem.countUserActionItemByActionItemId(actionItemId)
+        assertNotNull result
+        assertEquals 13, result
+    }
+
+    @Test
+    void testFetchActionItemByNonExisitingPidmCount() {
+        Long pidm = 99999999L
+        def result = UserActionItem.fetchUserActionItemsByPidm(pidm)
+        assertEquals 0, result.size()
+    }
 
     @Test
     void testFetchUserActionItemByPidmService() {
-        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemsByPidm( actionItemPidm )
-        assertEquals( 10, userActionItems.size() )
+        def actionItemPidm = PersonUtility.getPerson("CSRSTU018").pidm
+        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemsByPidm(actionItemPidm)
+        assertEquals(10, userActionItems.size())
     }
-
 
     @Test
     void testFetchUserActionItemByIdService() {
         //get the user's action items by a pidm
-        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemsByPidm( actionItemPidm )
+        def actionItemPidm = PersonUtility.getPerson("CSRSTU018").pidm
+        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemsByPidm(actionItemPidm)
         // select the first id of an action from that id list
         def actionItemId = userActionItems[0].id
         //get action item by id for that user
-        UserActionItem userActionItemId = UserActionItem.fetchUserActionItemById( actionItemId )
-        assertEquals( actionItemId, userActionItemId.id )
+        UserActionItem userActionItemId = UserActionItem.fetchUserActionItemById(actionItemId)
+        assertEquals(actionItemId, userActionItemId.id)
     }
 
 
     @Test
     void testUserActionItemsToString() {
-        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemsByPidm( actionItemPidm )
-        assertNotNull( userActionItems.toString() )
+        def actionItemPidm = PersonUtility.getPerson("CSRSTU018").pidm
+        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemsByPidm(actionItemPidm)
+        assertNotNull(userActionItems.toString())
         assertFalse userActionItems.isEmpty()
     }
 
@@ -61,18 +106,18 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     // No date range to check (most common condition)
     @Test
     void testIsExistingInDateRangeByPidmAndACTMIdNoneFound() {
-        ActionItem actionItem = ActionItem.findByName( 'Registration Process Training' )
+        ActionItem actionItem = ActionItem.findByName('Registration Process Training')
         ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
-        def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
+        def pidmToTest = PersonUtility.getPerson("CSRSTU002").pidm
 
         UserActionItem itemWeWantToTest = newActionItem()
         itemWeWantToTest.pidm = pidmToTest
-        itemWeWantToTest.displayStartDate = new SimpleDateFormat( "dd-MM-yyyy" ).parse( "01-01-2017" )
-        itemWeWantToTest.displayEndDate = new SimpleDateFormat( "dd-MM-yyyy" ).parse( "02-01-2017" )
+        itemWeWantToTest.displayStartDate = new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2017")
+        itemWeWantToTest.displayEndDate = new SimpleDateFormat("dd-MM-yyyy").parse("02-01-2017")
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
         itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus().id
-        assertFalse( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
+        assertFalse(UserActionItem.isExistingInDateRangeForPidmAndActionItemId(itemWeWantToTest))
     }
 
     // check that new ActionItem overlapping start date returns true
@@ -80,7 +125,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     void testIsExistingInDateRangeByPidmAndACTMIdFront() {
         ActionItem actionItem = ActionItem.fetchActionItems()[0]
         ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
-        def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
+        def pidmToTest = PersonUtility.getPerson("CSRSTU002").pidm
 
         UserActionItem itemToTestAgainst = newActionItem()
         itemToTestAgainst.pidm = pidmToTest
@@ -90,7 +135,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.groupId = actionItemGroup.id
         itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus().id
 
-        itemToTestAgainst.save( failOnError: true, flush: true )
+        itemToTestAgainst.save(failOnError: true, flush: true)
 
         UserActionItem itemWeWantToTest = newActionItem()
         itemWeWantToTest.pidm = pidmToTest
@@ -99,7 +144,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
         itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus().id
-        assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
+        assertTrue(UserActionItem.isExistingInDateRangeForPidmAndActionItemId(itemWeWantToTest))
     }
 
     // check that new ActionItem overlapping end date returns true
@@ -107,7 +152,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     void testIsExistingInDateRangeByPidmAndACTMIdBack() {
         ActionItem actionItem = ActionItem.fetchActionItems()[0]
         ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
-        def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
+        def pidmToTest = PersonUtility.getPerson("CSRSTU002").pidm
 
         UserActionItem itemToTestAgainst = newActionItem()
         itemToTestAgainst.pidm = pidmToTest
@@ -117,7 +162,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.groupId = actionItemGroup.id
         itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus().id
 
-        itemToTestAgainst.save( failOnError: true, flush: true )
+        itemToTestAgainst.save(failOnError: true, flush: true)
 
         UserActionItem itemWeWantToTest = newActionItem()
         itemWeWantToTest.pidm = pidmToTest
@@ -126,7 +171,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
         itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus().id
-        assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
+        assertTrue(UserActionItem.isExistingInDateRangeForPidmAndActionItemId(itemWeWantToTest))
     }
 
     // check that new ActionItem contained within existing date range returns true
@@ -134,7 +179,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     void testIsExistingInDateRangeByPidmAndACTMIdContained() {
         ActionItem actionItem = ActionItem.fetchActionItems()[0]
         ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
-        def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
+        def pidmToTest = PersonUtility.getPerson("CSRSTU002").pidm
 
         UserActionItem itemToTestAgainst = newActionItem()
         itemToTestAgainst.pidm = pidmToTest
@@ -144,7 +189,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.groupId = actionItemGroup.id
         itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus().id
 
-        itemToTestAgainst.save( failOnError: true, flush: true )
+        itemToTestAgainst.save(failOnError: true, flush: true)
 
         UserActionItem itemWeWantToTest = newActionItem()
         itemWeWantToTest.pidm = pidmToTest
@@ -153,14 +198,14 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
         itemWeWantToTest.status = ActionItemStatus.fetchDefaultActionItemStatus().id
-        assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
+        assertTrue(UserActionItem.isExistingInDateRangeForPidmAndActionItemId(itemWeWantToTest))
     }
     // check that new ActionItem containing existing date range returns true
     @Test
     void testIsExistingInDateRangeByPidmAndACTMIdContaining() {
         ActionItem actionItem = ActionItem.fetchActionItems()[0]
         ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
-        def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
+        def pidmToTest = PersonUtility.getPerson("CSRSTU002").pidm
 
         UserActionItem itemToTestAgainst = newActionItem()
         itemToTestAgainst.pidm = pidmToTest
@@ -170,7 +215,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.groupId = actionItemGroup.id
         itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus().id
 
-        itemToTestAgainst.save( failOnError: true, flush: true )
+        itemToTestAgainst.save(failOnError: true, flush: true)
 
         UserActionItem itemWeWantToTest = newActionItem()
         itemWeWantToTest.pidm = pidmToTest
@@ -178,15 +223,15 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemWeWantToTest.displayEndDate = new Date() + 15
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
-        assertTrue( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
+        assertTrue(UserActionItem.isExistingInDateRangeForPidmAndActionItemId(itemWeWantToTest))
     }
 
     // check that new ActionItem prior to existing date range returns false
     @Test
     void testIsExistingInDateRangeByPidmAndACTMIdPrior() {
-        ActionItem actionItem = ActionItem.findByName( 'Registration Process Training' )
+        ActionItem actionItem = ActionItem.findByName('Registration Process Training')
         ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
-        def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
+        def pidmToTest = PersonUtility.getPerson("CSRSTU002").pidm
 
         UserActionItem itemToTestAgainst = newActionItem()
         itemToTestAgainst.pidm = pidmToTest
@@ -196,22 +241,22 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.groupId = actionItemGroup.id
         itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus().id
 
-        itemToTestAgainst.save( failOnError: true, flush: true )
+        itemToTestAgainst.save(failOnError: true, flush: true)
 
         UserActionItem itemWeWantToTest = newActionItem()
         itemWeWantToTest.pidm = pidmToTest
-        itemWeWantToTest.displayStartDate = new SimpleDateFormat( "dd-MM-yyyy" ).parse( "01-01-2017" )
-        itemWeWantToTest.displayEndDate = new SimpleDateFormat( "dd-MM-yyyy" ).parse( "06-01-2017" )
+        itemWeWantToTest.displayStartDate = new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2017")
+        itemWeWantToTest.displayEndDate = new SimpleDateFormat("dd-MM-yyyy").parse("06-01-2017")
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
-        assertFalse( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
+        assertFalse(UserActionItem.isExistingInDateRangeForPidmAndActionItemId(itemWeWantToTest))
     }
     // check that new ActionItem after existing date range returns false
     @Test
     void testIsExistingInDateRangeByPidmAndACTMIdAfter() {
-        ActionItem actionItem = ActionItem.findByName( 'Registration Process Training' )
+        ActionItem actionItem = ActionItem.findByName('Registration Process Training')
         ActionItemGroup actionItemGroup = ActionItemGroup.fetchActionItemGroups()[0]
-        def pidmToTest = PersonUtility.getPerson( "CSRSTU002" ).pidm
+        def pidmToTest = PersonUtility.getPerson("CSRSTU002").pidm
 
         UserActionItem itemToTestAgainst = newActionItem()
         itemToTestAgainst.pidm = pidmToTest
@@ -221,25 +266,25 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         itemToTestAgainst.groupId = actionItemGroup.id
         itemToTestAgainst.status = ActionItemStatus.fetchDefaultActionItemStatus().id
 
-        itemToTestAgainst.save( failOnError: true, flush: true )
+        itemToTestAgainst.save(failOnError: true, flush: true)
 
         UserActionItem itemWeWantToTest = newActionItem()
         itemWeWantToTest.pidm = pidmToTest
-        itemWeWantToTest.displayStartDate = new SimpleDateFormat( "dd-MM-yyyy" ).parse( "01-01-2017" )
-        itemWeWantToTest.displayEndDate = new SimpleDateFormat( "dd-MM-yyyy" ).parse( "15-01-2017" )
+        itemWeWantToTest.displayStartDate = new SimpleDateFormat("dd-MM-yyyy").parse("01-01-2017")
+        itemWeWantToTest.displayEndDate = new SimpleDateFormat("dd-MM-yyyy").parse("15-01-2017")
         itemWeWantToTest.actionItemId = actionItem.id
         itemWeWantToTest.groupId = actionItemGroup.id
-        assertFalse( UserActionItem.isExistingInDateRangeForPidmAndActionItemId( itemWeWantToTest ) )
+        assertFalse(UserActionItem.isExistingInDateRangeForPidmAndActionItemId(itemWeWantToTest))
     }
 
 
     @Test
     void testUserActionItemHashCode() {
-        def actionItemPidm = PersonUtility.getPerson( "CSRSTU018" ).pidm
-        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemsByPidm( actionItemPidm )
+        def actionItemPidm = PersonUtility.getPerson("CSRSTU018").pidm
+        List<UserActionItem> userActionItems = UserActionItem.fetchUserActionItemsByPidm(actionItemPidm)
 
         def userActionItemId = userActionItems[0].id
-        UserActionItem userActionItemList = UserActionItem.fetchUserActionItemById( userActionItemId )
+        UserActionItem userActionItemList = UserActionItem.fetchUserActionItemById(userActionItemId)
 
         def result = userActionItemList.hashCode()
         assertNotNull result

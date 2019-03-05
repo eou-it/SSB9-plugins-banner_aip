@@ -29,6 +29,13 @@ class ActionItemService extends ServiceBase {
     def listActionItems() {
         ActionItem.fetchActionItems()
     }
+    /**
+         *
+         * @return
+         */
+    def listActionItemsIdAndName() {
+        ActionItem.fetchActionItemIdAndName()
+    }
 
     /**
      *

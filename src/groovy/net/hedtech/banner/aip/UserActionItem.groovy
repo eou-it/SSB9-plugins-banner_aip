@@ -18,18 +18,37 @@ import javax.persistence.Table
 import javax.persistence.Version
 
 
-
 @NamedQueries(value = [
         @NamedQuery(name = "UserActionItem.fetchUserActionItemById",
                 query = """
            FROM UserActionItem a
            WHERE a.id = :myId
           """),
+        @NamedQuery(name = "UserActionItem.fetchUserActionItemPidmById",
+                query = """select a.pidm
+                  FROM UserActionItem a
+                  WHERE a.id = :myId
+                 """),
+        @NamedQuery(name = "UserActionItem.countUserActionItemByActionItemId",
+                query = """select count(a.id)
+           FROM UserActionItem a
+           WHERE a.actionItemId = :myActionItemId
+          """),
         @NamedQuery(name = "UserActionItem.fetchUserActionItemByPidm",
                 query = """
            FROM UserActionItem a
            WHERE a.pidm = :myPidm
           """),
+        @NamedQuery(name = "UserActionItem.countUserActionItemByPidm",
+                query = """select count(a.pidm)
+               FROM UserActionItem a
+               WHERE a.pidm = :myPidm
+              """),
+        @NamedQuery(name = "UserActionItem.countUserActionItemByActionItemIdAndPidm",
+                query = """select count(a.id)
+                       FROM UserActionItem a
+                       WHERE a.actionItemId = :myActionItemId AND a.pidm = :myPidm
+                      """),
         @NamedQuery(name = "UserActionItem.isExistingInDateRangeForPidmAndActionItemId",
                 query = """ SELECT count(a.pidm)
                    FROM UserActionItem a
@@ -146,19 +165,19 @@ class UserActionItem implements Serializable {
     String dataOrigin
 
     static constraints = {
-        actionItemId( nullable: false, maxSize: 19 )
-        pidm( nullable: false, maxSize: 8 )
-        status( nullable: false, maxSize: 30 )
-        lastModifiedBy( nullable: true, maxSize: 30 )
-        userResponseDate( nullable: true )
-        displayStartDate( nullable: false )
-        displayEndDate( nullable: false )
-        groupId( nullable: false )
+        actionItemId(nullable: false, maxSize: 19)
+        pidm(nullable: false, maxSize: 8)
+        status(nullable: false, maxSize: 30)
+        lastModifiedBy(nullable: true, maxSize: 30)
+        userResponseDate(nullable: true)
+        displayStartDate(nullable: false)
+        displayEndDate(nullable: false)
+        groupId(nullable: false)
         reviewStateCode(nullable: true, maxSize: 10)
-        lastModified( nullable: true )
-        creatorId( nullable: true, maxSize: 30 )
-        createDate( nullable: true )
-        dataOrigin( nullable: true, maxSize: 30 )
+        lastModified(nullable: true)
+        creatorId(nullable: true, maxSize: 30)
+        createDate(nullable: true)
+        dataOrigin(nullable: true, maxSize: 30)
     }
 
     /**
@@ -166,9 +185,41 @@ class UserActionItem implements Serializable {
      * @param id
      * @return
      */
-    static def fetchUserActionItemById( Long id ) {
-        UserActionItem.withSession {session ->
-            session.getNamedQuery( 'UserActionItem.fetchUserActionItemById' ).setLong( 'myId', id ).list()[0]
+    static def fetchUserActionItemById(Long id) {
+        UserActionItem.withSession { session ->
+            session.getNamedQuery('UserActionItem.fetchUserActionItemById').setLong('myId', id).list()[0]
+        }
+    }
+    /**
+     *
+     * @param id
+     * @return
+     */
+    static def countUserActionItemByActionItemId(Long actionItemId) {
+        UserActionItem.withSession { session ->
+            session.getNamedQuery('UserActionItem.countUserActionItemByActionItemId').setLong('myActionItemId', actionItemId).list()[0]
+        }
+    }
+    /**
+     *
+     * @param pidm
+     * @return
+     */
+    static def countUserActionItemByPidm(Long pidm) {
+        UserActionItem.withSession { session ->
+            session.getNamedQuery('UserActionItem.countUserActionItemByPidm').setLong('myPidm', pidm).list()[0]
+        }
+    }
+    /**
+     *
+     * @param id
+     * @param pidm
+     * @return
+     */
+    static def countUserActionItemByActionItemIdAndPidm(Long actionItemId, Long pidm) {
+        UserActionItem.withSession { session ->
+            session.getNamedQuery('UserActionItem.countUserActionItemByActionItemIdAndPidm').setLong('myActionItemId', actionItemId)
+                    .setLong('myPidm', pidm).list()[0]
         }
     }
 
@@ -177,9 +228,19 @@ class UserActionItem implements Serializable {
      * @param pidm
      * @return
      */
-    static def fetchUserActionItemsByPidm( Long pidm ) {
-        UserActionItem.withSession {session ->
-            session.getNamedQuery( 'UserActionItem.fetchUserActionItemByPidm' ).setLong( 'myPidm', pidm ).list()
+    static def fetchUserActionItemsByPidm(Long pidm) {
+        UserActionItem.withSession { session ->
+            session.getNamedQuery('UserActionItem.fetchUserActionItemByPidm').setLong('myPidm', pidm).list()
+        }
+    }
+    /**
+     *
+     * @param id
+     * @return
+     */
+    static def fetchUserActionItemPidmById(Long id) {
+        UserActionItem.withSession { session ->
+            session.getNamedQuery('UserActionItem.fetchUserActionItemPidmById').setLong('myId', id).list()[0]
         }
     }
 
@@ -188,13 +249,13 @@ class UserActionItem implements Serializable {
      * @param UserActionItem
      * @return boolean Does an UserActionItem for this pidm and and ActionItem with overlapping display dates already exist
      */
-    static boolean isExistingInDateRangeForPidmAndActionItemId( UserActionItem itemToTest ) {
-        UserActionItem.withSession {session ->
+    static boolean isExistingInDateRangeForPidmAndActionItemId(UserActionItem itemToTest) {
+        UserActionItem.withSession { session ->
             session.getNamedQuery(
-                    'UserActionItem.isExistingInDateRangeForPidmAndActionItemId' ).setLong( 'myPidm', itemToTest.pidm )
-                    .setLong( 'myActionItemId', itemToTest.actionItemId )
-                    .setDate( 'myDisplayStartDate', itemToTest.displayStartDate )
-                    .setDate( 'myDisplayEndDate', itemToTest.displayEndDate )
+                    'UserActionItem.isExistingInDateRangeForPidmAndActionItemId').setLong('myPidm', itemToTest.pidm)
+                    .setLong('myActionItemId', itemToTest.actionItemId)
+                    .setDate('myDisplayStartDate', itemToTest.displayStartDate)
+                    .setDate('myDisplayEndDate', itemToTest.displayEndDate)
                     .uniqueResult() > 0
         }
     }

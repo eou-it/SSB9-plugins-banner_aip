@@ -46,6 +46,24 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
 
 
     @Test
+    void addActionItemEmptyMap() {
+        def result = actionItemCompositeService.addActionItem([:])
+        assertFalse result.success
+        assertNull result.newActionItem
+        assertNotNull result.message
+    }
+
+
+    @Test
+    void addActionItemInvalidFolderId() {
+        def result = actionItemCompositeService.addActionItem([folderId: '123', status: 'Draft', title: 'title', name: 'name', description: 'description'])
+        assertFalse result.success
+        assertNotNull result.message
+        assertNull result.newActionItem
+    }
+
+
+    @Test
     void updateActionItem() {
         def result = actionItemCompositeService.addActionItem([folderId: CommunicationFolder.findByName('Student').id, status: 'Draft', title: 'title', name: 'name', description: 'description'])
         assert result.success == true

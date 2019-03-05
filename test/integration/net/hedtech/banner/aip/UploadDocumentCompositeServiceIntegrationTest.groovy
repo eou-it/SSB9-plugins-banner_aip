@@ -4,6 +4,7 @@
 
 package net.hedtech.banner.aip
 
+import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.configuration.ConfigProperties
 import net.hedtech.banner.general.configuration.ConfigApplication
 import net.hedtech.banner.testing.BaseIntegrationTestCase
@@ -94,6 +95,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
             assert saveResult.message == "Save failed. Virus detected in uploaded file."
         }
     }
+
     @Test
     void testFileScanDisabled() {
         if (clamavEnabled) {
@@ -102,6 +104,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
             assert saveResult.success == true
         }
     }
+
     @Test
     void testFileScanWithWarning() {
         if (clamavEnabled) {
@@ -116,6 +119,51 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     void testTextSaveUploadDocumentService() {
         def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert saveResult.success == true
+    }
+
+    @Test
+    void testUserValidation() {
+        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
+        assert saveResult.success == true
+        def paramsObj = [
+                userActionItemId: userActionItemId.toString(),
+                responseId      : responseId.toString(),
+                sortColumn      : "id",
+                sortAscending   : false
+        ]
+        def response = uploadDocumentCompositeService.fetchDocuments(paramsObj)
+        assert response.result.size() > 0
+        assert response.length > 0
+        def documentId1 = response.result[0].id
+        logout()
+        def auth = selfServiceBannerAuthenticationProvider.authenticate(new UsernamePasswordAuthenticationToken('CSRSTU001', '111111'))
+        SecurityContextHolder.getContext().setAuthentication(auth)
+        assertNotNull auth
+        pidm = auth.pidm
+        assertNotNull pidm
+        getUserActionItemIdAndResponseId()
+        saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
+        assert saveResult.success == true
+
+        paramsObj = [
+                userActionItemId: userActionItemId.toString(),
+                responseId      : responseId.toString(),
+                sortColumn      : "id",
+                sortAscending   : false
+        ]
+        response = uploadDocumentCompositeService.fetchDocuments(paramsObj)
+        assert response.result.size() > 0
+        assert response.length > 0
+        def documentId2 = response.result[0].id
+
+        def inputParams = [
+                documentId: documentId1
+        ]
+        try{
+            def viewResponse = uploadDocumentCompositeService.previewDocument(inputParams)
+        }catch(ApplicationException ae){
+            assertApplicationException ae, "Invalid user"
+        }
     }
 
     @Test
@@ -294,14 +342,13 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         assertTrue saveResult4.success
         def saveResult5 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFilePPT.pptx')
         assertTrue saveResult5.success
-        def saveResult6 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileXLS.xlsx')
-        assertTrue saveResult6.success
+
         Map paramsMapObj = [
                 userActionItemId: "" + userActionItemId,
                 responseId      : "" + responseId
         ]
         boolean isMaxAttachmentValidation = uploadDocumentCompositeService.validateMaxAttachments(paramsMapObj)
-        assertEquals false, isMaxAttachmentValidation
+        assertEquals true, isMaxAttachmentValidation
 
     }
 

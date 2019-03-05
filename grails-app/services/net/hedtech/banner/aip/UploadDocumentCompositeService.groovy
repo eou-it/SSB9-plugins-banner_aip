@@ -31,6 +31,7 @@ class UploadDocumentCompositeService {
     def actionItemStatusRuleReadOnlyService
     def bdmAttachmentService
     def aipClamavService
+    def userActionItemService
 
     private static final def LOGGER = Logger.getLogger(net.hedtech.banner.aip.UploadDocumentCompositeService.class)
 
@@ -116,13 +117,13 @@ class UploadDocumentCompositeService {
         ScanResult scanResult = aipClamavService.fileScanner(scanner, file.inputStream)
         switch (scanResult?.getStatus()) {
             case ScanResult.Status.INFECTED:
-                LOGGER.error('Scan Result:'+scanResult.getMessage())
+                LOGGER.error('Scan Result:' + scanResult.getMessage())
                 String message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_VIRUS_FOUND)
                 throw new ApplicationException(UploadDocumentCompositeService,
                         new BusinessLogicValidationException(message, []))
                 break
             case ScanResult.Status.WARNING:
-                LOGGER.error('Scan Result:'+scanResult.getMessage())
+                LOGGER.error('Scan Result:' + scanResult.getMessage())
                 String message = MessageHelper.message(AIPConstants.ERROR_MESSAGE_VIRUS_SCAN_FAILED)
                 throw new ApplicationException(UploadDocumentCompositeService,
                         new BusinessLogicValidationException(message, []))
@@ -310,6 +311,7 @@ class UploadDocumentCompositeService {
         def message
         try {
             UploadDocument uploadDocument = uploadDocumentService.get(documentId)
+            validateUser(uploadDocument.userActionItemId)
             if (uploadDocument.fileLocation == AIPConstants.FILE_STORAGE_SYSTEM_BDM) {
                 def documentAttributes = [:]
                 documentAttributes.put(AIPConstants.DOCUMENT_ID, documentId)
@@ -329,7 +331,6 @@ class UploadDocumentCompositeService {
                 success: success,
                 message: message
         ]
-
     }
 
     /**
@@ -374,15 +375,12 @@ class UploadDocumentCompositeService {
      * @return
      */
     def previewDocument(paramsObj) {
-        def fileLocation
-        if (paramsObj.fileLocation) {
-            fileLocation = paramsObj.fileLocation
-        } else {
-            fileLocation = uploadDocumentService.fetchFileLocationById(paramsObj.documentId)
-        }
+
         def documentDetails = [:]
         try {
-            if (fileLocation == AIPConstants.FILE_STORAGE_SYSTEM_BDM) {
+            UploadDocument uploadDocument = uploadDocumentService.get(paramsObj.documentId)
+            validateUser(uploadDocument.userActionItemId)
+            if (uploadDocument.fileLocation == AIPConstants.FILE_STORAGE_SYSTEM_BDM) {
                 documentDetails.bdmDocument = getBDMDocumentById(paramsObj.documentId)
             } else {
                 UploadDocumentContent result = uploadDocumentContentService.fetchContentByFileUploadId(paramsObj.documentId)
@@ -398,5 +396,16 @@ class UploadDocumentCompositeService {
         }
         documentDetails
     }
+    /**
+     * Validate user to ensure user operates only on his documents.
+     * @param userActionItemId
+     */
+    private void validateUser(Long userActionItemId) {
+        def pidm = userActionItemService.getUserActionItemPidmById(userActionItemId)
+        def user = springSecurityService.getAuthentication()?.user
+        if (user.pidm != pidm) {
+            throw new ApplicationException(UploadDocumentCompositeService, '@@r1:Invalid user@@')
+        }
 
+    }
 }
