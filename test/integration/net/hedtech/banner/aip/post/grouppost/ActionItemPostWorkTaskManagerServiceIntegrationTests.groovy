@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip.post.grouppost
@@ -22,6 +22,7 @@ class ActionItemPostWorkTaskManagerServiceIntegrationTests extends BaseIntegrati
 
     def springSecurityService
 
+    def asynchronousBannerAuthenticationSpoofer
 
     @Before
     void setUp() {
