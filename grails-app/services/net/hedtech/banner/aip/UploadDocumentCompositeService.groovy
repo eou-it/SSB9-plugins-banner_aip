@@ -8,6 +8,7 @@ import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.general.configuration.ConfigProperties
 import net.hedtech.banner.i18n.MessageHelper
+import net.hedtech.banner.security.BannerGrantedAuthorityService
 import org.apache.log4j.Logger
 import org.jenkinsci.plugins.clamav.scanner.ScanResult
 import org.springframework.web.multipart.MultipartFile
@@ -183,7 +184,7 @@ class UploadDocumentCompositeService {
             def resultMap = bdmAttachmentService.createBDMLocation(map.file)
             uploadDocToBdmServer(saveUploadDocument.id, docType, resultMap.fileName, resultMap.absoluteFileName, vpdiCode)
             resultMap.userDir.deleteDir()
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             LOGGER.error('File Not found')
             throw new ApplicationException(UploadDocumentCompositeService, new BusinessLogicValidationException(e.getMessage(), []))
         }
@@ -379,7 +380,12 @@ class UploadDocumentCompositeService {
         def documentDetails = [:]
         try {
             UploadDocument uploadDocument = uploadDocumentService.get(paramsObj.documentId)
-            validateUser(uploadDocument.userActionItemId)
+            def authorities = BannerGrantedAuthorityService.getAuthorities()
+            def userAuthorities = authorities?.collect { it.objectName }
+            boolean isReviewer = userAuthorities?.contains(AIPConstants.ACTIONITEMREVIEWER_ROLE)
+            if (!isReviewer) {
+                validateUser(uploadDocument.userActionItemId)
+            }
             if (uploadDocument.fileLocation == AIPConstants.FILE_STORAGE_SYSTEM_BDM) {
                 documentDetails.bdmDocument = getBDMDocumentById(paramsObj.documentId)
             } else {
