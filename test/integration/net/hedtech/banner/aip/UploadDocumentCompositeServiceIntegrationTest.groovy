@@ -48,17 +48,10 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
             setConfigProperties('bdmServer.defaultFileSize', '3', 'string')
             setConfigProperties('bdmserver.BdmDataSource', 'B80H', 'string')
             Holders.config.bdmserver.file.location = 'C:/BDM_DOCUMENTS_FOLDER'
-            Holders.config.bdmserver.defaultFileSize = '3'
+            Holders.config.bdmserver.defaultFileSize = 3
             Holders.config.bdmserver.defaultfile_ext = ['EXE']
         }
-        if (clamavEnabled) {
-            Holders.config.clamav.enabled = true
-            Holders.config.clamav.host = '127.0.0.1'
-            Holders.config.clamav.port = 3310
-            Holders.config.clamav.connectionTimeout = 2000
-        } else {
-            Holders.config.clamav.enabled = false
-        }
+        Holders.config.clamav.enabled = false
         getUserActionItemIdAndResponseId()
 
     }
@@ -72,6 +65,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @Test
     void testFileScanningSuccess() {
         if (clamavEnabled) {
+            configureClamAV()
             def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
             assert saveResult.success == true
         }
@@ -80,6 +74,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @Test
     void testFileScanDefaultConfigSuccess() {
         if (clamavEnabled) {
+            configureClamAV()
             Holders.config.clamav.host = null
             Holders.config.clamav.port = null
             def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
@@ -90,15 +85,17 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @Test
     void testFileScanningFailure() {
         if (clamavEnabled) {
+            configureClamAV()
             def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'eicar_com.zip')
             assert saveResult.success == false
-            assert saveResult.message == "Save failed. Virus detected in uploaded file."
+            assert saveResult.message == "Save failed. Virus detected in selected file."
         }
     }
 
     @Test
     void testFileScanDisabled() {
         if (clamavEnabled) {
+            configureClamAV()
             Holders.config.clamav.enabled = false
             def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'eicar_com.zip')
             assert saveResult.success == true
@@ -108,10 +105,11 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @Test
     void testFileScanWithWarning() {
         if (clamavEnabled) {
-            Holders.config.clamav.connectionTimeout = 2
+            configureClamAV()
+            Holders.config.clamav.connectionTimeout = 1
             def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
             assert saveResult.success == false
-            assert saveResult.message == "Antivirus scan did not succeed. Please contact your administrator."
+            assert saveResult.message == "Unable to perform virus scan. Please contact your administrator."
         }
     }
 
@@ -139,31 +137,42 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         def auth = selfServiceBannerAuthenticationProvider.authenticate(new UsernamePasswordAuthenticationToken('CSRSTU001', '111111'))
         SecurityContextHolder.getContext().setAuthentication(auth)
         assertNotNull auth
-        pidm = auth.pidm
-        assertNotNull pidm
-        getUserActionItemIdAndResponseId()
-        saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
-        assert saveResult.success == true
 
-        paramsObj = [
+        def inputParams = [
+                documentId: documentId1
+        ]
+        try {
+            def viewResponse = uploadDocumentCompositeService.previewDocument(inputParams)
+        } catch (ApplicationException ae) {
+            assertApplicationException ae, "Invalid user"
+        }
+    }
+
+    @Test
+    void testUserValidationForReviewer() {
+        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
+        assert saveResult.success == true
+        def paramsObj = [
                 userActionItemId: userActionItemId.toString(),
                 responseId      : responseId.toString(),
                 sortColumn      : "id",
                 sortAscending   : false
         ]
-        response = uploadDocumentCompositeService.fetchDocuments(paramsObj)
+        def response = uploadDocumentCompositeService.fetchDocuments(paramsObj)
         assert response.result.size() > 0
         assert response.length > 0
-        def documentId2 = response.result[0].id
+        def documentId1 = response.result[0].id
+        logout()
+        def auth = selfServiceBannerAuthenticationProvider.authenticate(new UsernamePasswordAuthenticationToken('AIPADM002', '111111'))
+        SecurityContextHolder.getContext().setAuthentication(auth)
 
         def inputParams = [
                 documentId: documentId1
         ]
-        try{
-            def viewResponse = uploadDocumentCompositeService.previewDocument(inputParams)
-        }catch(ApplicationException ae){
-            assertApplicationException ae, "Invalid user"
-        }
+        def viewResponse = uploadDocumentCompositeService.previewDocument(inputParams)
+        assert documentId1 == viewResponse.fileUploadId
+        assertNotNull viewResponse.documentContent
+        assertTrue viewResponse.success
     }
 
     @Test
@@ -225,6 +234,18 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     }
 
     @Test
+    void testBDMFileSizeLessThanAIP() {
+        if (bdmEnabled) {
+            setConfigProperties('aip.attachment.file.storage.location', 'BDM', 'string')
+            Holders.config.bdmserver.defaultFileSize = 1
+            setConfigProperties('aip.allowed.attachment.max.size', '26214400', 'integer')
+            def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'BDM Install Guide.pdf')
+            assert saveResult.success == false
+            assert saveResult.message == "File size exceeding"
+        }
+    }
+
+    @Test
     void testAddDocumentEmptyFile() {
         def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIP_Empty_Text_File.txt')
         assert saveResult.success == false
@@ -241,6 +262,13 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     void testXlssaveUploadDocumentService() {
         def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileXLS.xlsx')
         assert saveResult.success == true
+    }
+
+    @Test
+    void testUploadDocumentServiceWithLongFileName() {
+        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'SixtyCharacterLongSampleFileToTestAipDocumentUploadFunctionality.txt')
+        assert saveResult.success == false
+        assert saveResult.message == "aip.uploadDocument.file.name.length.error"
     }
 
     @Test
@@ -276,7 +304,6 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     @Test
     void testRestrictedFileTypes() {
-
         setConfigProperties('aip.restricted.attachment.type', '[EXE, ZIP]', 'list')
         def result = uploadDocumentCompositeService.getRestrictedFileTypes()
         assertNotNull result
@@ -309,6 +336,9 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         assert result.restrictedFileTypes.toString().indexOf("EXE") != -1
 
         //configuration not done in ConfigProperties
+        ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.restricted.attachment.type', 'GENERAL_SS')
+        configProperties?.delete(flush: true)
+
         result = uploadDocumentCompositeService.getRestrictedFileTypes()
         assertNotNull result
         assert result.restrictedFileTypes.toString().indexOf("EXE") != -1
@@ -317,21 +347,55 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
     @Test
     void testMaxFileSize() {
         setConfigProperties('aip.allowed.attachment.max.size', '1024', 'string')
-        def result = uploadDocumentCompositeService.getMaxFileSize();
+        def result = uploadDocumentCompositeService.getMaxFileSize()
         assertNotNull result
         assert result.maxFileSize == '1024'
+    }
+
+    //TODO: Set default max file size in uploadDocumentCompositeService
+    @Test
+    void testDefaultMaxFileSize() {
+        setConfigProperties('aip.allowed.attachment.max.size', null, 'string')
+        def result = uploadDocumentCompositeService.getMaxFileSize()
+        assertNotNull result
+        assertNull result.maxFileSize
+
+        ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.allowed.attachment.max.size', 'GENERAL_SS')
+        configProperties?.delete(flush: true)
+
+        result = uploadDocumentCompositeService.getMaxFileSize();
+        assertNotNull result
+        assertNull result.maxFileSize
+
     }
 
     @Test
     void testUploadAttachmentStorageLocation() {
         setConfigProperties('aip.attachment.file.storage.location', 'AIP', 'string')
-        def result = uploadDocumentCompositeService.getDocumentStorageSystem();
+        def result = uploadDocumentCompositeService.getDocumentStorageSystem()
         assertNotNull result
         assert result.documentStorageLocation == 'AIP'
     }
 
     @Test
-    void testMaximumAttachmentsValidation() {
+    void testDefaultUploadAttachmentStorageLocation() {
+        setConfigProperties('aip.attachment.file.storage.location', null, 'string')
+        def result = uploadDocumentCompositeService.getDocumentStorageSystem()
+        assertNotNull result
+        assertNull result.documentStorageLocation
+        //TODO: Set documentStorageLocation to AIP when config property value is null.
+        //assert result.documentStorageLocation == 'AIP'
+
+        ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.attachment.file.storage.location', 'GENERAL_SS')
+        configProperties?.delete(flush: true)
+
+        result = uploadDocumentCompositeService.getDocumentStorageSystem();
+        assertNotNull result
+        assert result.documentStorageLocation == 'AIP'
+    }
+
+    @Test
+    void testMaximumAttachmentsValidationTrue() {
         def saveResult1 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFilePdf.pdf')
         assertTrue saveResult1.success
         def saveResult2 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileDoc.docx')
@@ -350,6 +414,46 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         boolean isMaxAttachmentValidation = uploadDocumentCompositeService.validateMaxAttachments(paramsMapObj)
         assertEquals true, isMaxAttachmentValidation
 
+    }
+
+    @Test
+    void testMaximumAttachmentsValidationFalse() {
+        def saveResult1 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFilePdf.pdf')
+        assertTrue saveResult1.success
+        def saveResult2 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileDoc.docx')
+        assertTrue saveResult2.success
+        def saveResult3 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileJpg.jpg')
+        assertTrue saveResult3.success
+        def saveResult4 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
+        assertTrue saveResult4.success
+        def saveResult5 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFilePPT.pptx')
+        assertTrue saveResult5.success
+        def saveResult6 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileXLS.xlsx')
+        assertTrue saveResult6.success
+        Map paramsMapObj = [
+                userActionItemId: "" + userActionItemId,
+                responseId      : "" + responseId
+        ]
+        boolean isMaxAttachmentValidation = uploadDocumentCompositeService.validateMaxAttachments(paramsMapObj)
+        assertEquals false, isMaxAttachmentValidation
+
+    }
+
+    @Test
+    void testMaximumAttachmentsZero() {
+        def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
+        def group = result.groups.find { it.title == 'Enrollment' }
+        def item = group.items.find { it.name == 'Personal Information' }
+        Long actionItemId = item.id
+
+        List<ActionItemStatusRule> responsesList = ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId(actionItemId)
+        ActionItemStatusRule response = responsesList.find { it.labelText == 'I have to research this' }
+        def respId = response.id
+        Map paramsMapObj = [
+                responseId: "" + respId
+        ]
+        boolean isMaxAttachmentValidation = uploadDocumentCompositeService.validateMaxAttachments(paramsMapObj)
+        assertEquals false, isMaxAttachmentValidation
     }
 
     @Test
@@ -415,6 +519,14 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
             def deleteResponse = uploadDocumentCompositeService.deleteDocument(response.result[0].id)
             assertTrue deleteResponse.success
         }
+    }
+
+    @Test
+    void testSaveDocumentsInvalidFileLocation() {
+        setConfigProperties('aip.attachment.file.storage.location', 'XYZ', 'string')
+        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
+        assert saveResult.success == false
+        assert saveResult.message == "Document management system is not supported. Please contact your administrator."
     }
 
     @Test
@@ -502,8 +614,15 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         List<ActionItemStatusRule> responsesList = ActionItemStatusRule.fetchActionItemStatusRulesByActionItemId(actionItemId)
         ActionItemStatusRule response = responsesList.find { it.labelText == 'Not in my life time.' }
         responseId = response.id
+
     }
 
+    private configureClamAV() {
+        Holders.config.clamav.enabled = true
+        Holders.config.clamav.host = '127.0.0.1'
+        Holders.config.clamav.port = 3310
+        Holders.config.clamav.connectionTimeout = 10000
+    }
     /**
      * Form file Object
      */
@@ -511,7 +630,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         File testFile
         try {
             String data = " Test data for integration testing"
-            String tempPath = "test"+File.separator+"data"
+            String tempPath = "test" + File.separator + "data"
             testFile = new File(tempPath, filename)
             if (!testFile.exists()) {
                 testFile.createNewFile()
@@ -523,7 +642,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         } catch (IOException e) {
             throw e
         }
-        FileInputStream input = new FileInputStream(testFile);
+        FileInputStream input = new FileInputStream(testFile)
         MultipartFile multipartFile = new MockMultipartFile("file",
                 testFile.getName(), "text/plain", IOUtils.toByteArray(input))
         multipartFile
