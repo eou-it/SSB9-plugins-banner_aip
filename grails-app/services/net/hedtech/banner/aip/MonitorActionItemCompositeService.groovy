@@ -36,7 +36,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                  actionItemName      : userActionItemDetails.actionItemName,
                  actionItemGroupName : userActionItemDetails.actionItemGroupName,
                  spridenId           : userActionItemDetails.spridenId,
-                 actionItemPersonName: formatPersonName(userActionItemDetails),
+                 actionItemPersonName: userActionItemDetails.personDisplayName,
                  status              : userActionItemDetails.status,
                  responseDate        : userActionItemDetails.responseDate,
                  displayStartDate    : userActionItemDetails.displayStartDate,
@@ -117,7 +117,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                         actionItemName      : it.actionItemName,
                         actionItemGroupName : it.actionItemGroupName,
                         spridenId           : it.spridenId,
-                        actionItemPersonName: formatPersonName(it),
+                        actionItemPersonName: it.personDisplayName,
                         status              : it.status,
                         responseDate        : it.responseDate,
                         displayStartDate    : it.displayStartDate,
@@ -275,22 +275,5 @@ class MonitorActionItemCompositeService extends ServiceBase {
             reviewAuditObject = reviewAuditObjectList[0]
         }
         reviewAuditObject
-    }
-
-    private String formatPersonName(monitorActionItemObj) {
-        String personLastName = monitorActionItemObj.personLastName ?: ''
-        String personFirstName = monitorActionItemObj.personFirstName ?: ''
-        String personMiddleName = monitorActionItemObj.personMiddleName ?: ''
-        String displayName
-        if (personLastName && personFirstName) {
-            displayName = personLastName + ", " + personFirstName + " " + personMiddleName
-        }
-        if(!personFirstName){
-            displayName = personLastName + ", " + personMiddleName
-        }
-        if(!personFirstName && !personMiddleName){
-            displayName = personLastName
-        }
-        displayName = displayName?.trim()
     }
 }
