@@ -40,7 +40,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
     @Test
     void testFetchActionItemsByExactPersonName() {
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
-        String personName = "Hank"
+        String personName = "ARCHIBALDE, HANK"
         def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionItemId, personName, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 1, result.size()
@@ -51,7 +51,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
     @Test
     void testFetchActionItemsByExactPersonNameCount() {
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
-        String personName = "Hank"
+        String personName = "ARCHIBALDE, HANK"
         def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonNameCount(actionItemId, personName)
         assertNotNull result
         assertEquals 1, result
@@ -163,22 +163,19 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
         assertEquals 0, result.size()
 
     }
-//Exact name search not supported
+
     @Test
     void testFetchByPersonNameExact() {
-        //String personName = "Cliff Starr"
-        String personName = "Starr"
+        String personName = "Starr, Cliff"
         def result = monitorActionItemReadOnlyService.fetchByPersonName(personName, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 5, result.size()
 
     }
 
-//Exact Name Search not supported in General SSB 9.3
     @Test
     void testFetchByPersonNameExactCount() {
-        //String personName = "Cliff Starr"
-        String personName = "Starr"
+        String personName = "Starr, Cliff"
         def result = monitorActionItemReadOnlyService.fetchByPersonNameCount(personName)
         assertNotNull result
         assertEquals 5, result

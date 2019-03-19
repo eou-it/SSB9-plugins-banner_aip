@@ -82,24 +82,6 @@ class MonitorActionItemReadOnly implements Serializable {
     String spridenId
 
     /**
-     * Person Last Name
-     */
-    @Column(name = "ACTION_ITEM_PERSON_LAST_NAME")
-    String personLastName
-
-    /**
-     * Person First Name
-     */
-    @Column(name = "ACTION_ITEM_PERSON_FIRST_NAME")
-    String personFirstName
-
-    /**
-     * Person Middle Name
-     */
-    @Column(name = "ACTION_ITEM_PERSON_MI_NAME")
-    String personMiddleName
-
-    /**
      * Search Person Last Name
      */
     @Column(name = "PERSON_SEARCH_LAST_NAME")
@@ -124,7 +106,7 @@ class MonitorActionItemReadOnly implements Serializable {
     /**
      * Person Display Name
      */
-    @Column(name = "ACTION_ITEM_PERSON_NAME")
+    @Column(name = "PERSON_DISPLAY_FULL_NAME")
     String personDisplayName
     /**
      * Change Indicator

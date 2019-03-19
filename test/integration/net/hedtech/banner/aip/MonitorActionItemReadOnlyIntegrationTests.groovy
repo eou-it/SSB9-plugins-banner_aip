@@ -1,11 +1,14 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2019 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 
 package net.hedtech.banner.aip
 
+import groovy.sql.Sql
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.apache.log4j.Logger
+import org.codehaus.groovy.grails.web.context.ServletContextHolder
+import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -44,15 +47,15 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
         String personName = "Hank"
         StopWatch stopWatch = new StopWatch("testFetchActionItemsByPersonName")
         stopWatch.start("searchByPersonName")
-        if (log.isDebugEnabled()) OverallUtility.turnSqlTraceOn("searchByPersonName")
+        //turnSqlTraceOn("searchByPersonName")
         def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItemId, personName, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 1, result.size()
         assertEquals "Drug and Alcohol Policy", result[0].actionItemName
         assertEquals "CSRSTU004", result[0].spridenId
         stopWatch.stop()
-        if (log.isDebugEnabled()) OverallUtility.turnSqlTraceOff("searchByPersonName")
-        log.debug stopWatch.prettyPrint()
+        //turnSqlTraceOff("searchByPersonName")
+        println(stopWatch.prettyPrint())
     }
 
     @Test
@@ -75,13 +78,13 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
         String personName = "Hank"
         StopWatch stopWatch = new StopWatch("testFetchActionItemsByPersonNameCount")
         stopWatch.start("searchByPersonNameCount")
-        if (log.isDebugEnabled()) OverallUtility.turnSqlTraceOn("searchByPersonNameCount")
+        //turnSqlTraceOn("searchByPersonNameCount")
         def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonNameCount(actionItemId, personName)
         assertNotNull result
         assertEquals 1, result
         stopWatch.stop()
-        if (log.isDebugEnabled()) OverallUtility.turnSqlTraceOff("searchByPersonNameCount")
-        log.debug stopWatch.prettyPrint()
+        //turnSqlTraceOff("searchByPersonNameCount")
+        println(stopWatch.prettyPrint())
     }
 
     @Test
@@ -191,7 +194,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
 
     //@Test
     void testFetchByPersonNameExact() {
-        String personName = "Cliff Starr"
+        String personName = "Starr, Cliff"
         def result = MonitorActionItemReadOnly.fetchByPersonName(personName, pagingAndSortParamsAsc)
         assertNotNull result
         assertEquals 5, result.size()
@@ -209,7 +212,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
 
     //@Test
     void testFetchByPersonNameExactCount() {
-        String personName = "Cliff Starr"
+        String personName = "Starr, Cliff"
         def result = MonitorActionItemReadOnly.fetchByPersonNameCount(personName)
         assertEquals 5, result
 
@@ -259,6 +262,41 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
         assertNotNull result
         assertEquals 143, result
 
+    }
+
+    public void turnSqlTraceOn(String identifier = null) {
+        def ctx = ServletContextHolder.servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
+        def sessionFactory = ctx.sessionFactory
+        def session = sessionFactory.currentSession
+        def sql
+        try {
+            sql = new Sql(session.connection())
+            String sqlTrace = "ALTER SESSION SET SQL_TRACE TRUE"
+            sql.execute sqlTrace
+            if (identifier) {
+                String sqlIdentifier = "ALTER SESSION SET tracefile_identifier=${identifier}"
+                sql.execute sqlIdentifier
+            }
+        }
+        finally {
+            sql?.close()
+        }
+    }
+
+
+    public void turnSqlTraceOff(String identifier) {
+        def ctx = ServletContextHolder.servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
+        def sessionFactory = ctx.sessionFactory
+        def session = sessionFactory.currentSession
+        def sql
+        try {
+            sql = new Sql(session.connection())
+            def sqlTrace = "ALTER SESSION SET SQL_TRACE FALSE"
+            sql.execute sqlTrace
+        }
+        finally {
+            sql?.close()
+        }
     }
 }
 
