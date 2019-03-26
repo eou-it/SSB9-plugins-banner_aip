@@ -23,17 +23,13 @@ import javax.persistence.Table
         @NamedQuery(name = "MonitorActionItemReadOnly.fetchByActionItemIdAndPersonNameCount",
                 query = """ select count(a.id) FROM  MonitorActionItemReadOnly a
                             where a.actionItemId = :actionItemId and
-                           (a.personSearchLastName like :personName 
-                           or a.personSearchFirstName like :personName 
-                           or a.personSearchMiddleName like :personName)
+                            a.personSearchFullName like :personName
                            and a.spridenChangeInd IS NULL
                            """),
 
         @NamedQuery(name = "MonitorActionItemReadOnly.fetchByPersonNameCount",
                 query = """ select count(a.id) FROM MonitorActionItemReadOnly a
-                            where (a.personSearchLastName like :personName 
-                               or a.personSearchFirstName like :personName 
-                               or a.personSearchMiddleName like :personName)
+                            where a.personSearchFullName like :personName 
                                and a.spridenChangeInd IS NULL
                         """)
 ])
@@ -86,24 +82,6 @@ class MonitorActionItemReadOnly implements Serializable {
     String spridenId
 
     /**
-     * Person Last Name
-     */
-    @Column(name = "ACTION_ITEM_PERSON_LAST_NAME")
-    String personLastName
-
-    /**
-     * Person First Name
-     */
-    @Column(name = "ACTION_ITEM_PERSON_FIRST_NAME")
-    String personFirstName
-
-    /**
-     * Person Middle Name
-     */
-    @Column(name = "ACTION_ITEM_PERSON_MI_NAME")
-    String personMiddleName
-
-    /**
      * Search Person Last Name
      */
     @Column(name = "PERSON_SEARCH_LAST_NAME")
@@ -121,7 +99,17 @@ class MonitorActionItemReadOnly implements Serializable {
     @Column(name = "PERSON_SEARCH_MI_NAME")
     String personSearchMiddleName
     /**
-     * Search Person Middle Name
+     * Search Person Full Name
+     */
+    @Column(name = "PERSON_SEARCH_FULL_NAME")
+    String personSearchFullName
+    /**
+     * Person Display Name
+     */
+    @Column(name = "PERSON_DISPLAY_FULL_NAME")
+    String personDisplayName
+    /**
+     * Change Indicator
      */
     @Column(name = "SPRIDEN_CHANGE_IND")
     String spridenChangeInd
@@ -195,13 +183,7 @@ class MonitorActionItemReadOnly implements Serializable {
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
             and {
                 eq("actionItemId", actionItem)
-                and {
-                    or {
-                        ilike("personSearchLastName", nameSearchParameter)
-                        ilike("personSearchFirstName", nameSearchParameter)
-                        ilike("personSearchMiddleName", nameSearchParameter)
-                    }
-                }
+                ilike("personSearchFullName", nameSearchParameter)
                 isNull("spridenChangeInd")
             }
             order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
@@ -281,13 +263,7 @@ class MonitorActionItemReadOnly implements Serializable {
         personNameParam = "%" + personNameParam + "%"
         def queryCriteria = MonitorActionItemReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
-            and {
-                or {
-                    ilike("personSearchLastName", personNameParam)
-                    ilike("personSearchFirstName", personNameParam)
-                    ilike("personSearchMiddleName", personNameParam)
-                }
-            }
+            ilike("personSearchFullName", personNameParam)
             isNull("spridenChangeInd")
             order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)))
         }

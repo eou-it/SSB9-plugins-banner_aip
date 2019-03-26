@@ -176,9 +176,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
     @Test
     void testFetchByPersonNameExact() {
         Long actionItemId = null
-        //Exact Name search is not supported after performance changes to View. Need to fix this post General 9.3
-        // String personName = "Cliff Starr"
-        String personName = "Starr"
+        String personName = "Starr, Cliff"
         String personId = null
         def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
