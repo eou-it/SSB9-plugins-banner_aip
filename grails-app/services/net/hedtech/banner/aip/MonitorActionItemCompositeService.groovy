@@ -78,6 +78,8 @@ class MonitorActionItemCompositeService extends ServiceBase {
         LOGGER.debug("Action ID : {$actionId} -- PersonName :{$personName} -- PersonID :{$personId}-- ${filterData} -- ${pagingAndSortParams}")
         def qryresult
         def count
+
+        pagingAndSortParams?.sortColumn = (pagingAndSortParams?.sortColumn == 'actionItemPersonName')?'personSearchFullName':pagingAndSortParams?.sortColumn
         if (actionId && personName && !personId) {          // action id + person name combination
             qryresult = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionId, personName, pagingAndSortParams)
             count = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonNameCount(actionId, personName)
