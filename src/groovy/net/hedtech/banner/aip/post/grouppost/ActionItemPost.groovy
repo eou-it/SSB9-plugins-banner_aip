@@ -236,6 +236,19 @@ class ActionItemPost implements Serializable {
     @Column(name = "GCBAPST_TIME_ZONE")
     String postingTimeZone
 
+    /**
+     * postingDisplayDateTime: Store user entered Date Time.
+     */
+    @Type(type = "yes_no")
+    @Column(name = "GCBAPST_RECUR_POST_IND")
+    boolean recurringPostInd
+
+    /**
+     * postingTimeZone:Store user entered TimeZone
+     */
+    @Column(name = "GCBAPST_GCBRAPT_ID")
+    Long recurringPostDetailsId
+
 
     static constraints = {
         version( nullable: true, maxSize: 19 )
@@ -265,6 +278,8 @@ class ActionItemPost implements Serializable {
         vpdiCode( nullable: true, maxSize: 6 )
         postingDisplayDateTime( nullable: true )
         postingTimeZone( nullable: true, maxSize: 100 )
+        recurringPostInd( nullable: true )
+        recurringPostDetailsId( nullable: true, maxSize: 19 )
     }
 
 
