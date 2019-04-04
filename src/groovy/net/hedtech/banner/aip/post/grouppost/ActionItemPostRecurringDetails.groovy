@@ -5,19 +5,12 @@ package net.hedtech.banner.aip.post.grouppost
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.service.DatabaseModifiesState
-import org.hibernate.annotations.Type
-
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
-import javax.persistence.NamedQueries
-import javax.persistence.NamedQuery
 import javax.persistence.SequenceGenerator
 import javax.persistence.Table
 import javax.persistence.Temporal
@@ -69,7 +62,7 @@ class ActionItemPostRecurringDetails implements Serializable {
      * POSTING DISPLAY END DAYS: Action item post display end date offset.
      */
     @Column(name = "GCBRAPT_POST_END_DAYS")
-    long postingDispEndtDays
+    Long postingDispEndtDays
 
     /**
      * POSTING DISPLAY END DATE: Display End Date of Action Item Posting.
