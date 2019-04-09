@@ -446,19 +446,6 @@ class ActionItemPostCompositeService {
         scheduledPostCallbackFailed( errorContext )
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////
-    // Scheduling service callback job methods for Manual population (leave public)
-    //////////////////////////////////////////////////////////////////////////////////////
-
-    public ActionItemPost generatePopulationVersionForPostFired( SchedulerJobContext jobContext ) {
-        markArtifactsAsPosted( jobContext.parameters.get( "groupSendId" ) as Long )
-        generatePopulationVersionForGroupSend( jobContext.parameters )
-    }
-
-    public ActionItemPost generatePopulationVersionForPostFailed( SchedulerErrorContext errorContext ) {
-        scheduledPostCallbackFailed( errorContext )
-    }
-
     /**
      *
      * @param groupSendId
@@ -570,12 +557,9 @@ class ActionItemPostCompositeService {
             try {
                 boolean shouldUpdateGroupSend = false
                 CommunicationPopulationVersion populationVersion
-                if (groupSend.populationVersionId) {
-                    populationVersion = CommunicationPopulationVersion.get( groupSend.populationVersionId )
-                } else {
-                    populationVersion = assignPopulationVersion( groupSend )
-                    shouldUpdateGroupSend = true
-                }
+                populationVersion = assignPopulationVersion( groupSend )
+                shouldUpdateGroupSend = true
+
                 if (!populationVersion) {
                     throw new ApplicationException( "populationVersion", new NotFoundException() )
                 }
@@ -588,43 +572,6 @@ class ActionItemPostCompositeService {
                             populationVersion )
                     groupSend.populationCalculationId = calculation.id
                     shouldUpdateGroupSend = true
-                }
-                if (shouldUpdateGroupSend) {
-                    groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
-                }
-                groupSend = generatePostItemsImpl( groupSend )
-            } catch (Throwable t) {
-                LOGGER.error( t.getMessage() )
-                groupSend.refresh()
-                groupSend.markError( ActionItemErrorCode.UNKNOWN_ERROR, t.getMessage() )
-                groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
-            }
-        }
-        groupSend
-    }
-
-    /**
-     * This method is called by the scheduler to regenerate a population list specifically for the Manual Population by passing JobContext Parameters
-     * @param  parameters
-     * @return the updated group send
-     * */
-    ActionItemPost generatePopulationVersionForGroupSend( Map parameters ) {
-        Long groupSendId = parameters.get( "groupSendId" ) as Long
-        assert (groupSendId)
-        LoggerUtility.debug( LOGGER, "Calling calculatePopulationVersionForPost for groupSendId = ${groupSendId}." )
-        ActionItemPost groupSend = ActionItemPost.get( groupSendId )
-        if (!groupSend) {
-            throw new ApplicationException( "groupSend", new NotFoundException() )
-        }
-        if (!groupSend.postingCurrentState.isTerminal()) {
-            try {
-                boolean shouldUpdateGroupSend = false
-                CommunicationPopulationVersion populationVersion
-                populationVersion = assignPopulationVersion( groupSend )
-                shouldUpdateGroupSend = true
-
-                if (!populationVersion) {
-                    throw new ApplicationException( "populationVersion", new NotFoundException() )
                 }
                 if (shouldUpdateGroupSend) {
                     groupSend = (ActionItemPost) actionItemPostService.update( groupSend )
@@ -716,13 +663,9 @@ class ActionItemPostCompositeService {
         CommunicationPopulation population = communicationPopulationCompositeService.fetchPopulation( groupSend.populationListId )
         boolean hasQuery = (CommunicationPopulationQueryAssociation.countByPopulation( population ) > 0)
 
-        if (hasQuery && groupSend.populationRegenerateIndicator) {
+        if (hasQuery && groupSend.populationRegenerateIndicator || !hasQuery) {
             jobContext.setJobHandle( "actionItemPostCompositeService", "calculatePopulationVersionForPostFired" )
                     .setErrorHandle( "actionItemPostCompositeService", "calculatePopulationVersionForPostFailed" )
-        }
-        else if(!hasQuery){
-            jobContext.setJobHandle( "actionItemPostCompositeService", "generatePopulationVersionForPostFired" )
-                    .setErrorHandle( "actionItemPostCompositeService", "generatePopulationVersionForPostFailed" )
         }
         else {
             jobContext.setJobHandle( "actionItemPostCompositeService", "generatePostItemsFired" )
