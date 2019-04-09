@@ -81,13 +81,12 @@ class ActionItemPostCompositeService {
         boolean useCurrentReplica = (!groupSend.populationRegenerateIndicator || !requestMap.scheduledStartDate)
         if (hasQuery && useCurrentReplica) {
             // this will need to be updated once we allow queries to be added to existing manual only populations
-            if (groupSend.populationRegenerateIndicator){
+            if (groupSend.populationRegenerateIndicator) {
                 groupSend.populationVersionId = null
                 groupSend.populationCalculationId = null
-            }
-            else {
-            assignPopulationVersion( groupSend )
-            assignPopulationCalculation( groupSend, user.oracleUserName )
+            } else {
+                assignPopulationVersion(groupSend)
+                assignPopulationCalculation(groupSend, user.oracleUserName)
             }
         } else if (groupSend.populationRegenerateIndicator) { // scheduled with future replica of population
             groupSend.populationVersionId = null
@@ -140,13 +139,12 @@ class ActionItemPostCompositeService {
         boolean useCurrentReplica = (!groupSend.populationRegenerateIndicator || !requestMap.scheduledStartDate)
         if (hasQuery && useCurrentReplica) {
             // this will need to be updated once we allow queries to be added to existing manual only populations
-            if (groupSend.populationRegenerateIndicator){
+            if (groupSend.populationRegenerateIndicator) {
                 groupSend.populationVersionId = null
                 groupSend.populationCalculationId = null
-            }
-            else {
-                assignPopulationVersion( groupSend )
-                assignPopulationCalculation( groupSend, user.oracleUserName )
+            } else {
+                assignPopulationVersion(groupSend)
+                assignPopulationCalculation(groupSend, user.oracleUserName)
             }
         } else if (groupSend.populationRegenerateIndicator) { // scheduled with future replica of population
             groupSend.populationVersionId = null
