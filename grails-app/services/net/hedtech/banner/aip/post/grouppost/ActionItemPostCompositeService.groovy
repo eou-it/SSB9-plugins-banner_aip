@@ -81,8 +81,13 @@ class ActionItemPostCompositeService {
         boolean useCurrentReplica = (!groupSend.populationRegenerateIndicator || !requestMap.scheduledStartDate)
         if (hasQuery && useCurrentReplica) {
             // this will need to be updated once we allow queries to be added to existing manual only populations
-            assignPopulationVersion( groupSend )
-            assignPopulationCalculation( groupSend, user.oracleUserName )
+            if (groupSend.populationRegenerateIndicator) {
+                groupSend.populationVersionId = null
+                groupSend.populationCalculationId = null
+            } else {
+                assignPopulationVersion(groupSend)
+                assignPopulationCalculation(groupSend, user.oracleUserName)
+            }
         } else if (groupSend.populationRegenerateIndicator) { // scheduled with future replica of population
             groupSend.populationVersionId = null
             groupSend.populationCalculationId = null
@@ -100,9 +105,6 @@ class ActionItemPostCompositeService {
             addPostingDetail( it, groupSendSaved.id )
         }
         if (requestMap.postNow) {
-            if (hasQuery) {
-                assert (groupSendSaved.populationCalculationId != null)
-            }
             groupSendSaved = schedulePostImmediately( groupSendSaved, user.oracleUserName )
         } else if (requestMap.scheduledStartDate) {
             groupSendSaved = schedulePost( groupSendSaved, user.oracleUserName )
@@ -137,8 +139,13 @@ class ActionItemPostCompositeService {
         boolean useCurrentReplica = (!groupSend.populationRegenerateIndicator || !requestMap.scheduledStartDate)
         if (hasQuery && useCurrentReplica) {
             // this will need to be updated once we allow queries to be added to existing manual only populations
-            assignPopulationVersion( groupSend )
-            assignPopulationCalculation( groupSend, user.oracleUserName )
+            if (groupSend.populationRegenerateIndicator) {
+                groupSend.populationVersionId = null
+                groupSend.populationCalculationId = null
+            } else {
+                assignPopulationVersion(groupSend)
+                assignPopulationCalculation(groupSend, user.oracleUserName)
+            }
         } else if (groupSend.populationRegenerateIndicator) { // scheduled with future replica of population
             groupSend.populationVersionId = null
             groupSend.populationCalculationId = null
@@ -160,9 +167,6 @@ class ActionItemPostCompositeService {
             schedulerJobService.deleteScheduledJob( groupSend.aSyncJobId, groupSend.aSyncGroupId )
         }
         if (requestMap.postNow) {
-            if (hasQuery) {
-                assert (groupSendSaved.populationCalculationId != null)
-            }
             groupSendSaved = schedulePostImmediately( groupSendSaved, user.oracleUserName )
         } else if (requestMap.scheduledStartDate) {
             groupSendSaved = schedulePost( groupSendSaved, user.oracleUserName )
@@ -198,7 +202,7 @@ class ActionItemPostCompositeService {
                 postingDisplayEndDate: actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate ),
                 postingScheduleDateTime: scheduledStartDateCalendar ? scheduledStartDateCalendar.getTime() : null,
                 postingCreationDateTime: new Date(),
-                populationRegenerateIndicator: false,
+                populationRegenerateIndicator: requestMap.populationRegenerateIndicator,
                 postingDeleteIndicator: false,
                 postingCreatorId: user.oracleUserName,
                 postingCurrentState: requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New),
@@ -251,7 +255,7 @@ class ActionItemPostCompositeService {
         actionItemPost.postingDisplayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate( requestMap.displayEndDate )
         actionItemPost.postingScheduleDateTime = scheduledStartDateCalendar ? scheduledStartDateCalendar.getTime() : null
         actionItemPost.postingCreationDateTime = new Date()
-        actionItemPost.populationRegenerateIndicator = false
+        actionItemPost.populationRegenerateIndicator = requestMap.populationRegenerateIndicator
         actionItemPost.postingDeleteIndicator = false
         actionItemPost.postingCreatorId = user.oracleUserName
         actionItemPost.postingCurrentState = requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New)
@@ -429,7 +433,7 @@ class ActionItemPostCompositeService {
     }
 
     //////////////////////////////////////////////////////////////////////////////////////
-    // Scheduling service callback job methods (leave public)
+    // Scheduling service callback job methods for Query Population (leave public)
     //////////////////////////////////////////////////////////////////////////////////////
 
     public ActionItemPost calculatePopulationVersionForPostFired( SchedulerJobContext jobContext ) {
@@ -499,14 +503,17 @@ class ActionItemPostCompositeService {
 
 
     CommunicationPopulationVersion assignPopulationVersion( ActionItemPost groupSend ) {
+
         CommunicationPopulation population = communicationPopulationCompositeService.fetchPopulation( groupSend.populationListId )
         CommunicationPopulationVersion populationVersion
+
         if (population.changesPending) {
             populationVersion = communicationPopulationCompositeService.createPopulationVersion( population )
             population.changesPending = false
             communicationPopulationCompositeService.updatePopulation( population )
         } else {
             populationVersion = CommunicationPopulationVersion.findLatestByPopulationId( groupSend.populationListId )
+
         }
         assert populationVersion.id
         groupSend.populationVersionId = populationVersion.id
@@ -545,16 +552,13 @@ class ActionItemPostCompositeService {
         if (!groupSend) {
             throw new ApplicationException( "groupSend", new NotFoundException() )
         }
+
         if (!groupSend.postingCurrentState.isTerminal()) {
             try {
                 boolean shouldUpdateGroupSend = false
                 CommunicationPopulationVersion populationVersion
-                if (groupSend.populationVersionId) {
-                    populationVersion = CommunicationPopulationVersion.get( groupSend.populationVersionId )
-                } else {
-                    populationVersion = assignPopulationVersion( groupSend )
-                    shouldUpdateGroupSend = true
-                }
+                populationVersion = assignPopulationVersion( groupSend )
+                shouldUpdateGroupSend = true
 
                 if (!populationVersion) {
                     throw new ApplicationException( "populationVersion", new NotFoundException() )
@@ -564,7 +568,7 @@ class ActionItemPostCompositeService {
 
                 if (!groupSend.populationCalculationId && hasQuery) {
                     groupSend.postingCurrentState = ActionItemPostExecutionState.Calculating
-                    CommunicationPopulationCalculation calculation = communicationPopulationCompositeService.calculatePopulationVersionForPost(
+                    CommunicationPopulationCalculation calculation = communicationPopulationCompositeService.calculatePopulationVersionForGroupSend(
                             populationVersion )
                     groupSend.populationCalculationId = calculation.id
                     shouldUpdateGroupSend = true
@@ -616,9 +620,20 @@ class ActionItemPostCompositeService {
                 groupSend.aSyncJobId != null ? groupSend.aSyncJobId : UUID.randomUUID().toString() )
                 .setBannerUser( bannerUser )
                 .setMepCode( mepCode )
-                .setJobHandle( "actionItemPostCompositeService", "generatePostItemsFired" )
-                .setErrorHandle( "actionItemPostCompositeService", "generatePostItemsFailed" )
                 .setParameter( "groupSendId", groupSend.id )
+
+        CommunicationPopulation population = communicationPopulationCompositeService.fetchPopulation( groupSend.populationListId )
+        boolean hasQuery = (CommunicationPopulationQueryAssociation.countByPopulation( population ) > 0)
+
+        if (hasQuery && groupSend.populationRegenerateIndicator) {
+            jobContext.setJobHandle( "actionItemPostCompositeService", "calculatePopulationVersionForPostFired" )
+                    .setErrorHandle( "actionItemPostCompositeService", "calculatePopulationVersionForPostFailed" )
+        }
+        else {
+            jobContext.setJobHandle( "actionItemPostCompositeService", "generatePostItemsFired" )
+                    .setErrorHandle( "actionItemPostCompositeService", "generatePostItemsFailed" )
+        }
+
         SchedulerJobReceipt jobReceipt = schedulerJobService.scheduleNowServiceMethod( jobContext )
         groupSend.markQueued( jobReceipt.jobId, jobReceipt.groupId )
         LoggerUtility.debug( LOGGER, " Completing marking posting in Queue." )
@@ -645,10 +660,14 @@ class ActionItemPostCompositeService {
                 .setScheduledStartDate( groupSend.postingScheduleDateTime )
                 .setParameter( "groupSendId", groupSend.id )
 
-        if (groupSend.populationRegenerateIndicator) {
+        CommunicationPopulation population = communicationPopulationCompositeService.fetchPopulation( groupSend.populationListId )
+        boolean hasQuery = (CommunicationPopulationQueryAssociation.countByPopulation( population ) > 0)
+
+        if ((hasQuery && groupSend.populationRegenerateIndicator) || !hasQuery) {
             jobContext.setJobHandle( "actionItemPostCompositeService", "calculatePopulationVersionForPostFired" )
                     .setErrorHandle( "actionItemPostCompositeService", "calculatePopulationVersionForPostFailed" )
-        } else {
+        }
+        else {
             jobContext.setJobHandle( "actionItemPostCompositeService", "generatePostItemsFired" )
                     .setErrorHandle( "actionItemPostCompositeService", "generatePostItemsFailed" )
         }
