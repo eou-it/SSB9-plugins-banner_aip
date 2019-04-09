@@ -604,8 +604,9 @@ class ActionItemPostCompositeService {
     }
 
     /**
-     * This method is called by the scheduler to regenerate a population list specifically for the Manual Population
-     *
+     * This method is called by the scheduler to regenerate a population list specifically for the Manual Population by passing JobContext Parameters
+     * @param  parameters
+     * @return the updated group send
      * */
     ActionItemPost generatePopulationVersionForGroupSend( Map parameters ) {
         Long groupSendId = parameters.get( "groupSendId" ) as Long
