@@ -46,7 +46,7 @@ class ActionItemPostRecurringDetailsIntegrationTests extends BaseIntegrationTest
                 recurFrequency:2L,
                 recurFrequencyType:'days',
                 postingDispStartDays:2L,
-                postingDispEndtDays:10L,
+                postingDispEndDays:10L,
                 postingDisplayEndDate:new Date(),
                 recurStartDate:new Date(),
                 recurEndDate:new Date(),
