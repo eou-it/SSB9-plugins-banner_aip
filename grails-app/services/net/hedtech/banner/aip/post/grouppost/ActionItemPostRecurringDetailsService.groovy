@@ -81,24 +81,24 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
 
 
 
-    Date resolveStartDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails, Integer iteration) {
+    Date resolveStartDate(Date scheduledDate , ActionItemPostRecurringDetails actionItemPostRecurringDetails) {
         if (actionItemPostRecurringDetails.postingDispStartDays == 0) {
-            return resolveScheduleDateTime(actionItemPostRecurringDetails, iteration)
+            return scheduledDate
         } else {
-            Integer daysToAdd = actionItemPostRecurringDetails.postingDispStartDays * iteration
-            return addDays(actionItemPostRecurringDetails.recurStartDate, daysToAdd)
+            Integer daysToadd=actionItemPostRecurringDetails.postingDispStartDays
+            return addDays(scheduledDate,daysToadd )
         }
     }
 
 
-    Date resolveEndDateOffset(ActionItemPostRecurringDetails actionItemPostRecurringDetails, Integer iteration) {
+    Date resolveEndDateOffset(Date scheduledDate,ActionItemPostRecurringDetails actionItemPostRecurringDetails) {
         Boolean isOffSetEndDate = !actionItemPostRecurringDetails.postingDisplayEndDate && actionItemPostRecurringDetails.postingDispEndDays
         if (isOffSetEndDate) {
             if (actionItemPostRecurringDetails.postingDispEndDays == 0) {
-                return resolveScheduleDateTime(actionItemPostRecurringDetails, iteration)
+                return scheduledDate
             } else {
-                Integer daysToAdd = actionItemPostRecurringDetails.postingDispEndDays * iteration
-                return addDays(actionItemPostRecurringDetails.recurStartDate, daysToAdd)
+                Integer daysToAdd = actionItemPostRecurringDetails.postingDispEndDays
+                return addDays(scheduledDate,daysToAdd )
             }
         } else {
             return actionItemPostRecurringDetails.postingDisplayEndDate
@@ -106,7 +106,7 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
     }
 
     Date resolveScheduleDateTime(ActionItemPostRecurringDetails actionItemPostRecurringDetails, Integer iteration) {
-        Date dateTime = addDateAndTime(actionItemPostRecurringDetails.recurStartDate, actionItemPostRecurringDetails.recurStartTime)
+        Date dateTime =  actionItemPostRecurringDetails.recurStartTime
         if (actionItemPostRecurringDetails.recurFrequencyType == "DAYS") {
             Integer daysToAdd = actionItemPostRecurringDetails.recurFrequency * iteration
             return addDays(dateTime, daysToAdd)
