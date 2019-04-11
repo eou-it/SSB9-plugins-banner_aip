@@ -625,7 +625,7 @@ class ActionItemPostCompositeService {
         CommunicationPopulation population = communicationPopulationCompositeService.fetchPopulation( groupSend.populationListId )
         boolean hasQuery = (CommunicationPopulationQueryAssociation.countByPopulation( population ) > 0)
 
-        if (hasQuery && groupSend.populationRegenerateIndicator) {
+        if ((hasQuery && groupSend.populationRegenerateIndicator) || !hasQuery) {
             jobContext.setJobHandle( "actionItemPostCompositeService", "calculatePopulationVersionForPostFired" )
                     .setErrorHandle( "actionItemPostCompositeService", "calculatePopulationVersionForPostFailed" )
         }
