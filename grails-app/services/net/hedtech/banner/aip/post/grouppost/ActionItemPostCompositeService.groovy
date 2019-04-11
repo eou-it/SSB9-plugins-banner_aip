@@ -70,12 +70,13 @@ class ActionItemPostCompositeService {
      * Initiate the posting of a actionItems to a set of prospect recipients
      * @param requestMap the post to initiate
      */
-    def sendAsynchronousPostItem(requestMap) {
+    def sendAsynchronousPostItem(requestMap, ActionItemPost recurringActionItemPost = null) {
         LoggerUtility.debug(LOGGER, "Method sendAsynchronousGroupActionItem reached.")
-        actionItemPostService.preCreateValidation(requestMap)
+        if (!recurringActionItemPost){
+            actionItemPostService.preCreateValidation(requestMap)}
         def user = springSecurityService.getAuthentication()?.user
         def success = false
-        ActionItemPost groupSend = getActionPostInstance(requestMap, user)
+        ActionItemPost groupSend = recurringActionItemPost ? recurringActionItemPost : getActionPostInstance(requestMap, user)
         validateDates(groupSend, requestMap.scheduled)
         CommunicationPopulation population = communicationPopulationCompositeService.fetchPopulation(groupSend.populationListId)
         boolean hasQuery = (CommunicationPopulationQueryAssociation.countByPopulation(population) > 0)
@@ -115,51 +116,6 @@ class ActionItemPostCompositeService {
         [
                 success : success,
                 savedJob: groupSendSaved
-        ]
-    }
-
-
-    def sendAsyncRecurringPostItem(ActionItemPost post, def user, def actionItemIds) {
-        LoggerUtility.debug(LOGGER, "Method sendRecurringPostItem reached.")
-        def success = false
-        ActionItemPost actionItemPost = post
-        validateDates(actionItemPost, true)
-        CommunicationPopulation population = communicationPopulationCompositeService.fetchPopulation(actionItemPost.populationListId)
-        boolean hasQuery = (CommunicationPopulationQueryAssociation.countByPopulation(population) > 0)
-        boolean useCurrentReplica = (!actionItemPost.populationRegenerateIndicator || !requestMap.scheduledStartDate)
-        if (hasQuery && useCurrentReplica) {
-            // this will need to be updated once we allow queries to be added to existing manual only populations
-            if (actionItemPost.populationRegenerateIndicator) {
-                actionItemPost.populationVersionId = null
-                actionItemPost.populationCalculationId = null
-            } else {
-                assignPopulationVersion(actionItemPost)
-                assignPopulationCalculation(actionItemPost, user.oracleUserName)
-            }
-        } else if (actionItemPost.populationRegenerateIndicator) { // scheduled with future replica of population
-            actionItemPost.populationVersionId = null
-            actionItemPost.populationCalculationId = null
-        } else { // sending now or scheduled with replica of current population
-            assert (useCurrentReplica == true)
-            assignPopulationVersion(actionItemPost)
-            if (hasQuery) {
-                assignPopulationCalculation(actionItemPost, user.oracleUserName)
-            }
-        }
-
-        ActionItemPost actionItemPostSaved = actionItemPostService.create(actionItemPost)
-        // Create the details records.
-        actionItemIds.each { actionItemId ->
-            addPostingDetail(actionItemId, actionItemPostSaved.id)
-        }
-
-        actionItemPostSaved = schedulePost(actionItemPostSaved, user.oracleUserName)
-
-        success = true
-        LoggerUtility.debug(LOGGER, " Finished Saving Posting ${actionItemPostSaved}.")
-        [
-                success : success,
-                savedJob: actionItemPostSaved
         ]
     }
 
@@ -229,7 +185,7 @@ class ActionItemPostCompositeService {
         actionItemPostRecurringDetailsService.create(getActionItemPostRecurringInstance(requestMap))
     }
 
-    ActionItemPost createActionItemPostForRecurActionItem(def requestMap, Long recurringDetailId,def user) {
+    ActionItemPost createActionItemPostForRecurActionItem(def requestMap, Long recurringDetailId, def user) {
         requestMap.displayStartDate = requestMap.recurStartDate
         requestMap.displayEndDate = requestMap.recurEndDate
         requestMap.timezoneStringOffset = requestMap.recurPostTimezone
@@ -244,20 +200,25 @@ class ActionItemPostCompositeService {
 
         def user = springSecurityService.getAuthentication()?.user
         ActionItemPostRecurringDetails actionItemPostRecurringDetails = validateAndCreateActionItemRecurDetlObject(requestMap)
-        ActionItemPost post = createActionItemPostForRecurActionItem(requestMap, actionItemPostRecurringDetails.id,user)
-        def actionItemIds=requestMap.actionItemIds
+        ActionItemPost post = createActionItemPostForRecurActionItem(requestMap, actionItemPostRecurringDetails.id, user)
+        def actionItemIds = requestMap.actionItemIds
 
         def actionItemPostObjects = createActionItemObjects(actionItemPostRecurringDetails, post);
 
         def success = true
         def result
-        actionItemPostObjects.each { actionItemPost ->
-            result = sendAsyncRecurringPostItem(actionItemPost,user,actionItemIds)
+        def asyncRequestMap = [scheduled    : true,
+                               actionItemIds: actionItemIds,
+                               postNow      : false]
 
+        actionItemPostObjects.each { actionItemPost ->
+            asyncRequestMap.scheduledStartDate = actionItemPost.postingScheduleDateTime
+            result = sendAsynchronousPostItem(asyncRequestMap, actionItemPost)
         }
+
         [
-                success: success,
-                savedJob:post
+                success : success,
+                savedJob: post
         ]
 
     }
@@ -292,17 +253,17 @@ class ActionItemPostCompositeService {
         ActionItemPost actionItemPost
 
         for (int iteration = 0; iteration <= numberOfJobs; iteration++) {
-            Date postingScheduleDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails,iteration)
-            Date postingDisplayStartDate = actionItemPostRecurringDetailsService.resolveStartDate(postingScheduleDateTime,actionItemPostRecurringDetails)
-            Date postingDisplayEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(postingScheduleDateTime,actionItemPostRecurringDetails)
+            Date postingScheduleDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, iteration)
+            Date postingDisplayStartDate = actionItemPostRecurringDetailsService.resolveStartDate(postingScheduleDateTime, actionItemPostRecurringDetails)
+            Date postingDisplayEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(postingScheduleDateTime, actionItemPostRecurringDetails)
 
             actionItemPost = new ActionItemPost(
                     populationListId: post.populationListId,
                     postingActionItemGroupId: post.postingActionItemGroupId,
-                    postingName: post.postingName+" "+"#"+(iteration+1),
+                    postingName: post.postingName + " " + "#" + (iteration + 1),
                     postingDisplayStartDate: postingDisplayStartDate,
                     postingDisplayEndDate: postingDisplayEndDate,
-                    postingScheduleDateTime:postingScheduleDateTime ,
+                    postingScheduleDateTime: postingScheduleDateTime,
                     postingCreationDateTime: new Date(),
                     populationRegenerateIndicator: post.populationRegenerateIndicator,
                     postingDeleteIndicator: false,
