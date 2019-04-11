@@ -189,6 +189,7 @@ class ActionItemPostCompositeService {
         requestMap.displayStartDate = requestMap.recurStartDate
         requestMap.displayEndDate = requestMap.recurEndDate
         requestMap.timezoneStringOffset = requestMap.recurPostTimezone
+        actionItemPostService.preCreateValidation(requestMap)
         def actionItemPost = getActionPostInstance(requestMap, user);
         actionItemPost.postingCurrentState = ActionItemPostExecutionState.RecurrenceScheduled
         actionItemPost.recurringPostInd = true
@@ -199,6 +200,7 @@ class ActionItemPostCompositeService {
     def addRecurringActionItemPosting(requestMap) {
 
         def user = springSecurityService.getAuthentication()?.user
+        requestMap.recurrence=true
         ActionItemPostRecurringDetails actionItemPostRecurringDetails = validateAndCreateActionItemRecurDetlObject(requestMap)
         ActionItemPost post = createActionItemPostForRecurActionItem(requestMap, actionItemPostRecurringDetails.id, user)
         def actionItemIds = requestMap.actionItemIds

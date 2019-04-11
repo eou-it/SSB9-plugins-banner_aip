@@ -3,6 +3,7 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.service.ServiceBase
@@ -44,10 +45,10 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
         if (map && !map.postingDispEndDays && map.postingDisplayEndDate && !(map.postingDisplayEndDate.compareTo(map.recurEndDate) > 0)) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.postingDisplayEndDate.greater.than.recurEndDate', []))
         }
-        if (map && map.recurFrequencyType == 'DAYS' && map.recurStartDate && !(map.recurEndDate.compareTo(map.recurStartDate) > 0)) {
+        if (map && map.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_DAYS && map.recurStartDate && !(map.recurEndDate.compareTo(map.recurStartDate) > 0)) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.recurStartDate.less.than.recurEndDate', []))
         }
-        if (map && map.recurFrequencyType == 'HOURS' && map.recurEndDate && !(map.recurEndDate.compareTo(map.recurStartDate) >= 0)) {
+        if (map && map.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_HOURS && map.recurEndDate && !(map.recurEndDate.compareTo(map.recurStartDate) >= 0)) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.recurStartDate.less.than.or.equals.recurEndDate', []))
         }
 
@@ -55,7 +56,7 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
 
 
     Long getNuberOfJobs(ActionItemPostRecurringDetails actionItemPostRecurringDetails) {
-        Long totalNumber = actionItemPostRecurringDetails.recurFrequencyType == "DAYS" ? getDaysBetweenRecurStartAndEndDate(actionItemPostRecurringDetails)
+        Long totalNumber = actionItemPostRecurringDetails.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_DAYS ? getDaysBetweenRecurStartAndEndDate(actionItemPostRecurringDetails)
                 : getHoursBetweenRecurStartAndEndDate(actionItemPostRecurringDetails)
         Long numberOfObjects = totalNumber / actionItemPostRecurringDetails.recurFrequency
         numberOfObjects
@@ -107,7 +108,7 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
 
     Date resolveScheduleDateTime(ActionItemPostRecurringDetails actionItemPostRecurringDetails, Integer iteration) {
         Date dateTime =  actionItemPostRecurringDetails.recurStartTime
-        if (actionItemPostRecurringDetails.recurFrequencyType == "DAYS") {
+        if (actionItemPostRecurringDetails.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_DAYS) {
             Integer daysToAdd = actionItemPostRecurringDetails.recurFrequency * iteration
             return addDays(dateTime, daysToAdd)
         } else {
@@ -117,15 +118,6 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
 
     }
 
-    private Date addDateAndTime(Date date, Date time) {
-        Calendar timeObject = Calendar.getInstance()
-        timeObject.setTime(time)
-        Calendar calculatedDateTime = Calendar.getInstance();
-        calculatedDateTime.setTime(date)
-        calculatedDateTime.add(Calendar.HOUR_OF_DAY, timeObject.get(Calendar.HOUR_OF_DAY))
-        calculatedDateTime.add(Calendar.MINUTE, timeObject.get(Calendar.MINUTE))
-        return calculatedDateTime.getTime()
-    }
 
     private Date addHours(Date date, Integer hoursToAdd) {
         Calendar calculatedDate = Calendar.getInstance()
