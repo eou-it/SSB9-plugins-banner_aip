@@ -62,7 +62,7 @@ class ActionItemPostRecurringDetails implements Serializable {
      * POSTING DISPLAY END DAYS: Action item post display end date offset.
      */
     @Column(name = "GCBRAPT_POST_END_DAYS")
-    Long postingDispEndtDays
+    Long postingDispEndDays
 
     /**
      * POSTING DISPLAY END DATE: Display End Date of Action Item Posting.
@@ -136,7 +136,7 @@ class ActionItemPostRecurringDetails implements Serializable {
         recurFrequency( nullable: false, maxSize: 2 )
         recurFrequencyType( nullable: false )
         postingDispStartDays( nullable: false, maxSize: 2 )
-        postingDispEndtDays( nullable: true, maxSize: 2 )
+        postingDispEndDays( nullable: true, maxSize: 2 )
         postingDisplayEndDate( nullable: true )
         recurStartDate( nullable: false )
         recurEndDate( nullable: false )

@@ -45,10 +45,10 @@ class ActionItemPostService extends ServiceBase {
         if (!dataMap.displayEndDate) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.display.end.date', [] ) )
         }
-        if (!dataMap.postNow && (!dataMap.scheduledStartDate || !dataMap.scheduledStartTime)) {
+        if (!dataMap.postNow && !dataMap.recurrence && (!dataMap.scheduledStartDate || !dataMap.scheduledStartTime)) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.schedule', [] ) )
         }
-        if (!dataMap.postNow && dataMap.scheduledStartDate && dataMap.scheduledStartTime) {
+        if (!dataMap.postNow && !dataMap.recurrence && dataMap.scheduledStartDate && dataMap.scheduledStartTime) {
             if (dataMap.scheduledStartTime.length() != 4) {
                 throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.schedule', [] ) )
             }
