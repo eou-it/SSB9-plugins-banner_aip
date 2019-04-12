@@ -133,7 +133,7 @@ class ActionItemPostRecurringDetails implements Serializable {
 
     static constraints = {
 
-        recurFrequency( nullable: false, maxSize: 2, )
+        recurFrequency( nullable: false, maxSize: 2 )
         recurFrequencyType( nullable: false )
         postingDispStartDays( nullable: false, maxSize: 2 )
         postingDispEndDays( nullable: true, maxSize: 2 )

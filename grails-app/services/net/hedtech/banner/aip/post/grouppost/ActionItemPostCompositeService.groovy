@@ -70,7 +70,8 @@ class ActionItemPostCompositeService {
      * Initiate the posting of a actionItems to a set of prospect recipients
      * @param requestMap the post to initiate
      */
-    def sendAsynchronousPostItem(requestMap, ActionItemPost recurringActionItemPost = null) {
+    def sendAsynchronousPostItem(requestMap) {
+        ActionItemPost recurringActionItemPost = requestMap.recurringActionItemPost
         LoggerUtility.debug(LOGGER, "Method sendAsynchronousGroupActionItem reached.")
         if (!recurringActionItemPost){
             actionItemPostService.preCreateValidation(requestMap)}
@@ -180,22 +181,40 @@ class ActionItemPostCompositeService {
         ]
     }
 
+    /**
+     * Validates and creates the Recurring action item detail object
+     * @param requestMap post request containing parameters from user input
+     * @return
+     */
     ActionItemPostRecurringDetails validateAndCreateActionItemRecurDetlObject(def requestMap) {
-        actionItemPostRecurringDetailsService.preCreateValidate(requestMap);
+        actionItemPostRecurringDetailsService.preCreateValidate(requestMap)
         actionItemPostRecurringDetailsService.create(getActionItemPostRecurringInstance(requestMap))
     }
+    /**
+     * Creates ActionItemPost object for a recurring action item for displaying it in the grid.
+     * It does not schedule the job or post the job
+     * @param requestMap post request containing parameters from user input
+     * @param recurringDetailId recurringDetailId containing metadata for recurrence
+     * @param user logged in user
+     * @return
+     */
 
     ActionItemPost createActionItemPostForRecurActionItem(def requestMap, Long recurringDetailId, def user) {
         requestMap.displayStartDate = requestMap.recurStartDate
         requestMap.displayEndDate = requestMap.recurEndDate
         requestMap.timezoneStringOffset = requestMap.recurPostTimezone
         actionItemPostService.preCreateValidation(requestMap)
-        def actionItemPost = getActionPostInstance(requestMap, user);
+        def actionItemPost = getActionPostInstance(requestMap, user)
         actionItemPost.postingCurrentState = ActionItemPostExecutionState.RecurrenceScheduled
         actionItemPost.recurringPostInd = true
         actionItemPost.recurringPostDetailsId = recurringDetailId
         actionItemPostService.create(actionItemPost)
     }
+    /**
+     * This method initiates the creation of recurring action item posting job
+     * @param requestMap post request containing parameters from user input
+     * @return
+     */
 
     def addRecurringActionItemPosting(requestMap) {
 
@@ -205,7 +224,7 @@ class ActionItemPostCompositeService {
         ActionItemPost post = createActionItemPostForRecurActionItem(requestMap, actionItemPostRecurringDetails.id, user)
         def actionItemIds = requestMap.actionItemIds
 
-        def actionItemPostObjects = createActionItemObjects(actionItemPostRecurringDetails, post);
+        def actionItemPostObjects = createActionItemObjects(actionItemPostRecurringDetails, post)
 
         def success = true
         def result
@@ -215,7 +234,8 @@ class ActionItemPostCompositeService {
 
         actionItemPostObjects.each { actionItemPost ->
             asyncRequestMap.scheduledStartDate = actionItemPost.postingScheduleDateTime
-            result = sendAsynchronousPostItem(asyncRequestMap, actionItemPost)
+            asyncRequestMap.recurringActionItemPost = actionItemPost
+            result = sendAsynchronousPostItem(asyncRequestMap)
         }
 
         [
@@ -224,11 +244,16 @@ class ActionItemPostCompositeService {
         ]
 
     }
+    /**
+     * Creates action item post recurring detail object from input parameters
+     * @param requestMap post request containing parameters from user input
+     * @return
+     */
 
     ActionItemPostRecurringDetails getActionItemPostRecurringInstance(def requestMap) {
 
-        Date recurStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.recurStartDate);
-        Date recurEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.recurEndDate);
+        Date recurStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.recurStartDate)
+        Date recurEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.recurEndDate)
         Date postingDisplayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.postingDisplayEndDate)
         String scheduledStartTime = requestMap.recurStartTime
         String timezoneStringOffset = requestMap.recurPostTimezone
@@ -244,39 +269,43 @@ class ActionItemPostCompositeService {
                 recurEndDate: recurEndDate,
                 recurStartTime: scheduledStartDateCalendar.getTime(),
                 recurPostTimezone: requestMap.recurPostTimezone
-        );
-
+        )
     }
+    /**
+     * Creates indivudual action item jobs for a recurring job
+     * @param actionItemPostRecurringDetails Containing metadata required for recurring job
+     * @param actionItemPost recurring job action item object
+     * @return
+     */
+    List<ActionItemPost> createActionItemObjects(ActionItemPostRecurringDetails actionItemPostRecurringDetails, ActionItemPost actionItemPost) {
 
-    def createActionItemObjects(ActionItemPostRecurringDetails actionItemPostRecurringDetails, ActionItemPost post) {
-
-        Long numberOfJobs = actionItemPostRecurringDetailsService.getNuberOfJobs(actionItemPostRecurringDetails)
+        Long numberOfJobs = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails)
         List<ActionItemPost> individualActionItemPostObjects = new LinkedList<ActionItemPost>()
-        ActionItemPost actionItemPost
+        ActionItemPost individualActionItemPost
 
         for (int iteration = 0; iteration <= numberOfJobs; iteration++) {
             Date postingScheduleDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, iteration)
-            Date postingDisplayStartDate = actionItemPostRecurringDetailsService.resolveStartDate(postingScheduleDateTime, actionItemPostRecurringDetails)
-            Date postingDisplayEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(postingScheduleDateTime, actionItemPostRecurringDetails)
+            Date postingDisplayStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(postingScheduleDateTime, actionItemPostRecurringDetails)
+            Date postingDisplayEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(postingScheduleDateTime, actionItemPostRecurringDetails)
 
-            actionItemPost = new ActionItemPost(
-                    populationListId: post.populationListId,
-                    postingActionItemGroupId: post.postingActionItemGroupId,
-                    postingName: post.postingName + " " + "#" + (iteration + 1),
+            individualActionItemPost = new ActionItemPost(
+                    populationListId: actionItemPost.populationListId,
+                    postingActionItemGroupId: actionItemPost.postingActionItemGroupId,
+                    postingName: actionItemPost.postingName + " " + "#" + (iteration + 1),
                     postingDisplayStartDate: postingDisplayStartDate,
                     postingDisplayEndDate: postingDisplayEndDate,
                     postingScheduleDateTime: postingScheduleDateTime,
                     postingCreationDateTime: new Date(),
-                    populationRegenerateIndicator: post.populationRegenerateIndicator,
+                    populationRegenerateIndicator: actionItemPost.populationRegenerateIndicator,
                     postingDeleteIndicator: false,
-                    postingCreatorId: post.postingCreatorId,
+                    postingCreatorId: actionItemPost.postingCreatorId,
                     postingCurrentState: ActionItemPostExecutionState.Scheduled,
                     postingDisplayDateTime: postingScheduleDateTime,
-                    postingTimeZone: post.postingTimeZone,
+                    postingTimeZone: actionItemPost.postingTimeZone,
                     recurringPostInd: false,
-                    recurringPostDetailsId: post.recurringPostDetailsId
+                    recurringPostDetailsId: actionItemPost.recurringPostDetailsId
             )
-            individualActionItemPostObjects.add(actionItemPost)
+            individualActionItemPostObjects.add(individualActionItemPost)
         }
         individualActionItemPostObjects
     }

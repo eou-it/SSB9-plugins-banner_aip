@@ -360,13 +360,13 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
         actionItemPostRecurringDetails.recurFrequencyType = "DAYS"
         actionItemPostRecurringDetails.recurFrequency = 1L
 
-        def numberOfObjects = actionItemPostRecurringDetailsService.getNuberOfJobs(actionItemPostRecurringDetails)
+        def numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails)
         assertEquals 6, numberOfObjects
 
         actionItemPostRecurringDetails.recurEndDate = new Date(2019, 03, 29)
         actionItemPostRecurringDetails.recurFrequency = 2L
 
-        numberOfObjects = actionItemPostRecurringDetailsService.getNuberOfJobs(actionItemPostRecurringDetails)
+        numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails)
         assertEquals 3, numberOfObjects
 
 
@@ -395,15 +395,15 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
         actionItemPostRecurringDetails.recurFrequencyType = "HOURS"
         actionItemPostRecurringDetails.recurFrequency = 1L
 
-        def numberOfObjects = actionItemPostRecurringDetailsService.getNuberOfJobs(actionItemPostRecurringDetails)
+        def numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails)
         assertEquals 24, numberOfObjects
 
         actionItemPostRecurringDetails.recurFrequency = 2L
-        numberOfObjects = actionItemPostRecurringDetailsService.getNuberOfJobs(actionItemPostRecurringDetails)
+        numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails)
         assertEquals 12, numberOfObjects
         actionItemPostRecurringDetails.recurStartTime = new Date(0, 0, 0, 9, 0)
         actionItemPostRecurringDetails.recurFrequency = 3L
-        numberOfObjects = actionItemPostRecurringDetailsService.getNuberOfJobs(actionItemPostRecurringDetails)
+        numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails)
         assertEquals 5, numberOfObjects
 
     }
@@ -418,13 +418,13 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
         actionItemPostRecurringDetails.recurFrequency = 1L
         //10 days and 10 iteration
         Date scheduledDate = new Date(2019, 03, 20)
-        Date result = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDate,actionItemPostRecurringDetails);
+        Date result = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDate,actionItemPostRecurringDetails);
         assertEquals new Date(2019, 03, 23), result
         scheduledDate=result
-        result = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDate,actionItemPostRecurringDetails);
+        result = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDate,actionItemPostRecurringDetails);
         assertEquals new Date(2019, 03, 26), result
         scheduledDate=result
-        result = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDate,actionItemPostRecurringDetails)
+        result = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDate,actionItemPostRecurringDetails)
         assertEquals new Date(2019, 03, 29), result
     }
 
@@ -486,8 +486,8 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
         Date resolvedEndDate
 
         scheduledDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 0)
-        resolvedStartDate = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDateTime, actionItemPostRecurringDetails)
-        resolvedEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(scheduledDateTime, actionItemPostRecurringDetails)
 
         assertEquals new Date(2019, Calendar.FEBRUARY, 24), scheduledDateTime
         assertEquals new Date(2019, Calendar.FEBRUARY, 26), resolvedStartDate
@@ -495,40 +495,40 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
 
 
         scheduledDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 1)
-        resolvedStartDate = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDateTime, actionItemPostRecurringDetails)
-        resolvedEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(scheduledDateTime, actionItemPostRecurringDetails)
 
         assertEquals new Date(2019, Calendar.FEBRUARY, 26), scheduledDateTime
         assertEquals new Date(2019, Calendar.FEBRUARY, 28), resolvedStartDate
         assertEquals new Date(2019, Calendar.MARCH, 8), resolvedEndDate
 
         scheduledDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 2)
-        resolvedStartDate = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDateTime, actionItemPostRecurringDetails)
-        resolvedEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(scheduledDateTime, actionItemPostRecurringDetails)
 
         assertEquals new Date(2019, Calendar.FEBRUARY, 28), scheduledDateTime
         assertEquals new Date(2019, Calendar.MARCH, 2), resolvedStartDate
         assertEquals new Date(2019, Calendar.MARCH, 10), resolvedEndDate
 
         scheduledDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 3)
-        resolvedStartDate = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDateTime, actionItemPostRecurringDetails)
-        resolvedEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(scheduledDateTime, actionItemPostRecurringDetails)
 
         assertEquals new Date(2019, Calendar.MARCH, 2), scheduledDateTime
         assertEquals new Date(2019, Calendar.MARCH, 4), resolvedStartDate
         assertEquals new Date(2019, Calendar.MARCH, 12), resolvedEndDate
 
         scheduledDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 4)
-        resolvedStartDate = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDateTime, actionItemPostRecurringDetails)
-        resolvedEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(scheduledDateTime, actionItemPostRecurringDetails)
 
         assertEquals new Date(2019, Calendar.MARCH, 4), scheduledDateTime
         assertEquals new Date(2019, Calendar.MARCH, 6), resolvedStartDate
         assertEquals new Date(2019, Calendar.MARCH, 14), resolvedEndDate
 
         scheduledDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 5)
-        resolvedStartDate = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDateTime, actionItemPostRecurringDetails)
-        resolvedEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(scheduledDateTime, actionItemPostRecurringDetails)
 
         assertEquals new Date(2019, Calendar.MARCH, 6), scheduledDateTime
         assertEquals new Date(2019, Calendar.MARCH, 8), resolvedStartDate
@@ -555,40 +555,40 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
         Date resolvedEndDate
 
         scheduledDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 0)
-        resolvedStartDate = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDateTime, actionItemPostRecurringDetails)
-        resolvedEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(scheduledDateTime, actionItemPostRecurringDetails)
 
         assertEquals new Date(2019, Calendar.FEBRUARY, 24), scheduledDateTime
         assertEquals new Date(2019, Calendar.FEBRUARY, 26), resolvedStartDate
         assertEquals new Date(2019, Calendar.MARCH, 20), resolvedEndDate
 
         scheduledDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 1)
-        resolvedStartDate = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDateTime, actionItemPostRecurringDetails)
-        resolvedEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(scheduledDateTime, actionItemPostRecurringDetails)
 
         assertEquals new Date(2019, Calendar.FEBRUARY, 26), scheduledDateTime
         assertEquals new Date(2019, Calendar.FEBRUARY, 28), resolvedStartDate
         assertEquals new Date(2019, Calendar.MARCH, 20), resolvedEndDate
 
         scheduledDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 2)
-        resolvedStartDate = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDateTime, actionItemPostRecurringDetails)
-        resolvedEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(scheduledDateTime, actionItemPostRecurringDetails)
 
         assertEquals new Date(2019, Calendar.FEBRUARY, 28), scheduledDateTime
         assertEquals new Date(2019, Calendar.MARCH, 02), resolvedStartDate
         assertEquals new Date(2019, Calendar.MARCH, 20), resolvedEndDate
 
         scheduledDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 3)
-        resolvedStartDate = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDateTime, actionItemPostRecurringDetails)
-        resolvedEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(scheduledDateTime, actionItemPostRecurringDetails)
 
         assertEquals new Date(2019, Calendar.MARCH, 02), scheduledDateTime
         assertEquals new Date(2019, Calendar.MARCH, 04), resolvedStartDate
         assertEquals new Date(2019, Calendar.MARCH, 20), resolvedEndDate
 
         scheduledDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 4)
-        resolvedStartDate = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDateTime, actionItemPostRecurringDetails)
-        resolvedEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(scheduledDateTime, actionItemPostRecurringDetails)
 
         assertEquals new Date(2019, Calendar.MARCH, 04), scheduledDateTime
         assertEquals new Date(2019, Calendar.MARCH, 06), resolvedStartDate
@@ -615,40 +615,40 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
         Date resolvedEndDate
 
         scheduledDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 0)
-        resolvedStartDate = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDateTime, actionItemPostRecurringDetails)
-        resolvedEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(scheduledDateTime, actionItemPostRecurringDetails)
 
         assertEquals new Date(2019, Calendar.FEBRUARY, 24,11,30), scheduledDateTime
         assertEquals new Date(2019, Calendar.FEBRUARY, 26,11,30), resolvedStartDate
         assertEquals new Date(2019, Calendar.MARCH, 6,11,30), resolvedEndDate
 
         scheduledDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 1)
-        resolvedStartDate = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDateTime, actionItemPostRecurringDetails)
-        resolvedEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(scheduledDateTime, actionItemPostRecurringDetails)
 
         assertEquals new Date(2019, Calendar.FEBRUARY, 24,16,30), scheduledDateTime
         assertEquals new Date(2019, Calendar.FEBRUARY, 26,16,30), resolvedStartDate
         assertEquals new Date(2019, Calendar.MARCH, 6,16,30), resolvedEndDate
 
         scheduledDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 2)
-        resolvedStartDate = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDateTime, actionItemPostRecurringDetails)
-        resolvedEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(scheduledDateTime, actionItemPostRecurringDetails)
 
         assertEquals new Date(2019, Calendar.FEBRUARY, 24,21,30), scheduledDateTime
         assertEquals new Date(2019, Calendar.FEBRUARY, 26,21,30), resolvedStartDate
         assertEquals new Date(2019, Calendar.MARCH, 06,21,30), resolvedEndDate
 
         scheduledDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 3)
-        resolvedStartDate = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDateTime, actionItemPostRecurringDetails)
-        resolvedEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(scheduledDateTime, actionItemPostRecurringDetails)
 
         assertEquals new Date(2019, Calendar.FEBRUARY, 25,2,30), scheduledDateTime
         assertEquals new Date(2019, Calendar.FEBRUARY, 27,2,30 ), resolvedStartDate
         assertEquals new Date(2019, Calendar.MARCH, 7,2,30), resolvedEndDate
 
         scheduledDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 4)
-        resolvedStartDate = actionItemPostRecurringDetailsService.resolveStartDate(scheduledDateTime, actionItemPostRecurringDetails)
-        resolvedEndDate = actionItemPostRecurringDetailsService.resolveEndDateOffset(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDateTime, actionItemPostRecurringDetails)
+        resolvedEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(scheduledDateTime, actionItemPostRecurringDetails)
 
         assertEquals new Date(2019, Calendar.FEBRUARY, 25,7,30), scheduledDateTime
         assertEquals new Date(2019, Calendar.FEBRUARY, 27,7,30), resolvedStartDate
