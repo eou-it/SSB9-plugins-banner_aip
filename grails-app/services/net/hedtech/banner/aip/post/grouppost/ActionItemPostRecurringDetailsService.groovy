@@ -58,6 +58,23 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
         }
 
     }
+    /**
+     * Validates firm display end dates
+     * @param actionItemPostRecurringDetails
+     * @return
+     */
+    Boolean validateDisplayEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails){
+        if(!actionItemPostRecurringDetails.postingDispEndDays && actionItemPostRecurringDetails.postingDisplayEndDate ){
+            //when firm dates have been given
+            Long numberOfObjects = getNumberOfJobs(actionItemPostRecurringDetails)
+            Date postingDateOfLastJob = resolveScheduleDateTime(actionItemPostRecurringDetails,numberOfObjects-1)
+            if(postingDateOfLastJob.compareTo(actionItemPostRecurringDetails.postingDisplayEndDate)<0){
+                //if firm display end date chosen & calculated last posting job date < display end date
+                //Display end date must be greater than or equal to date of last posting job.
+                throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('validation.DispEndDate.greater.than.or.equals.dateLastPosting', []))
+            }
+        }
+    }
 
     /**
      * Calculates the number of that a recurring post creates

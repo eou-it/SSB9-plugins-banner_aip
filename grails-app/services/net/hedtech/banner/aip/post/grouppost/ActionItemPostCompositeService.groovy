@@ -188,7 +188,9 @@ class ActionItemPostCompositeService {
      */
     ActionItemPostRecurringDetails validateAndCreateActionItemRecurDetlObject(def requestMap) {
         actionItemPostRecurringDetailsService.preCreateValidate(requestMap)
-        actionItemPostRecurringDetailsService.create(getActionItemPostRecurringInstance(requestMap))
+        def actionItemPostRecurringDetailsObject = getActionItemPostRecurringInstance(requestMap)
+        actionItemPostRecurringDetailsService.validateDisplayEndDate(actionItemPostRecurringDetailsObject)
+        actionItemPostRecurringDetailsService.create(actionItemPostRecurringDetailsObject)
     }
     /**
      * Creates ActionItemPost object for a recurring action item for displaying it in the grid.
