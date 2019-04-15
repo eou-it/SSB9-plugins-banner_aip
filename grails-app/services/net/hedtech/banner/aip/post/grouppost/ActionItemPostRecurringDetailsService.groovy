@@ -4,6 +4,7 @@
 package net.hedtech.banner.aip.post.grouppost
 
 import net.hedtech.banner.aip.common.AIPConstants
+import net.hedtech.banner.aip.post.exceptions.ActionItemExceptionFactory
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.service.ServiceBase
@@ -74,6 +75,44 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
                 throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('validation.DispEndDate.greater.than.or.equals.dateLastPosting', []))
             }
         }
+    }
+
+    /**
+     * Validates the first recurrance end date
+     * @param actionItemPostRecurringDetails
+     * @return
+     */
+    void validateRecurEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails){
+         //first recurrence job start date + start offset < recurrence end date if units is "days"
+        if(actionItemPostRecurringDetails.recurFrequencyType==AIPConstants.RECURR_FREQUENCY_TYPE_DAYS){
+            Integer daysToAdd = actionItemPostRecurringDetails.recurFrequency
+            Date calculatedEndDate = addDays(actionItemPostRecurringDetails.recurStartDate,daysToAdd)
+            if(calculatedEndDate.compareTo(actionItemPostRecurringDetails.recurEndDate)>0){
+                throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('validation.firstJob.endDate.more.than.recurEndDate', []))
+            }
+        }
+
+    }
+    /**
+     * validates the recurr stat date and time
+     * @param actionItemPostRecurringDetails
+     */
+    void validateRecurrStartDateAndTime(ActionItemPostRecurringDetails actionItemPostRecurringDetails){
+        Date now= new Date(System.currentTimeMillis())
+        if (now.after(actionItemPostRecurringDetails.recurStartTime)) {
+            throw ActionItemExceptionFactory.createApplicationException(ActionItemPostRecurringDetailsService, "validation.display.obsolete.recurStart.date")
+        }
+
+    }
+
+    /**
+     * Validate dates method calls various date validations required for recurrance
+     * @param actionItemPostRecurringDetails
+     */
+    void validateDates(ActionItemPostRecurringDetails actionItemPostRecurringDetails){
+        validateDisplayEndDate(actionItemPostRecurringDetails)
+        validateRecurEndDate(actionItemPostRecurringDetails)
+        validateRecurrStartDateAndTime(actionItemPostRecurringDetails)
     }
 
     /**

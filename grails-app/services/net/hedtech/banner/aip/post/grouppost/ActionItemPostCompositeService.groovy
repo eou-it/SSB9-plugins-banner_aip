@@ -189,7 +189,7 @@ class ActionItemPostCompositeService {
     ActionItemPostRecurringDetails validateAndCreateActionItemRecurDetlObject(def requestMap) {
         actionItemPostRecurringDetailsService.preCreateValidate(requestMap)
         def actionItemPostRecurringDetailsObject = getActionItemPostRecurringInstance(requestMap)
-        actionItemPostRecurringDetailsService.validateDisplayEndDate(actionItemPostRecurringDetailsObject)
+        actionItemPostRecurringDetailsService.validateDates(actionItemPostRecurringDetailsObject)
         actionItemPostRecurringDetailsService.create(actionItemPostRecurringDetailsObject)
     }
     /**
@@ -256,7 +256,7 @@ class ActionItemPostCompositeService {
 
         Date recurStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.recurStartDate)
         Date recurEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.recurEndDate)
-        Date postingDisplayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.postingDisplayEndDate)
+        Date postingDisplayEndDate = requestMap.postingDisplayEndDate?actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.postingDisplayEndDate):null
         String scheduledStartTime = requestMap.recurStartTime
         String timezoneStringOffset = requestMap.recurPostTimezone
         Calendar scheduledStartDateCalendar = actionItemProcessingCommonService.getRequestedTimezoneCalendar(recurStartDate, scheduledStartTime, timezoneStringOffset)
