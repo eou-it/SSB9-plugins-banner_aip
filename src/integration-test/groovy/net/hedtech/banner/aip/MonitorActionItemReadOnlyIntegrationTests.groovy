@@ -8,7 +8,7 @@ import groovy.sql.Sql
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.web.context.ServletContextHolder
-import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
+import org.grails.web.util.GrailsApplicationAttributes
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
