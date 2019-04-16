@@ -66,10 +66,9 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      */
     Boolean validateDisplayEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails){
         if(!actionItemPostRecurringDetails.postingDispEndDays && actionItemPostRecurringDetails.postingDisplayEndDate ){
-            //when firm dates have been given
-            Long numberOfObjects = getNumberOfJobs(actionItemPostRecurringDetails)
+            Integer numberOfObjects = getNumberOfJobs(actionItemPostRecurringDetails)
             Date postingDateOfLastJob = resolveScheduleDateTime(actionItemPostRecurringDetails,numberOfObjects-1)
-            if(postingDateOfLastJob.compareTo(actionItemPostRecurringDetails.postingDisplayEndDate)<0){
+            if(postingDateOfLastJob.compareTo(actionItemPostRecurringDetails.postingDisplayEndDate)>0){
                 //if firm display end date chosen & calculated last posting job date < display end date
                 //Display end date must be greater than or equal to date of last posting job.
                 throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('validation.DispEndDate.greater.than.or.equals.dateLastPosting', []))
@@ -144,13 +143,12 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * @return
      */
     Long getHoursBetweenRecurStartAndEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails) {
-        Calendar startTime = Calendar.getInstance()
-        startTime.setTime(actionItemPostRecurringDetails.recurStartTime)
-        Calendar calculatedStartDate = Calendar.getInstance()
-        calculatedStartDate.setTime(actionItemPostRecurringDetails.recurStartDate)
-        calculatedStartDate.add(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY))
-        calculatedStartDate.add(Calendar.MINUTE, startTime.get(Calendar.MINUTE))
-        Long diff = actionItemPostRecurringDetails.recurEndDate.getTime() - calculatedStartDate.getTime().getTime()
+        Calendar calculatedEndTime = Calendar.getInstance()
+        calculatedEndTime.setTime(actionItemPostRecurringDetails.recurEndDate)
+        calculatedEndTime.set(Calendar.HOUR_OF_DAY,23)
+        calculatedEndTime.set(Calendar.MINUTE,59)
+        calculatedEndTime.set(Calendar.SECOND,59)
+        Long diff = calculatedEndTime.getTime().getTime() - actionItemPostRecurringDetails.recurStartTime.getTime()
         TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)
     }
 
