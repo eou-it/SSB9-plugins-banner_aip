@@ -10,7 +10,7 @@ import java.sql.Clob
 
 class BannerCommManagementResourceAccessService {
     def sessionFactory
-    def log = Logger.getLogger( this.class )
+
 
     /**
      * Get BCM Location
