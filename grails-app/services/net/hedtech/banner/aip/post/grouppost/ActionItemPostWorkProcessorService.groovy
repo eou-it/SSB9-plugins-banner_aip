@@ -15,8 +15,7 @@ import java.sql.SQLException
  */
 class ActionItemPostWorkProcessorService {
     boolean transactional = true
-    private static
-    final log = Logger.getLogger( 'net.hedtech.banner.aip.post.grouppost.ActionItemPostWorkProcessorService' )
+    private static final logger = Logger.getLogger( 'net.hedtech.banner.aip.post.grouppost.ActionItemPostWorkProcessorService' )
 
     def actionItemPerformPostService
     def actionItemPostWorkService
@@ -30,7 +29,7 @@ class ActionItemPostWorkProcessorService {
         asynchronousBannerAuthenticationSpoofer.setMepContext( sessionFactory.currentSession.connection(), actionItemPostWork.mepCode )
 
         def groupSendItemId = actionItemPostWork.id
-        log.debug( "Performing group send item id = " + groupSendItemId )
+        logger.debug( "Performing group send item id = " + groupSendItemId )
         boolean locked = lockGroupSendItem( groupSendItemId, ActionItemPostWorkExecutionState.Ready )
         if (!locked) {
             // Do nothing
@@ -59,7 +58,7 @@ class ActionItemPostWorkProcessorService {
                 errorCode            : ActionItemErrorCode.valueOf( errorCode )
         ]
 
-        log.warn( "Group send item failed id = ${groupSendItemId}, errorText = ${errorText}." )
+        logger.warn( "Group send item failed id = ${groupSendItemId}, errorText = ${errorText}." )
 
         actionItemPostWorkService.update( groupSendItemParamMap )
     }
