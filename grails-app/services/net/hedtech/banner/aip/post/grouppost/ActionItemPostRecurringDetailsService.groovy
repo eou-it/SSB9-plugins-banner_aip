@@ -174,7 +174,8 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * @return
      */
     Date resolveDiplayEndDate(Date scheduledDate, ActionItemPostRecurringDetails actionItemPostRecurringDetails) {
-        Boolean isOffSetEndDate = !actionItemPostRecurringDetails.postingDisplayEndDate && actionItemPostRecurringDetails.postingDispEndDays
+        Boolean isOffSetEndDate = !actionItemPostRecurringDetails.postingDisplayEndDate && actionItemPostRecurringDetails.postingDispEndDays !=null
+        LOGGER.trace "Posting End date -{$actionItemPostRecurringDetails.postingDisplayEndDate}, Posting End date offset {$actionItemPostRecurringDetails.postingDispEndDays},isOffset - {$isOffSetEndDate}"
         if (isOffSetEndDate) {
             if (actionItemPostRecurringDetails.postingDispEndDays == 0) {
                 return scheduledDate
