@@ -647,7 +647,10 @@ class ActionItemPostCompositeService {
             communicationPopulationCompositeService.updatePopulation(population)
         } else {
             populationVersion = CommunicationPopulationVersion.findLatestByPopulationId(groupSend.populationListId)
-
+        }
+        if (!populationVersion) {
+            throw ActionItemExceptionFactory.createApplicationException( ActionItemPostCompositeService.class,
+                    "populationVersionNotFound" )
         }
         assert populationVersion.id
         groupSend.populationVersionId = populationVersion.id
@@ -693,10 +696,6 @@ class ActionItemPostCompositeService {
                 CommunicationPopulationVersion populationVersion
                 populationVersion = assignPopulationVersion(groupSend)
                 shouldUpdateGroupSend = true
-
-                if (!populationVersion) {
-                    throw new ApplicationException("populationVersion", new NotFoundException())
-                }
 
                 boolean hasQuery = (CommunicationPopulationVersionQueryAssociation.countByPopulationVersion(populationVersion) > 0)
 
