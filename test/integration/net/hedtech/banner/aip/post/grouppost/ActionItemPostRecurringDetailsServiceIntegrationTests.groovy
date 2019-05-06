@@ -246,7 +246,7 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
     }
 
     @Test
-    void testRecurEndDateDateGreaterThanStartDate() {
+    void testRecurEndDateGreaterThanStartDate() {
         //map  && map.postingDispEndDays && !map.postingDisplayEndDate && !(map.postingDispEndDays >= map.postingDispStartDays )
 
         def exception = false;
@@ -375,36 +375,38 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
     @Test
     void testGetHoursBetweenRecurStartAndEndDate() {
 
-        ActionItemPostRecurringDetails actionItemPostRecurringDetails = new ActionItemPostRecurringDetails(recurStartDate: new Date(2019, 03, 22), recurEndDate: new Date(2019, 03, 23), recurStartTime: new Date(0, 0, 0, 8, 0))
+        ActionItemPostRecurringDetails actionItemPostRecurringDetails = new ActionItemPostRecurringDetails(
+                    recurStartDate: new Date(2019, 03, 22),
+                    recurEndDate: new Date(2019, 03, 23),
+                    recurStartTime: new Date(2019, 03, 22, 8, 0))
 
 
         def hours = actionItemPostRecurringDetailsService.getHoursBetweenRecurStartAndEndDate(actionItemPostRecurringDetails);
-        assertEquals 16, hours
+        assertEquals 39, hours
 
-        actionItemPostRecurringDetails.recurStartTime = new Date(0, 0, 0, 0, 0);
+        actionItemPostRecurringDetails.recurStartTime = new Date(2019, 03, 23, 0, 0);
         hours = actionItemPostRecurringDetailsService.getHoursBetweenRecurStartAndEndDate(actionItemPostRecurringDetails);
-        assertEquals 24, hours
+        assertEquals 23, hours
     }
 
     @Test
     void getNuberOfJobsBasedOnHours() {
         ActionItemPostRecurringDetails actionItemPostRecurringDetails = new ActionItemPostRecurringDetails();
-        actionItemPostRecurringDetails.recurStartDate = new Date(2019, 03, 22)
-        actionItemPostRecurringDetails.recurStartTime = new Date(0, 0, 0, 0, 0)
+        actionItemPostRecurringDetails.recurStartTime = new Date(2019, 03, 22, 0, 0)
         actionItemPostRecurringDetails.recurEndDate = new Date(2019, 03, 23)
         actionItemPostRecurringDetails.recurFrequencyType = "HOURS"
         actionItemPostRecurringDetails.recurFrequency = 1L
 
         def numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails)
-        assertEquals 24, numberOfObjects
+        assertEquals 47, numberOfObjects
 
         actionItemPostRecurringDetails.recurFrequency = 2L
         numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails)
-        assertEquals 12, numberOfObjects
-        actionItemPostRecurringDetails.recurStartTime = new Date(0, 0, 0, 9, 0)
+        assertEquals 23, numberOfObjects
+        actionItemPostRecurringDetails.recurStartTime = new Date(2019, 03, 22, 9, 0)
         actionItemPostRecurringDetails.recurFrequency = 3L
         numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails)
-        assertEquals 5, numberOfObjects
+        assertEquals 12, numberOfObjects
 
     }
 
