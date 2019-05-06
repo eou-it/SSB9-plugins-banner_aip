@@ -4,6 +4,7 @@
 package net.hedtech.banner.aip.post.grouppost
 
 import net.hedtech.banner.aip.common.AIPConstants
+import net.hedtech.banner.aip.post.exceptions.ActionItemExceptionFactory
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.service.ServiceBase
@@ -65,15 +66,52 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      */
     Boolean validateDisplayEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails){
         if(!actionItemPostRecurringDetails.postingDispEndDays && actionItemPostRecurringDetails.postingDisplayEndDate ){
-            //when firm dates have been given
-            Long numberOfObjects = getNumberOfJobs(actionItemPostRecurringDetails)
+            Integer numberOfObjects = getNumberOfJobs(actionItemPostRecurringDetails)
             Date postingDateOfLastJob = resolveScheduleDateTime(actionItemPostRecurringDetails,numberOfObjects-1)
-            if(postingDateOfLastJob.compareTo(actionItemPostRecurringDetails.postingDisplayEndDate)<0){
+            if(postingDateOfLastJob.compareTo(actionItemPostRecurringDetails.postingDisplayEndDate)>0){
                 //if firm display end date chosen & calculated last posting job date < display end date
                 //Display end date must be greater than or equal to date of last posting job.
                 throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('validation.DispEndDate.greater.than.or.equals.dateLastPosting', []))
             }
         }
+    }
+
+    /**
+     * Validates the first recurrance end date
+     * @param actionItemPostRecurringDetails
+     * @return
+     */
+    void validateRecurEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails){
+         //first recurrence job start date + start offset < recurrence end date if units is "days"
+        if(actionItemPostRecurringDetails.recurFrequencyType==AIPConstants.RECURR_FREQUENCY_TYPE_DAYS){
+            Integer daysToAdd = actionItemPostRecurringDetails.recurFrequency
+            Date calculatedEndDate = addDays(actionItemPostRecurringDetails.recurStartDate,daysToAdd)
+            if(calculatedEndDate.compareTo(actionItemPostRecurringDetails.recurEndDate)>0){
+                throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('validation.firstJob.endDate.more.than.recurEndDate', []))
+            }
+        }
+
+    }
+    /**
+     * validates the recurr stat date and time
+     * @param actionItemPostRecurringDetails
+     */
+    void validateRecurrStartDateAndTime(ActionItemPostRecurringDetails actionItemPostRecurringDetails){
+        Date now= new Date(System.currentTimeMillis())
+        if (now.after(actionItemPostRecurringDetails.recurStartTime)) {
+            throw ActionItemExceptionFactory.createApplicationException(ActionItemPostRecurringDetailsService, "validation.display.obsolete.recurStart.date")
+        }
+
+    }
+
+    /**
+     * Validate dates method calls various date validations required for recurrance
+     * @param actionItemPostRecurringDetails
+     */
+    void validateDates(ActionItemPostRecurringDetails actionItemPostRecurringDetails){
+        validateDisplayEndDate(actionItemPostRecurringDetails)
+        validateRecurEndDate(actionItemPostRecurringDetails)
+        validateRecurrStartDateAndTime(actionItemPostRecurringDetails)
     }
 
     /**
@@ -105,13 +143,12 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * @return
      */
     Long getHoursBetweenRecurStartAndEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails) {
-        Calendar startTime = Calendar.getInstance()
-        startTime.setTime(actionItemPostRecurringDetails.recurStartTime)
-        Calendar calculatedStartDate = Calendar.getInstance()
-        calculatedStartDate.setTime(actionItemPostRecurringDetails.recurStartDate)
-        calculatedStartDate.add(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY))
-        calculatedStartDate.add(Calendar.MINUTE, startTime.get(Calendar.MINUTE))
-        Long diff = actionItemPostRecurringDetails.recurEndDate.getTime() - calculatedStartDate.getTime().getTime()
+        Calendar calculatedEndTime = Calendar.getInstance()
+        calculatedEndTime.setTime(actionItemPostRecurringDetails.recurEndDate)
+        calculatedEndTime.set(Calendar.HOUR_OF_DAY,23)
+        calculatedEndTime.set(Calendar.MINUTE,59)
+        calculatedEndTime.set(Calendar.SECOND,59)
+        Long diff = calculatedEndTime.getTime().getTime() - actionItemPostRecurringDetails.recurStartTime.getTime()
         TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)
     }
 
@@ -137,7 +174,8 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * @return
      */
     Date resolveDiplayEndDate(Date scheduledDate, ActionItemPostRecurringDetails actionItemPostRecurringDetails) {
-        Boolean isOffSetEndDate = !actionItemPostRecurringDetails.postingDisplayEndDate && actionItemPostRecurringDetails.postingDispEndDays
+        Boolean isOffSetEndDate = !actionItemPostRecurringDetails.postingDisplayEndDate && actionItemPostRecurringDetails.postingDispEndDays !=null
+        LOGGER.trace "Posting End date -{$actionItemPostRecurringDetails.postingDisplayEndDate}, Posting End date offset {$actionItemPostRecurringDetails.postingDispEndDays},isOffset - {$isOffSetEndDate}"
         if (isOffSetEndDate) {
             if (actionItemPostRecurringDetails.postingDispEndDays == 0) {
                 return scheduledDate

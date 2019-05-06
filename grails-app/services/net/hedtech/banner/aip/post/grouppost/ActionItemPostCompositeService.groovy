@@ -189,7 +189,7 @@ class ActionItemPostCompositeService {
     ActionItemPostRecurringDetails validateAndCreateActionItemRecurDetlObject(def requestMap) {
         actionItemPostRecurringDetailsService.preCreateValidate(requestMap)
         def actionItemPostRecurringDetailsObject = getActionItemPostRecurringInstance(requestMap)
-        actionItemPostRecurringDetailsService.validateDisplayEndDate(actionItemPostRecurringDetailsObject)
+        actionItemPostRecurringDetailsService.validateDates(actionItemPostRecurringDetailsObject)
         actionItemPostRecurringDetailsService.create(actionItemPostRecurringDetailsObject)
     }
     /**
@@ -256,7 +256,7 @@ class ActionItemPostCompositeService {
 
         Date recurStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.recurStartDate)
         Date recurEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.recurEndDate)
-        Date postingDisplayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.postingDisplayEndDate)
+        Date postingDisplayEndDate = requestMap.postingDisplayEndDate?actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.postingDisplayEndDate):null
         String scheduledStartTime = requestMap.recurStartTime
         String timezoneStringOffset = requestMap.recurPostTimezone
         Calendar scheduledStartDateCalendar = actionItemProcessingCommonService.getRequestedTimezoneCalendar(recurStartDate, scheduledStartTime, timezoneStringOffset)
@@ -647,7 +647,10 @@ class ActionItemPostCompositeService {
             communicationPopulationCompositeService.updatePopulation(population)
         } else {
             populationVersion = CommunicationPopulationVersion.findLatestByPopulationId(groupSend.populationListId)
-
+        }
+        if (!populationVersion) {
+            throw ActionItemExceptionFactory.createApplicationException( ActionItemPostCompositeService.class,
+                    "populationVersionNotFound" )
         }
         assert populationVersion.id
         groupSend.populationVersionId = populationVersion.id
@@ -693,10 +696,6 @@ class ActionItemPostCompositeService {
                 CommunicationPopulationVersion populationVersion
                 populationVersion = assignPopulationVersion(groupSend)
                 shouldUpdateGroupSend = true
-
-                if (!populationVersion) {
-                    throw new ApplicationException("populationVersion", new NotFoundException())
-                }
 
                 boolean hasQuery = (CommunicationPopulationVersionQueryAssociation.countByPopulationVersion(populationVersion) > 0)
 
