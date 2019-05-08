@@ -281,7 +281,7 @@ class ActionItemPostCompositeService {
      */
     List<ActionItemPost> createActionItemObjects(ActionItemPostRecurringDetails actionItemPostRecurringDetails, ActionItemPost actionItemPost) {
 
-        Long numberOfJobs = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails)
+        Long numberOfJobs = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails,actionItemPost)
         List<ActionItemPost> individualActionItemPostObjects = new LinkedList<ActionItemPost>()
         ActionItemPost individualActionItemPost
 
@@ -289,7 +289,7 @@ class ActionItemPostCompositeService {
             Date postingScheduleDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, iteration)
             Date postingDisplayStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(postingScheduleDateTime, actionItemPostRecurringDetails)
             Date postingDisplayEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(postingScheduleDateTime, actionItemPostRecurringDetails)
-
+            Date postingDisplayDateTime = actionItemPostRecurringDetailsService.resolvePostingDisplayDateTime(actionItemPostRecurringDetails,actionItemPost,iteration)
             individualActionItemPost = new ActionItemPost(
                     populationListId: actionItemPost.populationListId,
                     postingActionItemGroupId: actionItemPost.postingActionItemGroupId,
@@ -302,7 +302,7 @@ class ActionItemPostCompositeService {
                     postingDeleteIndicator: false,
                     postingCreatorId: actionItemPost.postingCreatorId,
                     postingCurrentState: ActionItemPostExecutionState.Scheduled,
-                    postingDisplayDateTime: postingScheduleDateTime,
+                    postingDisplayDateTime: postingDisplayDateTime,
                     postingTimeZone: actionItemPost.postingTimeZone,
                     recurringPostInd: false,
                     recurringPostDetailsId: actionItemPost.recurringPostDetailsId

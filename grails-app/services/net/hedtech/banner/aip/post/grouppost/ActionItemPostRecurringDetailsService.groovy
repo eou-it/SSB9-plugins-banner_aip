@@ -3,6 +3,7 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import net.hedtech.banner.aip.ActionItem
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.aip.post.exceptions.ActionItemExceptionFactory
 import net.hedtech.banner.exceptions.ApplicationException
@@ -119,9 +120,9 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * @param actionItemPostRecurringDetails metadata of recurring action item
      * @return
      */
-    Long getNumberOfJobs(ActionItemPostRecurringDetails actionItemPostRecurringDetails) {
+    Long getNumberOfJobs(ActionItemPostRecurringDetails actionItemPostRecurringDetails, ActionItemPost actionItemPost) {
         Long totalNumber = actionItemPostRecurringDetails.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_DAYS ? getDaysBetweenRecurStartAndEndDate(actionItemPostRecurringDetails)
-                : getHoursBetweenRecurStartAndEndDate(actionItemPostRecurringDetails)
+                : getHoursBetweenRecurStartAndEndDate(actionItemPostRecurringDetails,actionItemPost)
         Long numberOfObjects = totalNumber / actionItemPostRecurringDetails.recurFrequency
         LOGGER.trace "Number of jobs for reccuring job - ${actionItemPostRecurringDetails.id} is ${numberOfObjects}"
         numberOfObjects
@@ -142,13 +143,14 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * @param actionItemPostRecurringDetails actionItemPostRecurringDetails containing details required for recurrence
      * @return
      */
-    Long getHoursBetweenRecurStartAndEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails) {
+    Long getHoursBetweenRecurStartAndEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails,ActionItemPost actionItemPost) {
         Calendar calculatedEndTime = Calendar.getInstance()
         calculatedEndTime.setTime(actionItemPostRecurringDetails.recurEndDate)
         calculatedEndTime.set(Calendar.HOUR_OF_DAY,23)
         calculatedEndTime.set(Calendar.MINUTE,59)
         calculatedEndTime.set(Calendar.SECOND,59)
-        Long diff = calculatedEndTime.getTime().getTime() - actionItemPostRecurringDetails.recurStartTime.getTime()
+        Long diff = calculatedEndTime.getTime().getTime() - actionItemPost.postingDisplayDateTime.getTime()
+        LOGGER.trace "Start time - ${actionItemPost.postingDisplayDateTime} and end time - ${calculatedEndTime.getTime()} and diff in hours is ${TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)}}"
         TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)
     }
 
@@ -196,6 +198,26 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      */
     Date resolveScheduleDateTime(ActionItemPostRecurringDetails actionItemPostRecurringDetails, Integer iteration) {
         Date dateTime =  actionItemPostRecurringDetails.recurStartTime
+        if (actionItemPostRecurringDetails.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_DAYS) {
+            Integer daysToAdd = actionItemPostRecurringDetails.recurFrequency * iteration
+            return addDays(dateTime, daysToAdd)
+        } else {
+            Integer hourToAdd = actionItemPostRecurringDetails.recurFrequency * iteration
+            return addHours(dateTime, hourToAdd)
+        }
+
+    }
+
+
+    /**
+     * Calculates the display  date and time
+     * @param actionItemPostRecurringDetails actionItemPostRecurringDetails containing details required for recurrence
+     * @param actionItemPost
+     * @param iteration
+     * @return
+     */
+    Date resolvePostingDisplayDateTime(ActionItemPostRecurringDetails actionItemPostRecurringDetails,ActionItemPost actionItemPost,Integer iteration){
+        Date dateTime =  actionItemPost.postingDisplayDateTime
         if (actionItemPostRecurringDetails.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_DAYS) {
             Integer daysToAdd = actionItemPostRecurringDetails.recurFrequency * iteration
             return addDays(dateTime, daysToAdd)
