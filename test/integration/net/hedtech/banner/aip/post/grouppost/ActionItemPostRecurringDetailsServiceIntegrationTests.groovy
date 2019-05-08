@@ -8,6 +8,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+
 class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemPostRecurringDetailsService
@@ -73,7 +74,7 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
             assertEquals 'preCreate.validation.insufficient.request', ex.getMessage()
         }
         assertTrue exception
-        assertNull resp;
+        assertNull resp
 
     }
 
@@ -85,10 +86,10 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
         requestMap.recurFrequency = 0
         requestMap.recurFrequencyType = 'DAYS'
         requestMap.postingDispStartDays = 10
-        requestMap.postingDispEndDays = 10;
-        requestMap.recurStartDate = new Date();
-        requestMap.recurEndDate = new Date() + 10;
-        requestMap.recurStartTime = new Date();
+        requestMap.postingDispEndDays = 10
+        requestMap.recurStartDate = new Date()
+        requestMap.recurEndDate = new Date() + 10
+        requestMap.recurStartTime = new Date()
 
 
         def resp
@@ -101,7 +102,7 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
             assertEquals 'preCreate.validation.recurrence.frequency.greater.zero', ex.getMessage()
         }
         assertTrue exception
-        assertNull resp;
+        assertNull resp
 
     }
 
@@ -113,10 +114,10 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
         requestMap.recurFrequency = 1
         requestMap.recurFrequencyType = 'DAYS'
         requestMap.postingDispStartDays = -1
-        requestMap.postingDispEndDays = 10;
-        requestMap.recurStartDate = new Date();
-        requestMap.recurEndDate = new Date() + 10;
-        requestMap.recurStartTime = new Date();
+        requestMap.postingDispEndDays = 10
+        requestMap.recurStartDate = new Date()
+        requestMap.recurEndDate = new Date() + 10
+        requestMap.recurStartTime = new Date()
 
 
         def resp
@@ -129,7 +130,7 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
             assertEquals 'preCreate.validation.recurrence.displayStartDateOffset.zero', ex.getMessage()
         }
         assertTrue exception
-        assertNull resp;
+        assertNull resp
 
     }
 
@@ -141,10 +142,10 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
         requestMap.recurFrequency = 1
         requestMap.recurFrequencyType = 'DAYS'
         requestMap.postingDispStartDays = 1
-        requestMap.postingDispEndDays = -1;
-        requestMap.recurStartDate = new Date();
-        requestMap.recurEndDate = new Date() + 10;
-        requestMap.recurStartTime = new Date();
+        requestMap.postingDispEndDays = -1
+        requestMap.recurStartDate = new Date()
+        requestMap.recurEndDate = new Date() + 10
+        requestMap.recurStartTime = new Date()
 
 
         def resp
@@ -157,7 +158,7 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
             assertEquals 'preCreate.validation.recurrence.postingDispEndDays.zero', ex.getMessage()
         }
         assertTrue exception
-        assertNull resp;
+        assertNull resp
 
     }
 
@@ -170,9 +171,9 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
         requestMap.recurFrequencyType = 'DAYS'
         requestMap.postingDispStartDays = 3
         requestMap.postingDispEndDays = 2
-        requestMap.recurStartDate = new Date();
-        requestMap.recurEndDate = new Date() + 10;
-        requestMap.recurStartTime = new Date();
+        requestMap.recurStartDate = new Date()
+        requestMap.recurEndDate = new Date() + 10
+        requestMap.recurStartTime = new Date()
 
 
         def resp
@@ -185,7 +186,7 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
             assertEquals 'preCreate.validation.recurrence.postingDisplayEndDate.greater.postingDispStartDays', ex.getMessage()
         }
         assertTrue exception
-        assertNull resp;
+        assertNull resp
 
     }
 
@@ -213,7 +214,7 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
             assertEquals 'preCreate.validation.recurrence.postingDisplayEndDate.greater.than.recurStartDate', ex.getMessage()
         }
         assertTrue exception
-        assertNull resp;
+        assertNull resp
 
     }
 
@@ -241,7 +242,7 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
             assertEquals 'preCreate.validation.recurrence.postingDisplayEndDate.greater.than.recurStartDate', ex.getMessage()
         }
         assertTrue exception
-        assertNull resp;
+        assertNull resp
 
     }
 
@@ -249,7 +250,7 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
     void testRecurEndDateGreaterThanStartDate() {
         //map  && map.postingDispEndDays && !map.postingDisplayEndDate && !(map.postingDispEndDays >= map.postingDispStartDays )
 
-        def exception = false;
+        def exception = false
         def requestMap = [:]
         requestMap.recurFrequency = 1
         requestMap.recurFrequencyType = 'DAYS'
@@ -278,7 +279,7 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
     void testRecurEndDateDateGreaterThanStartDateHoursSadPath() {
         //map  && map.postingDispEndDays && !map.postingDisplayEndDate && !(map.postingDispEndDays >= map.postingDispStartDays )
 
-        def exception = false;
+        def exception = false
         def requestMap = [:]
         requestMap.recurFrequency = 1
         requestMap.recurFrequencyType = 'HOURS'
@@ -294,12 +295,12 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
             resp = actionItemPostRecurringDetailsService.preCreateValidate(requestMap)
         }
         catch (Exception ex) {
-            exception = true;
+            exception = true
             assertNotNull ex
             assertEquals 'preCreate.validation.recurrence.recurStartDate.less.than.or.equals.recurEndDate', ex.getMessage()
         }
         assertTrue exception
-        assertNull resp;
+        assertNull resp
 
     }
 
@@ -323,12 +324,12 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
             resp = actionItemPostRecurringDetailsService.preCreateValidate(requestMap)
         }
         catch (Exception ex) {
-            exception = true;
+            exception = true
             assertNotNull ex
             assertEquals 'preCreate.validation.recurrence.recurStartDate.equal.to.recurEndDate', ex.getMessage()
         }
-        assertNull resp;
-        assertFalse exception;
+        assertNull resp
+        assertFalse exception
 
     }
 
@@ -338,15 +339,15 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
         ActionItemPostRecurringDetails actionItemPostRecurringDetails = new ActionItemPostRecurringDetails(
                 recurStartDate: new Date(2019, 03, 22),
                 recurEndDate: new Date(2019, 03, 31))
-        def days = actionItemPostRecurringDetailsService.getDaysBetweenRecurStartAndEndDate(actionItemPostRecurringDetails);
+        def days = actionItemPostRecurringDetailsService.getDaysBetweenRecurStartAndEndDate(actionItemPostRecurringDetails)
         assertEquals 9, days
 
-        actionItemPostRecurringDetails.recurEndDate = new Date(2019, 03, 22);
-        days = actionItemPostRecurringDetailsService.getDaysBetweenRecurStartAndEndDate(actionItemPostRecurringDetails);
+        actionItemPostRecurringDetails.recurEndDate = new Date(2019, 03, 22)
+        days = actionItemPostRecurringDetailsService.getDaysBetweenRecurStartAndEndDate(actionItemPostRecurringDetails)
         assertEquals 0, days
 
-        actionItemPostRecurringDetails.recurEndDate = new Date(2019, 03, 21);
-        days = actionItemPostRecurringDetailsService.getDaysBetweenRecurStartAndEndDate(actionItemPostRecurringDetails);
+        actionItemPostRecurringDetails.recurEndDate = new Date(2019, 03, 21)
+        days = actionItemPostRecurringDetailsService.getDaysBetweenRecurStartAndEndDate(actionItemPostRecurringDetails)
         assertNotEquals 0, days
 
     }
@@ -354,19 +355,22 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
     @Test
     void getNuberOfJobsBasedOnDays() {
 
-        ActionItemPostRecurringDetails actionItemPostRecurringDetails = new ActionItemPostRecurringDetails();
+        ActionItemPostRecurringDetails actionItemPostRecurringDetails = new ActionItemPostRecurringDetails()
         actionItemPostRecurringDetails.recurStartDate = new Date(2019, 03, 22)
         actionItemPostRecurringDetails.recurEndDate = new Date(2019, 03, 28)
         actionItemPostRecurringDetails.recurFrequencyType = "DAYS"
         actionItemPostRecurringDetails.recurFrequency = 1L
+        ActionItemPost actionItemPost = new ActionItemPost(
+                postingDisplayDateTime: new Date(2019, 03, 22)
+        )
 
-        def numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails)
+        def numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails,actionItemPost)
         assertEquals 6, numberOfObjects
 
         actionItemPostRecurringDetails.recurEndDate = new Date(2019, 03, 29)
         actionItemPostRecurringDetails.recurFrequency = 2L
 
-        numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails)
+        numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails,actionItemPost)
         assertEquals 3, numberOfObjects
 
 
@@ -374,6 +378,7 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
 
     @Test
     void testGetHoursBetweenRecurStartAndEndDate() {
+        ActionItemPost actionItemPost = new ActionItemPost(postingDisplayDateTime:new Date(2019, 03, 22) )
 
         ActionItemPostRecurringDetails actionItemPostRecurringDetails = new ActionItemPostRecurringDetails(
                     recurStartDate: new Date(2019, 03, 22),
@@ -381,31 +386,36 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
                     recurStartTime: new Date(2019, 03, 22, 8, 0))
 
 
-        def hours = actionItemPostRecurringDetailsService.getHoursBetweenRecurStartAndEndDate(actionItemPostRecurringDetails);
+        def hours = actionItemPostRecurringDetailsService.getHoursBetweenRecurStartAndEndDate(actionItemPostRecurringDetails,actionItemPost)
         assertEquals 39, hours
 
-        actionItemPostRecurringDetails.recurStartTime = new Date(2019, 03, 23, 0, 0);
-        hours = actionItemPostRecurringDetailsService.getHoursBetweenRecurStartAndEndDate(actionItemPostRecurringDetails);
+        actionItemPostRecurringDetails.recurStartTime = new Date(2019, 03, 23, 0, 0)
+        actionItemPost.postingDisplayDateTime =  new Date(2019, 03, 23, 0, 0)
+        hours = actionItemPostRecurringDetailsService.getHoursBetweenRecurStartAndEndDate(actionItemPostRecurringDetails,actionItemPost)
         assertEquals 23, hours
     }
 
     @Test
     void getNuberOfJobsBasedOnHours() {
-        ActionItemPostRecurringDetails actionItemPostRecurringDetails = new ActionItemPostRecurringDetails();
+        ActionItemPostRecurringDetails actionItemPostRecurringDetails = new ActionItemPostRecurringDetails()
         actionItemPostRecurringDetails.recurStartTime = new Date(2019, 03, 22, 0, 0)
+        ActionItemPost actionItemPost = new ActionItemPost(
+                postingDisplayDateTime: new Date(2019, 03, 22, 0, 0)
+        )
         actionItemPostRecurringDetails.recurEndDate = new Date(2019, 03, 23)
         actionItemPostRecurringDetails.recurFrequencyType = "HOURS"
         actionItemPostRecurringDetails.recurFrequency = 1L
 
-        def numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails)
+        def numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails,actionItemPost)
         assertEquals 47, numberOfObjects
 
         actionItemPostRecurringDetails.recurFrequency = 2L
-        numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails)
+        numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails,actionItemPost)
         assertEquals 23, numberOfObjects
-        actionItemPostRecurringDetails.recurStartTime = new Date(2019, 03, 22, 9, 0)
+
+        actionItemPost.postingDisplayDateTime = new Date(2019, 03, 22, 9, 0)
         actionItemPostRecurringDetails.recurFrequency = 3L
-        numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails)
+        numberOfObjects = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails,actionItemPost)
         assertEquals 12, numberOfObjects
 
     }
@@ -420,10 +430,10 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
         actionItemPostRecurringDetails.recurFrequency = 1L
         //10 days and 10 iteration
         Date scheduledDate = new Date(2019, 03, 20)
-        Date result = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDate,actionItemPostRecurringDetails);
+        Date result = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDate,actionItemPostRecurringDetails)
         assertEquals new Date(2019, 03, 23), result
         scheduledDate=result
-        result = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDate,actionItemPostRecurringDetails);
+        result = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDate,actionItemPostRecurringDetails)
         assertEquals new Date(2019, 03, 26), result
         scheduledDate=result
         result = actionItemPostRecurringDetailsService.resolveDisplayStartDate(scheduledDate,actionItemPostRecurringDetails)
@@ -437,15 +447,15 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
                 recurStartTime: new Date(2019, 03, 20, 9, 30),
                 recurFrequency: 2L,
                 recurFrequencyType: "DAYS"
-        );
+        )
 
-        Date result = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 1);
+        Date result = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 1)
         assertEquals new Date(2019, 03, 22, 9, 30), result
 
-        result = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 2);
+        result = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 2)
         assertEquals new Date(2019, 03, 24, 9, 30), result
 
-        result = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 3);
+        result = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 3)
         assertEquals new Date(2019, 03, 26, 9, 30), result
     }
 
@@ -456,18 +466,18 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
                 recurStartTime: new Date(2019, 03, 20, 9, 30),
                 recurFrequency: 4L,
                 recurFrequencyType: "HOURS"
-        );
+        )
 
-        Date result = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 1);
+        Date result = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 1)
         assertEquals new Date(2019, 03, 20, 13, 30), result
 
-        result = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 2);
+        result = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 2)
         assertEquals new Date(2019, 03, 20, 17, 30), result
 
-        result = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 3);
+        result = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 3)
         assertEquals new Date(2019, 03, 20, 21, 30), result
 
-        result = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 4);
+        result = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, 4)
         assertEquals new Date(2019, 03, 21, 1, 30), result
     }
 
@@ -482,7 +492,7 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
                 recurFrequencyType: "DAYS",
                 postingDispStartDays: 2,
                 postingDispEndDays: 10
-        );
+        )
         Date scheduledDateTime
         Date resolvedStartDate
         Date resolvedEndDate
@@ -549,7 +559,7 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
                 recurFrequencyType: "DAYS",
                 postingDispStartDays: 2,
                 postingDisplayEndDate: new Date(2019, Calendar.MARCH, 20)
-        );
+        )
 
 
         Date scheduledDateTime
@@ -609,7 +619,7 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
                 recurFrequencyType: "HOURS",
                 postingDispStartDays: 2,
                 postingDispEndDays: 10
-        );
+        )
 
 
         Date scheduledDateTime
