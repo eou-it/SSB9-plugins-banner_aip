@@ -37,19 +37,19 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
         if (map && !map.recurFrequencyType) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.recurFrequencyType.invalid', []))
         }
-        if (map && map.postingDispStartDays && map.postingDispStartDays < 0) {
+        if (map && map.postingDispStartDays!=null && map.postingDispStartDays < 0) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.displayStartDateOffset.zero', []))
         }
-        if (map && map.postingDispEndDays && !map.postingDisplayEndDate && map.postingDispEndDays < 0) {
+        if (map && map.postingDispEndDays !=null && !map.postingDisplayEndDate && map.postingDispEndDays < 0) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.postingDispEndDays.zero', []))
         }
-        if (map && map.postingDispEndDays && !map.postingDisplayEndDate && map.postingDispEndDays < map.postingDispStartDays) {
+        if (map && map.postingDispEndDays!=null && !map.postingDisplayEndDate && map.postingDispEndDays < map.postingDispStartDays) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.postingDisplayEndDate.greater.postingDispStartDays', []))
         }
-        if (map && !map.postingDispEndDays && map.postingDisplayEndDate && map.postingDisplayEndDate.compareTo(map.recurStartDate) <= 0) {
+        if (map && map.postingDisplayEndDate && map.postingDisplayEndDate.compareTo(map.recurStartDate) < 0) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.postingDisplayEndDate.greater.than.recurStartDate', []))
         }
-        if (map && !map.postingDispEndDays && map.postingDisplayEndDate && !(map.postingDisplayEndDate.compareTo(map.recurEndDate) > 0)) {
+        if (map && map.postingDisplayEndDate && map.postingDisplayEndDate.compareTo(map.recurEndDate) < 0) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.postingDisplayEndDate.greater.than.recurEndDate', []))
         }
         if (map && map.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_DAYS && map.recurStartDate && !(map.recurEndDate.compareTo(map.recurStartDate) > 0)) {
@@ -65,10 +65,11 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * @param actionItemPostRecurringDetails
      * @return
      */
-    Boolean validateDisplayEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails){
+    Boolean validateDisplayEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails,Date displayStartDateTime ){
         if(!actionItemPostRecurringDetails.postingDispEndDays && actionItemPostRecurringDetails.postingDisplayEndDate ){
-            Integer numberOfObjects = getNumberOfJobs(actionItemPostRecurringDetails)
+            Integer numberOfObjects = getNumberOfJobs(actionItemPostRecurringDetails,displayStartDateTime)
             Date postingDateOfLastJob = resolveScheduleDateTime(actionItemPostRecurringDetails,numberOfObjects-1)
+            LOGGER.trace "validating display end date - Numbre of jobs - ${numberOfObjects},calculated date of last posting job -${postingDateOfLastJob},posting display end date -${actionItemPostRecurringDetails.postingDisplayEndDate}"
             if(postingDateOfLastJob.compareTo(actionItemPostRecurringDetails.postingDisplayEndDate)>0){
                 //if firm display end date chosen & calculated last posting job date < display end date
                 //Display end date must be greater than or equal to date of last posting job.
@@ -109,10 +110,10 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * Validate dates method calls various date validations required for recurrance
      * @param actionItemPostRecurringDetails
      */
-    void validateDates(ActionItemPostRecurringDetails actionItemPostRecurringDetails){
-        validateDisplayEndDate(actionItemPostRecurringDetails)
+    void validateDates(ActionItemPostRecurringDetails actionItemPostRecurringDetails,Date displayStartDateTime){
+        validateDisplayEndDate(actionItemPostRecurringDetails,displayStartDateTime)
         validateRecurEndDate(actionItemPostRecurringDetails)
-        validateRecurrStartDateAndTime(actionItemPostRecurringDetails)
+        validateRecurrStartDateAndTime(actionItemPostRecurringDetails,displayStartDateTime)
     }
 
     /**
@@ -120,11 +121,11 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * @param actionItemPostRecurringDetails metadata of recurring action item
      * @return
      */
-    Long getNumberOfJobs(ActionItemPostRecurringDetails actionItemPostRecurringDetails, ActionItemPost actionItemPost) {
+    Long getNumberOfJobs(ActionItemPostRecurringDetails actionItemPostRecurringDetails, Date displayStartDateTime) {
         Long totalNumber = actionItemPostRecurringDetails.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_DAYS ? getDaysBetweenRecurStartAndEndDate(actionItemPostRecurringDetails)
-                : getHoursBetweenRecurStartAndEndDate(actionItemPostRecurringDetails,actionItemPost)
+                : getHoursBetweenRecurStartAndEndDate(actionItemPostRecurringDetails,displayStartDateTime)
         Long numberOfObjects = totalNumber / actionItemPostRecurringDetails.recurFrequency
-        LOGGER.trace "Number of jobs for reccuring job - ${actionItemPostRecurringDetails.id} is ${numberOfObjects}"
+        LOGGER.trace "Number of jobs for reccuring job id- ${actionItemPostRecurringDetails.id} is ${numberOfObjects}"
         numberOfObjects
     }
 
@@ -143,14 +144,14 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * @param actionItemPostRecurringDetails actionItemPostRecurringDetails containing details required for recurrence
      * @return
      */
-    Long getHoursBetweenRecurStartAndEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails,ActionItemPost actionItemPost) {
+    Long getHoursBetweenRecurStartAndEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails,Date displayStartDateAndTime) {
         Calendar calculatedEndTime = Calendar.getInstance()
         calculatedEndTime.setTime(actionItemPostRecurringDetails.recurEndDate)
         calculatedEndTime.set(Calendar.HOUR_OF_DAY,23)
         calculatedEndTime.set(Calendar.MINUTE,59)
         calculatedEndTime.set(Calendar.SECOND,59)
-        Long diff = calculatedEndTime.getTime().getTime() - actionItemPost.postingDisplayDateTime.getTime()
-        LOGGER.trace "Start time - ${actionItemPost.postingDisplayDateTime} and end time - ${calculatedEndTime.getTime()} and diff in hours is ${TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)}}"
+        Long diff = calculatedEndTime.getTime().getTime() - displayStartDateAndTime.getTime()
+        LOGGER.trace "Start time - ${displayStartDateAndTime} and end time - ${calculatedEndTime.getTime()} and diff in hours is ${TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)}}"
         TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)
     }
 
@@ -162,10 +163,10 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      */
     Date resolveDisplayStartDate(Date scheduledDate, ActionItemPostRecurringDetails actionItemPostRecurringDetails) {
         if (actionItemPostRecurringDetails.postingDispStartDays == 0) {
-            return scheduledDate
+            return removeTime(scheduledDate)
         } else {
             Integer daysToadd=actionItemPostRecurringDetails.postingDispStartDays
-            return addDays(scheduledDate,daysToadd )
+            return removeTime(addDays(scheduledDate,daysToadd ))
         }
     }
 
@@ -177,13 +178,13 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      */
     Date resolveDiplayEndDate(Date scheduledDate, ActionItemPostRecurringDetails actionItemPostRecurringDetails) {
         Boolean isOffSetEndDate = !actionItemPostRecurringDetails.postingDisplayEndDate && actionItemPostRecurringDetails.postingDispEndDays !=null
-        LOGGER.trace "Posting End date -{$actionItemPostRecurringDetails.postingDisplayEndDate}, Posting End date offset {$actionItemPostRecurringDetails.postingDispEndDays},isOffset - {$isOffSetEndDate}"
+        LOGGER.trace "Resolving display End date - Posting End date -{$actionItemPostRecurringDetails.postingDisplayEndDate}, Posting End date offset {$actionItemPostRecurringDetails.postingDispEndDays},isOffset - {$isOffSetEndDate}"
         if (isOffSetEndDate) {
             if (actionItemPostRecurringDetails.postingDispEndDays == 0) {
-                return scheduledDate
+                return removeTime(scheduledDate)
             } else {
                 Integer daysToAdd = actionItemPostRecurringDetails.postingDispEndDays
-                return addDays(scheduledDate,daysToAdd )
+                return removeTime(addDays(scheduledDate,daysToAdd ))
             }
         } else {
             return actionItemPostRecurringDetails.postingDisplayEndDate
@@ -250,6 +251,20 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
         Calendar calculatedStartDate = Calendar.getInstance()
         calculatedStartDate.setTime(date)
         calculatedStartDate.add(Calendar.DAY_OF_MONTH, daysToadd)
+        calculatedStartDate.getTime()
+    }
+    /**
+     * Removes time from the given date
+     * @param date date object
+     * @param daysToadd hours to add
+     * @return
+     */
+    private Date removeTime(Date date) {
+        Calendar calculatedStartDate = Calendar.getInstance()
+        calculatedStartDate.setTime(date)
+        calculatedStartDate.set(Calendar.HOUR_OF_DAY,0)
+        calculatedStartDate.set(Calendar.MINUTE,0)
+        calculatedStartDate.set(Calendar.SECOND,0)
         calculatedStartDate.getTime()
     }
 }

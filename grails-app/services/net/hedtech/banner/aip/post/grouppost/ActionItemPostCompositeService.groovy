@@ -187,9 +187,10 @@ class ActionItemPostCompositeService {
      * @return
      */
     ActionItemPostRecurringDetails validateAndCreateActionItemRecurDetlObject(def requestMap) {
+        Date displayStartDateTime= getDisplayDateTimeCalender(requestMap.displayDatetimeZone).getTime()
         actionItemPostRecurringDetailsService.preCreateValidate(requestMap)
         def actionItemPostRecurringDetailsObject = getActionItemPostRecurringInstance(requestMap)
-        actionItemPostRecurringDetailsService.validateDates(actionItemPostRecurringDetailsObject)
+        actionItemPostRecurringDetailsService.validateDates(actionItemPostRecurringDetailsObject,displayStartDateTime)
         actionItemPostRecurringDetailsService.create(actionItemPostRecurringDetailsObject)
     }
     /**
@@ -281,7 +282,7 @@ class ActionItemPostCompositeService {
      */
     List<ActionItemPost> createActionItemObjects(ActionItemPostRecurringDetails actionItemPostRecurringDetails, ActionItemPost actionItemPost) {
 
-        Long numberOfJobs = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails,actionItemPost)
+        Long numberOfJobs = actionItemPostRecurringDetailsService.getNumberOfJobs(actionItemPostRecurringDetails,actionItemPost.postingDisplayDateTime)
         List<ActionItemPost> individualActionItemPostObjects = new LinkedList<ActionItemPost>()
         ActionItemPost individualActionItemPost
 
@@ -307,8 +308,10 @@ class ActionItemPostCompositeService {
                     recurringPostInd: false,
                     recurringPostDetailsId: actionItemPost.recurringPostDetailsId
             )
+            LOGGER.trace "createActionItemObjects - Item Created no ${iteration}, Item created ${individualActionItemPost} "
             individualActionItemPostObjects.add(individualActionItemPost)
         }
+
         individualActionItemPostObjects
     }
 
