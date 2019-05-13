@@ -70,7 +70,7 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
             Integer numberOfObjects = getNumberOfJobs(actionItemPostRecurringDetails,displayStartDateTime)
             Date postingDateOfLastJob = resolveScheduleDateTime(actionItemPostRecurringDetails,numberOfObjects-1)
             LOGGER.trace "validating display end date - Numbre of jobs - ${numberOfObjects},calculated date of last posting job -${postingDateOfLastJob},posting display end date -${actionItemPostRecurringDetails.postingDisplayEndDate}"
-            if(postingDateOfLastJob.compareTo(actionItemPostRecurringDetails.postingDisplayEndDate)>0){
+            if(removeTime(postingDateOfLastJob).compareTo(actionItemPostRecurringDetails.postingDisplayEndDate)>0){
                 //if firm display end date chosen & calculated last posting job date < display end date
                 //Display end date must be greater than or equal to date of last posting job.
                 throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('validation.DispEndDate.greater.than.or.equals.dateLastPosting', []))
