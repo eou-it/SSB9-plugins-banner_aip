@@ -113,7 +113,7 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
     void validateDates(ActionItemPostRecurringDetails actionItemPostRecurringDetails,Date displayStartDateTime){
         validateDisplayEndDate(actionItemPostRecurringDetails,displayStartDateTime)
         validateRecurEndDate(actionItemPostRecurringDetails)
-        validateRecurrStartDateAndTime(actionItemPostRecurringDetails,displayStartDateTime)
+        validateRecurrStartDateAndTime(actionItemPostRecurringDetails)
     }
 
     /**
