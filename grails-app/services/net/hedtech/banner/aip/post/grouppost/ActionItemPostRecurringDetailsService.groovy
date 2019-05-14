@@ -183,7 +183,7 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
             if (actionItemPostRecurringDetails.postingDispEndDays == 0) {
                 return removeTime(scheduledDate)
             } else {
-                Integer daysToAdd = actionItemPostRecurringDetails.postingDispEndDays
+                Integer daysToAdd = actionItemPostRecurringDetails.postingDispEndDays-1
                 return removeTime(addDays(scheduledDate,daysToAdd ))
             }
         } else {

@@ -288,9 +288,9 @@ class ActionItemPostCompositeService {
 
         for (int iteration = 0; iteration <= numberOfJobs; iteration++) {
             Date postingScheduleDateTime = actionItemPostRecurringDetailsService.resolveScheduleDateTime(actionItemPostRecurringDetails, iteration)
-            Date postingDisplayStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(postingScheduleDateTime, actionItemPostRecurringDetails)
-            Date postingDisplayEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(postingScheduleDateTime, actionItemPostRecurringDetails)
             Date postingDisplayDateTime = actionItemPostRecurringDetailsService.resolvePostingDisplayDateTime(actionItemPostRecurringDetails,actionItemPost,iteration)
+            Date postingDisplayStartDate = actionItemPostRecurringDetailsService.resolveDisplayStartDate(postingDisplayDateTime, actionItemPostRecurringDetails)
+            Date postingDisplayEndDate = actionItemPostRecurringDetailsService.resolveDiplayEndDate(postingDisplayDateTime, actionItemPostRecurringDetails)
             individualActionItemPost = new ActionItemPost(
                     populationListId: actionItemPost.populationListId,
                     postingActionItemGroupId: actionItemPost.postingActionItemGroupId,
