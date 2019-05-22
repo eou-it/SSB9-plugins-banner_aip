@@ -11,6 +11,8 @@ import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
+import javax.persistence.NamedQueries
+import javax.persistence.NamedQuery
 import javax.persistence.SequenceGenerator
 import javax.persistence.Table
 import javax.persistence.Temporal
@@ -25,6 +27,13 @@ import javax.persistence.Version
 @Table(name = "GCBRAPT")
 @ToString(includeNames = true, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)
+@NamedQueries(value = [
+        @NamedQuery(name = "ActionItemPostRecurringDetails.fetchByRecurId",
+                query = """FROM ActionItemPostRecurringDetails a		
+                           WHERE a.id = :recurId 		
+            """
+        )
+])
 
 
 @DatabaseModifiesState
@@ -148,6 +157,12 @@ class ActionItemPostRecurringDetails implements Serializable {
         vpdiCode( nullable: true, maxSize: 6 )
         version( nullable: true, maxSize: 19 )
 
+    }
+    def static fetchByRecurId( recurId ) {
+        ActionItemPostRecurringDetails.withSession {session ->
+            session.getNamedQuery( 'ActionItemPostRecurringDetails.fetchByRecurId' )
+                    .setLong( 'recurId', recurId ).list()[0]
+        }
     }
 
 }

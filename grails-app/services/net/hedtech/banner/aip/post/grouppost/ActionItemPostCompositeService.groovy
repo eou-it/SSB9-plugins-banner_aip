@@ -22,10 +22,16 @@ import net.hedtech.banner.general.communication.population.CommunicationPopulati
 import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.general.scheduler.SchedulerJobReceipt
+import net.hedtech.banner.virtualDomain.VirtualDomainRole
 import org.apache.log4j.Logger
+import org.grails.datastore.mapping.query.Query
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.request.RequestContextHolder
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+
 
 /**
  * ActionItemPost Composite Service is responsible for initiating and processing group posts.
@@ -78,7 +84,9 @@ class ActionItemPostCompositeService {
         def user = springSecurityService.getAuthentication()?.user
         def success = false
         ActionItemPost groupSend = recurringActionItemPost ? recurringActionItemPost : getActionPostInstance(requestMap, user)
-        validateDates(groupSend, requestMap.scheduled)
+        if(!requestMap.isRecurEdit) {
+            validateDates(groupSend, requestMap.scheduled)
+        }
         CommunicationPopulation population = communicationPopulationCompositeService.fetchPopulation(groupSend.populationListId)
         boolean hasQuery = (CommunicationPopulationQueryAssociation.countByPopulation(population) > 0)
         boolean useCurrentReplica = (!groupSend.populationRegenerateIndicator || !requestMap.scheduledStartDate)
@@ -110,7 +118,7 @@ class ActionItemPostCompositeService {
         if (requestMap.postNow) {
             groupSendSaved = schedulePostImmediately(groupSendSaved, user.oracleUserName)
         } else if (requestMap.scheduledStartDate) {
-            groupSendSaved = schedulePost(groupSendSaved, user.oracleUserName)
+            groupSendSaved = schedulePost(groupSendSaved, user.oracleUserName,requestMap.isRecurEdit)
         }
         success = true
         LoggerUtility.debug(LOGGER, " Finished Saving Posting ${groupSendSaved}.")
@@ -172,7 +180,7 @@ class ActionItemPostCompositeService {
         if (requestMap.postNow) {
             groupSendSaved = schedulePostImmediately(groupSendSaved, user.oracleUserName)
         } else if (requestMap.scheduledStartDate) {
-            groupSendSaved = schedulePost(groupSendSaved, user.oracleUserName)
+            groupSendSaved = schedulePost(groupSendSaved, user.oracleUserName,requestMap.isRecurEdit)
         }
         success = true
         [
@@ -227,6 +235,11 @@ class ActionItemPostCompositeService {
         ActionItemPost post = createActionItemPostForRecurActionItem(requestMap, actionItemPostRecurringDetails.id, user)
         def actionItemIds = requestMap.actionItemIds
 
+        // Create the Action Item details records.
+        requestMap.actionItemIds.each {
+            addPostingDetail(it, post.id)
+        }
+
         def actionItemPostObjects = createActionItemObjects(actionItemPostRecurringDetails, post)
 
         def success = true
@@ -247,6 +260,396 @@ class ActionItemPostCompositeService {
         ]
 
     }
+
+    /**
+     * This method updates the recurring action item posting job
+     * @param requestMap post request containing parameters from user input
+     * @return
+     */
+
+    def updateRecurringActionItemPosting(requestMap) {
+
+        def success = false
+        requestMap.recurrence=true
+        actionItemPostService.preCreateValidation(requestMap)
+        actionItemPostRecurringDetailsService.preCreateValidate(requestMap)
+
+        def actionItemPost = ActionItemPost.fetchJobByPostingId(requestMap.postId )
+        def actionItemPostRecurringDetails = ActionItemPostRecurringDetails.fetchByRecurId(actionItemPost.recurringPostDetailsId)
+        def  actionItemPostRecurringJobs = ActionItemPost.fetchRecurringScheduledJobs(requestMap.postId,actionItemPost.recurringPostDetailsId)
+        def updatedRecurringJobsList=actionItemPostRecurringJobs
+        def changedRecurringJobsList
+
+
+        updatedRecurringJobsList=checkAndEditRecurEndDateLesser(requestMap,actionItemPostRecurringDetails,actionItemPostRecurringJobs)
+        updatedRecurringJobsList=checkAndEditRecurEndDateGreater(requestMap,actionItemPostRecurringDetails,actionItemPostRecurringJobs,updatedRecurringJobsList)
+        changedRecurringJobsList=updatedRecurringJobsList
+        changedRecurringJobsList=checkAndEditDisplayStartDays(requestMap,actionItemPostRecurringDetails,changedRecurringJobsList)
+        changedRecurringJobsList=checkAndEditDisplayEndDays(requestMap,actionItemPostRecurringDetails,changedRecurringJobsList)
+        changedRecurringJobsList=checkAndEditDisplayEndDateToOffset(requestMap,actionItemPostRecurringDetails,changedRecurringJobsList)
+        changedRecurringJobsList=checkAndEditDisplayEndDate(requestMap,actionItemPostRecurringDetails,changedRecurringJobsList)
+        changedRecurringJobsList=checkAndEditRecurTime(requestMap,actionItemPost,changedRecurringJobsList)
+        changedRecurringJobsList=checkAndEditRecurTimeZone(requestMap,actionItemPostRecurringDetails,actionItemPost,changedRecurringJobsList)
+
+
+        updateRecurData(actionItemPostRecurringDetails)
+        updateRecurrenceScheduledJob(actionItemPost)
+
+        success=true
+        [
+                success : success,
+                savedJob: actionItemPost
+        ]
+
+    }
+
+    /**
+     * This method checks the RecurEndDate lesser and fetches the latest recurring jobs
+     * @param requestMap post request containing parameters from user input
+     * @actionItemPostRecurringDetails contains saved recurringDetails
+     * @actionItemPostRecurringJobs actionItemPostRecurringJobs contains latest actionItemRecurringJobs
+     * @return
+     */
+
+    def checkAndEditRecurEndDateLesser(requestMap,actionItemPostRecurringDetails,actionItemPostRecurringJobs) {
+
+        List<ActionItemPost> editedRecurringJobsList=actionItemPostRecurringJobs
+        Date newrecurEndDate=  new Date(requestMap.recurEndDate)
+        if (newrecurEndDate.compareTo(actionItemPostRecurringDetails.recurEndDate )<0)
+        {
+            deleteJobsRecurEndDateLesser(actionItemPostRecurringJobs,requestMap.recurEndDate)
+            actionItemPostRecurringDetails.recurEndDate= actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.recurEndDate)
+            def newRecurringJobList=ActionItemPost.fetchRecurringScheduledJobs(requestMap.postId,actionItemPostRecurringDetails.id)
+            return newRecurringJobList
+        }
+         return  editedRecurringJobsList
+    }
+
+    /**
+     * This method checks the RecurEndDate Greater and fetches the latest recurring jobs
+     * @param requestMap post request containing parameters from user input
+     * @actionItemPostRecurringDetails actionItemPostRecurringDetails contains saved recurringDetails
+     * @editedRecurringJobs editedRecurringJobs contains edited actionItemRecurringJobs
+     * @return
+     */
+
+    def checkAndEditRecurEndDateGreater(requestMap,actionItemPostRecurringDetails,actionItemPostRecurringJobs,editedRecurringJobs) {
+
+        print"GREATER"
+        List<ActionItemPost> editedRecurringJobsList=actionItemPostRecurringJobs
+        Date newrecurEndDateGreater = new Date(requestMap.recurEndDate)
+        if (newrecurEndDateGreater.compareTo(actionItemPostRecurringDetails.recurEndDate) > 0) {
+            actionItemPostRecurringDetails.recurEndDate= actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.recurEndDate)
+            editedRecurringJobsList = insertJobsRecurEndDateGreater(actionItemPostRecurringDetails, requestMap)
+             def newRecurringJobList=ActionItemPost.fetchRecurringScheduledJobs(requestMap.postId,actionItemPostRecurringDetails.id)
+            return newRecurringJobList
+        }
+        return editedRecurringJobs
+    }
+
+    /**
+     * This method checks the new DisplayStartDays not equal to old DisplayStartDays and edit
+     * @param requestMap post request containing parameters from user input
+     * @actionItemPostRecurringDetails actionItemPostRecurringDetails contains saved recurringDetails
+     * @editedRecurringJobs editedRecurringJobs contains edited actionItemRecurringJobs
+     * @return
+     */
+
+    def checkAndEditDisplayStartDays(requestMap,actionItemPostRecurringDetails,editedRecurringJobs){
+
+        Integer diffDispStartDaysVal
+        if (requestMap.postingDispStartDays != actionItemPostRecurringDetails.postingDispStartDays){
+            diffDispStartDaysVal=requestMap.postingDispStartDays-actionItemPostRecurringDetails.postingDispStartDays;
+            editedRecurringJobs.each {
+                Date calculatedDisplayStartDate = actionItemPostRecurringDetailsService.addDays( it.postingDisplayStartDate,diffDispStartDaysVal)
+                it.postingDisplayStartDate = calculatedDisplayStartDate
+            }
+            actionItemPostRecurringDetails.postingDispStartDays= requestMap.postingDispStartDays
+        }
+        return editedRecurringJobs
+    }
+
+    /**
+     * This method checks the new DisplayEndDays not equal to old DisplayEndDays and edit
+     * @param requestMap post request containing parameters from user input
+     * @actionItemPostRecurringDetails actionItemPostRecurringDetails contains saved recurringDetails
+     * @editedRecurringJobs editedRecurringJobs contains edited actionItemRecurringJobs
+     * @return
+     */
+    def checkAndEditDisplayEndDays(requestMap,actionItemPostRecurringDetails,editedRecurringJobs){
+
+        Integer diffDispEndDaysVal
+        if (requestMap.postingDispEndDays) {
+            actionItemPostRecurringDetails.postingDispEndDays ? actionItemPostRecurringDetails.postingDispEndDays : 0
+            if ( requestMap.postingDispEndDays != actionItemPostRecurringDetails.postingDispEndDays) {
+                diffDispEndDaysVal = requestMap.postingDispEndDays - actionItemPostRecurringDetails.postingDispEndDays;
+                editedRecurringJobs.each {
+                    Date calculatedDisplayEndDate = actionItemPostRecurringDetailsService.addDays(it.postingDisplayEndDate, diffDispEndDaysVal)
+                    it.postingDisplayEndDate = calculatedDisplayEndDate
+                }
+                actionItemPostRecurringDetails.postingDispEndDays = requestMap.postingDispEndDays
+                actionItemPostRecurringDetails.postingDisplayEndDate = null
+            }
+        }
+        return  editedRecurringJobs
+    }
+
+    /**
+     * This method checks the change from Display End Date to Offset and edit
+     * @param requestMap post request containing parameters from user input
+     * @actionItemPostRecurringDetails actionItemPostRecurringDetails contains saved recurringDetails
+     * @editedRecurringJobs editedRecurringJobs contains edited actionItemRecurringJobs
+     * @return
+     */
+
+    def checkAndEditDisplayEndDateToOffset(requestMap,actionItemPostRecurringDetails,editedRecurringJobs){
+
+        if (requestMap.postingDispEndDays && actionItemPostRecurringDetails.postingDisplayEndDate){
+            editedRecurringJobs.each {
+                Date calculatedDisplayEndDate=  actionItemPostRecurringDetailsService.addDays( it.postingScheduleDateTime,requestMap.postingDispEndDays)
+                it.postingDisplayEndDate = calculatedDisplayEndDate
+            }
+            actionItemPostRecurringDetails.postingDispEndDays= requestMap.postingDispEndDays
+            actionItemPostRecurringDetails.postingDisplayEndDate= null
+        }
+        return  editedRecurringJobs
+    }
+
+    /**
+     * This method compares the new DisplayEndDate to old DisplayEndDate and edit
+     * @param requestMap post request containing parameters from user input
+     * @actionItemPostRecurringDetails actionItemPostRecurringDetails contains saved recurringDetails
+     * @editedRecurringJobs editedRecurringJobs contains edited actionItemRecurringJobs
+     * @return
+     */
+
+    def checkAndEditDisplayEndDate(requestMap,actionItemPostRecurringDetails,editedRecurringJobs){
+
+        if(requestMap.postingDisplayEndDate) {
+
+            Date newPostingDisplayEndDate=  new Date(requestMap.postingDisplayEndDate)
+            if (actionItemPostRecurringDetails.postingDisplayEndDate.equals(null) ) {
+                editedRecurringJobs.each {
+                    it.postingDisplayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.postingDisplayEndDate)
+                }
+            }
+            else{
+                if( newPostingDisplayEndDate.compareTo(actionItemPostRecurringDetails.postingDisplayEndDate) != 0){
+                    editedRecurringJobs.each {
+                        it.postingDisplayEndDate = newPostingDisplayEndDate
+                    }
+                }
+            }
+            actionItemPostRecurringDetails.postingDispEndDays= null
+            actionItemPostRecurringDetails.postingDisplayEndDate= actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.postingDisplayEndDate)
+        }
+        return editedRecurringJobs
+    }
+
+    /**
+     * This method compares the new Recur Time to old Recur Time and edit
+     * @param requestMap post request containing parameters from user input
+     * @actionItemPostRecurringDetails actionItemPostRecurringDetails contains saved recurringDetails
+     * @actionItemPost actionItemPost contains actionItemPostObjects
+     * @editedRecurringJobs editedRecurringJobs contains edited actionItemRecurringJobs
+     * @return
+     */
+    def checkAndEditRecurTime(requestMap,actionItemPost,editedRecurringJobs){
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(actionItemPost.postingDisplayDateTime);
+        Integer getDisplayHours = calendar.get(Calendar.HOUR_OF_DAY);
+        Integer getDisplayMinutes = calendar.get(Calendar.MINUTE);
+
+        Integer getRecurHours = Integer.parseInt(requestMap.recurStartTime.substring(0,2))
+        Integer getRecurMinutes = Integer.parseInt(requestMap.recurStartTime.substring(2,4))
+
+        if(getDisplayHours != getRecurHours || getDisplayMinutes != getRecurMinutes)
+        {
+            editedRecurringJobs=updateNewRecurTime(editedRecurringJobs,requestMap)
+            actionItemPost.postingDisplayDateTime=editedRecurringJobs[0].postingDisplayDateTime
+
+        }
+        return editedRecurringJobs
+    }
+
+    /**
+     * This method compares the new Recur TimeZone to old Recur TimeZone and edit
+     * @param requestMap post request containing parameters from user input
+     * @actionItemPostRecurringDetails actionItemPostRecurringDetails contains saved recurringDetails
+     * @actionItemPost actionItemPost contains actionItemPostObjects
+     * @editedRecurringJobs editedRecurringJobs contains edited actionItemRecurringJobs
+     * @return
+     */
+    def checkAndEditRecurTimeZone(requestMap,actionItemPostRecurringDetails,actionItemPost,editedRecurringJobs){
+
+        if (requestMap.recurPostTimezone!=actionItemPostRecurringDetails.recurPostTimezone)
+        {
+            editedRecurringJobs=updateNewRecurTimeZone(editedRecurringJobs,requestMap)
+            actionItemPostRecurringDetails.recurPostTimezone=requestMap.recurPostTimezone
+            actionItemPost.postingTimeZone =requestMap.displayDatetimeZone.timeZoneVal
+        }
+        return editedRecurringJobs
+    }
+
+    /**
+     * This method compares new RecurEnd Date is less than old Recur End Date. Delete jobs beyond Recur End Date
+     * @param requestMap post request containing parameters from user input
+     * @actionItemPostRecurringJobs actionItemPostRecurringJobs contains actionItemRecurringJobs
+     * @editedRecurEndDate editedRecurEndDate contains new Recur EndDate
+     * @return
+     */
+    def deleteJobsRecurEndDateLesser(actionItemPostRecurringJobs,editedRecurEndDate)
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd")
+        Date newRecurEndDate = sdf.parse(sdf.format(new Date(editedRecurEndDate)))
+
+        actionItemPostRecurringJobs.each {
+            Date scheduledDate = sdf.parse(sdf.format(it.postingScheduleDateTime))
+            if (newRecurEndDate.compareTo(scheduledDate)<0)
+            {
+                deletePostingDetail(it.id)
+                deletePost(it.id)
+            }
+        }
+    }
+
+    /**
+     * This method updates the Recur jobs with new TimeZone
+     * @editedRecurringJobs editedRecurringJobs contains edited actionItemRecurringJobs
+     * @recurDetails recurDetails contains new recur Details
+     * @return
+     */
+    def updateNewRecurTimeZone(editedRecurringJobs,recurDetails){
+
+        def user = springSecurityService.getAuthentication()?.user
+        boolean isRecurEdit=true
+
+        editedRecurringJobs.each {
+            String scheduledStartTime = recurDetails.recurStartTime
+            String timezoneStringOffset = recurDetails.recurPostTimezone
+            Calendar newscheduledStartDate=actionItemProcessingCommonService.getRequestedTimezoneCalendar(it.postingScheduleDateTime, scheduledStartTime, timezoneStringOffset)
+            it.postingScheduleDateTime=newscheduledStartDate.getTime()
+            it.postingTimeZone = recurDetails.displayDatetimeZone.timeZoneVal
+            if (it.aSyncJobId != null) {
+                schedulerJobService.deleteScheduledJob(it.aSyncJobId, it.aSyncGroupId)
+            }
+            editedRecurringJobs = schedulePost((ActionItemPost) it, user.oracleUserName, isRecurEdit)
+        }
+        return  editedRecurringJobs
+    }
+
+    /**
+     * This method updates the Recur jobs with new Time
+     * @editedRecurringJobs editedRecurringJobs contains edited actionItemRecurringJobs
+     * @recurDetails recurDetails contains new recur Details
+     * @return
+     */
+    def updateNewRecurTime(editedRecurringJobs,recurDetails){
+
+        def user = springSecurityService.getAuthentication()?.user
+        boolean isRecurEdit=true
+        editedRecurringJobs.each {
+            String scheduledStartTime = recurDetails.recurStartTime
+            String timezoneStringOffset = recurDetails.recurPostTimezone
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(it.postingDisplayDateTime);
+            calendar.set(Calendar.HOUR_OF_DAY,Integer.parseInt(recurDetails.recurStartTime.substring(0,2)))
+            calendar.set(Calendar.MINUTE,Integer.parseInt(recurDetails.recurStartTime.substring(2,4)))
+            Date newdisplayDateTime = calendar.getTime();
+            Calendar  newscheduledStartDate=actionItemProcessingCommonService.getRequestedTimezoneCalendar(it.postingScheduleDateTime, scheduledStartTime, timezoneStringOffset)
+            it.postingScheduleDateTime=newscheduledStartDate.getTime()
+            it.postingDisplayDateTime= newdisplayDateTime
+            if (it.aSyncJobId != null) {
+                schedulerJobService.deleteScheduledJob(it.aSyncJobId, it.aSyncGroupId)
+            }
+            editedRecurringJobs = schedulePost((ActionItemPost) it, user.oracleUserName, isRecurEdit)
+         }
+            return  editedRecurringJobs
+    }
+
+    /**
+     * This method compares new RecurEnd Date is greater than old Recur End Date.Insert jobs
+     * @recurDetails recurDetails contains new recur Details
+     * @requestMap requestMap containing parameters from user input
+     * @return
+     */
+    def insertJobsRecurEndDateGreater (recurDetails,requestMap){
+
+        def user = springSecurityService.getAuthentication()?.user
+        def tempRecurringDetails=recurDetails
+        //  actionItemPostRecurringDetails.recurEndDate= new Date(editedRecurDetails.recurEndDate)
+        ActionItemPost post = ActionItemPost.fetchJobByPostingId(requestMap.postId )
+        def getAllExistingRecurringJobs=ActionItemPost.fetchAllRecurringJobs(requestMap.postId,recurDetails.id)
+        def actionItemPostObjects = createActionItemObjects(recurDetails, post)
+
+        def newRecurringJobs = []
+       /* actionItemPostObjects.each { validActionItemPost ->
+         if(validActionItemPost.postingName && getAllExistingRecurringJobs.each{it.postingName != validActionItemPost.postingName})
+         {
+             newRecurringJobs.push(validActionItemPost)
+         }
+        }*/
+
+        def asize=actionItemPostObjects.size()
+        def gsize=getAllExistingRecurringJobs.size()
+        print "asize $asize"
+        print "gsize $gsize"
+
+//        actionItemPostObjects.removeAll(getAllExistingRecurringJobs)
+
+
+       for (Integer i=0;i<actionItemPostObjects.size();i++)
+        {
+            for (Integer k=i;k<getAllExistingRecurringJobs.size();k++)
+            {
+                def apost=actionItemPostObjects[i].postingName
+                def gpost=getAllExistingRecurringJobs[k].postingName
+                print"actionItemPostObjects[i].postingName $apost"
+                print"getAllExistingRecurringJobs[k].postingName $gpost"
+
+                if(actionItemPostObjects[i].postingName.contains(getAllExistingRecurringJobs[k].postingName)){
+                    print"NE"
+                }else{
+                    def epost=actionItemPostObjects[i].postingName
+                    print "AIPO $epost"
+                    newRecurringJobs.push(actionItemPostObjects[i])
+                }
+
+            }
+        }
+
+        def actionItemIds = editedRecurDetails.actionItemIds
+        def result
+        def asyncRequestMap = [scheduled    : true,
+                               actionItemIds: actionItemIds,
+                               postNow      : false,
+                               isRecurEdit:true]
+
+
+        newRecurringJobs.each { actionItemPost ->
+            asyncRequestMap.scheduledStartDate = actionItemPost.postingScheduleDateTime
+            asyncRequestMap.recurringActionItemPost = actionItemPost
+            result = sendAsynchronousPostItem(asyncRequestMap)
+        }
+    }
+
+    /**
+     * This method to update the recur Details
+     * @changedRecurData changedRecurData contains new recur Details
+     */
+    def  updateRecurData(changedRecurData){
+        actionItemPostRecurringDetailsService.update(changedRecurData)
+    }
+
+    /**
+     * This method to update the recurrenceScheduledJob
+     * @recurrenceScheduledJob recurrenceScheduledJob contains recurrenceScheduledJobDetails
+     */
+    def  updateRecurrenceScheduledJob(recurrenceScheduledJob) {
+        actionItemPostService.update(recurrenceScheduledJob)
+    }
+
     /**
      * Creates action item post recurring detail object from input parameters
      * @param requestMap post request containing parameters from user input
@@ -782,9 +1185,10 @@ class ActionItemPostCompositeService {
      * @param bannerUser
      * @return
      */
-    ActionItemPost schedulePost(ActionItemPost groupSend, String bannerUser) {
+    ActionItemPost schedulePost(ActionItemPost groupSend, String bannerUser,recurEditFlag) {
+        print "schedulePost"
         Date now = new Date(System.currentTimeMillis())
-        if (now.after(groupSend.postingScheduleDateTime)) {
+        if ((now.after(groupSend.postingScheduleDateTime)) && (!recurEditFlag)) {
             throw ActionItemExceptionFactory.createApplicationException(ActionItemPostService.class, "invalidScheduledDate")
         }
         def mepCode = RequestContextHolder.currentRequestAttributes().request.session.getAttribute('mep')

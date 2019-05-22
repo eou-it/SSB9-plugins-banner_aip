@@ -200,19 +200,19 @@ class ActionItemPostReadOnly implements Serializable {
     String postingPopulation
 
     /**
-     * Action Item posted
+     * Activity Date
      */
     @Column(name = "GCBAPST_ACTIVITY_DATE")
     Date lastModified
 
     /**
-     * Action Item posted
+     * Last modified by
      */
     @Column(name = "GCBAPST_USER_ID")
     String lastModifiedBy
 
     /**
-     * Action Item posted
+     * Version
      */
     @Version
     @Column(name = "GCBAPST_VERSION")
@@ -230,6 +230,19 @@ class ActionItemPostReadOnly implements Serializable {
      */
     @Column(name = "GCBAPST_TIME_ZONE")
     String postingTimeZone
+
+    /**
+     * recurPostInd:Store Recurring post job indicator
+     */
+    @Type(type = "yes_no")
+    @Column(name = "GCBAPST_RECUR_POST_IND")
+    boolean recurPostInd
+
+    /**
+     * recurPostId:Store Recurring post detail ID
+     */
+    @Column(name = "GCBAPST_GCBRAPT_ID")
+    Long recurPostId
 
     /**
      *
