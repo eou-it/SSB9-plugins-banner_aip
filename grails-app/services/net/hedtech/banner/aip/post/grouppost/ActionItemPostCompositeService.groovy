@@ -22,13 +22,10 @@ import net.hedtech.banner.general.communication.population.CommunicationPopulati
 import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.general.scheduler.SchedulerJobReceipt
-import net.hedtech.banner.virtualDomain.VirtualDomainRole
 import org.apache.log4j.Logger
-import org.grails.datastore.mapping.query.Query
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.request.RequestContextHolder
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 
