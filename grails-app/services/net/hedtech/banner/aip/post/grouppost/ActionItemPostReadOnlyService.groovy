@@ -37,7 +37,8 @@ class ActionItemPostReadOnlyService extends ServiceBase {
             map.get( key )?.displayNameWithoutOffset
         }
 
-        def results = fetchWithPagingAndSortParams( params )
+        def results =  params?.recurringPostId? fetchRecurringPostActionItemWithPagingAndSortParams(params) : fetchWithPagingAndSortParams( params )
+
         results = results.collect {
             ActionItemPostReadOnly it ->
                 [
@@ -57,7 +58,8 @@ class ActionItemPostReadOnlyService extends ServiceBase {
                         postingCreatorId       : it.postingCreatorId,
                         lastModified           : it.lastModified,
                         lastModifiedBy         : it.lastModifiedBy,
-                        version                : it.version
+                        version                : it.version,
+                        recurringPostIndicator : it.recurringPostIndicator
 
                 ]
         }
@@ -76,7 +78,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
      */
     def fetchJobsCount( params ) {
         params.searchParam = params.searchParam ? ('%' + params.searchParam.toUpperCase() + '%') : ('%')
-        ActionItemPostReadOnly.fetchJobsCount( params )
+        params?.recurringPostId? ActionItemPostReadOnly.fetchRecurringJobsCount( params ) : ActionItemPostReadOnly.fetchJobsCount( params )
     }
 
 
@@ -137,7 +139,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
                     version                      : actionItemPostReadOnly.version,
                     scheduledStartTime           : actionItemPostReadOnly.postingScheduleDateTime ? timeFormat.format( actionItemPostReadOnly.postingScheduleDateTime ) : actionItemPostReadOnly.postingScheduleDateTime,
                     timezoneStringOffset         : serverDefaultTimeZone,
-                    postingDisplayDateTime       : actionItemPostReadOnly.postingDisplayDateTime,
+                    postingDisplayDateTime       : actionItemPostReadOnly.postingTimeZone == false?actionItemPostReadOnly.postingDisplayDateTime,
                     postingDisplayTime           : actionItemPostReadOnly.postingDisplayDateTime ? timeFormat.format( actionItemPostReadOnly.postingDisplayDateTime ) : actionItemPostReadOnly.postingDisplayDateTime,
                     postingTimeZone              : actionItemPostReadOnly.postingTimeZone
 
@@ -156,6 +158,38 @@ class ActionItemPostReadOnlyService extends ServiceBase {
         ActionItemPostReadOnly.fetchWithPagingAndSortParams(
                 [name: params?.searchParam],
                 [sortColumn: params.sortColumn, sortAscending: params.sortAscending, max: params.max, offset: params.offset] )
+    }
+
+    /**
+     * Function to fetch recurring post action items
+     * @param params
+     * @return
+     */
+    def fetchRecurringPostActionItemWithPagingAndSortParams( Map params ) {
+        Long postingId = params?.recurringPostId?Long.parseLong(params?.recurringPostId):-1
+        def actionItemPostReadOnly = ActionItemPostReadOnly.fetchByPostingId(postingId)
+        ActionItemPostReadOnly.fetchRecurringPostActionItemsWithPagingAndSortParams(
+                [name: params?.searchParam,recurringPostDetailsId:  actionItemPostReadOnly.recurringPostDetailsId],
+                [sortColumn: params.sortColumn, sortAscending: params.sortAscending, max: params.max, offset: params.offset] )
+    }
+	
+	/**
+     * Function to fetch recurring action item meta data
+     * @param actionItemPostId
+     * @return
+     */
+    def recurringJobMetaData(actionItemPostId){
+        def actionItemPostReadOnly = ActionItemPostReadOnly.fetchByPostingId(Long.parseLong(actionItemPostId))
+        def actionItemPostRecurringDetails =ActionItemPostRecurringDetails.get(actionItemPostReadOnly.recurringPostDetailsId)
+        def postActionItemMetaDataMap = [
+                postingName:actionItemPostReadOnly.postingName,
+                recurringStartDate:actionItemPostRecurringDetails.recurStartDate,
+                recurringEndDate:actionItemPostRecurringDetails.recurEndDate,
+                completedJobsCount:ActionItemPostReadOnly.fetchRecurringJobsStateCount(actionItemPostReadOnly.recurringPostDetailsId,ActionItemPostExecutionState.Complete.name()),
+                errorJobsCount:ActionItemPostReadOnly.fetchRecurringJobsStateCount(actionItemPostReadOnly.recurringPostDetailsId,ActionItemPostExecutionState.Error.name()),
+                remainingJobCount:ActionItemPostReadOnly.fetchRecurringJobsStateCount(actionItemPostReadOnly.recurringPostDetailsId,ActionItemPostExecutionState.Scheduled.name()),
+        ]
+        postActionItemMetaDataMap
     }
 
 }
