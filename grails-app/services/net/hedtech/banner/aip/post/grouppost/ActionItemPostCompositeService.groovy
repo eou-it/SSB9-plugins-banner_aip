@@ -580,11 +580,11 @@ class ActionItemPostCompositeService {
         def actionItemPostObjects = createActionItemObjects(recurDetails, post)
         def newRecurringJobs = []
 
-        for (Integer i=0;i<actionItemPostObjects.size();i++)
+        for (Integer iteration=0;iteration<actionItemPostObjects.size();iteration++)
         {
-               if(i>=getAllExistingRecurringJobs.size())
+               if(iteration>=getAllExistingRecurringJobs.size())
                {
-                   newRecurringJobs.push(actionItemPostObjects[i])
+                   newRecurringJobs.push(actionItemPostObjects[iteration])
                }
         }
 
