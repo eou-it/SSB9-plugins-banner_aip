@@ -335,7 +335,6 @@ class ActionItemPostCompositeService {
 
     def checkAndEditRecurEndDateGreater(requestMap,actionItemPostRecurringDetails,actionItemPostRecurringJobs,editedRecurringJobs) {
 
-        print"GREATER"
         List<ActionItemPost> editedRecurringJobsList=actionItemPostRecurringJobs
         Date newrecurEndDateGreater = new Date(requestMap.recurEndDate)
         if (newrecurEndDateGreater.compareTo(actionItemPostRecurringDetails.recurEndDate) > 0) {
@@ -576,55 +575,25 @@ class ActionItemPostCompositeService {
      */
     def insertJobsRecurEndDateGreater (recurDetails,requestMap){
 
-        def user = springSecurityService.getAuthentication()?.user
-        def tempRecurringDetails=recurDetails
-        //  actionItemPostRecurringDetails.recurEndDate= new Date(editedRecurDetails.recurEndDate)
         ActionItemPost post = ActionItemPost.fetchJobByPostingId(requestMap.postId )
         def getAllExistingRecurringJobs=ActionItemPost.fetchAllRecurringJobs(requestMap.postId,recurDetails.id)
         def actionItemPostObjects = createActionItemObjects(recurDetails, post)
-
         def newRecurringJobs = []
-       /* actionItemPostObjects.each { validActionItemPost ->
-         if(validActionItemPost.postingName && getAllExistingRecurringJobs.each{it.postingName != validActionItemPost.postingName})
-         {
-             newRecurringJobs.push(validActionItemPost)
-         }
-        }*/
 
-        def asize=actionItemPostObjects.size()
-        def gsize=getAllExistingRecurringJobs.size()
-        print "asize $asize"
-        print "gsize $gsize"
-
-//        actionItemPostObjects.removeAll(getAllExistingRecurringJobs)
-
-
-       for (Integer i=0;i<actionItemPostObjects.size();i++)
+        for (Integer i=0;i<actionItemPostObjects.size();i++)
         {
-            for (Integer k=i;k<getAllExistingRecurringJobs.size();k++)
-            {
-                def apost=actionItemPostObjects[i].postingName
-                def gpost=getAllExistingRecurringJobs[k].postingName
-                print"actionItemPostObjects[i].postingName $apost"
-                print"getAllExistingRecurringJobs[k].postingName $gpost"
-
-                if(actionItemPostObjects[i].postingName.contains(getAllExistingRecurringJobs[k].postingName)){
-                    print"NE"
-                }else{
-                    def epost=actionItemPostObjects[i].postingName
-                    print "AIPO $epost"
-                    newRecurringJobs.push(actionItemPostObjects[i])
-                }
-
-            }
+               if(i>=getAllExistingRecurringJobs.size())
+               {
+                   newRecurringJobs.push(actionItemPostObjects[i])
+               }
         }
 
-        def actionItemIds = editedRecurDetails.actionItemIds
+        def actionItemIds = requestMap.actionItemIds
         def result
         def asyncRequestMap = [scheduled    : true,
                                actionItemIds: actionItemIds,
                                postNow      : false,
-                               isRecurEdit:true]
+                               isRecurEdit  : true]
 
 
         newRecurringJobs.each { actionItemPost ->
@@ -1186,7 +1155,6 @@ class ActionItemPostCompositeService {
      * @return
      */
     ActionItemPost schedulePost(ActionItemPost groupSend, String bannerUser,recurEditFlag) {
-        print "schedulePost"
         Date now = new Date(System.currentTimeMillis())
         if ((now.after(groupSend.postingScheduleDateTime)) && (!recurEditFlag)) {
             throw ActionItemExceptionFactory.createApplicationException(ActionItemPostService.class, "invalidScheduledDate")

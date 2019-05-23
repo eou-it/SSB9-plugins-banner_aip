@@ -84,7 +84,10 @@ class ActionItemPostReadOnlyService extends ServiceBase {
         ActionItemPostReadOnly actionItemPostReadOnly = ActionItemPostReadOnly.fetchByPostingId( postingId )
         actionItemPostReadOnly
         if (actionItemPostReadOnly) {
-            if ( (actionItemPostReadOnly.postingCurrentState.equals( ActionItemPostExecutionState.Scheduled.name() )) || (actionItemPostReadOnly.postingCurrentState.equals( ActionItemPostExecutionState.RecurrenceScheduled.name() )))
+            String Scheduled=ActionItemPostExecutionState.Scheduled.name()
+            String RecurrenceScheduled=ActionItemPostExecutionState.RecurrenceScheduled.name()
+            String RecurrenceInProgress=ActionItemPostExecutionState.RecurrenceInProgress.name()
+            if ( (actionItemPostReadOnly.postingCurrentState.equals(Scheduled )) || (actionItemPostReadOnly.postingCurrentState.equals(RecurrenceScheduled )) || (actionItemPostReadOnly.postingCurrentState.equals(RecurrenceInProgress )))
             {
                 return AIPConstants.YES_IND
             }
