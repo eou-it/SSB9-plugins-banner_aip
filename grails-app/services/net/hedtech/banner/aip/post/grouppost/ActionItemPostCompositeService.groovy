@@ -277,7 +277,6 @@ class ActionItemPostCompositeService {
         def updatedRecurringJobsList=actionItemPostRecurringJobs
         def changedRecurringJobsList
 
-
         updatedRecurringJobsList=checkAndEditRecurEndDateLesser(requestMap,actionItemPostRecurringDetails,actionItemPostRecurringJobs)
         updatedRecurringJobsList=checkAndEditRecurEndDateGreater(requestMap,actionItemPostRecurringDetails,actionItemPostRecurringJobs,updatedRecurringJobsList)
         changedRecurringJobsList=updatedRecurringJobsList
@@ -287,7 +286,6 @@ class ActionItemPostCompositeService {
         changedRecurringJobsList=checkAndEditDisplayEndDate(requestMap,actionItemPostRecurringDetails,changedRecurringJobsList)
         changedRecurringJobsList=checkAndEditRecurTime(requestMap,actionItemPost,changedRecurringJobsList)
         changedRecurringJobsList=checkAndEditRecurTimeZone(requestMap,actionItemPostRecurringDetails,actionItemPost,changedRecurringJobsList)
-
 
         updateRecurData(actionItemPostRecurringDetails)
         updateRecurrenceScheduledJob(actionItemPost)
@@ -422,7 +420,6 @@ class ActionItemPostCompositeService {
     def checkAndEditDisplayEndDate(requestMap,actionItemPostRecurringDetails,editedRecurringJobs){
 
         if(requestMap.postingDisplayEndDate) {
-
             Date newPostingDisplayEndDate=  new Date(requestMap.postingDisplayEndDate)
             if (actionItemPostRecurringDetails.postingDisplayEndDate.equals(null) ) {
                 editedRecurringJobs.each {
