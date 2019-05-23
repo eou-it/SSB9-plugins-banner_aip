@@ -86,7 +86,11 @@ class ActionItemPostReadOnlyService extends ServiceBase {
         ActionItemPostReadOnly actionItemPostReadOnly = ActionItemPostReadOnly.fetchByPostingId( postingId )
         actionItemPostReadOnly
         if (actionItemPostReadOnly) {
-            if (actionItemPostReadOnly.postingCurrentState.equals( ActionItemPostExecutionState.Scheduled.name() )) {
+            String Scheduled=ActionItemPostExecutionState.Scheduled.name()
+            String RecurrenceScheduled=ActionItemPostExecutionState.RecurrenceScheduled.name()
+            String RecurrenceInProgress=ActionItemPostExecutionState.RecurrenceInProgress.name()
+            if ( (actionItemPostReadOnly.postingCurrentState.equals(Scheduled )) || (actionItemPostReadOnly.postingCurrentState.equals(RecurrenceScheduled )) || (actionItemPostReadOnly.postingCurrentState.equals(RecurrenceInProgress )))
+            {
                 return AIPConstants.YES_IND
             }
         }
@@ -96,6 +100,12 @@ class ActionItemPostReadOnlyService extends ServiceBase {
 
     def JobDetailsByPostId( postingId ) {
         ActionItemPostReadOnly actionItemPostReadOnly = ActionItemPostReadOnly.fetchByPostingId( postingId )
+        ActionItemPostRecurringDetails actionItemPostRecurringDetails
+        //Fetch Recurrence Details
+        if(actionItemPostReadOnly.recurPostInd){
+            actionItemPostRecurringDetails=ActionItemPostRecurringDetails.fetchByRecurId(actionItemPostReadOnly.recurPostId)
+        }
+
         def result = [:]
         SimpleDateFormat timeFormat = new SimpleDateFormat( MessageHelper.message( "default.time.format" ) );
 
@@ -145,6 +155,12 @@ class ActionItemPostReadOnlyService extends ServiceBase {
 
             ]
 
+        }
+        if (actionItemPostRecurringDetails) {
+            result.recurringDetails = actionItemPostRecurringDetails
+            // Extract time from TimeStamp "recurStartTime"
+            Date recurDateTime = new Date(actionItemPostRecurringDetails.recurStartTime.getTime());
+            result.calculatedRecurTimeVal=timeFormat.format(recurDateTime);
         }
         result
     }

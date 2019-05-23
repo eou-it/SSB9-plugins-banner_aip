@@ -214,19 +214,19 @@ class ActionItemPostReadOnly implements Serializable {
     String postingPopulation
 
     /**
-     * Action Item posted
+     * Activity Date
      */
     @Column(name = "GCBAPST_ACTIVITY_DATE")
     Date lastModified
 
     /**
-     * Action Item posted
+     * Last modified by
      */
     @Column(name = "GCBAPST_USER_ID")
     String lastModifiedBy
 
     /**
-     * Action Item posted
+     * Version
      */
     @Version
     @Column(name = "GCBAPST_VERSION")

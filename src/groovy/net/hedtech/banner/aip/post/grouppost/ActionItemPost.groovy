@@ -52,7 +52,26 @@ import javax.persistence.Version
         ), @NamedQuery(name = "ActionItemPost.checkIfJobNameAlreadyExistsForUpdate",
         query = """ select count (gs.postingName) FROM ActionItemPost gs
                         WHERE upper(gs.postingName) = upper( :postingName) and gs.id != :postId """
-)
+        ),
+        @NamedQuery(name = "ActionItemPost.fetchRecurringScheduledJobs",
+                query = """FROM ActionItemPost gs	
+                           WHERE gs.id != :postId 
+                           and gs.recurringPostDetailsId=:recurId
+                           and gs.postingCurrentState=:scheduled                         	
+            """
+        ),
+        @NamedQuery(name = "ActionItemPost.fetchAllRecurringJobs",
+                query = """FROM ActionItemPost gs	
+                           WHERE gs.id != :postId 
+                           and gs.recurringPostDetailsId=:recurId  
+                           order by gs.id                  	
+            """
+        ),
+        @NamedQuery(name = "ActionItemPost.fetchJobByPostingId",
+                query = """FROM ActionItemPost gs
+                           WHERE gs.id = :postId 
+            """
+        )
 ])
 @DatabaseModifiesState
 class ActionItemPost implements Serializable {
@@ -377,5 +396,45 @@ class ActionItemPost implements Serializable {
                     .uniqueResult()
         }
         count > 0
+    }
+    /**
+     * Fetch Recurring Scheduled Jobs
+     * @param postId, recurId
+     * @return
+     */
+    def static fetchRecurringScheduledJobs( postId,recurId ) {
+        ActionItemPost.withSession {session ->
+            session.getNamedQuery( 'ActionItemPost.fetchRecurringScheduledJobs' )
+                    .setLong( 'postId', postId )
+                    .setLong( 'recurId', recurId )
+                    .setString ( 'scheduled', ActionItemPostExecutionState.Scheduled.name())
+                    .list()
+
+        }
+    }
+    /**
+     * Fetch All Recurring Jobs
+     * @param postId, recurId
+     * @return
+     */
+    def static fetchAllRecurringJobs( postId,recurId ) {
+        ActionItemPost.withSession {session ->
+            session.getNamedQuery( 'ActionItemPost.fetchAllRecurringJobs' )
+                    .setLong( 'postId', postId )
+                    .setLong( 'recurId', recurId )
+                    .list()
+
+        }
+    }
+    /**
+     * Fetch RecurranceScheduledJob Details
+     * @param postId
+     * @return
+     */
+    def static fetchJobByPostingId( postId ) {
+        ActionItemPost.withSession {session ->
+            session.getNamedQuery( 'ActionItemPost.fetchJobByPostingId' )
+                    .setLong( 'postId', postId ).list()[0]
+        }
     }
 }
