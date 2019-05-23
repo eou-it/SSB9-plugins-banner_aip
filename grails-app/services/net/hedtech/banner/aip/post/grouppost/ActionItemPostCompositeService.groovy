@@ -284,7 +284,7 @@ class ActionItemPostCompositeService {
         changedRecurringJobsList=checkAndEditDisplayEndDays(requestMap,actionItemPostRecurringDetails,changedRecurringJobsList)
         changedRecurringJobsList=checkAndEditDisplayEndDateToOffset(requestMap,actionItemPostRecurringDetails,changedRecurringJobsList)
         changedRecurringJobsList=checkAndEditDisplayEndDate(requestMap,actionItemPostRecurringDetails,changedRecurringJobsList)
-        changedRecurringJobsList=checkAndEditRecurTime(requestMap,actionItemPost,changedRecurringJobsList)
+        changedRecurringJobsList=checkAndEditRecurTime(requestMap,actionItemPostRecurringDetails,actionItemPost,changedRecurringJobsList)
         changedRecurringJobsList=checkAndEditRecurTimeZone(requestMap,actionItemPostRecurringDetails,actionItemPost,changedRecurringJobsList)
 
         updateRecurData(actionItemPostRecurringDetails)
@@ -447,7 +447,7 @@ class ActionItemPostCompositeService {
      * @editedRecurringJobs editedRecurringJobs contains edited actionItemRecurringJobs
      * @return
      */
-    def checkAndEditRecurTime(requestMap,actionItemPost,editedRecurringJobs){
+    def checkAndEditRecurTime(requestMap,actionItemPostRecurringDetails,actionItemPost,editedRecurringJobs){
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(actionItemPost.postingDisplayDateTime);
@@ -459,9 +459,10 @@ class ActionItemPostCompositeService {
 
         if(getDisplayHours != getRecurHours || getDisplayMinutes != getRecurMinutes)
         {
-            editedRecurringJobs=updateNewRecurTime(editedRecurringJobs,requestMap)
+            updateNewRecurTime(editedRecurringJobs,requestMap)
             actionItemPost.postingDisplayDateTime=editedRecurringJobs[0].postingDisplayDateTime
-
+            def newRecurringJobList=ActionItemPost.fetchRecurringScheduledJobs(requestMap.postId,actionItemPostRecurringDetails.id)
+            return newRecurringJobList
         }
         return editedRecurringJobs
     }
@@ -478,9 +479,11 @@ class ActionItemPostCompositeService {
 
         if (requestMap.recurPostTimezone!=actionItemPostRecurringDetails.recurPostTimezone)
         {
-            editedRecurringJobs=updateNewRecurTimeZone(editedRecurringJobs,requestMap)
+            updateNewRecurTimeZone(editedRecurringJobs,requestMap)
             actionItemPostRecurringDetails.recurPostTimezone=requestMap.recurPostTimezone
             actionItemPost.postingTimeZone =requestMap.displayDatetimeZone.timeZoneVal
+            def newRecurringJobList=ActionItemPost.fetchRecurringScheduledJobs(requestMap.postId,actionItemPostRecurringDetails.id)
+            return newRecurringJobList
         }
         return editedRecurringJobs
     }
@@ -517,6 +520,7 @@ class ActionItemPostCompositeService {
 
         def user = springSecurityService.getAuthentication()?.user
         boolean isRecurEdit=true
+        def savedRecurringJobs
 
         editedRecurringJobs.each {
             String scheduledStartTime = recurDetails.recurStartTime
@@ -527,9 +531,8 @@ class ActionItemPostCompositeService {
             if (it.aSyncJobId != null) {
                 schedulerJobService.deleteScheduledJob(it.aSyncJobId, it.aSyncGroupId)
             }
-            editedRecurringJobs = schedulePost((ActionItemPost) it, user.oracleUserName, isRecurEdit)
+            savedRecurringJobs = schedulePost((ActionItemPost) it, user.oracleUserName, isRecurEdit)
         }
-        return  editedRecurringJobs
     }
 
     /**
@@ -542,6 +545,8 @@ class ActionItemPostCompositeService {
 
         def user = springSecurityService.getAuthentication()?.user
         boolean isRecurEdit=true
+        def savedRecurringJobs
+
         editedRecurringJobs.each {
             String scheduledStartTime = recurDetails.recurStartTime
             String timezoneStringOffset = recurDetails.recurPostTimezone
@@ -556,9 +561,8 @@ class ActionItemPostCompositeService {
             if (it.aSyncJobId != null) {
                 schedulerJobService.deleteScheduledJob(it.aSyncJobId, it.aSyncGroupId)
             }
-            editedRecurringJobs = schedulePost((ActionItemPost) it, user.oracleUserName, isRecurEdit)
+            savedRecurringJobs = schedulePost((ActionItemPost) it, user.oracleUserName, isRecurEdit)
          }
-            return  editedRecurringJobs
     }
 
     /**
