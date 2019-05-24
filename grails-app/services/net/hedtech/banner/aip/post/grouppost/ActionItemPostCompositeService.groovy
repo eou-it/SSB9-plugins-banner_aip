@@ -373,7 +373,7 @@ class ActionItemPostCompositeService {
     def checkAndEditDisplayEndDays(requestMap,actionItemPostRecurringDetails,editedRecurringJobs){
 
         Integer diffDispEndDaysVal
-        if (requestMap.postingDispEndDays) {
+        if (requestMap.postingDispEndDays >= 0) {
             actionItemPostRecurringDetails.postingDispEndDays ? actionItemPostRecurringDetails.postingDispEndDays : 0
             if ( requestMap.postingDispEndDays != actionItemPostRecurringDetails.postingDispEndDays) {
                 diffDispEndDaysVal = requestMap.postingDispEndDays - actionItemPostRecurringDetails.postingDispEndDays;

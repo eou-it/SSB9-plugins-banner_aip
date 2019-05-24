@@ -149,7 +149,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
                     version                      : actionItemPostReadOnly.version,
                     scheduledStartTime           : actionItemPostReadOnly.postingScheduleDateTime ? timeFormat.format( actionItemPostReadOnly.postingScheduleDateTime ) : actionItemPostReadOnly.postingScheduleDateTime,
                     timezoneStringOffset         : serverDefaultTimeZone,
-                    postingDisplayDateTime       : actionItemPostReadOnly.postingTimeZone == false?actionItemPostReadOnly.postingDisplayDateTime,
+                    postingDisplayDateTime       : actionItemPostReadOnly.postingDisplayDateTime,
                     postingDisplayTime           : actionItemPostReadOnly.postingDisplayDateTime ? timeFormat.format( actionItemPostReadOnly.postingDisplayDateTime ) : actionItemPostReadOnly.postingDisplayDateTime,
                     postingTimeZone              : actionItemPostReadOnly.postingTimeZone
 
