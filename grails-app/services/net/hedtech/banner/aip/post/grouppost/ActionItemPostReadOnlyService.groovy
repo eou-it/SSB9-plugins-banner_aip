@@ -102,8 +102,8 @@ class ActionItemPostReadOnlyService extends ServiceBase {
         ActionItemPostReadOnly actionItemPostReadOnly = ActionItemPostReadOnly.fetchByPostingId( postingId )
         ActionItemPostRecurringDetails actionItemPostRecurringDetails
         //Fetch Recurrence Details
-        if(actionItemPostReadOnly.recurPostInd){
-            actionItemPostRecurringDetails=ActionItemPostRecurringDetails.fetchByRecurId(actionItemPostReadOnly.recurPostId)
+        if(actionItemPostReadOnly.recurringPostIndicator){
+            actionItemPostRecurringDetails=ActionItemPostRecurringDetails.fetchByRecurId(actionItemPostReadOnly.recurringPostDetailsId)
         }
 
         def result = [:]

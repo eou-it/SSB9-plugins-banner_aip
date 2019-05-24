@@ -269,7 +269,10 @@ class ActionItemPostCompositeService {
         def success = false
         requestMap.recurrence=true
         actionItemPostService.preCreateValidation(requestMap)
+        Date displayStartDateTime= getDisplayDateTimeCalender(requestMap.displayDatetimeZone).getTime()
         actionItemPostRecurringDetailsService.preCreateValidate(requestMap)
+        def actionItemPostRecurringDetailsObject = getActionItemPostRecurringInstance(requestMap)
+        actionItemPostRecurringDetailsService.validateDates(actionItemPostRecurringDetailsObject,displayStartDateTime)
 
         def actionItemPost = ActionItemPost.fetchJobByPostingId(requestMap.postId )
         def actionItemPostRecurringDetails = ActionItemPostRecurringDetails.fetchByRecurId(actionItemPost.recurringPostDetailsId)
