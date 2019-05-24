@@ -33,7 +33,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
     def actionItemPostDetailService
     def actionItemJobService
 
-    private static final String USERNAME = 'AIPADM001'
+    private static final String USERNAME = 'AIPADM003'
 
 
     @Before
@@ -612,6 +612,15 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         assert updatedPost.postingErrorText == null
         assert updatedPost.lastModifiedBy == USERNAME
 
+    }
+
+    @Test
+    void getRecurringActionItemPostList(){
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        actionItemPostCompositeService.createPostItems( aip )
+        ActionItemPost actionItemPost = (ActionItemPost) actionItemPostService.get( aip.id )
+        assert actionItemPost.id == aip.id
     }
 
     private def newAIP() {
