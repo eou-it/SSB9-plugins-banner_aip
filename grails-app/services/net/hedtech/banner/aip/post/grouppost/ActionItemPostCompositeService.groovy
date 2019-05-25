@@ -269,10 +269,18 @@ class ActionItemPostCompositeService {
         def success = false
         requestMap.recurrence=true
         actionItemPostService.preCreateValidation(requestMap)
-        Date displayStartDateTime= getDisplayDateTimeCalender(requestMap.displayDatetimeZone).getTime()
-        actionItemPostRecurringDetailsService.preCreateValidate(requestMap)
-        def actionItemPostRecurringDetailsObject = getActionItemPostRecurringInstance(requestMap)
-        actionItemPostRecurringDetailsService.validateDates(actionItemPostRecurringDetailsObject,displayStartDateTime)
+
+        if (requestMap.recurFrequencyType.equals("DAYS") )
+        {
+            Date displayStartDateTime= getDisplayDateTimeCalender(requestMap.displayDatetimeZone).getTime()
+            actionItemPostRecurringDetailsService.preCreateValidate(requestMap)
+            def actionItemPostRecurringDetailsObject = getActionItemPostRecurringInstance(requestMap)
+            actionItemPostRecurringDetailsService.validateDates(actionItemPostRecurringDetailsObject,displayStartDateTime)
+        }
+        else
+        {
+            actionItemPostRecurringDetailsService.preCreateValidate(requestMap)
+        }
 
         def actionItemPost = ActionItemPost.fetchJobByPostingId(requestMap.postId )
         def actionItemPostRecurringDetails = ActionItemPostRecurringDetails.fetchByRecurId(actionItemPost.recurringPostDetailsId)
@@ -376,16 +384,18 @@ class ActionItemPostCompositeService {
     def checkAndEditDisplayEndDays(requestMap,actionItemPostRecurringDetails,editedRecurringJobs){
 
         Integer diffDispEndDaysVal
-        if (requestMap.postingDispEndDays >= 0) {
-            actionItemPostRecurringDetails.postingDispEndDays ? actionItemPostRecurringDetails.postingDispEndDays : 0
-            if ( requestMap.postingDispEndDays != actionItemPostRecurringDetails.postingDispEndDays) {
-                diffDispEndDaysVal = requestMap.postingDispEndDays - actionItemPostRecurringDetails.postingDispEndDays;
-                editedRecurringJobs.each {
-                    Date calculatedDisplayEndDate = actionItemPostRecurringDetailsService.addDays(it.postingDisplayEndDate, diffDispEndDaysVal)
-                    it.postingDisplayEndDate = calculatedDisplayEndDate
+        if (requestMap.postingDispEndDays ) {
+            if (requestMap.postingDispEndDays >=0 ) {
+                actionItemPostRecurringDetails.postingDispEndDays ? actionItemPostRecurringDetails.postingDispEndDays : 0
+                if (requestMap.postingDispEndDays != actionItemPostRecurringDetails.postingDispEndDays) {
+                    diffDispEndDaysVal = requestMap.postingDispEndDays - actionItemPostRecurringDetails.postingDispEndDays;
+                    editedRecurringJobs.each {
+                        Date calculatedDisplayEndDate = actionItemPostRecurringDetailsService.addDays(it.postingDisplayEndDate, diffDispEndDaysVal)
+                        it.postingDisplayEndDate = calculatedDisplayEndDate
+                    }
+                    actionItemPostRecurringDetails.postingDispEndDays = requestMap.postingDispEndDays
+                    actionItemPostRecurringDetails.postingDisplayEndDate = null
                 }
-                actionItemPostRecurringDetails.postingDispEndDays = requestMap.postingDispEndDays
-                actionItemPostRecurringDetails.postingDisplayEndDate = null
             }
         }
         return  editedRecurringJobs
@@ -498,14 +508,15 @@ class ActionItemPostCompositeService {
      * @editedRecurEndDate editedRecurEndDate contains new Recur EndDate
      * @return
      */
+    @Transactional
     def deleteJobsRecurEndDateLesser(actionItemPostRecurringJobs,editedRecurEndDate)
     {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd")
         Date newRecurEndDate = sdf.parse(sdf.format(new Date(editedRecurEndDate)))
-
+        def size=actionItemPostRecurringJobs.size()
         actionItemPostRecurringJobs.each {
-            Date scheduledDate = sdf.parse(sdf.format(it.postingScheduleDateTime))
-            if (newRecurEndDate.compareTo(scheduledDate)<0)
+            Date postingDisplayDate = sdf.parse(sdf.format(it.postingDisplayDateTime))
+            if (newRecurEndDate.compareTo(postingDisplayDate)<0)
             {
                 deletePostingDetail(it.id)
                 deletePost(it.id)
@@ -519,6 +530,7 @@ class ActionItemPostCompositeService {
      * @recurDetails recurDetails contains new recur Details
      * @return
      */
+    @Transactional
     def updateNewRecurTimeZone(editedRecurringJobs,recurDetails){
 
         def user = springSecurityService.getAuthentication()?.user
@@ -544,6 +556,7 @@ class ActionItemPostCompositeService {
      * @recurDetails recurDetails contains new recur Details
      * @return
      */
+    @Transactional
     def updateNewRecurTime(editedRecurringJobs,recurDetails){
 
         def user = springSecurityService.getAuthentication()?.user
