@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat
 class ActionItemPostReadOnlyService extends ServiceBase {
 
     def actionItemProcessingCommonService
+    def actionItemPostService
 
     /**
      * Lists Post Action Items
@@ -23,12 +24,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
      * @return
      */
     def listActionItemPostJobList(Map params ) {
-
-       SimpleDateFormat timeFormat = new SimpleDateFormat( MessageHelper.message( "default.time.format" ) );
-
-        if (actionItemProcessingCommonService.is12HourClock().use12HourClock) {
-            timeFormat = new SimpleDateFormat( "hh:mm a" );
-        }
+      
         List<AipTimezone> timeZoneList = actionItemProcessingCommonService.populateAvailableTimezones()
         Map<String, AipTimezone> map = timeZoneList.collectEntries() {
             [it.stringOffset + ' ' + it.timezoneId, it]
@@ -41,16 +37,17 @@ class ActionItemPostReadOnlyService extends ServiceBase {
 
         results = results.collect {
             ActionItemPostReadOnly it ->
+                def postingCurrentState = it.recurringPostIndicator? updateRecurringCurrentStatus(it.postingId): it.postingCurrentState
                 [
                         id                     : it.postingId,
                         postingId              : it.postingId,
-                        postingCurrentState    : it.postingCurrentState,
-                        jobState               : MessageHelper.message( 'aip.action.item.post.job.state.' + ActionItemPostExecutionState.getStateEnum( it.postingCurrentState ) ),
+                        postingCurrentState    : postingCurrentState,
+                        jobState               : MessageHelper.message( 'aip.action.item.post.job.state.' + ActionItemPostExecutionState.getStateEnum( postingCurrentState ) ),
                         postingName            : it.postingName,
                         postingDisplayStartDate: it.postingScheduleDateTime ? it.postingScheduleDateTime : it.postingDisplayStartDate,
                         postingStartedDate     : it.postingStartedDate,
                         postingDisplayDateTime : it.recurringPostIndicator? "-" :it.postingDisplayDateTime,
-                        postingDisplayTime     : it.recurringPostIndicator? "-" :(it.postingDisplayDateTime ? timeFormat.format( it.postingDisplayDateTime ) : it.postingDisplayDateTime),
+                        postingDisplayTime     : it.recurringPostIndicator? "-" :(it.postingDisplayDateTime ? timeFormat().format( it.postingDisplayDateTime ) : it.postingDisplayDateTime),
                         postingTimeZone        : it.recurringPostIndicator? "-" :getDisplayTimeZoneInfo( it.postingTimeZone ),
                         groupFolderName        : it.groupFolderName,
                         postingPopulation      : it.postingPopulation,
@@ -59,7 +56,8 @@ class ActionItemPostReadOnlyService extends ServiceBase {
                         lastModified           : it.lastModified,
                         lastModifiedBy         : it.lastModifiedBy,
                         version                : it.version,
-                        recurringPostIndicator : it.recurringPostIndicator
+                        recurringPostIndicator : it.recurringPostIndicator,
+                        recurringPostJobError  : it.recurringPostIndicator?ActionItemPostReadOnly.fetchRecurringJobsStateCount(it.recurringPostDetailsId,ActionItemPostExecutionState.Error.name()):0
 
                 ]
         }
@@ -107,11 +105,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
         }
 
         def result = [:]
-        SimpleDateFormat timeFormat = new SimpleDateFormat( MessageHelper.message( "default.time.format" ) );
-
-        if (actionItemProcessingCommonService.is12HourClock().use12HourClock) {
-            timeFormat = new SimpleDateFormat( "hh:mm a" );
-        }
+       
         //Initializing the date format
         List timeZoneList = actionItemProcessingCommonService.populateAvailableTimezones()
         TimeZone timezone = TimeZone.getDefault();
@@ -147,10 +141,10 @@ class ActionItemPostReadOnlyService extends ServiceBase {
                     postingScheduleDateTime      : actionItemPostReadOnly.postingScheduleDateTime,
                     postingStartedDate           : actionItemPostReadOnly.postingStartedDate,
                     version                      : actionItemPostReadOnly.version,
-                    scheduledStartTime           : actionItemPostReadOnly.postingScheduleDateTime ? timeFormat.format( actionItemPostReadOnly.postingScheduleDateTime ) : actionItemPostReadOnly.postingScheduleDateTime,
+                    scheduledStartTime           : actionItemPostReadOnly.postingScheduleDateTime ? timeFormat().format( actionItemPostReadOnly.postingScheduleDateTime ) : actionItemPostReadOnly.postingScheduleDateTime,
                     timezoneStringOffset         : serverDefaultTimeZone,
                     postingDisplayDateTime       : actionItemPostReadOnly.postingDisplayDateTime,
-                    postingDisplayTime           : actionItemPostReadOnly.postingDisplayDateTime ? timeFormat.format( actionItemPostReadOnly.postingDisplayDateTime ) : actionItemPostReadOnly.postingDisplayDateTime,
+                    postingDisplayTime           : actionItemPostReadOnly.postingDisplayDateTime ? timeFormat().format( actionItemPostReadOnly.postingDisplayDateTime ) : actionItemPostReadOnly.postingDisplayDateTime,
                     postingTimeZone              : actionItemPostReadOnly.postingTimeZone
 
             ]
@@ -160,7 +154,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
             result.recurringDetails = actionItemPostRecurringDetails
             // Extract time from TimeStamp "recurStartTime"
             Date recurDateTime = new Date(actionItemPostRecurringDetails.recurStartTime.getTime());
-            result.calculatedRecurTimeVal=timeFormat.format(recurDateTime);
+            result.calculatedRecurTimeVal=timeFormat().format(recurDateTime);
         }
         result
     }
@@ -198,14 +192,55 @@ class ActionItemPostReadOnlyService extends ServiceBase {
         def actionItemPostReadOnly = ActionItemPostReadOnly.fetchByPostingId(Long.parseLong(actionItemPostId))
         def actionItemPostRecurringDetails =ActionItemPostRecurringDetails.get(actionItemPostReadOnly.recurringPostDetailsId)
         def postActionItemMetaDataMap = [
-                postingName:actionItemPostReadOnly.postingName,
-                recurringStartDate:actionItemPostRecurringDetails.recurStartDate,
-                recurringEndDate:actionItemPostRecurringDetails.recurEndDate,
-                completedJobsCount:ActionItemPostReadOnly.fetchRecurringJobsStateCount(actionItemPostReadOnly.recurringPostDetailsId,ActionItemPostExecutionState.Complete.name()),
-                errorJobsCount:ActionItemPostReadOnly.fetchRecurringJobsStateCount(actionItemPostReadOnly.recurringPostDetailsId,ActionItemPostExecutionState.Error.name()),
-                remainingJobCount:ActionItemPostReadOnly.fetchRecurringJobsStateCount(actionItemPostReadOnly.recurringPostDetailsId,ActionItemPostExecutionState.Scheduled.name()),
+                postingName             :actionItemPostReadOnly.postingName,
+                recurFrequency          :actionItemPostRecurringDetails.recurFrequency,
+                recurFrequencyType      :actionItemPostRecurringDetails.recurFrequencyType,
+                postingDispStartDays    :actionItemPostRecurringDetails.postingDispStartDays,
+                postingDispEndDays      :actionItemPostRecurringDetails.postingDispEndDays,
+                postingDisplayEndDate   :actionItemPostRecurringDetails.postingDisplayEndDate,
+                recurringStartDate      :actionItemPostRecurringDetails.recurStartDate,
+                postingDisplayTime      :actionItemPostRecurringDetails.recurStartTime ? timeFormat().format( actionItemPostRecurringDetails.recurStartTime ) : actionItemPostRecurringDetails.recurStartTime,
+                recurPostTimezone       :actionItemPostRecurringDetails.recurPostTimezone,
+                recurringEndDate        :actionItemPostRecurringDetails.recurEndDate,
+                completedJobsCount      :ActionItemPostReadOnly.fetchRecurringJobsStateCount(actionItemPostReadOnly.recurringPostDetailsId,ActionItemPostExecutionState.Complete.name()),
+                errorJobsCount          :ActionItemPostReadOnly.fetchRecurringJobsStateCount(actionItemPostReadOnly.recurringPostDetailsId,ActionItemPostExecutionState.Error.name()),
+                remainingJobCount       :ActionItemPostReadOnly.fetchRecurringJobsStateCount(actionItemPostReadOnly.recurringPostDetailsId,ActionItemPostExecutionState.Scheduled.name()),
         ]
         postActionItemMetaDataMap
+    }
+
+    /**
+     * Function to update recurring parant job status
+     * @param actionItemPostId
+     * @return
+     */
+    def updateRecurringCurrentStatus(actionItemPostId){
+        def recurringCurrentStatus = ActionItemPostExecutionState.RecurrenceScheduled.name()
+        ActionItemPost actionItemPost = ActionItemPost.fetchJobByPostingId(actionItemPostId)
+        def recurringTotalJobcount = ActionItemPostReadOnly.fetchRecurringJobsCount( [recurringPostId:actionItemPostId+''] )
+        def recurringRemainJobCount = ActionItemPostReadOnly.fetchRecurringJobsStateCount(actionItemPost.recurringPostDetailsId,ActionItemPostExecutionState.Scheduled.name())
+        if(recurringRemainJobCount ==  0){
+            recurringCurrentStatus =  ActionItemPostExecutionState.RecurrenceComplete.name()
+        }else if (recurringRemainJobCount < recurringTotalJobcount ){
+            recurringCurrentStatus =  ActionItemPostExecutionState.RecurrenceInProgress.name()
+        }
+        if(!recurringCurrentStatus.equals(actionItemPost.postingCurrentState)){
+            actionItemPost.postingCurrentState = recurringCurrentStatus
+            actionItemPostService.update(actionItemPost)
+        }
+        return recurringCurrentStatus
+    }
+
+    /**
+     * Function to get simple time format object class
+     * @return
+     */
+    def timeFormat(){
+        SimpleDateFormat timeFormat = new SimpleDateFormat( MessageHelper.message( "default.time.format" ) )
+        if (actionItemProcessingCommonService.is12HourClock().use12HourClock) {
+            timeFormat = new SimpleDateFormat( "hh:mm a" );
+        }
+        timeFormat
     }
 
 }
