@@ -386,9 +386,7 @@ class ActionItemPostCompositeService {
     def checkAndEditDisplayEndDays(requestMap,actionItemPostRecurringDetails,editedRecurringJobs){
 
         Integer diffDispEndDaysVal
-        print "requestMap.postingDisplayEndDate"
         if (!requestMap.postingDisplayEndDate && !actionItemPostRecurringDetails.postingDisplayEndDate) {
-            print "REEE"
                 actionItemPostRecurringDetails.postingDispEndDays ? actionItemPostRecurringDetails.postingDispEndDays : 0
                 if (requestMap.postingDispEndDays != actionItemPostRecurringDetails.postingDispEndDays) {
                     diffDispEndDaysVal = requestMap.postingDispEndDays - actionItemPostRecurringDetails.postingDispEndDays;
@@ -412,10 +410,8 @@ class ActionItemPostCompositeService {
      */
 
     def checkAndEditDisplayEndDateToOffset(requestMap,actionItemPostRecurringDetails,editedRecurringJobs){
-          print "requestMap.postingDispEndDays $requestMap.postingDispEndDays"
-        print "PED $actionItemPostRecurringDetails.postingDisplayEndDate"
+
         if ((requestMap.postingDispEndDays && actionItemPostRecurringDetails.postingDisplayEndDate) || !requestMap.postingDisplayEndDate ){
-            print "CEDK"
             editedRecurringJobs.each {
                 Date calculatedDisplayEndDate=  actionItemPostRecurringDetailsService.addDays( it.postingScheduleDateTime,requestMap.postingDispEndDays)
                 it.postingDisplayEndDate = calculatedDisplayEndDate
