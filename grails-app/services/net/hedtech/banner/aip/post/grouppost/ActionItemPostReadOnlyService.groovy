@@ -57,6 +57,8 @@ class ActionItemPostReadOnlyService extends ServiceBase {
                         lastModifiedBy         : it.lastModifiedBy,
                         version                : it.version,
                         recurringPostIndicator : it.recurringPostIndicator,
+                        displayStartDate       : it.postingDisplayStartDate,
+                        displayEndDate         : it.postingDisplayEndDate,
                         recurringPostJobError  : it.recurringPostIndicator?ActionItemPostReadOnly.fetchRecurringJobsStateCount(it.recurringPostDetailsId,ActionItemPostExecutionState.Error.name()):0
 
                 ]
@@ -199,7 +201,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
                 postingDispEndDays      :actionItemPostRecurringDetails.postingDispEndDays,
                 postingDisplayEndDate   :actionItemPostRecurringDetails.postingDisplayEndDate,
                 recurringStartDate      :actionItemPostRecurringDetails.recurStartDate,
-                postingDisplayTime      :actionItemPostRecurringDetails.recurStartTime ? timeFormat().format( actionItemPostRecurringDetails.recurStartTime ) : actionItemPostRecurringDetails.recurStartTime,
+                postingDisplayTime      :actionItemPostReadOnly.postingDisplayDateTime ? timeFormat().format( actionItemPostReadOnly.postingDisplayDateTime ) : actionItemPostReadOnly.postingDisplayDateTime,
                 recurPostTimezone       :actionItemPostRecurringDetails.recurPostTimezone,
                 recurringEndDate        :actionItemPostRecurringDetails.recurEndDate,
                 completedJobsCount      :ActionItemPostReadOnly.fetchRecurringJobsStateCount(actionItemPostReadOnly.recurringPostDetailsId,ActionItemPostExecutionState.Complete.name()),
