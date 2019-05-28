@@ -434,9 +434,15 @@ class ActionItemPostCompositeService {
 
         if(requestMap.postingDisplayEndDate) {
             Date newPostingDisplayEndDate=  new Date(requestMap.postingDisplayEndDate)
+
+            editedRecurringJobs.each {
+                if (it.postingDisplayStartDate.compareTo(newPostingDisplayEndDate) > 0) {
+                    throw new ApplicationException(ActionItemPostService, new BusinessLogicValidationException('preCreate.validation.display.start.date.more.than.display.end.date', []))
+                }
+            }
             if (actionItemPostRecurringDetails.postingDisplayEndDate.equals(null) ) {
                 editedRecurringJobs.each {
-                    it.postingDisplayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.postingDisplayEndDate)
+                       it.postingDisplayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.postingDisplayEndDate)
                 }
             }
             else{
