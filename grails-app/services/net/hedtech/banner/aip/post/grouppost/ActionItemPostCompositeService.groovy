@@ -269,18 +269,7 @@ class ActionItemPostCompositeService {
         def success = false
         requestMap.recurrence=true
         actionItemPostService.preCreateValidation(requestMap)
-
-        if (requestMap.recurFrequencyType.equals("DAYS") )
-        {
-            Date displayStartDateTime= getDisplayDateTimeCalender(requestMap.displayDatetimeZone).getTime()
-            actionItemPostRecurringDetailsService.preCreateValidate(requestMap)
-            def actionItemPostRecurringDetailsObject = getActionItemPostRecurringInstance(requestMap)
-            actionItemPostRecurringDetailsService.validateDates(actionItemPostRecurringDetailsObject,displayStartDateTime)
-        }
-        else
-        {
-            actionItemPostRecurringDetailsService.preCreateValidate(requestMap)
-        }
+        actionItemPostRecurringDetailsService.preCreateValidate(requestMap)
 
         def actionItemPost = ActionItemPost.fetchJobByPostingId(requestMap.postId )
         def actionItemPostRecurringDetails = ActionItemPostRecurringDetails.fetchByRecurId(actionItemPost.recurringPostDetailsId)
@@ -295,8 +284,6 @@ class ActionItemPostCompositeService {
         changedRecurringJobsList=checkAndEditDisplayEndDays(requestMap,actionItemPostRecurringDetails,changedRecurringJobsList)
         changedRecurringJobsList=checkAndEditDisplayEndDateToOffset(requestMap,actionItemPostRecurringDetails,changedRecurringJobsList)
         changedRecurringJobsList=checkAndEditDisplayEndDate(requestMap,actionItemPostRecurringDetails,changedRecurringJobsList)
-        changedRecurringJobsList=checkAndEditRecurTime(requestMap,actionItemPostRecurringDetails,actionItemPost,changedRecurringJobsList)
-        changedRecurringJobsList=checkAndEditRecurTimeZone(requestMap,actionItemPostRecurringDetails,actionItemPost,changedRecurringJobsList)
 
         updateRecurData(actionItemPostRecurringDetails)
         updateRecurrenceScheduledJob(actionItemPost)
@@ -363,9 +350,7 @@ class ActionItemPostCompositeService {
     def checkAndEditDisplayStartDays(requestMap,actionItemPostRecurringDetails,editedRecurringJobs){
 
         Integer diffDispStartDaysVal
-        print "requestMap.postingDispStartDays $requestMap.postingDispStartDays"
         if (requestMap.postingDispStartDays != actionItemPostRecurringDetails.postingDispStartDays){
-            print "INDS"
             diffDispStartDaysVal=requestMap.postingDispStartDays-actionItemPostRecurringDetails.postingDispStartDays;
             editedRecurringJobs.each {
                 Date calculatedDisplayStartDate = actionItemPostRecurringDetailsService.addDays( it.postingDisplayStartDate,diffDispStartDaysVal)
@@ -459,55 +444,6 @@ class ActionItemPostCompositeService {
     }
 
     /**
-     * This method compares the new Recur Time to old Recur Time and edit
-     * @param requestMap post request containing parameters from user input
-     * @actionItemPostRecurringDetails actionItemPostRecurringDetails contains saved recurringDetails
-     * @actionItemPost actionItemPost contains actionItemPostObjects
-     * @editedRecurringJobs editedRecurringJobs contains edited actionItemRecurringJobs
-     * @return
-     */
-    def checkAndEditRecurTime(requestMap,actionItemPostRecurringDetails,actionItemPost,editedRecurringJobs){
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(actionItemPost.postingDisplayDateTime);
-        Integer getDisplayHours = calendar.get(Calendar.HOUR_OF_DAY);
-        Integer getDisplayMinutes = calendar.get(Calendar.MINUTE);
-
-        Integer getRecurHours = Integer.parseInt(requestMap.recurStartTime.substring(0,2))
-        Integer getRecurMinutes = Integer.parseInt(requestMap.recurStartTime.substring(2,4))
-
-        if(getDisplayHours != getRecurHours || getDisplayMinutes != getRecurMinutes)
-        {
-            updateNewRecurTime(editedRecurringJobs,requestMap)
-            actionItemPost.postingDisplayDateTime=editedRecurringJobs[0].postingDisplayDateTime
-            def newRecurringJobList=ActionItemPost.fetchRecurringScheduledJobs(requestMap.postId,actionItemPostRecurringDetails.id)
-            return newRecurringJobList
-        }
-        return editedRecurringJobs
-    }
-
-    /**
-     * This method compares the new Recur TimeZone to old Recur TimeZone and edit
-     * @param requestMap post request containing parameters from user input
-     * @actionItemPostRecurringDetails actionItemPostRecurringDetails contains saved recurringDetails
-     * @actionItemPost actionItemPost contains actionItemPostObjects
-     * @editedRecurringJobs editedRecurringJobs contains edited actionItemRecurringJobs
-     * @return
-     */
-    def checkAndEditRecurTimeZone(requestMap,actionItemPostRecurringDetails,actionItemPost,editedRecurringJobs){
-
-        if (requestMap.recurPostTimezone!=actionItemPostRecurringDetails.recurPostTimezone)
-        {
-            updateNewRecurTimeZone(editedRecurringJobs,requestMap)
-            actionItemPostRecurringDetails.recurPostTimezone=requestMap.recurPostTimezone
-            actionItemPost.postingTimeZone =requestMap.displayDatetimeZone.timeZoneVal
-            def newRecurringJobList=ActionItemPost.fetchRecurringScheduledJobs(requestMap.postId,actionItemPostRecurringDetails.id)
-            return newRecurringJobList
-        }
-        return editedRecurringJobs
-    }
-
-    /**
      * This method compares new RecurEnd Date is less than old Recur End Date. Delete jobs beyond Recur End Date
      * @param requestMap post request containing parameters from user input
      * @actionItemPostRecurringJobs actionItemPostRecurringJobs contains actionItemRecurringJobs
@@ -528,63 +464,6 @@ class ActionItemPostCompositeService {
                 deletePost(it.id)
             }
         }
-    }
-
-    /**
-     * This method updates the Recur jobs with new TimeZone
-     * @editedRecurringJobs editedRecurringJobs contains edited actionItemRecurringJobs
-     * @recurDetails recurDetails contains new recur Details
-     * @return
-     */
-    @Transactional
-    def updateNewRecurTimeZone(editedRecurringJobs,recurDetails){
-
-        def user = springSecurityService.getAuthentication()?.user
-        boolean isRecurEdit=true
-        def savedRecurringJobs
-
-        editedRecurringJobs.each {
-            String scheduledStartTime = recurDetails.recurStartTime
-            String timezoneStringOffset = recurDetails.recurPostTimezone
-            Calendar newscheduledStartDate=actionItemProcessingCommonService.getRequestedTimezoneCalendar(it.postingScheduleDateTime, scheduledStartTime, timezoneStringOffset)
-            it.postingScheduleDateTime=newscheduledStartDate.getTime()
-            it.postingTimeZone = recurDetails.displayDatetimeZone.timeZoneVal
-            if (it.aSyncJobId != null) {
-                schedulerJobService.deleteScheduledJob(it.aSyncJobId, it.aSyncGroupId)
-            }
-            savedRecurringJobs = schedulePost((ActionItemPost) it, user.oracleUserName, isRecurEdit)
-        }
-    }
-
-    /**
-     * This method updates the Recur jobs with new Time
-     * @editedRecurringJobs editedRecurringJobs contains edited actionItemRecurringJobs
-     * @recurDetails recurDetails contains new recur Details
-     * @return
-     */
-    @Transactional
-    def updateNewRecurTime(editedRecurringJobs,recurDetails){
-
-        def user = springSecurityService.getAuthentication()?.user
-        boolean isRecurEdit=true
-        def savedRecurringJobs
-
-        editedRecurringJobs.each {
-            String scheduledStartTime = recurDetails.recurStartTime
-            String timezoneStringOffset = recurDetails.recurPostTimezone
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(it.postingDisplayDateTime);
-            calendar.set(Calendar.HOUR_OF_DAY,Integer.parseInt(recurDetails.recurStartTime.substring(0,2)))
-            calendar.set(Calendar.MINUTE,Integer.parseInt(recurDetails.recurStartTime.substring(2,4)))
-            Date newdisplayDateTime = calendar.getTime();
-            Calendar  newscheduledStartDate=actionItemProcessingCommonService.getRequestedTimezoneCalendar(it.postingScheduleDateTime, scheduledStartTime, timezoneStringOffset)
-            it.postingScheduleDateTime=newscheduledStartDate.getTime()
-            it.postingDisplayDateTime= newdisplayDateTime
-            if (it.aSyncJobId != null) {
-                schedulerJobService.deleteScheduledJob(it.aSyncJobId, it.aSyncGroupId)
-            }
-            savedRecurringJobs = schedulePost((ActionItemPost) it, user.oracleUserName, isRecurEdit)
-         }
     }
 
     /**
