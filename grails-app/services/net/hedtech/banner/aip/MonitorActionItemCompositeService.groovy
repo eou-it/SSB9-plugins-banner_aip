@@ -3,11 +3,15 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import grails.util.Holders
+import groovy.sql.Sql
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.service.ServiceBase
 import org.apache.log4j.Logger
 import org.omg.CORBA.portable.ApplicationException
 import net.hedtech.banner.i18n.MessageHelper
+
+import java.sql.SQLException
 
 
 /**
@@ -24,6 +28,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
     def configUserPreferenceService
     def aipReviewStateService
     def actionItemService
+    def preferredNameService
 
     /**
      * get Action Item
@@ -119,7 +124,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                         actionItemName      : it.actionItemName,
                         actionItemGroupName : it.actionItemGroupName,
                         spridenId           : it.spridenId,
-                        actionItemPersonName: it.personDisplayName,
+                        actionItemPersonName: getPreferredName(it.pidm),
                         status              : it.status,
                         responseDate        : it.responseDate,
                         displayStartDate    : it.displayStartDate,
@@ -130,7 +135,6 @@ class MonitorActionItemCompositeService extends ServiceBase {
                         attachments         : it.attachments])
 
         }
-
         def resultMap = [result: filterResults(result, filterData.params.searchString),
                          length: filterData.params.searchString ? filterResults(result, filterData.params.searchString).size() : count];
 
@@ -277,5 +281,26 @@ class MonitorActionItemCompositeService extends ServiceBase {
             reviewAuditObject = reviewAuditObjectList[0]
         }
         reviewAuditObject
+    }
+
+    public String getPreferredName(pidm) {
+        def params = [:]
+        def conn
+        params.put("pidm", pidm)
+        params.put("productname", "General")
+        params.put("appname", "GeneralSsb")
+        params.put("pagename", "Monitor Action Item")
+        params.put("sectionname", "Search Results")
+        if (isSsbEnabled()) {
+            conn = dataSource.getSsbConnection()
+            log.debug "AuthenticationProviderUtility.getUserFullName using banssuser ssb connection"
+        } else {
+            conn = dataSource.getConnection()
+            log.debug "AuthenticationProviderUtility.getUserFullName using banproxy connection"
+        }
+        preferredNameService.getName(params,conn)
+    }
+    private def isSsbEnabled() {
+        Holders.config.ssbEnabled instanceof Boolean ? Holders.config.ssbEnabled : false
     }
 }
