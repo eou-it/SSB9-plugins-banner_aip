@@ -4,13 +4,22 @@
 
 package net.hedtech.banner.aip
 
+
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
+import grails.util.GrailsWebMockUtil
+import grails.web.servlet.context.GrailsWebApplicationContext
 import net.hedtech.banner.aip.block.process.ActionItemBlockedProcess
 import net.hedtech.banner.aip.block.process.BlockingProcess
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.testing.BaseIntegrationTestCase
+import org.grails.plugins.testing.GrailsMockHttpServletRequest
+import org.grails.plugins.testing.GrailsMockHttpServletResponse
+import org.grails.web.servlet.mvc.GrailsWebRequest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+
 
 class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
 
@@ -25,9 +34,16 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
     void setUp() {
         formContext = ['GUAGMNU']
         super.setUp()
+        webAppCtx = new GrailsWebApplicationContext()
+        mockRequest()
         loginSSB('CSRSTU001', '111111')
     }
 
+    GrailsWebRequest mockRequest() {
+        GrailsMockHttpServletRequest mockRequest = new GrailsMockHttpServletRequest();
+        GrailsMockHttpServletResponse mockResponse = new GrailsMockHttpServletResponse();
+        GrailsWebMockUtil.bindMockWebRequest(webAppCtx, mockRequest, mockResponse)
+    }
 
     @After
     void tearDown() {

@@ -4,6 +4,8 @@
 
 package net.hedtech.banner.aip.bcm
 
+import grails.gorm.transactions.Rollback
+import grails.testing.mixin.integration.Integration
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
@@ -12,6 +14,8 @@ import org.junit.Test
 /**
  * Test class for BannerCommManagementResourceAccessService
  */
+@Integration
+@Rollback
 class BannerCommManagementResourceAccessServiceIntegrationTests extends BaseIntegrationTestCase {
     def bannerCommManagementResourceAccessService
 

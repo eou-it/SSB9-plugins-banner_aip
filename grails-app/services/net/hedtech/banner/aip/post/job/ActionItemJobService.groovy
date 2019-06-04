@@ -3,14 +3,17 @@
  ********************************************************************************* */
 package net.hedtech.banner.aip.post.job
 
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.aip.common.LoggerUtility
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
 import org.apache.log4j.Logger
 
+
 /**
  *  DAO service interface for actionItem group send item objects.
  */
+@Transactional
 class ActionItemJobService extends ServiceBase {
     private static final LOGGER = Logger.getLogger( this.class )
 

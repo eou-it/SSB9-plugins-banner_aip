@@ -4,7 +4,7 @@
 
 package net.hedtech.banner.aip.block.process
 
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.aip.common.LoggerUtility
 import net.hedtech.banner.exceptions.ApplicationException
@@ -15,8 +15,9 @@ import org.springframework.transaction.annotation.Propagation
 /**
  * Service class for Action item Blocked Process
  */
+@Transactional
 class ActionItemBlockedProcessCompositeService {
-    static transactional = true
+
     def actionItemBlockedProcessReadOnlyService
     def actionItemBlockedProcessService
     def blockingProcessService

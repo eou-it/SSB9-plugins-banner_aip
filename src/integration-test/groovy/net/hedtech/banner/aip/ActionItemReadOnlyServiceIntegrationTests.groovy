@@ -4,13 +4,16 @@
 
 package net.hedtech.banner.aip
 
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-
+@Integration
+@Rollback
 class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemReadOnlyService

@@ -4,6 +4,8 @@
 
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Transactional
+import grails.testing.mixin.integration.Integration
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
@@ -11,7 +13,8 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-
+@Integration
+@Transactional
 class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemService

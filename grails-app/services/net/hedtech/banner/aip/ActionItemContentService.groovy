@@ -4,15 +4,16 @@
 package net.hedtech.banner.aip
 
 import net.hedtech.banner.service.ServiceBase
-import org.springframework.transaction.annotation.Transactional
+import grails.gorm.transactions.Transactional
 
 
 /**
  * Service class for Action Item Content
  */
+@Transactional
 class ActionItemContentService extends ServiceBase {
 
-    boolean transactional = true
+
 
     /**
      *

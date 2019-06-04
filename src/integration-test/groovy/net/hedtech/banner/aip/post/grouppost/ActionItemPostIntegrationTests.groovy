@@ -3,6 +3,8 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import grails.gorm.transactions.Rollback
+import grails.testing.mixin.integration.Integration
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.testing.BaseIntegrationTestCase
@@ -11,7 +13,8 @@ import org.junit.Before
 import org.junit.Test
 
 import java.text.SimpleDateFormat
-
+@Integration
+@Rollback
 class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
     @Before
     void setUp() {

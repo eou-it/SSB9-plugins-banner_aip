@@ -4,6 +4,8 @@
 
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Rollback
+import grails.testing.mixin.integration.Integration
 import groovy.sql.Sql
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.testing.BaseIntegrationTestCase
@@ -11,7 +13,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-
+@Integration
+@Rollback
 class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
     @Before

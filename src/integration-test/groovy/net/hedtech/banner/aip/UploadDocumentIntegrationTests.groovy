@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.multipart.MultipartFile
 
+
 class UploadDocumentIntegrationTests extends BaseIntegrationTestCase {
 
     def uploadDocumentCompositeService

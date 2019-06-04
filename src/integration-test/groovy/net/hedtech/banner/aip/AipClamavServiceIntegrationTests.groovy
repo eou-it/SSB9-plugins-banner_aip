@@ -4,6 +4,8 @@
 
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Rollback
+import grails.testing.mixin.integration.Integration
 import grails.util.Holders
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.apache.commons.io.IOUtils
@@ -16,7 +18,8 @@ import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.multipart.MultipartFile
-
+@Integration
+@Rollback
 class AipClamavServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def aipClamavService

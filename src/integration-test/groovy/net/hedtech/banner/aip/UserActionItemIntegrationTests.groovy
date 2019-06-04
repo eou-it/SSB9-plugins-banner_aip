@@ -4,6 +4,8 @@
 
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Rollback
+import grails.testing.mixin.integration.Integration
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import net.zorched.test.User
@@ -13,7 +15,8 @@ import org.junit.Test
 
 import java.text.SimpleDateFormat
 
-
+@Integration
+@Rollback
 class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     ActionItem drugAndAlcoholPolicyActionItem
 

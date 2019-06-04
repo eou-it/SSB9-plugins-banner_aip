@@ -3,6 +3,7 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.actionitem
 
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.aip.ActionItemStatus
 import net.hedtech.banner.aip.UserActionItem
 import net.hedtech.banner.aip.post.ActionItemErrorCode
@@ -16,6 +17,7 @@ import net.hedtech.banner.aip.post.job.ActionItemJobStatus
 /**
  * Service class for Action Item Perform Posting
  */
+@Transactional
 class ActionItemPerformPostService {
     def userActionItemService
     def actionItemJobService

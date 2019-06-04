@@ -4,11 +4,17 @@
 
 package net.hedtech.banner.aip.block.process
 
+import grails.gorm.transactions.Transactional
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+
+@Integration
+@Rollback
 class BlockingProcessUrlIntegrationTests extends BaseIntegrationTestCase {
 
     @Before

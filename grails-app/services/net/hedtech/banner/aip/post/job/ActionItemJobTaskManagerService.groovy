@@ -3,6 +3,7 @@
  *********************************************************************************/
 package net.hedtech.banner.aip.post.job
 
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.aip.common.LoggerUtility
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.exceptions.ApplicationException
@@ -12,13 +13,14 @@ import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskMonitorRecor
 import net.hedtech.banner.general.communication.groupsend.automation.StringHelper
 import org.apache.commons.lang.NotImplementedException
 import org.apache.log4j.Logger
-import org.springframework.transaction.annotation.Transactional
+
 
 /**
  * ActionItemJobTaskManagerService implements asynchronous job engine life cycle
  * methods for manipulating group send item tasks.
  *
  */
+@Transactional
 class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
     private static final LOGGER = Logger.getLogger( 'net.hedtech.banner.aip.post.job.ActionItemJobTaskManagerService' )
 

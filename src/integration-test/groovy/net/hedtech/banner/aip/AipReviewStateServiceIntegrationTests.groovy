@@ -4,6 +4,8 @@
 
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Rollback
+import grails.testing.mixin.integration.Integration
 import net.hedtech.banner.aip.ActionItemStatus
 import net.hedtech.banner.aip.UserActionItem
 import net.hedtech.banner.aip.common.AIPConstants
@@ -15,7 +17,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-
+@Integration
+@Rollback
 class AipReviewStateServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def aipReviewStateService

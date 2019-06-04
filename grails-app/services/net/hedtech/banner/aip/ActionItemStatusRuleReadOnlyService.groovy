@@ -3,11 +3,13 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.service.ServiceBase
 
 /**
  * Service for Action Item Status Rules Readonly
  */
+@Transactional
 class ActionItemStatusRuleReadOnlyService extends ServiceBase {
 
     def listActionItemStatusRulesRO() {

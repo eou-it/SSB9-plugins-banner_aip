@@ -3,12 +3,14 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
 
 /**
  * Service class for Action Item Status Rules
  */
+@Transactional
 class ActionItemStatusRuleService extends ServiceBase {
 
     static final String NO_ACTIONITEMID_ERROR = "@@r1:ActionItemIdCanNotBeNullError@@"
