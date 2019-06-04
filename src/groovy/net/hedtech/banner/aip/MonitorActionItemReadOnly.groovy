@@ -104,11 +104,6 @@ class MonitorActionItemReadOnly implements Serializable {
     @Column(name = "PERSON_SEARCH_FULL_NAME")
     String personSearchFullName
     /**
-     * Person Display Name
-     */
-    @Column(name = "PERSON_DISPLAY_FULL_NAME")
-    String personDisplayName
-    /**
      * Change Indicator
      */
     @Column(name = "SPRIDEN_CHANGE_IND")

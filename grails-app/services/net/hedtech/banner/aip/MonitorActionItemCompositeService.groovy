@@ -291,14 +291,23 @@ class MonitorActionItemCompositeService extends ServiceBase {
         params.put("appname", "GeneralSsb")
         params.put("pagename", "Monitor Action Item")
         params.put("sectionname", "Search Results")
+
         if (isSsbEnabled()) {
             conn = dataSource.getSsbConnection()
-            log.debug "AuthenticationProviderUtility.getUserFullName using banssuser ssb connection"
+            log.debug "MonitorActionItem.getPreferredName using banssuser ssb connection"
         } else {
             conn = dataSource.getConnection()
-            log.debug "AuthenticationProviderUtility.getUserFullName using banproxy connection"
+            log.debug "MonitorActionItem.getPreferredName using banproxy connection"
         }
-        preferredNameService.getName(params,conn)
+        try {
+            preferredNameService.getName(params, conn)
+        }
+        catch (net.hedtech.banner.exceptions.ApplicationException aex) {
+            log.error "ApplicationException occurred while fetching Preferred Name with :${aex}"
+        }
+        finally {
+            conn?.close()
+        }
     }
     private def isSsbEnabled() {
         Holders.config.ssbEnabled instanceof Boolean ? Holders.config.ssbEnabled : false
