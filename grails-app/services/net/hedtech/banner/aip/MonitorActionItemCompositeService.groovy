@@ -41,7 +41,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                  actionItemName      : userActionItemDetails.actionItemName,
                  actionItemGroupName : userActionItemDetails.actionItemGroupName,
                  spridenId           : userActionItemDetails.spridenId,
-                 actionItemPersonName: userActionItemDetails.personDisplayName,
+                 actionItemPersonName: getPreferredName(userActionItemDetails.pidm),
                  status              : userActionItemDetails.status,
                  responseDate        : userActionItemDetails.responseDate,
                  displayStartDate    : userActionItemDetails.displayStartDate,
