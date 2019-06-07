@@ -4,15 +4,23 @@
 
 package net.hedtech.banner.aip
 
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 
 import java.sql.SQLException
 
+
+@Integration
+@Rollback
 class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemStatusCompositeService
@@ -22,7 +30,7 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
     }
 
@@ -50,7 +58,8 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
 
     @Test
     void testFetchActionItemCheckIfStatusRulePresent() {
-        loginSSB('CSRSTU001', '111111')
+        Authentication auth = bannerAuthenticationProvider.authenticate( new UsernamePasswordAuthenticationToken( 'CSRSTU001', '111111' ) )
+        SecurityContextHolder.getContext().setAuthentication( auth )
         def title = 'TEST_TITLE'
         ActionItemStatus actionItemStatus = actionItemStatusCompositeService.statusSave([title: title]).status
         assert actionItemStatus.actionItemStatus == title
@@ -96,6 +105,8 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
 
     @Test
     void testStatusSave() {
+
+
         loginSSB('CSRSTU001', '111111')
         def title = 'TEST_TITLE'
         ActionItemStatus actionItemStatus = actionItemStatusCompositeService.statusSave([title: title]).status
@@ -121,6 +132,7 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
     @Test
     void testStatusSaveInvalidPidm() {
         try {
+            logout()
             loginSSB('INVALID', '111111')
             ActionItemStatus actionItemStatusList1 = actionItemStatusCompositeService.statusSave([title: 'Completed'])
         } catch (ApplicationException e) {

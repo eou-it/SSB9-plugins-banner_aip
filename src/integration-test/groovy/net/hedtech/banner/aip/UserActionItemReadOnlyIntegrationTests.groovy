@@ -4,17 +4,20 @@
 
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Rollback
+import grails.testing.mixin.integration.Integration
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-
+@Integration
+@Rollback
 class UserActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
     }
 

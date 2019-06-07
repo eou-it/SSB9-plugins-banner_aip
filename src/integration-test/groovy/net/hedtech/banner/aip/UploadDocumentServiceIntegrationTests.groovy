@@ -4,6 +4,8 @@
 
 package net.hedtech.banner.aip
 
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
 import net.hedtech.banner.aip.ActionItemStatusRule
 import net.hedtech.banner.aip.UploadDocument
 import net.hedtech.banner.general.person.PersonUtility
@@ -29,7 +31,7 @@ class UploadDocumentServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
         def auth = selfServiceBannerAuthenticationProvider.authenticate(new UsernamePasswordAuthenticationToken('CSRSTU004', '111111'))
         SecurityContextHolder.getContext().setAuthentication(auth)

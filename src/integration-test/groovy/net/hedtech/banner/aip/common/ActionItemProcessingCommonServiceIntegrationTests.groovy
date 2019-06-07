@@ -4,6 +4,8 @@
 
 package net.hedtech.banner.aip.common
 
+import grails.gorm.transactions.Rollback
+import grails.testing.mixin.integration.Integration
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.i18n.LocalizeUtil
 import net.hedtech.banner.i18n.MessageHelper
@@ -14,14 +16,15 @@ import org.junit.Test
 
 import java.text.SimpleDateFormat
 
-
+@Integration
+@Rollback
 class ActionItemProcessingCommonServiceIntegrationTests extends BaseIntegrationTestCase {
     def actionItemProcessingCommonService
 
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['SELFSERVICE','GUAGMNU']
         super.setUp()
         loginSSB( 'AIPADM001', '111111' )
     }

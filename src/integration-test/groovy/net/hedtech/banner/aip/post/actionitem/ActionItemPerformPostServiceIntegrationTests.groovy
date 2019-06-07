@@ -3,6 +3,8 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.actionitem
 
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.ActionItemGroupAssign
 import net.hedtech.banner.aip.post.grouppost.ActionItemPost
@@ -20,6 +22,8 @@ import org.junit.Test
 
 import java.text.SimpleDateFormat
 
+@Integration
+@Rollback
 class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCase {
     def actionItemPostCompositeService
     def actionItemPostService
@@ -35,7 +39,7 @@ class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCa
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
         loginSSB( USERNAME, '111111' )
     }

@@ -4,18 +4,22 @@
 
 package net.hedtech.banner.aip.pb
 
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+@Integration
+@Rollback
 class AipPageBuilderCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
     def aipPageBuilderCompositeService
 
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
     }
 

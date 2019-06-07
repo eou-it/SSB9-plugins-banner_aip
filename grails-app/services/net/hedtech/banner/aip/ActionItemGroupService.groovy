@@ -3,6 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
@@ -11,9 +12,10 @@ import net.hedtech.banner.service.ServiceBase
 /**
  * Service class for Action Item Group
  */
+@Transactional
 class ActionItemGroupService extends ServiceBase {
 
-    boolean transactional = true
+
 
     static final String UNIQUE_NAME_ERROR = '@@r1:UniqueNameInFolderError@@'
 

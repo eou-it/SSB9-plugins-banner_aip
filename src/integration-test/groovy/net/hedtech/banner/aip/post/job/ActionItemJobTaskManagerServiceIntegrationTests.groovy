@@ -4,6 +4,8 @@
 
 package net.hedtech.banner.aip.post.job
 
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.apache.commons.lang.NotImplementedException
@@ -11,6 +13,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+@Integration
+@Rollback
 class ActionItemJobTaskManagerServiceIntegrationTests extends BaseIntegrationTestCase {
     def actionItemJobTaskManagerService
     def actionItemJobService

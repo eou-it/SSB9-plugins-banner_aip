@@ -4,10 +4,12 @@
 
 package net.hedtech.banner.aip
 
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
 import groovy.sql.Sql
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.apache.log4j.Logger
-import org.codehaus.groovy.grails.web.context.ServletContextHolder
+import grails.web.context.ServletContextHolder
 import org.grails.web.util.GrailsApplicationAttributes
 import org.junit.After
 import org.junit.Before
@@ -15,6 +17,8 @@ import org.junit.Test
 import net.hedtech.banner.general.person.PersonUtility
 import org.springframework.util.StopWatch
 
+@Integration
+@Rollback
 class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
     private static final log = Logger.getLogger(MonitorActionItemReadOnlyIntegrationTests.class)
@@ -28,7 +32,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
         drugAndAlcoholPolicyActionItem = ActionItem.findByName("Drug and Alcohol Policy");
         assertNotNull drugAndAlcoholPolicyActionItem
@@ -279,7 +283,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
             }
         }
         finally {
-            sql?.close()
+            //sql?.close()
         }
     }
 
@@ -295,7 +299,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
             sql.execute sqlTrace
         }
         finally {
-            sql?.close()
+            //sql?.close()
         }
     }
 }

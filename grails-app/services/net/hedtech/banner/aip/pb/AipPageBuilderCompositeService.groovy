@@ -4,12 +4,14 @@
 
 package net.hedtech.banner.aip.pb
 
+import grails.gorm.transactions.Transactional
 import groovy.json.JsonSlurper
 import org.apache.log4j.Logger
 
 /**
  * Service class for Action item Processing Page Builder
  */
+@Transactional
 class AipPageBuilderCompositeService {
     private static final def LOGGER = Logger.getLogger( this.class )
     def pageService

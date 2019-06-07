@@ -3,6 +3,8 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
 import net.hedtech.banner.aip.ActionItem
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.ActionItemGroupAssign
@@ -21,9 +23,14 @@ import org.json.JSONObject
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 
 import java.text.SimpleDateFormat
 
+@Integration
+@Rollback
 class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
     def actionItemPostCompositeService
     def actionItemPostService
@@ -38,9 +45,11 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
-        loginSSB( USERNAME, '111111' )
+        Authentication auth = selfServiceBannerAuthenticationProvider.authenticate( new UsernamePasswordAuthenticationToken( USERNAME, '111111' ) )
+        SecurityContextHolder.getContext().setAuthentication( auth )
+
     }
 
 

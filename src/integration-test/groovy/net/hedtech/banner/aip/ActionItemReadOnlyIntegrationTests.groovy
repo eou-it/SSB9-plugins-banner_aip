@@ -4,6 +4,8 @@
 
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Rollback
+import grails.testing.mixin.integration.Integration
 import groovy.sql.Sql
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.testing.BaseIntegrationTestCase
@@ -11,7 +13,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-
+@Integration
+@Rollback
 class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
@@ -198,24 +201,20 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
     private void setBackActionItemActivityDate( def daysBack, def actionItemId ) {
         def sql
-        try {
+
             def updateSql = """update gcbactm set gcbactm_activity_date = (SYSDATE - ?), gcbactm_user_id = 'jack' where gcbactm_name = ?"""
             sql = new Sql( sessionFactory.getCurrentSession().connection() )
             sql.executeUpdate( updateSql, [daysBack, actionItemId] )
-        } finally {
-            sql?.close()
-        }
+
     }
 
-
+//TODO : Sivaram reloook
     private void setBackActionItemDetailActivityDate( def daysBack, def actionItemId ) {
         def sql
-        try {
+
             def updateSql = """update gcracnt set GCRACNT_ACTIVITY_DATE = (SYSDATE - ?), gcracnt_user_id = 'jill' where gcracnt_gcbactm_id = ?"""
             sql = new Sql( sessionFactory.getCurrentSession().connection() )
             sql.executeUpdate( updateSql, [daysBack, actionItemId] )
-        } finally {
-            sql?.close()
-        }
+
     }
 }

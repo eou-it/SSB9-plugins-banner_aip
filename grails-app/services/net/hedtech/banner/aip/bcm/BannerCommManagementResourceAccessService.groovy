@@ -3,11 +3,11 @@
  ****************************************************************************** */
 package net.hedtech.banner.aip.bcm
 
-import grails.transaction.Transactional
-import org.apache.log4j.Logger
+import grails.gorm.transactions.Transactional
+
 
 import java.sql.Clob
-
+@Transactional
 class BannerCommManagementResourceAccessService {
     def sessionFactory
 

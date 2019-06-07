@@ -4,13 +4,19 @@
 
 package net.hedtech.banner.aip
 
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.Assert
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 
-
+@Integration
+@Rollback
 class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def monitorActionItemCompositeService
@@ -25,7 +31,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
         drugAndAlcoholPolicyActionItem = ActionItem.findByName("Drug and Alcohol Policy")
         assertNotNull drugAndAlcoholPolicyActionItem
@@ -465,7 +471,9 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Test
     void testReviewStateNameInSearchResult() {
-        loginSSB('CSRSTU004', '111111')
+        //loginSSB('CSRSTU004', '111111')
+        Authentication auth = bannerAuthenticationProvider.authenticate( new UsernamePasswordAuthenticationToken('CSRSTU004', '111111') )
+        SecurityContextHolder.getContext().setAuthentication( auth )
         def map = [locale: 'en-US']
         def statusMap = configUserPreferenceService.saveLocale(map)
         assert statusMap.status == 'success'
@@ -486,7 +494,10 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Test
     void testGetReviewStatusList() {
-        loginSSB('CSRSTU004', '111111')
+//        loginSSB('CSRSTU004', '111111')
+        Authentication auth = bannerAuthenticationProvider.authenticate( new UsernamePasswordAuthenticationToken('CSRSTU004', '111111') )
+        SecurityContextHolder.getContext().setAuthentication( auth )
+
         def map = [locale: 'en-US']
         def statusMap = configUserPreferenceService.saveLocale(map)
         assertEquals 'success',statusMap.status

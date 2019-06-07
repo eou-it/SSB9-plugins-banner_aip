@@ -6,6 +6,7 @@ package net.hedtech.banner.aip.common
 
 import com.ibm.icu.util.Calendar
 import com.ibm.icu.util.ULocale
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
@@ -18,7 +19,7 @@ import org.springframework.context.i18n.LocaleContextHolder
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 
-
+@Transactional
 class ActionItemProcessingCommonService {
     def dateConverterService
 

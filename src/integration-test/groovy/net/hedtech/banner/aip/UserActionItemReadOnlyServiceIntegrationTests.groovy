@@ -16,7 +16,7 @@ class UserActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
     }
 

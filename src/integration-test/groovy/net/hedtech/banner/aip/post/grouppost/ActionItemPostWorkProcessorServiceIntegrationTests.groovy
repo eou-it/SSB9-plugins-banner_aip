@@ -3,6 +3,8 @@
  ********************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.ActionItemGroupAssign
 import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
@@ -17,7 +19,8 @@ import org.junit.Test
 
 import java.text.SimpleDateFormat
 
-
+@Integration
+@Rollback
 class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemPostWorkProcessorService
@@ -35,7 +38,7 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE','CMQUERYEXECUTE']
         super.setUp()
         loginSSB( 'AIPADM001', '111111' )
     }

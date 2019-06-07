@@ -4,18 +4,21 @@
 
 package net.hedtech.banner.aip.post.grouppost
 
+import grails.gorm.transactions.Rollback
+import grails.testing.mixin.integration.Integration
 import net.hedtech.banner.aip.post.engine.ActionItemAsynchronousTaskProcessingEngineImpl
 import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-
+@Integration
+@Rollback
 class ActionItemPostMonitorThreadIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
     }
 

@@ -3,7 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
@@ -18,8 +18,9 @@ import net.hedtech.banner.aip.block.process.ActionItemBlockedProcess
 /**
  * Class for ActionItemCompositeService.
  */
+@Transactional
 class ActionItemCompositeService {
-    static transactional = true
+
     def actionItemService
     def springSecurityService
     def actionItemReadOnlyCompositeService

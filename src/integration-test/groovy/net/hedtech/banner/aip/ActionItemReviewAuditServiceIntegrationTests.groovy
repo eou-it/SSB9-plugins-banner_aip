@@ -4,13 +4,14 @@
 
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.block.process.ActionItemBlockedProcess
-
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-
+@Integration
+@Rollback
 class ActionItemReviewAuditServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemReviewAuditService
@@ -19,7 +20,7 @@ class ActionItemReviewAuditServiceIntegrationTests extends BaseIntegrationTestCa
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
         loginSSB('AIDADM001', '111111')
     }

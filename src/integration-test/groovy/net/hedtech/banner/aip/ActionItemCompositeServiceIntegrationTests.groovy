@@ -4,13 +4,23 @@
 
 package net.hedtech.banner.aip
 
+
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
+import grails.util.GrailsWebMockUtil
+import grails.web.servlet.context.GrailsWebApplicationContext
 import net.hedtech.banner.aip.block.process.ActionItemBlockedProcess
 import net.hedtech.banner.aip.block.process.BlockingProcess
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.testing.BaseIntegrationTestCase
+import org.grails.plugins.testing.GrailsMockHttpServletRequest
+import org.grails.plugins.testing.GrailsMockHttpServletResponse
+import org.grails.web.servlet.mvc.GrailsWebRequest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+@Integration
+@grails.gorm.transactions.Rollback
 
 class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
 
@@ -23,11 +33,18 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['SELFSERVICE','GUAGMNU']
         super.setUp()
+  //      webAppCtx = new GrailsWebApplicationContext()
+//        mockRequest()
         loginSSB('CSRSTU001', '111111')
     }
 
+    GrailsWebRequest mockRequest() {
+        GrailsMockHttpServletRequest mockRequest = new GrailsMockHttpServletRequest();
+        GrailsMockHttpServletResponse mockResponse = new GrailsMockHttpServletResponse();
+        GrailsWebMockUtil.bindMockWebRequest(webAppCtx, mockRequest, mockResponse)
+    }
 
     @After
     void tearDown() {
@@ -56,7 +73,7 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
 
     @Test
     void addActionItemInvalidFolderId() {
-        def result = actionItemCompositeService.addActionItem([folderId: '123', status: 'Draft', title: 'title', name: 'name', description: 'description'])
+        def result = actionItemCompositeService.addActionItem([folderId: 123L, status: 'Draft', title: 'title', name: 'name', description: 'description'])
         assertFalse result.success
         assertNotNull result.message
         assertNull result.newActionItem

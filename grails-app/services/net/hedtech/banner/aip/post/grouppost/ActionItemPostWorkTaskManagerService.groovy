@@ -12,12 +12,13 @@ import net.hedtech.banner.general.communication.groupsend.automation.StringHelpe
 import org.apache.commons.lang.NotImplementedException
 import org.apache.log4j.Logger
 import org.springframework.transaction.annotation.Propagation
-import org.springframework.transaction.annotation.Transactional
+import grails.gorm.transactions.Transactional
 
 /**
  * ActionItemGroupSendItemTaskManagerService implements asynchronous job engine life cycle
  * methods for manipulating group send item tasks.
  */
+@Transactional
 class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
     private static
     final LOGGER = Logger.getLogger( 'net.hedtech.banner.aip.post.grouppost.ActionItemPostWorkTaskManagerService' )
