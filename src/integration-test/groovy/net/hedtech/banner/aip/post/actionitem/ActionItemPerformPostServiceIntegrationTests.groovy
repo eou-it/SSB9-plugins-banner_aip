@@ -22,7 +22,8 @@ import org.junit.Test
 
 import java.text.SimpleDateFormat
 
-
+@Integration
+@Rollback
 class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCase {
     def actionItemPostCompositeService
     def actionItemPostService
@@ -38,7 +39,7 @@ class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCa
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
         loginSSB( USERNAME, '111111' )
     }

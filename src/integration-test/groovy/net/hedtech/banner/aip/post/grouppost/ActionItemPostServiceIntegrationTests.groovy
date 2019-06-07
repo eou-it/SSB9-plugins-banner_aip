@@ -3,7 +3,9 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
-import net.hedtech.banner.aip.ActionItemGroup
+    import grails.testing.mixin.integration.Integration
+    import grails.transaction.Rollback
+    import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
@@ -14,7 +16,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-
+    @Integration
+    @Rollback
 class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def actionItemPostService
@@ -22,7 +25,7 @@ class ActionItemPostServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
     }
 

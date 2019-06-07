@@ -3,6 +3,7 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import grails.gorm.transactions.Transactional
 import groovy.sql.Sql
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import org.apache.log4j.Logger
@@ -13,8 +14,9 @@ import java.sql.SQLException
  * Process a group send item to the point of creating recipient merge data values and submitting an individual ActionItem job
  * for the recipient.
  */
+@Transactional
 class ActionItemPostWorkProcessorService {
-    boolean transactional = true
+
     private static final logger = Logger.getLogger( 'net.hedtech.banner.aip.post.grouppost.ActionItemPostWorkProcessorService' )
 
     def actionItemPerformPostService

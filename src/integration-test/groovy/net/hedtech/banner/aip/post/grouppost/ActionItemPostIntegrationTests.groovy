@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat
 class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
     }
 
@@ -82,7 +82,6 @@ class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
                 postingName: "some name",
                 postingActionItemGroupId: ActionItemGroup.findByName('Enrollment').id,
                 postingDeleteIndicator: false,
-                postingScheduleType: "some type",
                 postingCreationDateTime: new Date(),
                 postingDisplayStartDate: new Date(),
                 postingDisplayEndDate: new Date(),
@@ -124,7 +123,6 @@ class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
                 postingName: "some name",
                 postingActionItemGroupId: ActionItemGroup.findByName('Enrollment').id,
                 postingDeleteIndicator: false,
-                postingScheduleType: "some type",
                 postingCreationDateTime: new Date(),
                 postingDisplayStartDate: new Date(),
                 postingDisplayEndDate: new Date(),

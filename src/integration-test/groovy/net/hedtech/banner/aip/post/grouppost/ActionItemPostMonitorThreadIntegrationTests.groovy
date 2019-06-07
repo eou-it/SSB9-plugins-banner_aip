@@ -18,7 +18,7 @@ class ActionItemPostMonitorThreadIntegrationTests extends BaseIntegrationTestCas
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
     }
 

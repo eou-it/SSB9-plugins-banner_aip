@@ -22,7 +22,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
         drugAndAlcoholPolicyActionItem = ActionItem.findByName("Drug and Alcohol Policy");
         assertNotNull drugAndAlcoholPolicyActionItem

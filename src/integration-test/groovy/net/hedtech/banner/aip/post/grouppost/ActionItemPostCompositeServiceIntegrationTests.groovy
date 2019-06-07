@@ -28,6 +28,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 
 import java.text.SimpleDateFormat
+
 @Integration
 @Rollback
 class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
@@ -44,7 +45,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
         Authentication auth = selfServiceBannerAuthenticationProvider.authenticate( new UsernamePasswordAuthenticationToken( USERNAME, '111111' ) )
         SecurityContextHolder.getContext().setAuthentication( auth )

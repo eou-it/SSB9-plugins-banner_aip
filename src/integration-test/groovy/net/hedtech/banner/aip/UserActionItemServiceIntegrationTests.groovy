@@ -12,10 +12,11 @@ import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import static groovy.test.GroovyAssert.shouldFail
 
 
-@Integration
-@Rollback
+
+//TODO:Sivaram
 class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def userActionItemService
@@ -23,7 +24,7 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
         drugAndAlcoholPolicyActionItem = ActionItem.findByName("Drug and Alcohol Policy");
         assertNotNull drugAndAlcoholPolicyActionItem

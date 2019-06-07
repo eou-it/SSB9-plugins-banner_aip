@@ -201,24 +201,20 @@ class ActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase {
 
     private void setBackActionItemActivityDate( def daysBack, def actionItemId ) {
         def sql
-        try {
+
             def updateSql = """update gcbactm set gcbactm_activity_date = (SYSDATE - ?), gcbactm_user_id = 'jack' where gcbactm_name = ?"""
             sql = new Sql( sessionFactory.getCurrentSession().connection() )
             sql.executeUpdate( updateSql, [daysBack, actionItemId] )
-        } finally {
-            sql?.close()
-        }
+
     }
 
-
+//TODO : Sivaram reloook
     private void setBackActionItemDetailActivityDate( def daysBack, def actionItemId ) {
         def sql
-        try {
+
             def updateSql = """update gcracnt set GCRACNT_ACTIVITY_DATE = (SYSDATE - ?), gcracnt_user_id = 'jill' where gcracnt_gcbactm_id = ?"""
             sql = new Sql( sessionFactory.getCurrentSession().connection() )
             sql.executeUpdate( updateSql, [daysBack, actionItemId] )
-        } finally {
-            sql?.close()
-        }
+
     }
 }

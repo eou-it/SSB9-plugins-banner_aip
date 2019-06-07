@@ -91,7 +91,7 @@ environments {
     test {
         ssbEnabled = true
         ssbOracleUsersProxied = true
-        commmgrDataSourceEnabled = false
+        commmgrDataSourceEnabled = true
 
     }
     production {
@@ -99,3 +99,35 @@ environments {
     }
 }
 
+
+aip {
+    weblogicDeployment = false
+
+    actionItemPostMonitor {
+        enabled = true
+        monitorIntervalInSeconds = 10
+    }
+
+    actionItemPostWorkProcessingEngine {
+        enabled = true
+        maxThreads = 1
+        maxQueueSize = 5000
+        continuousPolling = true
+        pollingInterval = 2000
+        deleteSuccessfullyCompleted = false
+    }
+
+    actionItemJobProcessingEngine {
+        enabled = true
+        maxThreads = 2
+        maxQueueSize = 5000
+        continuousPolling = true
+        pollingInterval = 2000
+        deleteSuccessfullyCompleted = false
+    }
+
+    scheduler {
+        enabled = true
+        idleWaitTime = 30000
+    }
+}

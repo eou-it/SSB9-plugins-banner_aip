@@ -4,13 +4,16 @@
 
 package net.hedtech.banner.aip.post.grouppost
 
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-
+@Integration
+@Rollback
 class ActionItemPostWorkServiceIntegrationTests extends BaseIntegrationTestCase {
     def actionItemPostWorkService
     def springSecurityService
@@ -19,7 +22,7 @@ class ActionItemPostWorkServiceIntegrationTests extends BaseIntegrationTestCase 
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
         loginSSB( 'AIPADM001', '111111' )
     }
@@ -86,7 +89,7 @@ class ActionItemPostWorkServiceIntegrationTests extends BaseIntegrationTestCase 
                 populationVersionId: 1L,
                 postingName: "some name",
                 postingDeleteIndicator: false,
-                postingScheduleType: "some type",
+
                 postingActionItemGroupId: ActionItemGroup.findByName( 'Enrollment' ).id,
                 postingDisplayStartDate: new Date(),
                 postingCreationDateTime: new Date(),

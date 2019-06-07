@@ -4,12 +4,16 @@
 
 package net.hedtech.banner.aip.post.grouppost
 
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+@Integration
+@Rollback
 
 class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase {
     def actionItemPostReadOnlyService

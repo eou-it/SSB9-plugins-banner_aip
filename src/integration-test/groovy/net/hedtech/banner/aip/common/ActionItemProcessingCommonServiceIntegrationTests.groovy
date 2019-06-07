@@ -24,7 +24,7 @@ class ActionItemProcessingCommonServiceIntegrationTests extends BaseIntegrationT
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['SELFSERVICE','GUAGMNU']
         super.setUp()
         loginSSB( 'AIPADM001', '111111' )
     }

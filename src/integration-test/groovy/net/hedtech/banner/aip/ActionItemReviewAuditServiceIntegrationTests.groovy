@@ -4,7 +4,6 @@
 
 package net.hedtech.banner.aip
 
-import grails.gorm.transactions.Transactional
 import grails.testing.mixin.integration.Integration
 import grails.transaction.Rollback
 import net.hedtech.banner.testing.BaseIntegrationTestCase
@@ -21,7 +20,7 @@ class ActionItemReviewAuditServiceIntegrationTests extends BaseIntegrationTestCa
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
         loginSSB('AIDADM001', '111111')
     }

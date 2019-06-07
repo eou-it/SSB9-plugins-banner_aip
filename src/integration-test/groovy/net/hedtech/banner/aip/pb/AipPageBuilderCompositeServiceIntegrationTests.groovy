@@ -19,7 +19,7 @@ class AipPageBuilderCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
     }
 

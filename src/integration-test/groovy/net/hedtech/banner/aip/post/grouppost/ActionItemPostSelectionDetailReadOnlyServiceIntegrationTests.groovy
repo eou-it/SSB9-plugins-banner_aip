@@ -3,6 +3,8 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
@@ -15,7 +17,8 @@ import org.junit.Before
 import org.junit.Test
 
 import java.util.concurrent.TimeUnit
-
+@Integration
+@Rollback
 class ActionItemPostSelectionDetailReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase {
     def actionItemPostSelectionDetailReadOnlyService
     def communicationFolderService
@@ -56,7 +59,7 @@ class ActionItemPostSelectionDetailReadOnlyServiceIntegrationTests extends BaseI
                 postingName: "some name",
                 postingActionItemGroupId: ActionItemGroup.findByName( 'Enrollment' ).id,
                 postingDeleteIndicator: false,
-                postingScheduleType: "some type",
+
                 postingCreationDateTime: new Date(),
                 postingDisplayStartDate: new Date(),
                 postingDisplayEndDate: new Date(),

@@ -14,7 +14,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-
+@Integration
+@Rollback
 class ActionItemPostWorkTaskManagerServiceIntegrationTests extends BaseIntegrationTestCase {
     def actionItemPostWorkTaskManagerService
 
@@ -28,7 +29,7 @@ class ActionItemPostWorkTaskManagerServiceIntegrationTests extends BaseIntegrati
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
         loginSSB( 'AIPADM001', '111111' )
     }
@@ -163,7 +164,7 @@ class ActionItemPostWorkTaskManagerServiceIntegrationTests extends BaseIntegrati
                 populationVersionId: 1L,
                 postingName: "some name",
                 postingDeleteIndicator: false,
-                postingScheduleType: "some type",
+
                 postingActionItemGroupId: ActionItemGroup.findByName( 'Enrollment' ).id,
                 postingDisplayStartDate: new Date(),
                 postingCreationDateTime: new Date(),

@@ -3,6 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
@@ -10,7 +11,7 @@ import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.i18n.MessageHelper
 import org.apache.log4j.Logger
 import net.hedtech.banner.general.configuration.ConfigProperties
-
+@Transactional
 class ActionItemStatusCompositeService {
     private static final def LOGGER = Logger.getLogger(this.class)
     private static final int defaultMaxAttachmentCount = 10

@@ -19,7 +19,8 @@ import org.grails.web.servlet.mvc.GrailsWebRequest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-
+@Integration
+@grails.gorm.transactions.Rollback
 
 class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
 
@@ -32,10 +33,10 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['SELFSERVICE','GUAGMNU']
         super.setUp()
-        webAppCtx = new GrailsWebApplicationContext()
-        mockRequest()
+  //      webAppCtx = new GrailsWebApplicationContext()
+//        mockRequest()
         loginSSB('CSRSTU001', '111111')
     }
 
@@ -72,7 +73,7 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
 
     @Test
     void addActionItemInvalidFolderId() {
-        def result = actionItemCompositeService.addActionItem([folderId: '123', status: 'Draft', title: 'title', name: 'name', description: 'description'])
+        def result = actionItemCompositeService.addActionItem([folderId: 123L, status: 'Draft', title: 'title', name: 'name', description: 'description'])
         assertFalse result.success
         assertNotNull result.message
         assertNull result.newActionItem

@@ -4,6 +4,8 @@
 
 package net.hedtech.banner.aip
 
+import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.configuration.ConfigProperties
 import net.hedtech.banner.general.configuration.ConfigApplication
@@ -17,7 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.multipart.MultipartFile
 import grails.util.Holders
-
+//TODO:Sivaram
 class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestCase {
 
     def uploadDocumentCompositeService
@@ -31,7 +33,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU']
+        formContext = ['GUAGMNU','SELFSERVICE']
         super.setUp()
         def auth = selfServiceBannerAuthenticationProvider.authenticate(new UsernamePasswordAuthenticationToken('CSRSTU004', '111111'))
         SecurityContextHolder.getContext().setAuthentication(auth)
