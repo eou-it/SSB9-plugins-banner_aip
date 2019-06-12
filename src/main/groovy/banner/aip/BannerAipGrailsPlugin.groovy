@@ -50,7 +50,13 @@ Brief summary/description of the plugin.
     }
 
     void doWithApplicationContext() {
-        // TODO Implement post initialization spring config (optional)
+        def pbConfig = grails.util.Holders.getConfig().pageBuilder
+        if (pbConfig && pbConfig.locations && pbConfig.locations.page) {
+            applicationContext.pageUtilService.importAllFromDir(pbConfig.locations.page, ctx.pageUtilService.loadIfNew)
+            applicationContext.virtualDomainUtilService.importAllFromDir(pbConfig.locations.virtualDomain, ctx.virtualDomainUtilService.loadIfNew)
+            applicationContext.cssUtilService.importAllFromDir(pbConfig.locations.css, ctx.cssUtilService.loadIfNew)
+            applicationContext.pageSecurityService.init()
+        }
     }
 
     void onChange(Map<String, Object> event) {
