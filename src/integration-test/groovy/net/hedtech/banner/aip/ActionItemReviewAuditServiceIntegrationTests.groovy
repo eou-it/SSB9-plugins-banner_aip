@@ -20,7 +20,7 @@ class ActionItemReviewAuditServiceIntegrationTests extends BaseIntegrationTestCa
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU','SELFSERVICE']
+        formContext = ['SELFSERVICE']
         super.setUp()
         loginSSB('AIDADM001', '111111')
     }

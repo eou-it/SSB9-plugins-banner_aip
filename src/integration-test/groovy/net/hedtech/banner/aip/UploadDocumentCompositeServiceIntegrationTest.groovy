@@ -4,8 +4,8 @@
 
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Rollback
 import grails.testing.mixin.integration.Integration
-import grails.transaction.Rollback
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.configuration.ConfigProperties
 import net.hedtech.banner.general.configuration.ConfigApplication
@@ -19,7 +19,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.multipart.MultipartFile
 import grails.util.Holders
-//TODO:Sivaram
+
+@Integration
+@Rollback
 class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestCase {
 
     def uploadDocumentCompositeService
@@ -33,7 +35,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU','SELFSERVICE']
+        formContext = ['SELFSERVICE']
         super.setUp()
         def auth = selfServiceBannerAuthenticationProvider.authenticate(new UsernamePasswordAuthenticationToken('CSRSTU004', '111111'))
         SecurityContextHolder.getContext().setAuthentication(auth)
@@ -632,8 +634,11 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         File testFile
         try {
             String data = " Test data for integration testing"
-            String tempPath = "test" + File.separator + "data"
+            println "Current working directory is "+System.getProperty("user.dir")
+            String tempPath = System.getProperty("user.dir") + File.separator + "build"+File.separator+"tmp"
+
             testFile = new File(tempPath, filename)
+            println "File create path is "+testFile.getPath()
             if (!testFile.exists()) {
                 testFile.createNewFile()
                 FileWriter fileWritter = new FileWriter(testFile, true)

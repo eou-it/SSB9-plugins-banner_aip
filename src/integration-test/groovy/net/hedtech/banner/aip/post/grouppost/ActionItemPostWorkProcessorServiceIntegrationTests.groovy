@@ -35,10 +35,11 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
 
     def actionItemPostDetailService
 
+    def asynchronousBannerAuthenticationSpoofer
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU','SELFSERVICE','CMQUERYEXECUTE']
+        formContext = ['SELFSERVICE']
         super.setUp()
         loginSSB( 'AIPADM001', '111111' )
     }
@@ -53,7 +54,7 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
 
     @Test
     void testPerformGroupSendItem() {
-        actionItemPostWorkProcessorService.setAsynchronousBannerAuthenticationSpoofer( new AsynchronousBannerAuthenticationSpoofer() )
+        actionItemPostWorkProcessorService.setAsynchronousBannerAuthenticationSpoofer( asynchronousBannerAuthenticationSpoofer )
         def user = springSecurityService.getAuthentication()?.user
         ActionItemPostWork actionItemPostWork = new ActionItemPostWork()
         actionItemPostWork.referenceId = 'somestringfortestinglswefhihvciewranc'

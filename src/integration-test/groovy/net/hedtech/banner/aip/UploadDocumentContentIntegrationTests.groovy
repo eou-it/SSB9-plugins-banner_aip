@@ -5,7 +5,7 @@
 package net.hedtech.banner.aip
 
 import grails.testing.mixin.integration.Integration
-import grails.transaction.Rollback
+import grails.gorm.transactions.Rollback
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.apache.commons.io.IOUtils
@@ -17,7 +17,8 @@ import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.multipart.MultipartFile
-//TO
+@Integration
+@Rollback
 class UploadDocumentContentIntegrationTests extends BaseIntegrationTestCase {
 
 
@@ -30,7 +31,7 @@ class UploadDocumentContentIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU','SELFSERVICE']
+        formContext = ['SELFSERVICE']
         super.setUp()
         def auth = selfServiceBannerAuthenticationProvider.authenticate(new UsernamePasswordAuthenticationToken('CSRSTU004', '111111'))
         SecurityContextHolder.getContext().setAuthentication(auth)
@@ -50,7 +51,7 @@ class UploadDocumentContentIntegrationTests extends BaseIntegrationTestCase {
         File testFile
         try {
             String data = " Test data for integration testing"
-            String tempPath = "test/data"
+            String tempPath = System.getProperty("user.dir") + File.separator + "build"+File.separator+"tmp"
             testFile = new File(tempPath, filename)
             if (!testFile.exists()) {
                 testFile.createNewFile()

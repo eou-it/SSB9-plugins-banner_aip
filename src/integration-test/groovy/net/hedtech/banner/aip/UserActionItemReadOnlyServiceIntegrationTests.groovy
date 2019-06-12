@@ -4,24 +4,28 @@
 
 package net.hedtech.banner.aip
 
+import grails.testing.mixin.integration.Integration
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.springframework.test.annotation.Rollback
 
+@Integration
+@Rollback
 class UserActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase {
     def userActionItemReadOnlyService
 
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU','SELFSERVICE']
+        formContext = ['SELFSERVICE']
         super.setUp()
     }
 
 
-    @After
+	@After
     void tearDown() {
         super.tearDown()
     }

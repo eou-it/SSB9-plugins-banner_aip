@@ -4,11 +4,17 @@
 
 package net.hedtech.banner.aip
 
+
 import grails.testing.mixin.integration.Integration
-import grails.transaction.Rollback
+import grails.gorm.transactions.Rollback
+import grails.util.GrailsWebMockUtil
+import grails.web.servlet.context.GrailsWebApplicationContext;
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.testing.BaseIntegrationTestCase
+import org.grails.plugins.testing.GrailsMockHttpServletRequest
+import org.grails.plugins.testing.GrailsMockHttpServletResponse
+import org.grails.web.servlet.mvc.GrailsWebRequest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -30,7 +36,7 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU','SELFSERVICE']
+        formContext = ['SELFSERVICE']
         super.setUp()
     }
 
@@ -58,8 +64,6 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
 
     @Test
     void testFetchActionItemCheckIfStatusRulePresent() {
-        Authentication auth = bannerAuthenticationProvider.authenticate( new UsernamePasswordAuthenticationToken( 'CSRSTU001', '111111' ) )
-        SecurityContextHolder.getContext().setAuthentication( auth )
         def title = 'TEST_TITLE'
         ActionItemStatus actionItemStatus = actionItemStatusCompositeService.statusSave([title: title]).status
         assert actionItemStatus.actionItemStatus == title
@@ -121,7 +125,7 @@ class ActionItemStatusCompositeServiceIntegrationTests extends BaseIntegrationTe
     @Test
     void testStatusSaveCheckDuplicate() {
         try {
-            loginSSB('CSRSTU001', '111111')
+         	loginSSB('CSRSTU001', '111111')
             ActionItemStatus actionItemStatusList1 = actionItemStatusCompositeService.statusSave([title: 'Completed'])
         } catch (ApplicationException e) {
             assertApplicationException(e, 'actionItemStatus.status.unique')

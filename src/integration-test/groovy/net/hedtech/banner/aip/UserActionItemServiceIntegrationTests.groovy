@@ -15,8 +15,8 @@ import org.junit.Test
 import static groovy.test.GroovyAssert.shouldFail
 
 
-
-//TODO:Sivaram
+@Integration
+@Rollback
 class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def userActionItemService
@@ -24,7 +24,7 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU','SELFSERVICE']
+        formContext = ['GUAGMNU']
         super.setUp()
         drugAndAlcoholPolicyActionItem = ActionItem.findByName("Drug and Alcohol Policy");
         assertNotNull drugAndAlcoholPolicyActionItem
@@ -79,7 +79,7 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
         def result = userActionItemService.countUserActionItemByActionItemId(actionItemId)
         assertNotNull result
-        assertEquals 13, result
+        assertEquals 12, result
     }
 
     @Test
@@ -128,7 +128,7 @@ class UserActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         def message = shouldFail(ApplicationException) {
             userActionItemService.create(userActionItem)
         }
-        assertEquals("@@r1:AlreadyExistsCondition@@", message)
+        assertEquals("@@r1:AlreadyExistsCondition@@", message.wrappedException.message)
 
         List<UserActionItem> newUserActionItems = userActionItemService.listActionItemsByPidm(actionItemPidm)
         assertEquals(origSize, newUserActionItems.size())

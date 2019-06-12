@@ -18,7 +18,8 @@ import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.multipart.MultipartFile
-
+@Integration
+@Rollback
 class UploadDocumentServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def uploadDocumentCompositeService
@@ -31,7 +32,7 @@ class UploadDocumentServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU','SELFSERVICE']
+        formContext = ['SELFSERVICE']
         super.setUp()
         def auth = selfServiceBannerAuthenticationProvider.authenticate(new UsernamePasswordAuthenticationToken('CSRSTU004', '111111'))
         SecurityContextHolder.getContext().setAuthentication(auth)
@@ -51,7 +52,7 @@ class UploadDocumentServiceIntegrationTests extends BaseIntegrationTestCase {
         File testFile
         try {
             String data = " Test data for integration testing"
-            String tempPath = "test/data"
+            String tempPath = System.getProperty("user.dir") + File.separator + "build"+File.separator+"tmp"
             testFile = new File(tempPath, filename)
             if (!testFile.exists()) {
                 testFile.createNewFile()

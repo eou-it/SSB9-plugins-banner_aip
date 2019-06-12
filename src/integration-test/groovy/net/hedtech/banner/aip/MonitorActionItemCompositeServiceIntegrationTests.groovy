@@ -31,7 +31,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU','SELFSERVICE']
+        formContext = ['SELFSERVICE']
         super.setUp()
         drugAndAlcoholPolicyActionItem = ActionItem.findByName("Drug and Alcohol Policy")
         assertNotNull drugAndAlcoholPolicyActionItem
@@ -471,9 +471,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Test
     void testReviewStateNameInSearchResult() {
-        //loginSSB('CSRSTU004', '111111')
-        Authentication auth = bannerAuthenticationProvider.authenticate( new UsernamePasswordAuthenticationToken('CSRSTU004', '111111') )
-        SecurityContextHolder.getContext().setAuthentication( auth )
+        loginSSB('CSRSTU004', '111111')
         def map = [locale: 'en-US']
         def statusMap = configUserPreferenceService.saveLocale(map)
         assert statusMap.status == 'success'
@@ -494,9 +492,8 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
     @Test
     void testGetReviewStatusList() {
-//        loginSSB('CSRSTU004', '111111')
-        Authentication auth = bannerAuthenticationProvider.authenticate( new UsernamePasswordAuthenticationToken('CSRSTU004', '111111') )
-        SecurityContextHolder.getContext().setAuthentication( auth )
+        loginSSB('CSRSTU004', '111111')
+
 
         def map = [locale: 'en-US']
         def statusMap = configUserPreferenceService.saveLocale(map)

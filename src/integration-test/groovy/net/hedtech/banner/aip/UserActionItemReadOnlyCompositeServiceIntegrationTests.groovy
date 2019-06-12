@@ -4,8 +4,9 @@
 
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Rollback
 import grails.testing.mixin.integration.Integration
-import grails.transaction.Rollback
+
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
@@ -13,7 +14,9 @@ import org.junit.Test
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
-//TODO:sivaram
+
+@Integration
+@Rollback
 class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
 
     def userActionItemReadOnlyCompositeService
@@ -21,7 +24,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU','SELFSERVICE']
+        formContext = ['SELFSERVICE']
         super.setUp()
     }
 
@@ -33,9 +36,8 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void testReviewStateNameInActionItemsList() {
-        Authentication auth = selfServiceBannerAuthenticationProvider.authenticate( new UsernamePasswordAuthenticationToken( 'CSRSTU004', '111111' ) )
-        SecurityContextHolder.getContext().setAuthentication( auth )
-  //      loginSSB( 'CSRSTU004', '111111' )
+        logout()
+        loginSSB( 'CSRSTU004', '111111' )
         def map = [locale:'en-US']
         def statusMap = configUserPreferenceService.saveLocale(map)
         assert statusMap.status == 'success'
@@ -50,6 +52,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void listActionItemByPidmWithinDate() {
+        logout()
         loginSSB( 'CSRSTU004', '111111' )
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
         assert result.groups.size() > 0
@@ -62,6 +65,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void testActionItemWithHaltProcess() {
+        logout()
         loginSSB( 'CSRSTU004', '111111' )
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
         assert result.groups.size() > 0
@@ -75,6 +79,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void testGroupHaltedAndAINotHalted() {
+        logout()
         loginSSB( 'CSRSTU004', '111111' )
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
         assert result.groups.size() > 0
@@ -87,6 +92,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void listActionItemsByPidmNotExists() {
+        logout()
         loginSSB( 'CSRSTU026', '111111' )
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
         assert result.groups.isEmpty() == true
@@ -105,6 +111,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void testGroupAndAINotHalted() {
+        logout()
         loginSSB( 'CSRSTU001', '111111' )
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
         assert result.groups.size() > 0
@@ -117,6 +124,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void actionItemOrGroupInfoByGroupSearch() {
+        logout()
         loginSSB( 'CSRSTU001', '111111' )
         def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'group', groupId: "${ActionItemGroup.findByName( 'Enrollment' ).id}"] )
         def result = result1.find {
@@ -134,6 +142,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void actionItemOrGroupInfoByActionItemSearch() {
+        logout()
         loginSSB( 'CSRSTU001', '111111' )
         List result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'actionItem', actionItemId: "${ActionItem.findByName( 'Drug and Alcohol Policy' ).id}"] )
         def result = result1.find {
@@ -148,6 +157,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void actionItemOrGroupInfoByGroupNoDescInTableSearch() {
+        logout()
         loginSSB( 'CSRSTU001', '111111' )
         sessionFactory.currentSession.createSQLQuery( """UPDATE gcbagrp set GCBAGRP_INSTRUCTION = null where GCBAGRP_NAME='Enrollment'""" ).executeUpdate()
         def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'group', groupId: "${ActionItemGroup.findByName( 'Enrollment' ).id}"] )
@@ -165,6 +175,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void actionItemOrGroupInfoNoGroupExist() {
+        logout()
         loginSSB( 'CSRSTU001', '111111' )
         def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'group', groupId: '50'])
         assert result1.isEmpty() == true
@@ -172,12 +183,14 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void actionItemOrGroupInfoNoActionItemExist() {
+        logout()
         loginSSB( 'CSRSTU001', '111111' )
         def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'actionItem', actionItemId: '50'])
         assert result1.isEmpty() == true
     }
     @Test
     void actionItemOrGroupInfoInvalidSearchType() {
+        logout()
         loginSSB( 'CSRSTU001', '111111' )
         def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'invalid'])
         assert result1.isEmpty() == true
@@ -185,6 +198,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void testReviewStateNameErrorMessage() {
+        logout()
         loginSSB( 'CSRSTU004', '111111' )
         def map = [locale:'gb']
         def statusMap = configUserPreferenceService.saveLocale(map)
@@ -206,6 +220,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void testCurrentReviewStateIsNull() {
+        logout()
         loginSSB( 'CSRSTU004', '111111' )
         def map = [locale:'gb']
         def statusMap = configUserPreferenceService.saveLocale(map)

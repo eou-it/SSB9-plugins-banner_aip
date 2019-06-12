@@ -27,8 +27,7 @@ class ActionItemPostSelectionDetailReadOnlyServiceIntegrationTests extends BaseI
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU', 'SELFSERVICE']
-        //formContext = ['GUAGMNU']
+        formContext = ['SELFSERVICE']
         super.setUp()
         loginSSB( 'AIPADM001', '111111' )
     }

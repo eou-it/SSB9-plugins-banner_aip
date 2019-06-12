@@ -22,7 +22,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU','SELFSERVICE']
+        formContext = ['GUAGMNU']
         super.setUp()
         drugAndAlcoholPolicyActionItem = ActionItem.findByName("Drug and Alcohol Policy");
         assertNotNull drugAndAlcoholPolicyActionItem
@@ -50,7 +50,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     void testCountUserActionItemByActionItemId() {
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
         def result = UserActionItem.countUserActionItemByActionItemId(actionItemId)
-        assertEquals 13, result
+        assertEquals 12, result
 
     }
 
@@ -67,7 +67,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
         def result = UserActionItem.countUserActionItemByActionItemId(actionItemId)
         assertNotNull result
-        assertEquals 13, result
+        assertEquals 12, result
     }
 
     @Test

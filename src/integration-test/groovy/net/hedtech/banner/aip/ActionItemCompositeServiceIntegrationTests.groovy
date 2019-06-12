@@ -37,7 +37,9 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
         super.setUp()
   //      webAppCtx = new GrailsWebApplicationContext()
 //        mockRequest()
+     
         loginSSB('CSRSTU001', '111111')
+     
     }
 
     GrailsWebRequest mockRequest() {

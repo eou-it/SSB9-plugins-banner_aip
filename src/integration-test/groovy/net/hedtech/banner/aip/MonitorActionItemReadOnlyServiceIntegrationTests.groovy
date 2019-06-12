@@ -4,6 +4,8 @@
 
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Rollback
+import grails.testing.mixin.integration.Integration
 import net.hedtech.banner.general.person.PersonUtility
 
 import static org.junit.Assert.assertNotNull
@@ -12,7 +14,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-
+@Integration
+@Rollback
 class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase {
     def monitorActionItemReadOnlyService
 
@@ -64,7 +67,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
         String personName = ""
         def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionItemId, personName, pagingAndSortParamsAsc)
         assertNotNull result
-        assertEquals 13, result.size()
+        assertEquals 12, result.size()
     }
 
     @Test
@@ -73,7 +76,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
         String personName = ""
         def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonNameCount(actionItemId, personName)
         assertNotNull result
-        assertEquals 13, result
+        assertEquals 12, result
     }
 
     @Test
@@ -137,7 +140,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
         def result = monitorActionItemReadOnlyService.fetchByActionItemId(actionItemId, pagingAndSortParamsAsc)
         assertNotNull result
-        assertEquals 13, result.size()
+        assertEquals 12, result.size()
     }
 
     @Test
