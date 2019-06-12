@@ -7,6 +7,14 @@ project(':banner-general-person').projectDir = new File('../banner_general_perso
 include ':banner-general-validation-common'
 project(':banner-general-validation-common').projectDir = new File('../banner_general_validation_common.git')
 
+
+include 'restful-api'
+project(':restful-api').projectDir = new File('../restful-api.git')
+
+include ':banner-restful-api-support'
+project(':banner-restful-api-support').projectDir = new File('../banner-restful-api-support.git')
+
+
 include ':banner-document-management'
 project(':banner-document-management').projectDir = new File('../banner_document_management.git')
 
