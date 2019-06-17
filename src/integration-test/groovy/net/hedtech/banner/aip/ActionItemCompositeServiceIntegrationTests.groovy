@@ -149,7 +149,7 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
 
     @Test
     void updateActionItemFolderValidation() {
-        def result = actionItemCompositeService.addActionItem([folderId: CommunicationFolder.findByName('Student').id, status: 'Draft', title: 'title', name: 'name', description: 'description'])
+        def result = actionItemCompositeService.addActionItem([folderId: CommunicationFolder.findByName('Student').id, status: 'D', title: 'title', name: 'name', description: 'description'])
         assert result.success == true
         assert result.newActionItem.description == 'description'
         assert result.message == null
@@ -159,7 +159,8 @@ class ActionItemCompositeServiceIntegrationTests extends BaseIntegrationTestCase
                          status      : 'Complete',
                          title       : 'title',
                          name        : 'name',
-                         description : 'description1']
+                         description : 'description1',
+                         status      :  'D']
         result = actionItemCompositeService.editActionItem(editParam)
         assert result.success == false
         assert result.message == 'Save failed. The Folder Id can not be null or empty.'

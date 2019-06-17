@@ -34,7 +34,7 @@ class ActionItemPostReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         def ourName = 'kdsfkgeddd'
 
         ActionItemPost myAip = newActionItemPost( ourName )
-        myAip.save()
+        myAip.save(failOnError: true,flush:true)
 
         assert ActionItemPost.findAllByPostingName( ourName ).size() > 0
         assert ActionItemPostReadOnly.findAllByPostingName( ourName ).size() > 0
@@ -49,7 +49,7 @@ class ActionItemPostReadOnlyIntegrationTests extends BaseIntegrationTestCase {
         def ourName = 'asdfkdsfsskgedddfgr'
 
         ActionItemPost myAip = newActionItemPost( ourName )
-        myAip.save()
+        myAip.save(failOnError:true,flush:true)
 
         assert ActionItemPost.findAllByPostingName( ourName ).size() > 0
         assert ActionItemPostReadOnly.findAllByPostingName( ourName ).size() > 0

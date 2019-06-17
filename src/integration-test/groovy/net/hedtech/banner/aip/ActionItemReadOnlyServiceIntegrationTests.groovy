@@ -48,7 +48,7 @@ class ActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase 
     @Test
     void testCompositeDate() {
         List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
-        def actionItemId = actionItemsList[0].id
+        def actionItemId = actionItemsList[3].id
         ActionItemContent myActionItemDetail = ActionItemContent.fetchActionItemContentById( actionItemId )
         assertEquals( actionItemId, myActionItemDetail.actionItemId )
 

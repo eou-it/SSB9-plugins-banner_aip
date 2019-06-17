@@ -13,6 +13,7 @@ import org.junit.Test
 
 @Integration
 @Rollback
+
 class ActionItemContentIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
@@ -30,27 +31,35 @@ class ActionItemContentIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testFetchActionItemDetailById() {
-        List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
-        def actionItemId = actionItemsList[0].id
-        ActionItemContent actionItemDetailList = ActionItemContent.fetchActionItemContentById( actionItemId )
-        assertEquals( actionItemId, actionItemDetailList.actionItemId )
+        def actionItemId
+        List<ActionItem> actionItemsList
+        ActionItemContent actionItemDetailList
+
+        actionItemsList = ActionItem.fetchActionItems()
+        actionItemId = actionItemsList[4].id
+        assertNotNull actionItemId
+
+        actionItemDetailList = ActionItemContent.fetchActionItemContentById(actionItemId)
+        assertNotNull actionItemDetailList
+        assertEquals(actionItemId, actionItemDetailList.actionItemId)
+
     }
 
 
     @Test
     void testFetchActionItemDetailString() {
         List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
-        def actionItemId = actionItemsList[0].id
-        ActionItemContent actionItemDetailList = ActionItemContent.fetchActionItemContentById( actionItemId )
-        assertNotNull( actionItemDetailList.toString() )
+        def actionItemId = actionItemsList[4].id
+        ActionItemContent actionItemDetailList = ActionItemContent.fetchActionItemContentById(actionItemId)
+        assertNotNull(actionItemDetailList.toString())
     }
 
 
     @Test
     void testActionItemDetailHashCode() {
         List<ActionItem> actionItemsList = ActionItem.fetchActionItems()
-        def actionItemId = actionItemsList[0].id
-        ActionItemContent actionItemDetailList = ActionItemContent.fetchActionItemContentById( actionItemId )
+        def actionItemId = actionItemsList[4].id
+        ActionItemContent actionItemDetailList = ActionItemContent.fetchActionItemContentById(actionItemId)
 
         def result = actionItemDetailList.hashCode()
         assertNotNull result

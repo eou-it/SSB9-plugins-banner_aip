@@ -85,15 +85,17 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase {
         def actionItemTemplateNew = new ActionItemTemplate()
 
         actionItemTemplateNew.title = actionItemTemplate.title
+        actionItemTemplateNew.pageId = actionItemTemplate.pageId
         actionItemTemplateNew.sourceInd = null
         actionItemTemplateNew.lastModifiedBy = actionItemTemplate.lastModifiedBy
         actionItemTemplateNew.systemRequired = actionItemTemplate.systemRequired
         actionItemTemplateNew.activeInd = actionItemTemplate.activeInd
         actionItemTemplateNew.lastModified = actionItemTemplate.lastModified
         actionItemTemplateNew.dataOrigin = actionItemTemplate.dataOrigin
-        actionItemTemplateNew.vpdiCode = actionItemTemplate.vpdiCode
+
 
         assertFalse actionItemTemplateNew.validate()
+        println actionItemTemplateNew.errors.allErrors
         assertTrue( actionItemTemplateNew.errors.allErrors.codes[0].contains( 'actionItemTemplate.sourceInd.nullable.error' ) )
     }
 
@@ -111,9 +113,10 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase {
         actionItemTemplateNew.activeInd = actionItemTemplate.activeInd
         actionItemTemplateNew.lastModified = actionItemTemplate.lastModified
         actionItemTemplateNew.dataOrigin = actionItemTemplate.dataOrigin
-        actionItemTemplateNew.vpdiCode = actionItemTemplate.vpdiCode
+
 
         assertFalse actionItemTemplateNew.validate()
+        println actionItemTemplateNew.errors.allErrors
         assertTrue( actionItemTemplateNew.errors.allErrors.codes[0].contains( 'actionItemTemplate.systemRequired.nullable.error' ) )
     }
 
@@ -131,9 +134,10 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase {
         actionItemTemplateNew.activeInd = null
         actionItemTemplateNew.lastModified = actionItemTemplate.lastModified
         actionItemTemplateNew.dataOrigin = actionItemTemplate.dataOrigin
-        actionItemTemplateNew.vpdiCode = actionItemTemplate.vpdiCode
+
 
         assertFalse actionItemTemplateNew.validate()
+        println actionItemTemplateNew.errors.allErrors
         assertTrue( actionItemTemplateNew.errors.allErrors.codes[0].contains( 'actionItemTemplate.activeInd.nullable.error' ) )
     }
 }

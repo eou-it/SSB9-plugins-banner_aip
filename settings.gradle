@@ -42,4 +42,6 @@ project(':banner-spring-security-cas').projectDir = new File('../banner_spring_s
 include ':banner-spring-security-saml'
 project(':banner-spring-security-saml').projectDir = new File('../banner_spring_security_saml.git')
 
+include ':banner-sspb'
+project(':banner-sspb').projectDir = new File('../banner-sspb.git')
 

@@ -18,7 +18,7 @@ class ActionItemJobServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU','SELFSERVICE']
+        formContext = ['SELFSERVICE']
         super.setUp()
     }
 
@@ -32,7 +32,7 @@ class ActionItemJobServiceIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testFetchJobsNoParam() {
         ActionItemJob actionItemJob = newActionItemJob()
-        actionItemJob.save()
+        actionItemJob.save(flush: true,failOnError: true)
         List<ActionItemJob> actionItemJobList = actionItemJobService.fetchPending()
         assert actionItemJobList.size() > 0
     }
@@ -46,7 +46,7 @@ class ActionItemJobServiceIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void acquireJobPresent() {
         ActionItemJob actionItemJob = newActionItemJob()
-        ActionItemJob actionItemJob1 = actionItemJob.save()
+        ActionItemJob actionItemJob1 = actionItemJob.save(flush: true,failOnError: true)
         assert actionItemJobService.acquire( actionItemJob1.id ) == true
     }
 
@@ -60,7 +60,7 @@ class ActionItemJobServiceIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void markCompletedIfJobPresent() {
         ActionItemJob actionItemJob = newActionItemJob()
-        ActionItemJob actionItemJob1 = actionItemJob.save()
+        ActionItemJob actionItemJob1 = actionItemJob.save(flush: true,failOnError: true)
         actionItemJobService.markCompleted( actionItemJob1.id )
     }
 

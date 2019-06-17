@@ -117,6 +117,7 @@ class ActionItemTemplate implements Serializable {
         sourceInd(blank: false, nullable: false)
         systemRequired(blank: false, nullable: false)
         activeInd(nullable: false)
+        vpdiCode(nullable:true)
     }
 
     /**

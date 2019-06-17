@@ -106,22 +106,22 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
                 actionItemStatus: "A_INT_TEST", actionItemStatusActive: 'Y', actionItemStatusBlockedProcess: 'N',
                 actionItemStatusDefault: 'N',
                 actionItemStatusSystemRequired: 'N'
-        ).save( flash: true )
+        ).save( flash: true ,failOnError:true)
         new ActionItemStatus(
                 actionItemStatus: "B_INT_TEST", actionItemStatusActive: 'Y', actionItemStatusBlockedProcess: 'N',
                 actionItemStatusDefault: 'N',
                 actionItemStatusSystemRequired: 'N'
-        ).save( flash: true )
+        ).save( flash: true ,failOnError:true )
         new ActionItemStatus(
                 actionItemStatus: "C_INT_TEST", actionItemStatusActive: 'Y', actionItemStatusBlockedProcess: 'N',
                 actionItemStatusDefault: 'N',
                 actionItemStatusSystemRequired: 'N'
-        ).save( flash: true )
+        ).save( flash: true ,failOnError:true )
         new ActionItemStatus(
                 actionItemStatus: "D_INT_TEST", actionItemStatusActive: 'Y', actionItemStatusBlockedProcess: 'N',
                 actionItemStatusDefault: 'N',
                 actionItemStatusSystemRequired: 'N'
-        ).save( flash: true )
+        ).save( flash: true ,failOnError:true)
         def results = ActionItemStatus.fetchWithPagingAndSortParams(
                 [params: [name: "%_INT_TEST"]],
                 [sortColumn: "actionItemStatusBlockedProcess", sortAscending: false, max: 50, offset: 0] )
@@ -156,15 +156,16 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testNullStatusError() {
-        List<ActionItemStatus> actionItemStatuses = ActionItemStatus.fetchActionItemStatuses()
         def actionItemStatusNew = new ActionItemStatus()
 
         actionItemStatusNew.actionItemStatus = null
         actionItemStatusNew.actionItemStatusActive = "Y"
         actionItemStatusNew.actionItemStatusSystemRequired = "Y"
         actionItemStatusNew.actionItemStatusActive = "Y"
+        actionItemStatusNew.actionItemStatusBlockedProcess = "N"
 
         assertFalse actionItemStatusNew.validate()
+        println actionItemStatusNew.errors.allErrors
         assertTrue( actionItemStatusNew.errors.allErrors.codes[0].contains( 'actionItemStatus.actionItemStatus.nullable.error' ) )
     }
 

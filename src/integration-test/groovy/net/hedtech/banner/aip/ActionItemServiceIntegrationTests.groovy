@@ -58,7 +58,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ActionItem ai = new ActionItem()
         ai.folderId = folderId
         ai.status = 'D'
-        ai.name = 'Test Action Item. unique 98d7efh'
+        ai.name = 'Test Action Item. unique 98d7efh '+new Date().toString().hashCode().toString()
         ai.title = 'Test Action Item. unique 98d7efh'
         ai.description = 'this is some action item'
         ai.postedIndicator = 'N'
@@ -115,11 +115,11 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
 
     @Test
     void testCreateActionItemFailsNoStatus() {
-        ActionItem existingAI = actionItemService.list()[7]
+        ActionItem existingAI = actionItemService.list()[6]
         ActionItem ai = new ActionItem()
         ai.folderId = existingAI.folderId
         ai.status = null
-        ai.name = ' a title ds8f4h3'
+        ai.name = ' a title ds8f4h3'+new Date().toString()
         ai.title = ' a title ds8f4h3'
         ai.description = 'this is some action item'
         // fails due to no folder matching id
@@ -139,7 +139,7 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
         ActionItem ai = new ActionItem()
         ai.folderId = null
         ai.status = 'Pending'
-        ai.title = ' a title ds8f4h3'
+        ai.title = ' a title ds8f4h3 2'
         ai.description = 'this is some action item'
         // fails due to no folder matching id
         try {

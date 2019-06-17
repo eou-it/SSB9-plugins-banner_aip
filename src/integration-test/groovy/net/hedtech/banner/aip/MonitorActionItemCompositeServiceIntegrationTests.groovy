@@ -140,8 +140,8 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         String personId = null
         def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
-        assertEquals 13, response.result.size()
-        assertEquals 13, response.length
+        assertEquals 12, response.result.size()
+        assertEquals 12, response.length
     }
 
     @Test

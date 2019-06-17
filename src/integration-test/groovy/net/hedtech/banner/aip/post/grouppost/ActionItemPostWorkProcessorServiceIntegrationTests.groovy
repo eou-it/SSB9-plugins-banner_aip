@@ -3,9 +3,12 @@
  ********************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import grails.gorm.transactions.Rollback
+import grails.gorm.transactions.Transactional
 import grails.testing.mixin.integration.Integration
-import grails.transaction.Rollback
+
 import net.hedtech.banner.aip.ActionItemGroup
+import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
 import net.hedtech.banner.aip.ActionItemGroupAssign
 import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
 import net.hedtech.banner.general.communication.population.CommunicationPopulation
@@ -35,7 +38,7 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
 
     def actionItemPostDetailService
 
-    def asynchronousBannerAuthenticationSpoofer
+
 
     @Before
     void setUp() {
@@ -53,8 +56,9 @@ class ActionItemPostWorkProcessorServiceIntegrationTests extends BaseIntegration
 
 
     @Test
+
     void testPerformGroupSendItem() {
-        actionItemPostWorkProcessorService.setAsynchronousBannerAuthenticationSpoofer( asynchronousBannerAuthenticationSpoofer )
+        actionItemPostWorkProcessorService.setAsynchronousBannerAuthenticationSpoofer( new AsynchronousBannerAuthenticationSpoofer() )
         def user = springSecurityService.getAuthentication()?.user
         ActionItemPostWork actionItemPostWork = new ActionItemPostWork()
         actionItemPostWork.referenceId = 'somestringfortestinglswefhihvciewranc'

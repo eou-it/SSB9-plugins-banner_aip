@@ -70,6 +70,7 @@ grails {
         compile project(':banner-general-common')
         compile project(':banner-document-management')
         compile project(':banner-ui-ss')
+        compile project(':banner-sspb')
     }
 }
 

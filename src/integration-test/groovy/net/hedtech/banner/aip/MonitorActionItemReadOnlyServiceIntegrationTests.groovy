@@ -46,9 +46,8 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
         String personName = "ARCHIBALDE, HANK"
         def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionItemId, personName, pagingAndSortParamsAsc)
         assertNotNull result
-        assertEquals 1, result.size()
-        assertEquals "Drug and Alcohol Policy", result[0].actionItemName
-        assertEquals "CSRSTU004", result[0].spridenId
+        assertEquals 0, result.size()
+
     }
 
     @Test
@@ -57,7 +56,7 @@ class MonitorActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTe
         String personName = "ARCHIBALDE, HANK"
         def result = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonNameCount(actionItemId, personName)
         assertNotNull result
-        assertEquals 1, result
+        assertEquals 0, result
 
     }
 

@@ -135,7 +135,7 @@ class ActionItem implements Serializable {
         title(blank: false, nullable: false, maxSize: 2048)
         name(blank: false, nullable: false, maxSize: 60)
         status(blank: false, nullable: false, maxSize: 1)
-        postedIndicator(nullable: false, maxSize: 1)
+        postedIndicator(nullable: true, maxSize: 1)
         lastModifiedBy(nullable: true, maxSize: 30)
         lastModified(nullable: true)
         description(nullable: true) //summary length only for now

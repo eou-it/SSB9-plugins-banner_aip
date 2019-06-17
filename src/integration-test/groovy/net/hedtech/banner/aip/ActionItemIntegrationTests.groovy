@@ -116,6 +116,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         actionNew.createDate = actionItem.createDate
         actionNew.dataOrigin = actionItem.dataOrigin
         assertFalse actionNew.validate()
+        println actionNew.errors.allErrors
         assertTrue( actionNew.errors.allErrors.codes[0].contains( 'actionItem.status.nullable.error' ) )
     }
 
@@ -125,7 +126,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         List<ActionItem> actionItems = ActionItem.fetchActionItems()
         def actionItem = actionItems[7]
         def actionNew = new ActionItem()
-
+        actionNew.name = "Action Item name for testNullFolderError"
         actionNew.title = 'a title f984h'
         actionNew.folderId = null
         actionNew.status = 'Pending'
@@ -134,6 +135,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         actionNew.createDate = actionItem.createDate
         actionNew.dataOrigin = actionItem.dataOrigin
         assertFalse actionNew.validate()
+        println actionNew.errors.allErrors
         assertTrue( actionNew.errors.allErrors.codes[0].contains( 'actionItem.folderId.nullable.error' ) )
     }
 

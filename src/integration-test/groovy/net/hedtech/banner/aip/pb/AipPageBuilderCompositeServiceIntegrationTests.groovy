@@ -4,6 +4,7 @@
 
 package net.hedtech.banner.aip.pb
 
+import grails.gorm.transactions.Transactional
 import grails.testing.mixin.integration.Integration
 import grails.transaction.Rollback
 import net.hedtech.banner.testing.BaseIntegrationTestCase
@@ -13,6 +14,7 @@ import org.junit.Test
 
 @Integration
 @Rollback
+
 class AipPageBuilderCompositeServiceIntegrationTests extends BaseIntegrationTestCase {
     def aipPageBuilderCompositeService
 
@@ -32,6 +34,8 @@ class AipPageBuilderCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     @Test
     void page() {
+
+
         String query = """ INSERT INTO PAGE ( CONSTANT_NAME, VERSION, ID, MODEL_VIEW ) VALUES ('TestAIPMasterTemplateSystemRequired', 0, -9999, :clob) """
         sessionFactory.currentSession.createSQLQuery( query ).setString( 'clob', '{ "name":"TestAIPMasterTemplateSystemRequired","type":"page" }' ).executeUpdate()
         def page = aipPageBuilderCompositeService.page( 'TestAIPMasterTemplateSystemRequired' )

@@ -42,7 +42,7 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
                       offset       : 0]
 
         ActionItemPost aiPost = newActionItemPost( data )
-        aiPost.save()
+        aiPost.save(flush: true,failOnError: true)
         assert ActionItemPost.findAllByPostingName( data ).size() > 0
         assert ActionItemPostReadOnly.findAllByPostingName( data ).size() > 0
         List<ActionItemPostReadOnly> actionItemReadPostOnlyList = actionItemPostReadOnlyService.listActionItemPostJobList( paramObj ).result
@@ -60,7 +60,7 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
                       offset       : 0]
         
         ActionItemPost aiPost = newActionItemPost( data )
-        aiPost.save()
+        aiPost.save(flush: true,failOnError: true)
         assert ActionItemPost.findAllByPostingName( data ).size() > 0
         assert ActionItemPostReadOnly.findAllByPostingName( data ).size() > 0
         List<ActionItemPostReadOnly> actionItemReadPostOnlyList = actionItemPostReadOnlyService.listActionItemPostJobList( paramObj ).result
@@ -73,7 +73,7 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
     void statusPosted() {
         def data = 'kdsfwkw'
         ActionItemPost aiPost = newActionItemPost( data )
-        aiPost = aiPost.save()
+        aiPost = aiPost.save(flush: true,failOnError: true)
         assert ActionItemPost.findAllByPostingName( data ).size() > 0
         assert ActionItemPostReadOnly.findAllByPostingName( data ).size() > 0
         assert AIPConstants.NO_IND == actionItemPostReadOnlyService.statusPosted( aiPost.id )
@@ -84,7 +84,7 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
     @Test
     void statusPostedScheduledOne() {
         ActionItemPost aiPost = newScheduledActionItemPost( 'test_scheduled_kdsfwkw' )
-        aiPost = aiPost.save( flush: true )
+        aiPost = aiPost.save(flush: true,failOnError: true )
         assert AIPConstants.YES_IND == actionItemPostReadOnlyService.statusPosted( aiPost.id )
     }
 
@@ -93,7 +93,7 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
     void JobDetailsByPostId() {
         def data = 'kdsfwkw'
         ActionItemPost aiPost = newScheduledActionItemPost( data )
-        aiPost = aiPost.save()
+        aiPost = aiPost.save(flush: true,failOnError: true)
         assert ActionItemPost.findAllByPostingName( data ).size() > 0
         assert ActionItemPostReadOnly.findAllByPostingName( data ).size() > 0
         def result = actionItemPostReadOnlyService.JobDetailsByPostId( aiPost.id )

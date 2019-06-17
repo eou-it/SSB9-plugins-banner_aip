@@ -45,7 +45,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     @Before
     void setUp() {
-        formContext = ['GUAGMNU','SELFSERVICE']
+        formContext = ['SELFSERVICE']
         super.setUp()
         Authentication auth = selfServiceBannerAuthenticationProvider.authenticate( new UsernamePasswordAuthenticationToken( USERNAME, '111111' ) )
         SecurityContextHolder.getContext().setAuthentication( auth )
@@ -282,6 +282,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
     void scheduledPostCallbackFailed() {
         ActionItemPost aip = newAIP()
         aip = actionItemPostService.create( aip )
+        println "Aip object after create "+aip
         SchedulerJobContext jobContext = new SchedulerJobContext( 'test' )
         jobContext.setParameter( 'groupSendId', aip.id )
         SchedulerErrorContext context = new SchedulerErrorContext()
@@ -448,7 +449,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         correspondingServerDetails.put("timeVal", "0330");
         correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
-        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
+        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes succcess'
         requestMap.populationId = populationListView.id
         requestMap.referenceId = UUID.randomUUID().toString()
         requestMap.postingActionItemGroupId = actionItemGroup.id
@@ -482,7 +483,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         correspondingServerDetails.put("timeVal", "0330");
         correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
-        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
+        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes obsolete.schedule.date'
         requestMap.populationId = populationListView.id
         requestMap.referenceId = UUID.randomUUID().toString()
         requestMap.postingActionItemGroupId = actionItemGroup.id
@@ -517,7 +518,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         correspondingServerDetails.put("timeVal", "0330");
         correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
-        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
+        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes display start date error'
         requestMap.populationId = populationListView.id
         requestMap.referenceId = UUID.randomUUID().toString()
         requestMap.postingActionItemGroupId = actionItemGroup.id
@@ -561,7 +562,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         correspondingServerDetails.put("timeVal", "0330");
         correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
-        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
+        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes display date'
         requestMap.populationId = populationListView.id
         requestMap.referenceId = UUID.randomUUID().toString()
         requestMap.postingActionItemGroupId = actionItemGroup.id
@@ -593,7 +594,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         correspondingServerDetails.put("timeVal", "0330");
         correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
-        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
+        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes 1'
         requestMap.populationId = populationListView.id
         requestMap.referenceId = UUID.randomUUID().toString()
         requestMap.postingActionItemGroupId = actionItemGroup.id
@@ -617,7 +618,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         assert result1.savedJob != null
         ActionItemPost actionItemPost = (ActionItemPost) actionItemPostService.get( post.id )
         assert actionItemPost != null
-        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
+        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes2'
         requestMap.postId = post.id
         requestMap.displayStartDate = testingDateFormat.format( new Date() + 2 )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
@@ -634,11 +635,13 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
 
     private def newAIP() {
+        println "calling new instance"
         getInstance()
     }
 
 
     private getInstance() {
+        println "Calling gt instance"
         CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'AIP Student Population 1' )[0]
         CommunicationPopulationVersion populationVersion = CommunicationPopulationVersion.findLatestByPopulationId( population.id )
         SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
@@ -651,7 +654,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         correspondingServerDetails.put("timeVal", "0330");
         correspondingServerDetails.put("timeZoneVal", "(GMT+5:30) Asia/Kolkata");
         def requestMap = [:]
-        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes'
+        requestMap.postingName = 'testPostByPopulationSendInTwoMinutes3'
         requestMap.populationId = populationListView.id
         requestMap.referenceId = UUID.randomUUID().toString()
         requestMap.postingActionItemGroupId = actionItemGroup.id

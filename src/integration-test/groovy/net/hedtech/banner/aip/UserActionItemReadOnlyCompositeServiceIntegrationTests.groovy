@@ -36,7 +36,6 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void testReviewStateNameInActionItemsList() {
-        logout()
         loginSSB( 'CSRSTU004', '111111' )
         def map = [locale:'en-US']
         def statusMap = configUserPreferenceService.saveLocale(map)
@@ -52,7 +51,6 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void listActionItemByPidmWithinDate() {
-        logout()
         loginSSB( 'CSRSTU004', '111111' )
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
         assert result.groups.size() > 0
@@ -65,7 +63,6 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void testActionItemWithHaltProcess() {
-        logout()
         loginSSB( 'CSRSTU004', '111111' )
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
         assert result.groups.size() > 0
@@ -79,7 +76,6 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
 
     @Test
     void testGroupHaltedAndAINotHalted() {
-        logout()
         loginSSB( 'CSRSTU004', '111111' )
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
         assert result.groups.size() > 0

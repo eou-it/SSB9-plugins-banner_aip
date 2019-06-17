@@ -4,6 +4,7 @@
 
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Transactional
 import grails.testing.mixin.integration.Integration
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.testing.BaseIntegrationTestCase
@@ -14,6 +15,7 @@ import org.springframework.test.annotation.Rollback
 
 @Integration
 @Rollback
+@Transactional
 class UserActionItemReadOnlyServiceIntegrationTests extends BaseIntegrationTestCase {
     def userActionItemReadOnlyService
 

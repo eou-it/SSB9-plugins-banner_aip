@@ -68,7 +68,7 @@ hibernate {
     cache.use_query_cache = true
     cache.region.factory_class = 'org.hibernate.cache.SingletonEhCacheRegionFactory'
     flush.mode = AUTO
-    packagesToScan="net.hedtech.**.*"
+    packagesToScan="net.hedtech"
     config.location = [
             "classpath:hibernate-banner-aip.cfg.xml",
             "classpath:hibernate-banner-core.cfg.xml",

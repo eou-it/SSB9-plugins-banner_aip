@@ -251,7 +251,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     @Test
     void testAddDocumentEmptyFile() {
-        def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIP_Empty_Text_File.txt')
+        def saveResult = saveEmptyFileUploadDocumentService(userActionItemId, responseId, 'AIP_Empty_Text_File.txt')
         assert saveResult.success == false
         assert saveResult.message == "Save failed. Empty document can not be uploaded."
     }
@@ -598,7 +598,19 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
 
     }
 
+    private def saveEmptyFileUploadDocumentService(userActionItemId, responseId, fileName) {
+
+
+        MockMultipartFile multipartFile = createEmpgyFileformFileObject(fileName);
+        multipartFile.metaClass.content=[]
+
+        def result = uploadDocumentCompositeService.addDocument(
+                [userActionItemId: userActionItemId, responseId: responseId, documentName: fileName, documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
+        result
+    }
+
     private def saveUploadDocumentService(userActionItemId, responseId, fileName) {
+
         MockMultipartFile multipartFile = formFileObject(fileName)
         def result = uploadDocumentCompositeService.addDocument(
                 [userActionItemId: userActionItemId, responseId: responseId, documentName: fileName, documentUploadedDate: new Date(), fileLocation: 'AIP', file: multipartFile])
@@ -645,6 +657,30 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
                 BufferedWriter bufferWritter = new BufferedWriter(fileWritter)
                 bufferWritter.write(data)
                 bufferWritter.close()
+            }
+        } catch (IOException e) {
+            throw e
+        }
+        FileInputStream input = new FileInputStream(testFile)
+        MultipartFile multipartFile = new MockMultipartFile("file",
+                testFile.getName(), "text/plain", IOUtils.toByteArray(input))
+        multipartFile
+    }
+
+    /**
+     * Form file Object
+     */
+    private MockMultipartFile createEmpgyFileformFileObject(filename) {
+        File testFile
+        try {
+            String data = " Test data for integration testing"
+            String tempPath = System.getProperty("user.dir") + File.separator + "build"+File.separator+"tmp"
+
+            testFile = new File(tempPath, filename)
+            println "File create path is "+testFile.getPath()
+            if (!testFile.exists()) {
+                testFile.createNewFile()
+
             }
         } catch (IOException e) {
             throw e
