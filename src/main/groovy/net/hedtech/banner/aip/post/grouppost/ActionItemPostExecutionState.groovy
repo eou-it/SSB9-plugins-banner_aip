@@ -12,14 +12,18 @@ enum ActionItemPostExecutionState implements Serializable {
     New( false ),
     Scheduled( false ),
     Queued( false ),
+    RecurrenceScheduled(false),
+
 
     Calculating( false ),
     Processing( false ),
+    RecurrenceInProgress(false),
 
     Complete( true ),
     Stopped( true ),
-    Error( true )
+    Error( true ),
 
+    RecurrenceComplete(true),
     boolean terminal
 
     /**

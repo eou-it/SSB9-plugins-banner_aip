@@ -32,14 +32,28 @@ import javax.persistence.Version
           """),
         @NamedQuery(name = "ActionItemPostReadOnly.fetchJobsCount",
                 query = """SELECT COUNT(a.postingId) FROM ActionItemPostReadOnly a
-                           WHERE upper(a.postingName) like :postingName 
+                           WHERE upper(a.postingName) like :postingName
+                           AND (a.recurringPostIndicator = true OR a.recurringPostDetailsId is null)
             """
         ),
         @NamedQuery(name = "ActionItemPostReadOnly.fetchByPostingId",
                 query = """FROM ActionItemPostReadOnly a
                            WHERE a.postingId = :postingId 
             """
+        ),
+        @NamedQuery(name = "ActionItemPostReadOnly.fetchRecurringJobsCount",
+                query = """SELECT COUNT(a.postingId) FROM ActionItemPostReadOnly a
+                           WHERE a.recurringPostDetailsId = :recurringPostDetailsId
+                           AND a.recurringPostIndicator = false
+            """
+        ),
+        @NamedQuery(name = "ActionItemPostReadOnly.fetchRecurringJobsStateCount",
+                query = """SELECT COUNT(a.postingId) FROM ActionItemPostReadOnly a
+                           WHERE a.recurringPostDetailsId = :recurringPostDetailsId
+                           AND a.postingCurrentState = :postingCurrentState
+            """
         )
+
 ])
 class ActionItemPostReadOnly implements Serializable {
 
@@ -200,19 +214,19 @@ class ActionItemPostReadOnly implements Serializable {
     String postingPopulation
 
     /**
-     * Action Item posted
+     * Activity Date
      */
     @Column(name = "GCBAPST_ACTIVITY_DATE")
     Date lastModified
 
     /**
-     * Action Item posted
+     * Last modified by
      */
     @Column(name = "GCBAPST_USER_ID")
     String lastModifiedBy
 
     /**
-     * Action Item posted
+     * Version
      */
     @Version
     @Column(name = "GCBAPST_VERSION")
@@ -231,6 +245,18 @@ class ActionItemPostReadOnly implements Serializable {
     @Column(name = "GCBAPST_TIME_ZONE")
     String postingTimeZone
 
+    /**
+     * Recurring action item post indicator .
+     */
+    @Type(type = "yes_no")
+    @Column(name = "gcbapst_recur_post_ind")
+    boolean recurringPostIndicator
+
+    /**
+     * Recurring action item meta data Id
+     */
+    @Column(name = "gcbapst_gcbrapt_id")
+    Long recurringPostDetailsId
     /**
      *
      * @param params
@@ -273,6 +299,15 @@ class ActionItemPostReadOnly implements Serializable {
     static fetchWithPagingAndSortParams(filterData, pagingAndSortParams) {
         def queryCriteria = ActionItemPostReadOnly.createCriteria()
         queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
+            or {
+                and {
+                    isNull("recurringPostDetailsId")
+                }
+                and {
+                    eq('recurringPostIndicator', true)
+                }
+            }
+
             ilike("postingName", CommunicationCommonUtility.getScrubbedInput(filterData?.name))
             order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
             if (!pagingAndSortParams?.sortColumn.equals("postingName")) {
@@ -280,4 +315,57 @@ class ActionItemPostReadOnly implements Serializable {
             }
         }
     }
+
+
+    /**
+     * Function to fetch recurring post action items based on params
+     * @param filterData
+     * @param pagingAndSortParams
+     * @return
+     */
+    static fetchRecurringPostActionItemsWithPagingAndSortParams(filterData, pagingAndSortParams) {
+        def queryCriteria = ActionItemPostReadOnly.createCriteria()
+        queryCriteria.list(max: pagingAndSortParams.max, offset: pagingAndSortParams.offset) {
+            and {
+                eq("recurringPostDetailsId",filterData?.recurringPostDetailsId)
+                eq("recurringPostIndicator",false)
+            }
+            ilike("postingName", CommunicationCommonUtility.getScrubbedInput(filterData?.name))
+            order((pagingAndSortParams.sortAscending ? Order.asc(pagingAndSortParams?.sortColumn) : Order.desc(pagingAndSortParams?.sortColumn)).ignoreCase())
+            if (!pagingAndSortParams?.sortColumn.equals("postingName")) {
+                order(Order.asc('postingName').ignoreCase())
+            }
+        }
+    }
+
+    /**
+     * Function to fetch post recurring action items count based on params
+     * @param params
+     * @return
+     */
+    def static fetchRecurringJobsCount( params ) {
+        def actionItemPostReadOnly = ActionItemPostReadOnly.fetchByPostingId(Long.parseLong(params?.recurringPostId))
+        ActionItemPostReadOnly.withSession {session ->
+            session.getNamedQuery( 'ActionItemPostReadOnly.fetchRecurringJobsCount' )
+                    .setLong( 'recurringPostDetailsId', actionItemPostReadOnly.recurringPostDetailsId)
+                    .uniqueResult()
+        }
+    }
+
+    /**
+     * Function to fetch post reucrring action items jobs state count
+     * @param recurringPostId
+     * @param jobState
+     * @return
+     */
+    def static fetchRecurringJobsStateCount( recurringPostId ,jobState) {
+        ActionItemPostReadOnly.withSession {session ->
+            session.getNamedQuery( 'ActionItemPostReadOnly.fetchRecurringJobsStateCount' )
+                    .setLong( 'recurringPostDetailsId', recurringPostId)
+                    .setString( 'postingCurrentState', jobState)
+                    .uniqueResult()
+        }
+    }
+
+
 }

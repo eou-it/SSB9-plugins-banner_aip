@@ -7,13 +7,10 @@ package net.hedtech.banner.aip.post.grouppost
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.service.ServiceBase
-import grails.gorm.transactions.Transactional
-
 
 /**
  * Manages action item group post instances.
  */
-@Transactional
 class ActionItemPostService extends ServiceBase {
 
     /**
@@ -48,10 +45,10 @@ class ActionItemPostService extends ServiceBase {
         if (!dataMap.displayEndDate) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.display.end.date', [] ) )
         }
-        if (!dataMap.postNow && (!dataMap.scheduledStartDate || !dataMap.scheduledStartTime)) {
+        if (!dataMap.postNow && !dataMap.recurrence && (!dataMap.scheduledStartDate || !dataMap.scheduledStartTime)) {
             throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.schedule', [] ) )
         }
-        if (!dataMap.postNow && dataMap.scheduledStartDate && dataMap.scheduledStartTime) {
+        if (!dataMap.postNow && !dataMap.recurrence && dataMap.scheduledStartDate && dataMap.scheduledStartTime) {
             if (dataMap.scheduledStartTime.length() != 4) {
                 throw new ApplicationException( ActionItemPostService, new BusinessLogicValidationException( 'preCreate.validation.no.schedule', [] ) )
             }

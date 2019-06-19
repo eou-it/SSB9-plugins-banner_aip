@@ -60,9 +60,6 @@ dependencies {
     compile "org.hibernate:hibernate-core:5.1.5.Final"
     compile "org.hibernate:hibernate-ehcache:5.1.5.Final"
 
-
-
-
 }
 
 grails {
