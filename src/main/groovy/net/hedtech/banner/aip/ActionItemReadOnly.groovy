@@ -212,10 +212,8 @@ class ActionItemReadOnly implements Serializable {
      * @return
      */
     static def fetchActionItemROById(Long myId) {
-        ActionItemReadOnly.withSession { session ->
-            session.getNamedQuery('ActionItemReadOnly.fetchActionItemROById')
-                    .setLong('myId', myId)
-                    .list()[0]
+        ActionItemReadOnly.withSession {session ->
+            session.getNamedQuery( 'ActionItemReadOnly.fetchActionItemROById' ).setLong( 'myId', myId )?.uniqueResult()
         }
     }
 

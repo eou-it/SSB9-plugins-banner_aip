@@ -110,10 +110,7 @@ class ActionItemContent implements Serializable {
      */
     static def fetchActionItemContentById( Long id ) {
         ActionItemContent.withSession {session ->
-            List actionItemContent = session.getNamedQuery( 'ActionItemContent.fetchActionItemContentById' )
-                    .setLong( 'myId', id )
-                    .list()
-            actionItemContent ? actionItemContent[0] : null
+            session.getNamedQuery( 'ActionItemContent.fetchActionItemContentById' ).setLong( 'myId', id )?.uniqueResult()
         }
     }
 }
