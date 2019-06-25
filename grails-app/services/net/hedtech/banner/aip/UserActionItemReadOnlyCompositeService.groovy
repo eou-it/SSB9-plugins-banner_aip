@@ -150,15 +150,52 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
                 itemDetailInfo << groupItem
             }
         } else if (params.searchType == 'actionItem') {
+
             def itemDetail = actionItemContentService.listActionItemContentById( Long.parseLong( params.actionItemId ) )
             def templateInfo = actionItemReadOnlyService.getActionItemROById( Long.parseLong( params.actionItemId ) )
+            def actionItem=[]
+            def actionItemContent=[]
             if (itemDetail) {
-                itemDetailInfo << itemDetail
+                  actionItem=[
+                          id:itemDetail.id,
+                          actionItemId:itemDetail.actionItemId,
+                          text:itemDetail.text,
+                          actionItemTemplateId:itemDetail.actionItemTemplateId,
+                          lastModifiedBy:itemDetail.lastModifiedBy,
+                          version:itemDetail.version
+                  ]
+                itemDetailInfo << actionItem
             }
+
             if (templateInfo) {
-                itemDetailInfo << templateInfo
+                actionItemContent=[
+                        actionItemId:templateInfo.actionItemId,
+                        actionItemName:templateInfo.actionItemName,
+                        actionItemTitle:templateInfo.actionItemTitle,
+                        folderId:templateInfo.folderId,
+                        folderName:templateInfo.folderName,
+                        folderDesc:templateInfo.folderDesc,
+                        actionItemDesc:templateInfo.actionItemDesc,
+                        actionItemStatus:templateInfo.actionItemStatus,
+                        actionItemPostedStatus:templateInfo.actionItemPostedStatus,
+                        actionItemActivityDate:templateInfo.actionItemActivityDate,
+                        actionItemUserId:templateInfo.actionItemUserId,
+                        actionItemContentUserId:templateInfo.actionItemContentUserId,
+                        actionItemCreatorId:templateInfo.actionItemCreatorId,
+                        actionItemCompositeDate:templateInfo.actionItemCompositeDate,
+                        actionItemLastUserId:templateInfo.actionItemLastUserId,
+                        actionItemVersion:templateInfo.actionItemVersion,
+                        actionItemTemplateId:templateInfo.actionItemTemplateId,
+                        actionItemTemplateName:templateInfo.actionItemTemplateName,
+                        actionItemTemplateDesc:templateInfo.actionItemTemplateDesc,
+                        actionItemPageName:templateInfo.actionItemPageName,
+                        actionItemContentId:templateInfo.actionItemContentId,
+                        actionItemContentDate:templateInfo.actionItemContentDate,
+                        actionItemContent:templateInfo.actionItemContent,
+                ]
+                itemDetailInfo << actionItemContent
             }
         }
-        itemDetailInfo
+
     }
 }

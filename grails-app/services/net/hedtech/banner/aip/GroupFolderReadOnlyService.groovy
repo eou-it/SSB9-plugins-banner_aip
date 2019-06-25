@@ -29,8 +29,9 @@ class GroupFolderReadOnlyService extends ServiceBase {
      */
     def getActionItemGroupById( Long actionItemGroupId ) {
         GroupFolderReadOnly groupRO = GroupFolderReadOnly.fetchGroupFolderById( actionItemGroupId )
+        def groupFolder=[]
         if (groupRO) {
-            [
+            groupFolder =   [
                     groupId          : groupRO.groupId,
                     groupTitle       : groupRO.groupTitle,
                     groupName        : groupRO.groupName,
@@ -45,6 +46,7 @@ class GroupFolderReadOnlyService extends ServiceBase {
                     postedInd        : groupRO.postedInd
             ]
         }
+        groupFolder
     }
 
     /**Lists Group Folder count

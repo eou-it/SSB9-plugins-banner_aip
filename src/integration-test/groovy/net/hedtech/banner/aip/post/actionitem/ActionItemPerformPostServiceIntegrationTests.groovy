@@ -100,6 +100,7 @@ class ActionItemPerformPostServiceIntegrationTests extends BaseIntegrationTestCa
         requestMap.displayStartDate = testingDateFormat.format( new Date() )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date()
+        requestMap.populationRegenerateIndicator=false
         def actionItemPost = actionItemPostCompositeService.getActionPostInstance( requestMap, springSecurityService.getAuthentication()?.user )
         actionItemPost.populationCalculationId = populationVersion.id
         actionItemPost.populationVersionId = populationVersion.id
