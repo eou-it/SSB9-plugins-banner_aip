@@ -3,12 +3,14 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.service.ServiceBase
 
 /**
  * Service class for UserActionItem
  */
+@Transactional
 class UserActionItemService extends ServiceBase {
     static final String BAD_DATA_ERROR = '@@r1:BadDataError@@' // generic unable to insert
     static final String ALREADY_EXISTS_CONDITION = '@@r1:AlreadyExistsCondition@@'

@@ -3,8 +3,9 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.i18n.MessageHelper
-
+@Transactional
 class ActionItemGroupAssignReadOnlyService {
 
     /**

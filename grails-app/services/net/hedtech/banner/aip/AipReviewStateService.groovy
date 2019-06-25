@@ -4,12 +4,14 @@
 
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.service.ServiceBase
 
 /****
  * AIP Review State Services.
  */
+@Transactional
 class AipReviewStateService extends ServiceBase {
 
     /**

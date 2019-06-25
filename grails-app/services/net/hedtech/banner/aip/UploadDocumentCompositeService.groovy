@@ -3,7 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.general.configuration.ConfigProperties
@@ -24,6 +24,7 @@ import org.jenkinsci.plugins.clamav.scanner.ClamAvScanner
 /**
  * UploadDocumentCompositeService Class for adding, preview and deleting of uploaded files.
  */
+@Transactional
 class UploadDocumentCompositeService {
 
     def springSecurityService

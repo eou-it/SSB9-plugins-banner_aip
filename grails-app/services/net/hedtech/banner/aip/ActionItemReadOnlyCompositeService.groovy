@@ -3,11 +3,12 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.aip.post.grouppost.ActionItemPostDetail
 import net.hedtech.banner.i18n.MessageHelper
 import net.hedtech.banner.service.ServiceBase
-
+@Transactional
 class ActionItemReadOnlyCompositeService extends ServiceBase {
     def actionItemReadOnlyService
     def actionItemGroupAssignService

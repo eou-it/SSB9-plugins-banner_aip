@@ -4,10 +4,13 @@
 package net.hedtech.banner.aip.post.grouppost
 
 import net.hedtech.banner.service.ServiceBase
-
+import grails.gorm.transactions.Transactional
 /**
  * DAO service interface for ActionItem group send item objects.
+
  */
+
+@Transactional
 class ActionItemPostWorkService extends ServiceBase {
 
     /**
@@ -32,3 +35,5 @@ class ActionItemPostWorkService extends ServiceBase {
         ActionItemPostWork.updateStateToStop( groupSend )
     }
 }
+
+

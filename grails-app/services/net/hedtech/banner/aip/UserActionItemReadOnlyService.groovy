@@ -3,11 +3,13 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.service.ServiceBase
 
 /**
  * Service class for UserActionItemReadOnly domain
  */
+@Transactional
 class UserActionItemReadOnlyService extends ServiceBase {
 
     /**
