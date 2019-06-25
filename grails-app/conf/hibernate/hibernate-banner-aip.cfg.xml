@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <!--*****************************************************************************
-Copyright 2018 Ellucian Company L.P. and its affiliates.
+Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
 *********************************************************************************-->
 
 <!--
@@ -34,6 +34,7 @@ Copyright 2018 Ellucian Company L.P. and its affiliates.
         <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPostDetail"/>
         <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPostReadOnly"/>
         <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPostWork"/>
+        <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPostRecurringDetails"/>
         <mapping class="net.hedtech.banner.aip.post.job.ActionItemJob"/>
         <mapping class="net.hedtech.banner.aip.post.job.ActionItemJobStatus"/>
         <mapping class="net.hedtech.banner.aip.post.grouppost.ActionItemPostSelectionDetailReadOnly"/>

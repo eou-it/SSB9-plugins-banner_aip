@@ -315,7 +315,7 @@ class ActionItemPostCompositeService {
             def newRecurringJobList=ActionItemPost.fetchRecurringScheduledJobs(requestMap.postId,actionItemPostRecurringDetails.id)
             return newRecurringJobList
         }
-        return  editedRecurringJobsList
+         return  editedRecurringJobsList
     }
 
     /**
@@ -333,7 +333,7 @@ class ActionItemPostCompositeService {
         if (newrecurEndDateGreater.compareTo(actionItemPostRecurringDetails.recurEndDate) > 0) {
             actionItemPostRecurringDetails.recurEndDate= actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.recurEndDate)
             editedRecurringJobsList = insertJobsRecurEndDateGreater(actionItemPostRecurringDetails, requestMap)
-            def newRecurringJobList=ActionItemPost.fetchRecurringScheduledJobs(requestMap.postId,actionItemPostRecurringDetails.id)
+             def newRecurringJobList=ActionItemPost.fetchRecurringScheduledJobs(requestMap.postId,actionItemPostRecurringDetails.id)
             return newRecurringJobList
         }
         return editedRecurringJobs
@@ -372,16 +372,16 @@ class ActionItemPostCompositeService {
 
         Integer diffDispEndDaysVal
         if (!requestMap.postingDisplayEndDate && !actionItemPostRecurringDetails.postingDisplayEndDate) {
-            actionItemPostRecurringDetails.postingDispEndDays ? actionItemPostRecurringDetails.postingDispEndDays : 0
-            if (requestMap.postingDispEndDays != actionItemPostRecurringDetails.postingDispEndDays) {
-                diffDispEndDaysVal = requestMap.postingDispEndDays - actionItemPostRecurringDetails.postingDispEndDays;
-                editedRecurringJobs.each {
-                    Date calculatedDisplayEndDate = actionItemPostRecurringDetailsService.addDays(it.postingDisplayEndDate, diffDispEndDaysVal)
-                    it.postingDisplayEndDate = calculatedDisplayEndDate
+                actionItemPostRecurringDetails.postingDispEndDays ? actionItemPostRecurringDetails.postingDispEndDays : 0
+                if (requestMap.postingDispEndDays != actionItemPostRecurringDetails.postingDispEndDays) {
+                    diffDispEndDaysVal = requestMap.postingDispEndDays - actionItemPostRecurringDetails.postingDispEndDays;
+                    editedRecurringJobs.each {
+                        Date calculatedDisplayEndDate = actionItemPostRecurringDetailsService.addDays(it.postingDisplayEndDate, diffDispEndDaysVal)
+                        it.postingDisplayEndDate = calculatedDisplayEndDate
+                    }
+                    actionItemPostRecurringDetails.postingDispEndDays = requestMap.postingDispEndDays
+                    actionItemPostRecurringDetails.postingDisplayEndDate = null
                 }
-                actionItemPostRecurringDetails.postingDispEndDays = requestMap.postingDispEndDays
-                actionItemPostRecurringDetails.postingDisplayEndDate = null
-            }
         }
         return  editedRecurringJobs
     }
@@ -427,7 +427,7 @@ class ActionItemPostCompositeService {
             }
             if (actionItemPostRecurringDetails.postingDisplayEndDate.equals(null) ) {
                 editedRecurringJobs.each {
-                    it.postingDisplayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.postingDisplayEndDate)
+                       it.postingDisplayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.postingDisplayEndDate)
                 }
             }
             else{
@@ -481,10 +481,10 @@ class ActionItemPostCompositeService {
 
         for (Integer iteration=0;iteration<actionItemPostObjects.size();iteration++)
         {
-            if(iteration>=getAllExistingRecurringJobs.size())
-            {
-                newRecurringJobs.push(actionItemPostObjects[iteration])
-            }
+               if(iteration>=getAllExistingRecurringJobs.size())
+               {
+                   newRecurringJobs.push(actionItemPostObjects[iteration])
+               }
         }
 
         def actionItemIds = requestMap.actionItemIds

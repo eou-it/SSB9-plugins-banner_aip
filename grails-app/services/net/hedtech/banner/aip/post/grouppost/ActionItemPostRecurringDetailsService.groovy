@@ -3,6 +3,7 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import net.hedtech.banner.aip.ActionItem
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.aip.post.exceptions.ActionItemExceptionFactory
 import net.hedtech.banner.exceptions.ApplicationException
@@ -11,7 +12,6 @@ import net.hedtech.banner.service.ServiceBase
 import org.apache.log4j.Logger
 
 import java.util.concurrent.TimeUnit
-
 /**
  * ActionItemPost Recurring Details Service is responsible for initiating and processing recurring posts.
  */
@@ -65,7 +65,7 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * @param actionItemPostRecurringDetails
      * @return
      */
-    Boolean validateDisplayEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails, Date displayStartDateTime ){
+    Boolean validateDisplayEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails,Date displayStartDateTime ){
         if(!actionItemPostRecurringDetails.postingDispEndDays && actionItemPostRecurringDetails.postingDisplayEndDate ){
             Integer numberOfObjects = getNumberOfJobs(actionItemPostRecurringDetails,displayStartDateTime)
             Date postingDateOfLastJob = resolveScheduleDateTime(actionItemPostRecurringDetails,numberOfObjects-1)
@@ -110,7 +110,7 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * Validate dates method calls various date validations required for recurrance
      * @param actionItemPostRecurringDetails
      */
-    void validateDates(ActionItemPostRecurringDetails actionItemPostRecurringDetails, Date displayStartDateTime){
+    void validateDates(ActionItemPostRecurringDetails actionItemPostRecurringDetails,Date displayStartDateTime){
         validateDisplayEndDate(actionItemPostRecurringDetails,displayStartDateTime)
         validateRecurEndDate(actionItemPostRecurringDetails)
         validateRecurrStartDateAndTime(actionItemPostRecurringDetails)
@@ -144,7 +144,7 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * @param actionItemPostRecurringDetails actionItemPostRecurringDetails containing details required for recurrence
      * @return
      */
-    Long getHoursBetweenRecurStartAndEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails, Date displayStartDateAndTime) {
+    Long getHoursBetweenRecurStartAndEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails,Date displayStartDateAndTime) {
         Calendar calculatedEndTime = Calendar.getInstance()
         calculatedEndTime.setTime(actionItemPostRecurringDetails.recurEndDate)
         calculatedEndTime.set(Calendar.HOUR_OF_DAY,23)
@@ -217,7 +217,7 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * @param iteration
      * @return
      */
-    Date resolvePostingDisplayDateTime(ActionItemPostRecurringDetails actionItemPostRecurringDetails, ActionItemPost actionItemPost, Integer iteration){
+    Date resolvePostingDisplayDateTime(ActionItemPostRecurringDetails actionItemPostRecurringDetails,ActionItemPost actionItemPost,Integer iteration){
         Date dateTime =  actionItemPost.postingDisplayDateTime
         if (actionItemPostRecurringDetails.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_DAYS) {
             Integer daysToAdd = actionItemPostRecurringDetails.recurFrequency * iteration

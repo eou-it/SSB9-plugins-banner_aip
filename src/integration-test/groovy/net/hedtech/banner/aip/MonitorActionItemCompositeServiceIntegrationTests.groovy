@@ -22,7 +22,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
     def monitorActionItemCompositeService
     def userActionItemReadOnlyCompositeService
     def configUserPreferenceService
-    def pagingAndSortParams = [sortColumn: "actionItemName", sortDirection: "asc", max: 50, offset: 0];
+    def pagingAndSortParams = [sortColumn: "actionItemName", sortAscending: true, max: 50, offset: 0];
     def paramsMap = [:]
     def criteriaMap = [:]
     def filterData = [params: paramsMap, criteria: criteriaMap];
@@ -234,16 +234,16 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         filterData = [params: paramsMap, criteria: criteriaMap]
         response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
-        assertEquals 3,response.result.size()
-        assertEquals 3,response.length
+        assertEquals 3, response.result.size()
+        assertEquals 3, response.length
 
         searchparam = "completed"
         paramsMap = [searchString: searchparam]
         filterData = [params: paramsMap, criteria: criteriaMap]
         response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
-        assertEquals 2,response.result.size()
-        assertEquals 2,response.length
+        assertEquals 2, response.result.size()
+        assertEquals 2, response.length
     }
 
     @Test
@@ -265,7 +265,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         filterData = [params: paramsMap, criteria: criteriaMap]
         response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
-        assertEquals 1,response.result.size()
+        assertEquals 1, response.result.size()
         assertEquals 1, response.length
 
         searchparam = "a"//for names containing a
@@ -406,17 +406,17 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         assertTrue response.length > 0
         def actionItemDetails = monitorActionItemCompositeService.getActionItem(response.result[0].id)
         def requestMap = [
-                userActionItemId:actionItemDetails.id,
-                reviewStateCode:20,
-                displayEndDate:actionItemDetails.displayEndDate,
-                responseId:actionItemDetails.responseId,
-                externalCommentInd:true,
-                reviewComments:'test comments',
-                contactInfo:'admin office'
+                userActionItemId  : actionItemDetails.id,
+                reviewStateCode   : 20,
+                displayEndDate    : actionItemDetails.displayEndDate,
+                responseId        : actionItemDetails.responseId,
+                externalCommentInd: true,
+                reviewComments    : 'test comments',
+                contactInfo       : 'admin office'
         ]
 
-        def result =  monitorActionItemCompositeService.updateActionItemReview(requestMap)
-        assertEquals true,result.success
+        def result = monitorActionItemCompositeService.updateActionItemReview(requestMap)
+        assertEquals true, result.success
     }
 
     @Test
@@ -431,17 +431,17 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         assertEquals 1, response.length
         def actionItemDetails = monitorActionItemCompositeService.getActionItem(response.result[0].id)
         def requestMap = [
-                userActionItemId:actionItemDetails.id,
-                reviewStateCode:20,
-                displayEndDate:new Date(),
-                responseId:actionItemDetails.responseId,
-                externalCommentInd:true,
-                reviewComments:'test comments',
-                contactInfo:'admin office'
+                userActionItemId  : actionItemDetails.id,
+                reviewStateCode   : 20,
+                displayEndDate    : new Date(),
+                responseId        : actionItemDetails.responseId,
+                externalCommentInd: true,
+                reviewComments    : 'test comments',
+                contactInfo       : 'admin office'
         ]
 
-        def result =  monitorActionItemCompositeService.updateActionItemReview(requestMap)
-        assertEquals false,result.success
+        def result = monitorActionItemCompositeService.updateActionItemReview(requestMap)
+        assertEquals false, result.success
     }
 
     @Test
@@ -456,17 +456,17 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
         assertEquals 1, response.length
         def actionItemDetails = monitorActionItemCompositeService.getActionItem(response.result[0].id)
         def requestMap = [
-                userActionItemId:12345,
-                reviewStateCode:20,
-                displayEndDate:new Date(),
-                responseId:actionItemDetails.responseId,
-                externalCommentInd:true,
-                reviewComments:'test comments',
-                contactInfo:'admin office'
+                userActionItemId  : 12345,
+                reviewStateCode   : 20,
+                displayEndDate    : new Date(),
+                responseId        : actionItemDetails.responseId,
+                externalCommentInd: true,
+                reviewComments    : 'test comments',
+                contactInfo       : 'admin office'
         ]
 
-        def result =  monitorActionItemCompositeService.updateActionItemReview(requestMap)
-        assertEquals false,result.success
+        def result = monitorActionItemCompositeService.updateActionItemReview(requestMap)
+        assertEquals false, result.success
     }
 
     @Test
@@ -497,9 +497,128 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
         def map = [locale: 'en-US']
         def statusMap = configUserPreferenceService.saveLocale(map)
-        assertEquals 'success',statusMap.status
+        assertEquals 'success', statusMap.status
         def output = monitorActionItemCompositeService.getReviewStatusList()
         assertNotNull output
     }
 
+    @Test
+    void testPersonNameSortingAsc() {
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
+        String personId = null
+        String personName = null
+        String searchparam = ""
+        pagingAndSortParams = [sortColumn: "actionItemPersonName", sortAscending: true, max: 10, offset: 0];
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 'Archibalde, Hank', response.result[0].actionItemPersonName
+    }
+
+    @Test
+    void testPersonNameSortingDesc() {
+        Long actionItemId = drugAndAlcoholPolicyActionItem.id
+        String personId = null
+        String personName = null
+        String searchparam = ""
+        pagingAndSortParams = [sortColumn: "actionItemPersonName", sortAscending: false, max: 10, offset: 0];
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 'Worthington, Dennis', response.result[0].actionItemPersonName
+    }
+
+    @Test
+    void testSearchWithFirstName() {
+        Long actionItemId = null
+        String personId = null
+        String personName = ", WILLIAM"
+        String searchparam = ""
+        pagingAndSortParams = [sortColumn: "actionItemPersonName", sortDirection: "asc", max: 25, offset: 0];
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 11, response.result.size()
+    }
+
+    @Test
+    void testSearchWithLastName() {
+        Long actionItemId = null
+        String personId = null
+        String personName = "SHERMAN,"
+        String searchparam = ""
+        pagingAndSortParams = [sortColumn: "actionItemPersonName", sortDirection: "asc", max: 10, offset: 0];
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 1, response.result.size()
+    }
+
+    @Test
+    void testPersonNameSearchCaseInsensitive() {
+        Long actionItemId = null
+        String personId = null
+        String personName = "hope, william f"
+        String searchparam = ""
+        pagingAndSortParams = [sortColumn: "actionItemPersonName", sortDirection: "asc", max: 10, offset: 0];
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 10, response.result.size()
+    }
+
+    @Test
+    void testSearchWithFirstAndLastName() {
+        Long actionItemId = null
+        String personId = null
+        String personName = 'SHERMAN, WILLIAM'
+        String searchparam = ""
+        pagingAndSortParams = [sortColumn: "actionItemPersonName", sortDirection: "asc", max: 10, offset: 0];
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 1, response.result.size()
+    }
+
+    @Test
+    void testSearchWithOnlyMiddleName() {
+        Long actionItemId = null
+        String personId = null
+        String personName = " BFGHFH"
+        String searchparam = ""
+        pagingAndSortParams = [sortColumn: "actionItemPersonName", sortDirection: "asc", max: 10, offset: 0];
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 1, response.result.size()
+    }
+
+    @Test
+    void testSearchWithFullName() {
+        Long actionItemId = null
+        String personId = null
+        String personName = 'Hope, William F'
+        String searchparam = ""
+        pagingAndSortParams = [sortColumn: "actionItemPersonName", sortDirection: "asc", max: 10, offset: 0];
+        def paramsMap = [searchString: searchparam]
+        def filterData = [params: paramsMap, criteria: criteriaMap]
+
+        def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
+        assertNotNull response
+        assertEquals 10, response.result.size()
+    }
 }

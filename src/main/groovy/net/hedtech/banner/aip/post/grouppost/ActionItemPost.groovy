@@ -52,7 +52,7 @@ import javax.persistence.Version
         ), @NamedQuery(name = "ActionItemPost.checkIfJobNameAlreadyExistsForUpdate",
         query = """ select count (gs.postingName) FROM ActionItemPost gs
                         WHERE upper(gs.postingName) = upper( :postingName) and gs.id != :postId """
-),
+        ),
         @NamedQuery(name = "ActionItemPost.fetchRecurringScheduledJobs",
                 query = """FROM ActionItemPost gs	
                            WHERE gs.id != :postId 
