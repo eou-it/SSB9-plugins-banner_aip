@@ -7,6 +7,7 @@ package net.hedtech.banner.aip.common
 import com.ibm.icu.util.Calendar
 import com.ibm.icu.util.ULocale
 import grails.gorm.transactions.Transactional
+import groovy.util.logging.Slf4j
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
@@ -18,7 +19,7 @@ import org.springframework.context.i18n.LocaleContextHolder
 
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
-
+@Slf4j
 @Transactional
 class ActionItemProcessingCommonService {
     def dateConverterService
@@ -26,8 +27,6 @@ class ActionItemProcessingCommonService {
     def grailsApplication
 
     def messageSource
-
-    private static final def LOGGER = Logger.getLogger( this.getClass() )
 
     /**
      * Gets Communication folders
@@ -62,7 +61,7 @@ class ActionItemProcessingCommonService {
             return strDate
         }
         catch (ApplicationException e) {
-            LOGGER.error( 'Error while parsing date' + e )
+            log.error( 'Error while parsing date' + e )
             throw new ApplicationException( ActionItemProcessingCommonService, new BusinessLogicValidationException( 'invalid.date.format', [] ) )
         }
     }

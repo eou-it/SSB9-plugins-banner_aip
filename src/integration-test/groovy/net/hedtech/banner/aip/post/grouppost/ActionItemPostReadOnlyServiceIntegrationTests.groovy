@@ -101,7 +101,7 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
     }
 
 
-    private ActionItemPost newActionItemPost( String name ) {
+    private ActionItemPost newActionItemPost(String name ) {
         ActionItemPost aip = new ActionItemPost()
         aip.populationVersionId = 32548072L
         aip.populationListId = 43987234L
@@ -119,7 +119,7 @@ class ActionItemPostReadOnlyServiceIntegrationTests extends BaseIntegrationTestC
     }
 
 
-    private ActionItemPost newScheduledActionItemPost( String name ) {
+    private ActionItemPost newScheduledActionItemPost(String name ) {
         ActionItemPost aip = new ActionItemPost()
         aip.populationVersionId = 32548072L
         aip.populationListId = 43987234L

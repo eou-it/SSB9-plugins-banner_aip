@@ -62,7 +62,7 @@ class ActionItemPostReadOnlyIntegrationTests extends BaseIntegrationTestCase {
     }
 
 
-    private ActionItemPost newActionItemPost( String name ) {
+    private ActionItemPost newActionItemPost(String name ) {
             ActionItemPost aip = new ActionItemPost()
             aip.populationVersionId = 32548072L
             aip.populationListId = 43987234L

@@ -1,6 +1,8 @@
 package banner.aip
 
 import grails.plugins.*
+import grails.util.Holders
+import groovy.util.logging.Slf4j
 
 class BannerAipGrailsPlugin extends Plugin {
 
@@ -50,13 +52,6 @@ Brief summary/description of the plugin.
     }
 
     void doWithApplicationContext() {
-        def pbConfig = grails.util.Holders.getConfig().pageBuilder
-       /* if (pbConfig && pbConfig.locations && pbConfig.locations.page) {
-            applicationContext.pageUtilService.importAllFromDir(pbConfig.locations.page, ctx.pageUtilService.loadIfNew)
-            applicationContext.virtualDomainUtilService.importAllFromDir(pbConfig.locations.virtualDomain, ctx.virtualDomainUtilService.loadIfNew)
-            applicationContext.cssUtilService.importAllFromDir(pbConfig.locations.css, ctx.cssUtilService.loadIfNew)
-            applicationContext.pageSecurityService.init()
-        }*/
     }
 
     void onChange(Map<String, Object> event) {

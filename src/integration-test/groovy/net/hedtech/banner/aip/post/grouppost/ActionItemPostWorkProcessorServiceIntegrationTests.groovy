@@ -4,11 +4,9 @@
 package net.hedtech.banner.aip.post.grouppost
 
 import grails.gorm.transactions.Rollback
-import grails.gorm.transactions.Transactional
 import grails.testing.mixin.integration.Integration
 
 import net.hedtech.banner.aip.ActionItemGroup
-import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
 import net.hedtech.banner.aip.ActionItemGroupAssign
 import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
 import net.hedtech.banner.general.communication.population.CommunicationPopulation
