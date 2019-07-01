@@ -183,12 +183,14 @@ class ActionItemCompositeService {
      * @param map
      * @return
      */
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     def updateActionItemDetailWithTemplate( map ) {
         def templateId = map.templateId.toInteger()
         def actionItemId = map.actionItemId.toInteger()
         def actionItemDetailText = map.actionItemContent
         def success = false
         def result = validateEditActionItemContent( actionItemId )
+        println "result $result"
         if (!result.editable) {
             def model = [
                     success: false,
@@ -197,6 +199,7 @@ class ActionItemCompositeService {
             return model
         }
         ActionItemContent aic = actionItemContentService.listActionItemContentById( actionItemId )
+        println "aic $aic"
         if (!aic) {
             aic = new ActionItemContent()
         }
@@ -204,9 +207,11 @@ class ActionItemCompositeService {
         aic.actionItemTemplateId = templateId
         aic.text = actionItemDetailText
 
-        ActionItemContent newAic = actionItemContentService.createOrUpdate( aic )
+        ActionItemContent newAic = actionItemContentService.createOrUpdate( aic ,false)
+        println "newAic $newAic"
         def errors = []
         def actionItemRO = actionItemReadOnlyService.getActionItemROById( newAic.actionItemId )
+        println "actionItemRO $actionItemRO"
         actionItemRO = actionItemRO?.collect {ActionItemReadOnly it ->
             [id                     : it.actionItemId,
              version                : it.actionItemVersion,

@@ -194,7 +194,7 @@ class ActionItemPostWork implements AsynchronousTask {
      * @param max
      * @return
      */
-    static List fetchByGroupSend( ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
+    static List fetchByGroupSend(ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
         ActionItemPostWork.withSession {session ->
             session.getNamedQuery( 'ActionItemPostWork.fetchByGroupSend' )
                     .setParameter( 'groupSend', groupSend )
@@ -211,7 +211,7 @@ class ActionItemPostWork implements AsynchronousTask {
      * @param max
      * @return
      */
-    static List fetchByExecutionStateAndGroupSend( ActionItemPostWorkExecutionState executionState, ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
+    static List fetchByExecutionStateAndGroupSend(ActionItemPostWorkExecutionState executionState, ActionItemPost groupSend, Integer max = Integer.MAX_VALUE ) {
         ActionItemPostWork.withSession {session ->
             session.getNamedQuery( 'ActionItemPostWork.fetchByExecutionStateAndGroupSend' )
                     .setParameter( 'executionState', executionState )
@@ -227,7 +227,7 @@ class ActionItemPostWork implements AsynchronousTask {
      * @param groupSend
      * @return
      */
-    static def fetchRunningGroupSendItemCount( ActionItemPost groupSend ) {
+    static def fetchRunningGroupSendItemCount(ActionItemPost groupSend ) {
         ActionItemPostWork.withSession {session ->
             session.getNamedQuery( 'ActionItemPostWork.countByExecutionStateAndGroupSend' )
                     .setParameter( 'executionState', ActionItemPostWorkExecutionState.Ready )
@@ -241,7 +241,7 @@ class ActionItemPostWork implements AsynchronousTask {
      * @param groupSend
      * @return
      */
-    static def updateStateToStop( ActionItemPost groupSend ) {
+    static def updateStateToStop(ActionItemPost groupSend ) {
         ActionItemPostWork.withSession {session ->
             session.getNamedQuery( 'ActionItemPostWork.updateStateToStop' )
                     .setParameter( 'executionState', ActionItemPostWorkExecutionState.Ready )

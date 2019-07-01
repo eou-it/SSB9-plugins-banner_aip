@@ -1,11 +1,11 @@
 /*******************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
-import net.hedtech.banner.aip.common.LoggerUtility
+import grails.gorm.transactions.Transactional
+import groovy.util.logging.Slf4j
 import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
-import org.apache.log4j.Logger
 import org.springframework.beans.factory.DisposableBean
 import org.springframework.beans.factory.annotation.Required
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException
@@ -13,8 +13,9 @@ import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureExcep
 /**
  * Action Item Monitor class
  */
+@Slf4j
+@Transactional
 class ActionItemPostMonitor implements DisposableBean {
-    private static final log = Logger.getLogger( this.class )
     private ActionItemPostMonitorThread monitorThread
     private ActionItemPostService actionItemPostService
     private ActionItemPostWorkService actionItemPostWorkService
@@ -59,14 +60,14 @@ class ActionItemPostMonitor implements DisposableBean {
 
 
     void init() {
-        LoggerUtility.info( log, "Initialized." )
+        log.info( "Initialized." )
 
     }
 
 
     @Override
     void destroy() throws Exception {
-        LoggerUtility.info( log, "Calling disposable bean method." )
+        log.info( "Calling disposable bean method." )
         if (monitorThread) {
             monitorThread.stopRunning()
         }
@@ -74,7 +75,7 @@ class ActionItemPostMonitor implements DisposableBean {
 
 
     void startMonitoring() {
-        LoggerUtility.info( log, "Monitor thread started." )
+        log.info( "Monitor thread started." )
         if (!monitorThread) {
             monitorThread = new ActionItemPostMonitorThread( this )
         }
@@ -83,7 +84,7 @@ class ActionItemPostMonitor implements DisposableBean {
 
 
     void shutdown() {
-        LoggerUtility.debug( log, "Shutting down." )
+        log.debug( "Shutting down." )
         if (monitorThread) {
             monitorThread.stopRunning()
             try {
@@ -96,15 +97,15 @@ class ActionItemPostMonitor implements DisposableBean {
 
 
     void monitorPosts() {
-        LoggerUtility.debug( log, "Checking posts for status updates." )
+        log.debug( "Checking posts for status updates." )
         // begin setup
         asynchronousBannerAuthenticationSpoofer.authenticateAndSetFormContextForExecute()
         try {
             List<ActionItemPost> groupSendList = ActionItemPost.findRunning()
-            LoggerUtility.debug( log, "Running group send count = " + groupSendList.size() + "." )
+            log.debug( "Running group send count = " + groupSendList.size() + "." )
 
             for (ActionItemPost groupSend : groupSendList) {
-                LoggerUtility.debug( log, "group send id = " + groupSend.id + "." )
+                log.debug( "group send id = " + groupSend.id + "." )
                 if (groupSend.postingCurrentState.equals( ActionItemPostExecutionState.Processing )) {
                     int runningCount = ActionItemPostWork.fetchRunningGroupSendItemCount( groupSend )
                     if (runningCount == 0) {
@@ -113,7 +114,7 @@ class ActionItemPostMonitor implements DisposableBean {
                 }
             }
         } catch (Throwable t) {
-            LoggerUtility.error( log, t )
+            log.error( t )
         }
     }
 
@@ -122,8 +123,8 @@ class ActionItemPostMonitor implements DisposableBean {
      * @param groupSendId the id of the group send.
      * @return the updated group send
      */
-    private ActionItemPost completeGroupSend( Long groupSendId ) {
-        LoggerUtility.debug( log, "Completing group send with id = " + groupSendId + "." )
+    private ActionItemPost completeGroupSend(Long groupSendId ) {
+        log.debug( "Completing group send with id = " + groupSendId + "." )
 
         int retries = 2
         while (retries > 0) {

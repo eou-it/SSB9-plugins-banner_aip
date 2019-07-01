@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat
 class ActionItemPostIntegrationTests extends BaseIntegrationTestCase {
     @Before
     void setUp() {
-        formContext = ['GUAGMNU','SELFSERVICE']
+        formContext = ['SELFSERVICE']
         super.setUp()
     }
 

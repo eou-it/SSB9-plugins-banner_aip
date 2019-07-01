@@ -5,6 +5,7 @@ package net.hedtech.banner.aip.post.grouppost
 
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+import groovy.util.logging.Slf4j
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.service.DatabaseModifiesState
 import org.hibernate.annotations.Type
@@ -28,6 +29,7 @@ import javax.persistence.Version
 /**
  * Action Item Post: Defines the parameters for an action item post.
  */
+@Slf4j
 @Entity
 @Table(name = "GCBAPST")
 @ToString(includeNames = true, ignoreNulls = true)
@@ -303,6 +305,7 @@ class ActionItemPost implements Serializable {
 
 
     void markScheduled( String jobId, String groupId ) {
+        log.trace("Marking $jobId as Scheduled and group id $groupId")
         assert jobId != null
         assert groupId != null
         assignPostExecutionState( ActionItemPostExecutionState.Scheduled, jobId, groupId )
@@ -310,6 +313,7 @@ class ActionItemPost implements Serializable {
 
 
     void markQueued( String jobId, String groupId ) {
+        log.trace("Marking $jobId as markQueued and group id $groupId")
         assert jobId != null
         assert groupId != null
         assignPostExecutionState( ActionItemPostExecutionState.Queued, jobId, groupId )
@@ -317,18 +321,21 @@ class ActionItemPost implements Serializable {
 
 
     void markStopped( Date stopDate = new Date() ) {
+        log.trace("Marking ${this.aSyncJobId} as markStopped  stop date id $stopDate")
         assignPostExecutionState( ActionItemPostExecutionState.Stopped )
         this.postingStopDate = stopDate
     }
 
 
     void markComplete( Date stopDate = new Date() ) {
+        log.trace("Marking ${this.aSyncJobId} as markComplete and stop date  id $stopDate")
         assignPostExecutionState( ActionItemPostExecutionState.Complete )
         this.postingStopDate = stopDate
     }
 
 
     void markProcessing() {
+        log.trace("Marking ${this.id}  with job id ${this.aSyncJobId} as markComplete ")
         assignPostExecutionState( ActionItemPostExecutionState.Processing )
         if (this.postingStartedDate == null) {
             this.postingStartedDate = new Date()
@@ -345,9 +352,10 @@ class ActionItemPost implements Serializable {
 
 
     private void assignPostExecutionState( ActionItemPostExecutionState executionState, String jobId = null, String groupId = null ) {
-        this.postingCurrentState = executionState
-        this.aSyncJobId = jobId
-        this.aSyncGroupId = groupId
+       log.trace "AssignPostExcutionStatus executionState -$executionState ,groupId - $groupId , jobId - ${jobId}"
+       this.setPostingCurrentState ( executionState)
+       this.setaSyncJobId( jobId)
+       this.aSyncGroupId = groupId
     }
 
 
@@ -374,7 +382,7 @@ class ActionItemPost implements Serializable {
      */
     static def checkIfJobNameAlreadyExists( name ) {
         def count
-        ActionItemPostWork.withSession {session ->
+        ActionItemPostWork.withSession { session ->
             count = session.getNamedQuery( 'ActionItemPost.checkIfJobNameAlreadyExists' )
                     .setParameter( 'postingName', name )
                     .uniqueResult()

@@ -4,6 +4,7 @@
 
 package net.hedtech.banner.aip.post.grouppost
 
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.service.ServiceBase
@@ -11,6 +12,7 @@ import net.hedtech.banner.service.ServiceBase
 /**
  * Manages action item group post instances.
  */
+@Transactional
 class ActionItemPostService extends ServiceBase {
 
     /**

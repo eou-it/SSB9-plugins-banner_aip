@@ -142,8 +142,8 @@ class UploadDocument implements Serializable {
     static fetchDocuments(paramsObj) {
         def queryCriteria = UploadDocument.createCriteria()
         queryCriteria.list {
-            eq("userActionItemId", Long.parseLong(paramsObj.userActionItemId))
-            eq("responseId", Long.parseLong(paramsObj.responseId))
+            eq("userActionItemId", paramsObj.userActionItemId)
+            eq("responseId", paramsObj.responseId)
             order((paramsObj.sortAscending ? Order.asc(paramsObj.sortColumn) : Order.desc(paramsObj.sortColumn)).ignoreCase())
         }
     }
@@ -155,8 +155,8 @@ class UploadDocument implements Serializable {
     static def fetchDocumentsCount(paramsObj) {
         UploadDocument.withSession { session ->
             session.getNamedQuery('UploadDocument.fetchDocumentsCount')
-                    .setLong("userActionItemId", Long.parseLong(paramsObj.userActionItemId))
-                    .setLong("responseId", Long.parseLong(paramsObj.responseId))
+                    .setLong("userActionItemId", paramsObj.userActionItemId)
+                    .setLong("responseId", paramsObj.responseId)
                     .uniqueResult()
         }
     }
