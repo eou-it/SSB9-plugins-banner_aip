@@ -186,7 +186,7 @@ class ActionItemStatusCompositeService {
                     message = MessageHelper.message("actionItemStatusRule.statusId.nullable.error")
                     throw new ApplicationException(ActionItemStatusCompositeService, new BusinessLogicValidationException(message, []))
                 }
-
+             def numberOfAttachments=Integer.parseInt(rule.allowedAttachments)
                 if (rule.statusRuleId) {
                     statusRule = ActionItemStatusRule.get(rule.statusRuleId)
                     statusRule.seqOrder = rule.statusRuleSeqOrder.toInteger()
@@ -194,7 +194,7 @@ class ActionItemStatusCompositeService {
                     statusRule.actionItemStatusId = statusId
                     statusRule.reviewReqInd = rule.reviewReqInd
                     statusRule.actionItemId = jsonObj.actionItemId.toLong()
-                    statusRule.allowedAttachments = rule.allowedAttachments.toInteger()
+                    statusRule.allowedAttachments = numberOfAttachments
                 } else {
                     statusRule = new ActionItemStatusRule(
                             seqOrder: rule.statusRuleSeqOrder,
@@ -202,7 +202,7 @@ class ActionItemStatusCompositeService {
                             actionItemId: jsonObj.actionItemId.toLong(),
                             actionItemStatusId: statusId,
                             reviewReqInd: rule.reviewReqInd,
-                            allowedAttachments:rule.allowedAttachments
+                            allowedAttachments:numberOfAttachments
                     )
                 }
                 ruleList.push(statusRule)
