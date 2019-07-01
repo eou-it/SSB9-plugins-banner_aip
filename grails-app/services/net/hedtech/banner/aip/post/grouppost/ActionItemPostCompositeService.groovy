@@ -4,10 +4,10 @@
 package net.hedtech.banner.aip.post.grouppost
 
 
+import groovy.util.logging.Slf4j
 import net.hedtech.banner.aip.ActionItem
 import net.hedtech.banner.aip.ActionItemGroup
 import net.hedtech.banner.aip.common.AIPConstants
-import net.hedtech.banner.aip.common.LoggerUtility
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.aip.post.exceptions.ActionItemExceptionFactory
 import net.hedtech.banner.exceptions.ApplicationException
@@ -22,12 +22,11 @@ import net.hedtech.banner.general.communication.population.CommunicationPopulati
 import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.general.scheduler.SchedulerJobReceipt
-import org.apache.log4j.Logger
 import org.springframework.transaction.annotation.Propagation
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.request.RequestContextHolder
-import java.text.SimpleDateFormat;
 
+import java.text.SimpleDateFormat
+import grails.gorm.transactions.Transactional
 
 
 /**
@@ -35,11 +34,10 @@ import java.text.SimpleDateFormat;
  * Controllers and other client code should generally work through this service for interacting with group send
  * behavior and objects.
  */
+@Slf4j
 @Transactional
 class ActionItemPostCompositeService {
 
-    private static
-    final LOGGER = Logger.getLogger("net.hedtech.banner.aip.post.grouppost.ActionItemPostCompositeService")
 
     def actionItemPostService
 
@@ -48,8 +46,6 @@ class ActionItemPostCompositeService {
     def actionItemPostDetailService
 
     def grailsApplication
-
-    def transactionManager
 
     def communicationPopulationCompositeService
 
@@ -75,7 +71,7 @@ class ActionItemPostCompositeService {
      */
     def sendAsynchronousPostItem(requestMap) {
         ActionItemPost recurringActionItemPost = requestMap.recurringActionItemPost
-        LoggerUtility.debug(LOGGER, "Method sendAsynchronousGroupActionItem reached.")
+        log.debug( "Method sendAsynchronousGroupActionItem reached.")
         if (!recurringActionItemPost){
             actionItemPostService.preCreateValidation(requestMap)}
         def user = springSecurityService.getAuthentication()?.user
@@ -118,7 +114,7 @@ class ActionItemPostCompositeService {
             groupSendSaved = schedulePost(groupSendSaved, user.oracleUserName,requestMap.isRecurEdit)
         }
         success = true
-        LoggerUtility.debug(LOGGER, " Finished Saving Posting ${groupSendSaved}.")
+        log.debug( " Finished Saving Posting ${groupSendSaved}.")
         [
                 success : success,
                 savedJob: groupSendSaved
@@ -213,7 +209,7 @@ class ActionItemPostCompositeService {
         requestMap.timezoneStringOffset = requestMap.recurPostTimezone
         actionItemPostService.preCreateValidation(requestMap)
         def actionItemPost = getActionPostInstance(requestMap, user)
-        actionItemPost.postingCurrentState = ActionItemPostExecutionState.RecurrenceScheduled
+        actionItemPost.setPostingCurrentState( ActionItemPostExecutionState.RecurrenceScheduled)
         actionItemPost.recurringPostInd = true
         actionItemPost.recurringPostDetailsId = recurringDetailId
         actionItemPostService.create(actionItemPost)
@@ -315,7 +311,7 @@ class ActionItemPostCompositeService {
             def newRecurringJobList=ActionItemPost.fetchRecurringScheduledJobs(requestMap.postId,actionItemPostRecurringDetails.id)
             return newRecurringJobList
         }
-        return  editedRecurringJobsList
+         return  editedRecurringJobsList
     }
 
     /**
@@ -333,7 +329,7 @@ class ActionItemPostCompositeService {
         if (newrecurEndDateGreater.compareTo(actionItemPostRecurringDetails.recurEndDate) > 0) {
             actionItemPostRecurringDetails.recurEndDate= actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.recurEndDate)
             editedRecurringJobsList = insertJobsRecurEndDateGreater(actionItemPostRecurringDetails, requestMap)
-            def newRecurringJobList=ActionItemPost.fetchRecurringScheduledJobs(requestMap.postId,actionItemPostRecurringDetails.id)
+             def newRecurringJobList=ActionItemPost.fetchRecurringScheduledJobs(requestMap.postId,actionItemPostRecurringDetails.id)
             return newRecurringJobList
         }
         return editedRecurringJobs
@@ -372,16 +368,16 @@ class ActionItemPostCompositeService {
 
         Integer diffDispEndDaysVal
         if (!requestMap.postingDisplayEndDate && !actionItemPostRecurringDetails.postingDisplayEndDate) {
-            actionItemPostRecurringDetails.postingDispEndDays ? actionItemPostRecurringDetails.postingDispEndDays : 0
-            if (requestMap.postingDispEndDays != actionItemPostRecurringDetails.postingDispEndDays) {
-                diffDispEndDaysVal = requestMap.postingDispEndDays - actionItemPostRecurringDetails.postingDispEndDays;
-                editedRecurringJobs.each {
-                    Date calculatedDisplayEndDate = actionItemPostRecurringDetailsService.addDays(it.postingDisplayEndDate, diffDispEndDaysVal)
-                    it.postingDisplayEndDate = calculatedDisplayEndDate
+                actionItemPostRecurringDetails.postingDispEndDays ? actionItemPostRecurringDetails.postingDispEndDays : 0
+                if (requestMap.postingDispEndDays != actionItemPostRecurringDetails.postingDispEndDays) {
+                    diffDispEndDaysVal = requestMap.postingDispEndDays - actionItemPostRecurringDetails.postingDispEndDays;
+                    editedRecurringJobs.each {
+                        Date calculatedDisplayEndDate = actionItemPostRecurringDetailsService.addDays(it.postingDisplayEndDate, diffDispEndDaysVal)
+                        it.postingDisplayEndDate = calculatedDisplayEndDate
+                    }
+                    actionItemPostRecurringDetails.postingDispEndDays = requestMap.postingDispEndDays
+                    actionItemPostRecurringDetails.postingDisplayEndDate = null
                 }
-                actionItemPostRecurringDetails.postingDispEndDays = requestMap.postingDispEndDays
-                actionItemPostRecurringDetails.postingDisplayEndDate = null
-            }
         }
         return  editedRecurringJobs
     }
@@ -427,7 +423,7 @@ class ActionItemPostCompositeService {
             }
             if (actionItemPostRecurringDetails.postingDisplayEndDate.equals(null) ) {
                 editedRecurringJobs.each {
-                    it.postingDisplayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.postingDisplayEndDate)
+                       it.postingDisplayEndDate = actionItemProcessingCommonService.convertToLocaleBasedDate(requestMap.postingDisplayEndDate)
                 }
             }
             else{
@@ -481,10 +477,10 @@ class ActionItemPostCompositeService {
 
         for (Integer iteration=0;iteration<actionItemPostObjects.size();iteration++)
         {
-            if(iteration>=getAllExistingRecurringJobs.size())
-            {
-                newRecurringJobs.push(actionItemPostObjects[iteration])
-            }
+               if(iteration>=getAllExistingRecurringJobs.size())
+               {
+                   newRecurringJobs.push(actionItemPostObjects[iteration])
+               }
         }
 
         def actionItemIds = requestMap.actionItemIds
@@ -579,7 +575,7 @@ class ActionItemPostCompositeService {
                     recurringPostInd: false,
                     recurringPostDetailsId: actionItemPost.recurringPostDetailsId
             )
-            LOGGER.trace "createActionItemObjects - Item Created no ${iteration}, Item created ${individualActionItemPost} "
+            log.trace "createActionItemObjects - Item Created no ${iteration}, Item created ${individualActionItemPost} "
             individualActionItemPostObjects.add(individualActionItemPost)
         }
 
@@ -764,7 +760,7 @@ class ActionItemPostCompositeService {
      * @param groupSendId the long id of the group send
      */
     void deletePost(Long groupSendId) {
-        LoggerUtility.debug(LOGGER, "deleteGroupSend for id = ${groupSendId}.")
+        log.debug( "deleteGroupSend for id = ${groupSendId}.")
         ActionItemPost groupSend = (ActionItemPost) actionItemPostService.get(groupSendId)
         if (!groupSend.postingCurrentState.pending && !groupSend.postingCurrentState.terminal) {
             throw ActionItemExceptionFactory.createApplicationException(ActionItemPostCompositeService.class, "cannotDeleteRunningPost")
@@ -806,12 +802,12 @@ class ActionItemPostCompositeService {
      * @return the updated (stopped) group send
      */
     ActionItemPost stopPost(Long groupSendId) {
-        LoggerUtility.debug(LOGGER, "Stopping group send with id = ${groupSendId}.")
+        log.debug( "Stopping group send with id = ${groupSendId}.")
 
         ActionItemPost groupSend = (ActionItemPost) actionItemPostService.get(groupSendId)
 
         if (groupSend.postingCurrentState.isTerminal()) {
-            LoggerUtility.warn(LOGGER, "Group send with id = ${groupSend.id} has already concluded with execution state ${groupSend.postingCurrentState.toString()}.")
+            log.warn( "Group send with id = ${groupSend.id} has already concluded with execution state ${groupSend.postingCurrentState.toString()}.")
             throw ActionItemExceptionFactory.createApplicationException(ActionItemPostService.class, "cannotStopConcludedPost")
         }
 
@@ -834,7 +830,7 @@ class ActionItemPostCompositeService {
      * @return the updated group post
      */
     ActionItemPost completePost(Long groupSendId) {
-        LoggerUtility.debug(LOGGER, "Completing group send with id = " + groupSendId + ".")
+        log.debug( "Completing group send with id = " + groupSendId + ".")
         ActionItemPost aGroupSend = (ActionItemPost) actionItemPostService.get(groupSendId)
         aGroupSend.markComplete()
         actionItemPostService.update(aGroupSend)
@@ -934,7 +930,7 @@ class ActionItemPostCompositeService {
 
     ActionItemPost scheduledPostCallbackFailed(SchedulerErrorContext errorContext) {
         Long groupSendId = errorContext.jobContext.getParameter("groupSendId") as Long
-        LoggerUtility.debug(LOGGER, "${errorContext.jobContext.errorHandle} called for groupSendId = ${groupSendId} with message = ${errorContext?.cause?.message}")
+        log.debug( "${errorContext.jobContext.errorHandle} called for groupSendId = ${groupSendId} with message = ${errorContext?.cause?.message}")
         ActionItemPost groupSend = ActionItemPost.get(groupSendId)
         if (!groupSend) {
             throw new ApplicationException("groupSend", new NotFoundException())
@@ -958,7 +954,7 @@ class ActionItemPostCompositeService {
     ActionItemPost calculatePopulationVersionForGroupSend(Map parameters) {
         Long groupSendId = parameters.get("groupSendId") as Long
         assert (groupSendId)
-        LoggerUtility.debug(LOGGER, "Calling calculatePopulationVersionForPost for groupSendId = ${groupSendId}.")
+        log.debug( "Calling calculatePopulationVersionForPost for groupSendId = ${groupSendId}.")
         ActionItemPost groupSend = ActionItemPost.get(groupSendId)
         if (!groupSend) {
             throw new ApplicationException("groupSend", new NotFoundException())
@@ -974,7 +970,7 @@ class ActionItemPostCompositeService {
                 boolean hasQuery = (CommunicationPopulationVersionQueryAssociation.countByPopulationVersion(populationVersion) > 0)
 
                 if (!groupSend.populationCalculationId && hasQuery) {
-                    groupSend.postingCurrentState = ActionItemPostExecutionState.Calculating
+                    groupSend.setPostingCurrentState ( ActionItemPostExecutionState.Calculating)
                     CommunicationPopulationCalculation calculation = communicationPopulationCompositeService.calculatePopulationVersionForGroupSend(
                             populationVersion)
                     groupSend.populationCalculationId = calculation.id
@@ -985,7 +981,7 @@ class ActionItemPostCompositeService {
                 }
                 groupSend = generatePostItemsImpl(groupSend)
             } catch (Throwable t) {
-                LOGGER.error(t.getMessage())
+                log.error(t.getMessage())
                 groupSend.refresh()
                 groupSend.markError(ActionItemErrorCode.UNKNOWN_ERROR, t.getMessage())
                 groupSend = (ActionItemPost) actionItemPostService.update(groupSend)
@@ -1001,7 +997,7 @@ class ActionItemPostCompositeService {
     ActionItemPost generatePostItems(Map parameters) {
         Long groupSendId = parameters.get("groupSendId") as Long
         assert (groupSendId)
-        LoggerUtility.debug(LOGGER, "Calling generateGroupSendItems for groupSendId = ${groupSendId}.")
+        log.debug( "Calling generateGroupSendItems for groupSendId = ${groupSendId}.")
         ActionItemPost groupSend = ActionItemPost.get(groupSendId)
         if (!groupSend) {
             throw new ApplicationException("groupSend", new NotFoundException())
@@ -1011,7 +1007,7 @@ class ActionItemPostCompositeService {
             try {
                 groupSend = generatePostItemsImpl(groupSend)
             } catch (Throwable t) {
-                LoggerUtility.error(LOGGER, t.getMessage())
+                log.error( t.getMessage())
                 groupSend.markError(ActionItemErrorCode.UNKNOWN_ERROR, t.getMessage())
                 groupSend = (ActionItemPost) actionItemPostService.update(groupSend)
             }
@@ -1021,7 +1017,7 @@ class ActionItemPostCompositeService {
 
 
     ActionItemPost schedulePostImmediately(ActionItemPost groupSend, String bannerUser) {
-        LoggerUtility.debug(LOGGER, " Start creating  jobContext for ${bannerUser}.")
+        log.debug( " Start creating  jobContext for ${bannerUser}.")
         def mepCode = RequestContextHolder.currentRequestAttributes().request.session.getAttribute('mep')
         SchedulerJobContext jobContext = new SchedulerJobContext(
                 groupSend.aSyncJobId != null ? groupSend.aSyncJobId : UUID.randomUUID().toString())
@@ -1042,8 +1038,10 @@ class ActionItemPostCompositeService {
         }
 
         SchedulerJobReceipt jobReceipt = schedulerJobService.scheduleNowServiceMethod(jobContext)
+        log.trace "Quratz Job is scheduled and ID - ${jobReceipt.jobId} "
         groupSend.markQueued(jobReceipt.jobId, jobReceipt.groupId)
-        LoggerUtility.debug(LOGGER, " Completing marking posting in Queue.")
+        log.debug( " Completing marking posting in Queue.")
+        log.trace "ActionItemPost before update $groupSend"
         actionItemPostService.update(groupSend)
     }
 
@@ -1053,13 +1051,13 @@ class ActionItemPostCompositeService {
      * @param bannerUser
      * @return
      */
-    ActionItemPost schedulePost(ActionItemPost groupSend, String bannerUser,recurEditFlag) {
+    ActionItemPost schedulePost(ActionItemPost groupSend, String bannerUser, recurEditFlag) {
         Date now = new Date(System.currentTimeMillis())
         if ((now.after(groupSend.postingScheduleDateTime)) && (!recurEditFlag)) {
             throw ActionItemExceptionFactory.createApplicationException(ActionItemPostService.class, "invalidScheduledDate")
         }
         def mepCode = RequestContextHolder.currentRequestAttributes().request.session.getAttribute('mep')
-        LOGGER.debug "Setting mepCod ${mepCode} in JobContext"
+        log.debug "Setting mepCod ${mepCode} in JobContext"
         SchedulerJobContext jobContext = new SchedulerJobContext(
                 groupSend.aSyncJobId != null ? groupSend.aSyncJobId : UUID.randomUUID().toString())
                 .setBannerUser(bannerUser)
@@ -1114,11 +1112,11 @@ class ActionItemPostCompositeService {
      * @param groupSend
      */
     void createPostItems(ActionItemPost groupSend) {
-        LoggerUtility.debug(LOGGER, "Generating group send item records for group send with id = " + groupSend?.id)
+        log.debug( "Generating group send item records for group send with id = " + groupSend?.id)
         def session = sessionFactory.currentSession
         def timeoutSeconds = (grailsApplication.config.banner?.transactionTimeout instanceof Integer ? (grailsApplication.config.banner?.transactionTimeout) : 300)
         try {
-            transactionManager.setDefaultTimeout(timeoutSeconds * 2)
+            //transactionManager.setDefaultTimeout(timeoutSeconds * 2)
             List<ActionItemPostSelectionDetailReadOnly> list = session.getNamedQuery('ActionItemPostSelectionDetailReadOnly.fetchSelectionIds')
                     .setLong('postingId', groupSend.id)
                     .list()
@@ -1132,9 +1130,9 @@ class ActionItemPostCompositeService {
                 }', sysdate, sysdate ) """)
                         .executeUpdate()
             }
-            LoggerUtility.debug(LOGGER, "Created " + list?.size() + " group send item records for group send with id = " + groupSend.id)
+            log.debug( "Created " + list?.size() + " group send item records for group send with id = " + groupSend.id)
         } finally {
-            transactionManager.setDefaultTimeout(timeoutSeconds)
+            //transactionManager.setDefaultTimeout(timeoutSeconds)
         }
     }
     /**

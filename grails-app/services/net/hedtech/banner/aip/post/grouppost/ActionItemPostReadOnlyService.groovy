@@ -24,7 +24,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
      * @return
      */
     def listActionItemPostJobList(Map params ) {
-
+      
         List<AipTimezone> timeZoneList = actionItemProcessingCommonService.populateAvailableTimezones()
         Map<String, AipTimezone> map = timeZoneList.collectEntries() {
             [it.stringOffset + ' ' + it.timezoneId, it]
@@ -107,7 +107,7 @@ class ActionItemPostReadOnlyService extends ServiceBase {
         }
 
         def result = [:]
-
+       
         //Initializing the date format
         List timeZoneList = actionItemProcessingCommonService.populateAvailableTimezones()
         TimeZone timezone = TimeZone.getDefault();
@@ -184,8 +184,8 @@ class ActionItemPostReadOnlyService extends ServiceBase {
                 [name: params?.searchParam,recurringPostDetailsId:  actionItemPostReadOnly.recurringPostDetailsId],
                 [sortColumn: params.sortColumn, sortAscending: params.sortAscending, max: params.max, offset: params.offset] )
     }
-
-    /**
+	
+	/**
      * Function to fetch recurring action item meta data
      * @param actionItemPostId
      * @return

@@ -40,7 +40,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
     def actionItemPostDetailService
     def actionItemJobService
 
-    private static final String USERNAME = 'AIPADM001'
+    private static final String USERNAME = 'AIPADM003'
 
 
     @Before
@@ -206,7 +206,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         }
     }
 
-
     @Test
     void schedulePostImmediately() {
         ActionItemPost aip = newAIP()
@@ -224,7 +223,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         actionItemPostCompositeService.schedulePostImmediately( aip, USERNAME )
         assert aip.postingCurrentState == ActionItemPostExecutionState.Queued
     }
-
 
     @Test
     void generatePostItems() {
@@ -254,7 +252,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         }
     }
 
-
     @Test
     void scheduledPostCallbackFailedGroupSendNotFound() {
         try {
@@ -268,7 +265,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         }
     }
 
-
     @Test
     void calculatePopulationVersionForGroupSend() {
         ActionItemPost aip = newAIP()
@@ -276,7 +272,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         actionItemPostCompositeService.calculatePopulationVersionForGroupSend( [groupSendId: aip.id] )
         assert aip.postingCurrentState == ActionItemPostExecutionState.Processing
     }
-
 
     @Test
     void scheduledPostCallbackFailed() {
@@ -307,7 +302,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         assert aip.postingCurrentState == ActionItemPostExecutionState.Error
         assert aip.postingErrorCode == ActionItemErrorCode.UNKNOWN_ERROR
     }
-
 
     @Test
     void generatePostItemsFired() {
@@ -426,7 +420,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     }
 
-
     @Test
     void deletePostInvaidGroupSend() {
         try {
@@ -460,6 +453,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.scheduledStartDate = new Date() + 1
         requestMap.actionItemIds = actionItemIds
         requestMap.displayDatetimeZone=correspondingServerDetails
+        requestMap.populationRegenerateIndicator=false
         def result = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
         assert result.success == true
         assert result.savedJob != null
@@ -496,7 +490,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.timezoneStringOffset = "Asia/Kolkata"
         requestMap.displayDatetimeZone=correspondingServerDetails;
         requestMap.actionItemIds = actionItemIds
-        print "REM,$requestMap"
         try {
             actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
         } catch (ApplicationException e) {
@@ -504,7 +497,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         }
 
     }
-
 
     @Test
     void sendAsynchronousPostItemInvalidDisplayStartDate() {
@@ -537,7 +529,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     }
 
-
     @Test
     void markActionItemPosted() {
         ActionItem actionItem = ActionItem.findByName( 'Drug and Alcohol Policy' )
@@ -548,7 +539,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         actionItem = ActionItem.findByName( 'Drug and Alcohol Policy' )
         assert actionItem.postedIndicator == 'Y'
     }
-
 
     @Test
     void sendAsynchronousPostItemInvalidDisplayEndDate() {
@@ -581,7 +571,6 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     }
 
-
     @Test
     void updateAsynchronousPostItem() {
         SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
@@ -605,6 +594,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.scheduledStartDate = new Date() + 1
         requestMap.displayDatetimeZone=correspondingServerDetails;
         requestMap.actionItemIds = actionItemIds
+        requestMap.populationRegenerateIndicator=true
         def result = actionItemPostCompositeService.sendAsynchronousPostItem( requestMap )
         assert result.success == true
         assert result.savedJob != null
@@ -623,6 +613,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.displayStartDate = testingDateFormat.format( new Date() + 2 )
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date() + 2
+        requestMap.populationRegenerateIndicator=true
         def updateResult = actionItemPostCompositeService.updateAsynchronousPostItem( requestMap )
         assert updateResult.success == true
         assert updateResult.savedJob != null
@@ -633,6 +624,14 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
 
     }
 
+    @Test
+    void getRecurringActionItemPostList(){
+        ActionItemPost aip = newAIP()
+        aip = actionItemPostService.create( aip )
+        actionItemPostCompositeService.createPostItems( aip )
+        ActionItemPost actionItemPost = (ActionItemPost) actionItemPostService.get( aip.id )
+        assert actionItemPost.id == aip.id
+    }
 
     private def newAIP() {
         println "calling new instance"
@@ -665,6 +664,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         requestMap.scheduledStartDate = new Date() + 1
         requestMap.actionItemIds = actionItemIds
         requestMap.displayDatetimeZone=correspondingServerDetails;
+        requestMap.populationRegenerateIndicator=true
         def actionItemPost = actionItemPostCompositeService.getActionPostInstance( requestMap, springSecurityService.getAuthentication()?.user )
         actionItemPost.populationCalculationId = populationVersion.id
         actionItemPost.populationVersionId = populationVersion.id

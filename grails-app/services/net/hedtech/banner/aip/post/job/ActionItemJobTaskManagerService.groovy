@@ -4,7 +4,7 @@
 package net.hedtech.banner.aip.post.job
 
 import grails.gorm.transactions.Transactional
-import net.hedtech.banner.aip.common.LoggerUtility
+import groovy.util.logging.Slf4j
 import net.hedtech.banner.aip.post.ActionItemErrorCode
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTask
@@ -12,7 +12,6 @@ import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskManager
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskMonitorRecord
 import net.hedtech.banner.general.communication.groupsend.automation.StringHelper
 import org.apache.commons.lang.NotImplementedException
-import org.apache.log4j.Logger
 
 
 /**
@@ -20,9 +19,9 @@ import org.apache.log4j.Logger
  * methods for manipulating group send item tasks.
  *
  */
+@Slf4j
 @Transactional
 class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
-    private static final LOGGER = Logger.getLogger( 'net.hedtech.banner.aip.post.job.ActionItemJobTaskManagerService' )
 
     def actionItemJobService
 
@@ -39,13 +38,13 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
 
 
     public AsynchronousTask create( AsynchronousTask job ) throws ApplicationException {
-        LOGGER.trace "${job?.toString()}"
+        log.trace "${job?.toString()}"
         throw new NotImplementedException()
     }
 
 
     public void init() {
-        LoggerUtility.debug( LOGGER, "${this.getClass().getSimpleName()} initialized." )
+        log.debug( "${this.getClass().getSimpleName()} initialized." )
 
     }
 
@@ -57,7 +56,7 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
     public void delete( AsynchronousTask jobItem ) throws ApplicationException {
         ActionItemJob actionItemJob = (ActionItemJob) jobItem
         actionItemJobService.delete( actionItemJob )
-        LoggerUtility.debug( LOGGER, "${this.getClass().getSimpleName()} deleted actionItem job with id = ${actionItemJob.id}." )
+        log.debug( "${this.getClass().getSimpleName()} deleted actionItem job with id = ${actionItemJob.id}." )
     }
 
     /**
@@ -78,23 +77,23 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
      */
     @Transactional(readOnly = true, rollbackFor = Throwable.class)
     public List<ActionItemJob> getPendingJobs( int max ) throws ApplicationException {
-        LoggerUtility.debug( LOGGER, "Get pending actionItem jobs" )
+        log.debug( "Get pending actionItem jobs" )
         List<ActionItemJob> result = actionItemJobService.fetchPending( max )
-        LoggerUtility.debug( LOGGER, "Found ${result.size()} actionItem jobs." )
+        log.debug( "Found ${result.size()} actionItem jobs." )
         result
     }
 
 
     public boolean acquire( AsynchronousTask task ) throws ApplicationException {
         ActionItemJob job = task as ActionItemJob
-        LoggerUtility.info( LOGGER, "Acquiring actionItem job with id = ${job.id}." )
+        log.info( "Acquiring actionItem job with id = ${job.id}." )
         actionItemJobService.acquire( job.id )
     }
 
 
     public void markComplete( AsynchronousTask task ) throws ApplicationException {
         ActionItemJob job = task as ActionItemJob
-        LoggerUtility.info( LOGGER, "Marking completed actionItem job id = ${job.id}." )
+        log.info( "Marking completed actionItem job id = ${job.id}." )
         actionItemJobService.markCompleted( job.id )
     }
 
@@ -106,7 +105,7 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
      */
     public void process( AsynchronousTask task ) throws ApplicationException {
         ActionItemJob job = task as ActionItemJob
-        LoggerUtility.info( LOGGER, "Processing actionItem job id = ${job.id}." )
+        log.info( "Processing actionItem job id = ${job.id}." )
         try {
             if (simulatedFailureException != null) {
                 throw simulatedFailureException
@@ -115,7 +114,7 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
             //actionItemJobProcessorService.performActionItemJob( task.getId() )
 
         } catch (Exception e) {
-            LoggerUtility.debug( LOGGER, "${this.getClass().getSimpleName()}.process caught exception " + e.getMessage() )
+            log.debug( "${this.getClass().getSimpleName()}.process caught exception " + e.getMessage() )
             // we MUST re-throw as the thread which invoked this method must
             // mark the job as failed by using another thread (as the
             // thread associated with this thread will likely be rolled back)
@@ -140,14 +139,14 @@ class ActionItemJobTaskManagerService implements AsynchronousTaskManager {
         job.setErrorCode( ActionItemErrorCode.valueOf( errorCode ) )
         actionItemJobService.update( job )
         if (cause) {
-            LoggerUtility.info( LOGGER, "Marked job with id = ${job.id} as failed cause = ${cause.toString()}." )
+            log.info( "Marked job with id = ${job.id} as failed cause = ${cause.toString()}." )
         }
     }
 
 
     @Transactional(rollbackFor = Throwable.class)
     public AsynchronousTaskMonitorRecord updateMonitorRecord( AsynchronousTaskMonitorRecord monitorRecord ) {
-        LOGGER.trace "${monitorRecord?.toString()}"
+        log.trace "${monitorRecord?.toString()}"
         null
     }
 

@@ -32,7 +32,7 @@ class ActionItemPostExecutionStateIntegrationTests extends BaseIntegrationTestCa
     @Test
     void set() {
         ActionItemPostExecutionState executionState = ActionItemPostExecutionState.New
-        assert executionState.set().size() == 8
+        assert 10,executionState.set().size()
     }
 
 

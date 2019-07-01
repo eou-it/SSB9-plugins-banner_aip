@@ -3,30 +3,31 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import grails.gorm.transactions.Transactional
+import groovy.util.logging.Slf4j
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.aip.post.exceptions.ActionItemExceptionFactory
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.service.ServiceBase
-import org.apache.log4j.Logger
+
 
 import java.util.concurrent.TimeUnit
-
 /**
  * ActionItemPost Recurring Details Service is responsible for initiating and processing recurring posts.
  */
-
+@Slf4j
+@Transactional
 class ActionItemPostRecurringDetailsService extends ServiceBase {
 
-    private static
-    final LOGGER = Logger.getLogger("net.hedtech.banner.aip.post.grouppost.ActionItemPostRecurringDetailsService")
+
 
     /**
      * validates user intpus
      * @param map map of user inputs
      */
     void preCreateValidate(map) {
-        LOGGER.trace "Request map -{$map}"
+        log.trace "Request map -{$map}"
 
         if (!map) {
             throw new ApplicationException(ActionItemPostService, new BusinessLogicValidationException('preCreate.validation.insufficient.request', []))
@@ -65,11 +66,11 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * @param actionItemPostRecurringDetails
      * @return
      */
-    Boolean validateDisplayEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails, Date displayStartDateTime ){
+    Boolean validateDisplayEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails,Date displayStartDateTime ){
         if(!actionItemPostRecurringDetails.postingDispEndDays && actionItemPostRecurringDetails.postingDisplayEndDate ){
             Integer numberOfObjects = getNumberOfJobs(actionItemPostRecurringDetails,displayStartDateTime)
             Date postingDateOfLastJob = resolveScheduleDateTime(actionItemPostRecurringDetails,numberOfObjects-1)
-            LOGGER.trace "validating display end date - Numbre of jobs - ${numberOfObjects},calculated date of last posting job -${postingDateOfLastJob},posting display end date -${actionItemPostRecurringDetails.postingDisplayEndDate}"
+            log.trace "validating display end date - Numbre of jobs - ${numberOfObjects},calculated date of last posting job -${postingDateOfLastJob},posting display end date -${actionItemPostRecurringDetails.postingDisplayEndDate}"
             if(removeTime(postingDateOfLastJob).compareTo(actionItemPostRecurringDetails.postingDisplayEndDate)>0){
                 //if firm display end date chosen & calculated last posting job date < display end date
                 //Display end date must be greater than or equal to date of last posting job.
@@ -110,7 +111,7 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * Validate dates method calls various date validations required for recurrance
      * @param actionItemPostRecurringDetails
      */
-    void validateDates(ActionItemPostRecurringDetails actionItemPostRecurringDetails, Date displayStartDateTime){
+    void validateDates(ActionItemPostRecurringDetails actionItemPostRecurringDetails,Date displayStartDateTime){
         validateDisplayEndDate(actionItemPostRecurringDetails,displayStartDateTime)
         validateRecurEndDate(actionItemPostRecurringDetails)
         validateRecurrStartDateAndTime(actionItemPostRecurringDetails)
@@ -125,7 +126,7 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
         Long totalNumber = actionItemPostRecurringDetails.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_DAYS ? getDaysBetweenRecurStartAndEndDate(actionItemPostRecurringDetails)
                 : getHoursBetweenRecurStartAndEndDate(actionItemPostRecurringDetails,displayStartDateTime)
         Long numberOfObjects = totalNumber / actionItemPostRecurringDetails.recurFrequency
-        LOGGER.trace "Number of jobs for reccuring job id- ${actionItemPostRecurringDetails.id} is ${numberOfObjects}"
+        log.trace "Number of jobs for reccuring job id- ${actionItemPostRecurringDetails.id} is ${numberOfObjects}"
         numberOfObjects
     }
 
@@ -144,14 +145,14 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * @param actionItemPostRecurringDetails actionItemPostRecurringDetails containing details required for recurrence
      * @return
      */
-    Long getHoursBetweenRecurStartAndEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails, Date displayStartDateAndTime) {
+    Long getHoursBetweenRecurStartAndEndDate(ActionItemPostRecurringDetails actionItemPostRecurringDetails,Date displayStartDateAndTime) {
         Calendar calculatedEndTime = Calendar.getInstance()
         calculatedEndTime.setTime(actionItemPostRecurringDetails.recurEndDate)
         calculatedEndTime.set(Calendar.HOUR_OF_DAY,23)
         calculatedEndTime.set(Calendar.MINUTE,59)
         calculatedEndTime.set(Calendar.SECOND,59)
         Long diff = calculatedEndTime.getTime().getTime() - displayStartDateAndTime.getTime()
-        LOGGER.trace "Start time - ${displayStartDateAndTime} and end time - ${calculatedEndTime.getTime()} and diff in hours is ${TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)}}"
+        log.trace "Start time - ${displayStartDateAndTime} and end time - ${calculatedEndTime.getTime()} and diff in hours is ${TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)}}"
         TimeUnit.HOURS.convert(diff, TimeUnit.MILLISECONDS)
     }
 
@@ -178,7 +179,7 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      */
     Date resolveDiplayEndDate(Date scheduledDate, ActionItemPostRecurringDetails actionItemPostRecurringDetails) {
         Boolean isOffSetEndDate = !actionItemPostRecurringDetails.postingDisplayEndDate && actionItemPostRecurringDetails.postingDispEndDays !=null
-        LOGGER.trace "Resolving display End date - Posting End date -{$actionItemPostRecurringDetails.postingDisplayEndDate}, Posting End date offset {$actionItemPostRecurringDetails.postingDispEndDays},isOffset - {$isOffSetEndDate}"
+        log.trace "Resolving display End date - Posting End date -{$actionItemPostRecurringDetails.postingDisplayEndDate}, Posting End date offset {$actionItemPostRecurringDetails.postingDispEndDays},isOffset - {$isOffSetEndDate}"
         if (isOffSetEndDate) {
             if (actionItemPostRecurringDetails.postingDispEndDays == 0) {
                 return removeTime(scheduledDate)
@@ -217,7 +218,7 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
      * @param iteration
      * @return
      */
-    Date resolvePostingDisplayDateTime(ActionItemPostRecurringDetails actionItemPostRecurringDetails, ActionItemPost actionItemPost, Integer iteration){
+    Date resolvePostingDisplayDateTime(ActionItemPostRecurringDetails actionItemPostRecurringDetails,ActionItemPost actionItemPost,Integer iteration){
         Date dateTime =  actionItemPost.postingDisplayDateTime
         if (actionItemPostRecurringDetails.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_DAYS) {
             Integer daysToAdd = actionItemPostRecurringDetails.recurFrequency * iteration

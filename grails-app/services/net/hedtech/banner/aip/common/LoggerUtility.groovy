@@ -4,7 +4,7 @@
 package net.hedtech.banner.aip.common
 
 /**
- * Class to LOGGER the statements
+ * Class to log the statements
  */
 class LoggerUtility {
 
