@@ -199,7 +199,6 @@ class ActionItemCompositeService {
             return model
         }
         ActionItemContent aic = actionItemContentService.listActionItemContentById( actionItemId )
-        println "aic $aic"
         if (!aic) {
             aic = new ActionItemContent()
         }
@@ -208,10 +207,8 @@ class ActionItemCompositeService {
         aic.text = actionItemDetailText
 
         ActionItemContent newAic = actionItemContentService.createOrUpdate( aic ,false)
-        println "newAic $newAic"
         def errors = []
         def actionItemRO = actionItemReadOnlyService.getActionItemROById( newAic.actionItemId )
-        println "actionItemRO $actionItemRO"
         actionItemRO = actionItemRO?.collect {ActionItemReadOnly it ->
             [id                     : it.actionItemId,
              version                : it.actionItemVersion,
