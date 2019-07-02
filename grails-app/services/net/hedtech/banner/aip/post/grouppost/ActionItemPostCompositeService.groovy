@@ -22,6 +22,7 @@ import net.hedtech.banner.general.communication.population.CommunicationPopulati
 import net.hedtech.banner.general.scheduler.SchedulerErrorContext
 import net.hedtech.banner.general.scheduler.SchedulerJobContext
 import net.hedtech.banner.general.scheduler.SchedulerJobReceipt
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.web.context.request.RequestContextHolder
 
@@ -38,6 +39,7 @@ import grails.gorm.transactions.Transactional
 @Transactional
 class ActionItemPostCompositeService {
 
+    def applicationContext
 
     def actionItemPostService
 
@@ -1116,7 +1118,7 @@ class ActionItemPostCompositeService {
         def session = sessionFactory.currentSession
         def timeoutSeconds = (grailsApplication.config.banner?.transactionTimeout instanceof Integer ? (grailsApplication.config.banner?.transactionTimeout) : 300)
         try {
-            //transactionManager.setDefaultTimeout(timeoutSeconds * 2)
+            applicationContext.getBean('transactionManager')?.setDefaultTimeout(timeoutSeconds * 2)
             List<ActionItemPostSelectionDetailReadOnly> list = session.getNamedQuery('ActionItemPostSelectionDetailReadOnly.fetchSelectionIds')
                     .setLong('postingId', groupSend.id)
                     .list()
@@ -1132,7 +1134,7 @@ class ActionItemPostCompositeService {
             }
             log.debug( "Created " + list?.size() + " group send item records for group send with id = " + groupSend.id)
         } finally {
-            //transactionManager.setDefaultTimeout(timeoutSeconds)
+            applicationContext.getBean('transactionManager')?.setDefaultTimeout(timeoutSeconds * 2)
         }
     }
     /**
