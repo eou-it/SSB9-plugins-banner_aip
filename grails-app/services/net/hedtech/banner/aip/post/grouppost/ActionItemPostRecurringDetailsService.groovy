@@ -32,7 +32,7 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
         if (!map) {
             throw new ApplicationException(ActionItemPostService, new BusinessLogicValidationException('preCreate.validation.insufficient.request', []))
         }
-        if (map && map.recurFrequency <= 0) {
+        if (map && map.recurFrequency < 1) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.frequency.greater.zero', []))
         }
         if (map && !map.recurFrequencyType) {
