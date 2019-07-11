@@ -1116,7 +1116,7 @@ class ActionItemPostCompositeService {
         def session = sessionFactory.currentSession
         def timeoutSeconds = (grailsApplication.config.banner?.transactionTimeout instanceof Integer ? (grailsApplication.config.banner?.transactionTimeout) : 300)
         try {
-            //transactionManager.setDefaultTimeout(timeoutSeconds * 2)
+            Holders.applicationContext.getBean('transactionManager')?.setDefaultTimeout(timeoutSeconds * 2)
             List<ActionItemPostSelectionDetailReadOnly> list = session.getNamedQuery('ActionItemPostSelectionDetailReadOnly.fetchSelectionIds')
                     .setLong('postingId', groupSend.id)
                     .list()
@@ -1132,7 +1132,7 @@ class ActionItemPostCompositeService {
             }
             log.debug( "Created " + list?.size() + " group send item records for group send with id = " + groupSend.id)
         } finally {
-            //transactionManager.setDefaultTimeout(timeoutSeconds)
+            Holders.applicationContext.getBean('transactionManager')?.setDefaultTimeout(timeoutSeconds)
         }
     }
     /**
