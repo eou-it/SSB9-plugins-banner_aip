@@ -3,7 +3,7 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
-
+import grails.util.Holders
 import groovy.util.logging.Slf4j
 import net.hedtech.banner.aip.ActionItem
 import net.hedtech.banner.aip.ActionItemGroup
