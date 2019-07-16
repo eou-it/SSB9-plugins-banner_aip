@@ -35,15 +35,30 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
         if (map && map.recurFrequency < 1) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.frequency.greater.zero', []))
         }
+
+        if (map && !(map.recurFrequency == Math.round(map.recurFrequency))) {
+            throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.frequency.decimal.validation', []))
+        }
+
         if (map && !map.recurFrequencyType) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.recurFrequencyType.invalid', []))
         }
         if (map && map.postingDispStartDays!=null && map.postingDispStartDays < 0) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.displayStartDateOffset.zero', []))
         }
+
+        if (map && map.postingDispStartDays!=null && !(map.postingDispStartDays == Math.round(map.postingDispStartDays))) {
+            throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.displayStartDateOffset.decimal.validation', []))
+        }
+
         if (map && map.postingDispEndDays !=null && !map.postingDisplayEndDate && map.postingDispEndDays < 0) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.postingDispEndDays.zero', []))
         }
+
+        if (map && map.postingDispEndDays !=null && !(map.postingDispEndDays == Math.round(map.postingDispEndDays))) {
+            throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.postingDispEndDays.decimal.validation', []))
+        }
+
         if (map && map.postingDispEndDays!=null && !map.postingDisplayEndDate && map.postingDispEndDays < map.postingDispStartDays) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.postingDisplayEndDate.greater.postingDispStartDays', []))
         }
@@ -267,5 +282,10 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
         calculatedStartDate.set(Calendar.MINUTE,0)
         calculatedStartDate.set(Calendar.SECOND,0)
         calculatedStartDate.getTime()
+    }
+
+    private boolean isIntegerNumber(value){
+        return
+
     }
 }
