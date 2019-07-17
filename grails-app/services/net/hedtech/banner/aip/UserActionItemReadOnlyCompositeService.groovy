@@ -4,7 +4,7 @@
 package net.hedtech.banner.aip
 
 import grails.gorm.transactions.Transactional
-import net.hedtech.banner.aip.common.LoggerUtility
+import groovy.util.logging.Slf4j
 import net.hedtech.banner.i18n.MessageHelper
 import net.hedtech.banner.service.ServiceBase
 import org.apache.log4j.Logger
@@ -13,8 +13,8 @@ import org.apache.log4j.Logger
  * Composite Service class for UserActionItemReadOnly domain
  */
 @Transactional
+@Slf4j
 class UserActionItemReadOnlyCompositeService extends ServiceBase {
-    private static final def LOGGER = Logger.getLogger( this.class )
     def groupFolderReadOnlyService
     def userActionItemReadOnlyService
     def springSecurityService
@@ -130,7 +130,7 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
      */
     def actionItemOrGroupInfo( params ) {
         def itemDetailInfo = []
-        LoggerUtility.debug( LOGGER, 'Params for actionItemOrGroupInfo ' + params )
+        log.debug(  'Params for actionItemOrGroupInfo ' + params )
         if (params.searchType == 'group') {
             def group = groupFolderReadOnlyService.getActionItemGroupById( Long.parseLong( params.groupId ) )
             if (group) {
