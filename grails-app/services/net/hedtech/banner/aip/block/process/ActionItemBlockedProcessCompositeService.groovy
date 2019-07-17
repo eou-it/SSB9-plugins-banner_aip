@@ -5,23 +5,22 @@
 package net.hedtech.banner.aip.block.process
 
 import grails.gorm.transactions.Transactional
+import groovy.util.logging.Slf4j
 import net.hedtech.banner.aip.common.AIPConstants
-import net.hedtech.banner.aip.common.LoggerUtility
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.i18n.MessageHelper
-import org.apache.log4j.Logger
 import org.springframework.transaction.annotation.Propagation
 
 /**
  * Service class for Action item Blocked Process
  */
 @Transactional
+@Slf4j
 class ActionItemBlockedProcessCompositeService {
 
     def actionItemBlockedProcessReadOnlyService
     def actionItemBlockedProcessService
     def blockingProcessService
-    private static final LOGGER = Logger.getLogger( this.class )
 
 
     def getBlockedProcessForSpecifiedActionItem( Long actionItemId ) {
@@ -73,9 +72,9 @@ class ActionItemBlockedProcessCompositeService {
     def updateBlockedProcessItems( paramMap ) {
         boolean isGlobalBlock = paramMap.globalBlockProcess
 
-        LoggerUtility.debug( LOGGER, 'Input params for updateBlockedProcessItems' + paramMap )
+        log.debug(  'Input params for updateBlockedProcessItems' + paramMap )
         if (!paramMap.actionItemId) {
-            LoggerUtility.error( LOGGER, 'Action Item Id not present' )
+            log.error(  'Action Item Id not present' )
             return [success: false, message: MessageHelper.message( 'incomplete.request.action.item.id.not.present' )]
         }
         def initialSize = paramMap.blockedProcesses?.size()
