@@ -175,7 +175,7 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
                 errorExecutor = Executors.newFixedThreadPool(1)
             } catch (ApplicationException e) {
                 log.fatal("JobProcessingEngine for " + jobManager.getJobType() + " caught " + e, e)
-                throw new RuntimeException(e)
+
             }
             pollingThread.start()
             threadsRunning = true
