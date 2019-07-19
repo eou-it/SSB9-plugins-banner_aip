@@ -230,9 +230,10 @@ class ActionItemStatusCompositeService {
     def getMaxAttachmentsValue(maxAttachment) {
         def result
         try {
-            ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.institution.maximum.attachment.number', grailsApplication.metadata['app.appId'])
-            maxAttachment = (configProperties ? Integer.parseInt(configProperties.configValue) : 0)
 
+            //TODO Remove Hardcored AppId
+            ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.institution.maximum.attachment.number', "GENERAL_SS")
+            maxAttachment = (configProperties ? Integer.parseInt(configProperties.configValue) : 0)
             result = [maxAttachment: (maxAttachment <= 0) ? defaultMaxAttachmentCount : maxAttachment]
         }
         catch(Exception e)
