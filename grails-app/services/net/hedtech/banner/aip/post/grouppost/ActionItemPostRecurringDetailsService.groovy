@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit
 class ActionItemPostRecurringDetailsService extends ServiceBase {
 
 
-
+    def actionItemProcessingCommonService
     /**
      * validates user intpus
      * @param map map of user inputs
@@ -40,7 +40,7 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.frequency.decimal.validation', []))
         }
 
-        if (map && !map.recurFrequencyType) {
+        if (map && !map.recurFrequencyType) {D
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.recurFrequencyType.invalid', []))
         }
         if (map && map.postingDispStartDays!=null && map.postingDispStartDays < 0) {
@@ -68,10 +68,14 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
         if (map && map.postingDisplayEndDate && map.postingDisplayEndDate.compareTo(map.recurEndDate) < 0) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.postingDisplayEndDate.greater.than.recurEndDate', []))
         }
-        if (map && map.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_DAYS && map.recurStartDate && !(map.recurEndDate.compareTo(map.recurStartDate) > 0)) {
+
+        Date recurStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate(map.recurStartDate)
+        Date recurEndDate   = actionItemProcessingCommonService.convertToLocaleBasedDate(map.recurEndDate)
+
+        if (map && map.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_DAYS && map.recurStartDate && (recurStartDate.compareTo(recurEndDate)) > 0) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.recurStartDate.less.than.recurEndDate', []))
         }
-        if (map && map.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_HOURS && map.recurEndDate && !(map.recurEndDate.compareTo(map.recurStartDate) >= 0)) {
+        if (map && map.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_HOURS && map.recurEndDate && !(recurEndDate.compareTo(recurStartDate) >= 0)) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.recurStartDate.less.than.or.equals.recurEndDate', []))
         }
 
