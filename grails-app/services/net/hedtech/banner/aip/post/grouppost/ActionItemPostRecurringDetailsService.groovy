@@ -62,16 +62,16 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
         if (map && map.postingDispEndDays!=null && !map.postingDisplayEndDate && map.postingDispEndDays < map.postingDispStartDays) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.postingDisplayEndDate.greater.postingDispStartDays', []))
         }
-        if (map && map.postingDisplayEndDate && map.postingDisplayEndDate.compareTo(map.recurStartDate) < 0) {
-            throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.postingDisplayEndDate.greater.than.recurStartDate', []))
-        }
-        if (map && map.postingDisplayEndDate && map.postingDisplayEndDate.compareTo(map.recurEndDate) < 0) {
-            throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.postingDisplayEndDate.greater.than.recurEndDate', []))
-        }
-
         Date recurStartDate = actionItemProcessingCommonService.convertToLocaleBasedDate(map.recurStartDate)
         Date recurEndDate   = actionItemProcessingCommonService.convertToLocaleBasedDate(map.recurEndDate)
+        Date postingDisplayEndDate =  actionItemProcessingCommonService.convertToLocaleBasedDate(map.postingDisplayEndDate)
 
+        if (map && map.postingDisplayEndDate && postingDisplayEndDate.compareTo(recurStartDate) < 0) {
+            throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.postingDisplayEndDate.greater.than.recurStartDate', []))
+        }
+        if (map && map.postingDisplayEndDate && postingDisplayEndDate.compareTo(recurEndDate) < 0) {
+            throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.postingDisplayEndDate.greater.than.recurEndDate', []))
+        }
         if (map && map.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_DAYS && map.recurStartDate && (recurStartDate.compareTo(recurEndDate)) > 0) {
             throw new ApplicationException(ActionItemPostRecurringDetailsService, new BusinessLogicValidationException('preCreate.validation.recurrence.recurStartDate.less.than.recurEndDate', []))
         }
