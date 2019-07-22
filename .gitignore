@@ -21,3 +21,8 @@ out/
 plugin.xml
 *-rtl.css
 messages_ar_SA.properties
+build
+.gradle/**/*
+*scss
+
+

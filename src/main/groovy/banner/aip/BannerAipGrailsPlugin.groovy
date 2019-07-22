@@ -52,8 +52,15 @@ Brief summary/description of the plugin.
     }
 
     void doWithApplicationContext() {
-    }
+        def pbConfig = grails.util.Holders.getConfig().pageBuilder
+        if (pbConfig && pbConfig.locations && pbConfig.locations.page) {
 
+            // Install metadata from configured directories
+            applicationContext.pageUtilService.importAllFromDir(pbConfig.locations.page, applicationContext.pageUtilService.loadIfNew)
+            applicationContext.virtualDomainUtilService.importAllFromDir(pbConfig.locations.virtualDomain, applicationContext.virtualDomainUtilService.loadIfNew)
+            applicationContext.cssUtilService.importAllFromDir(pbConfig.locations.css, applicationContext.cssUtilService.loadIfNew)
+        }
+     }
     void onChange(Map<String, Object> event) {
         // TODO Implement code that is executed when any artefact that this plugin is
         // watching is modified and reloaded. The event contains: event.source,
