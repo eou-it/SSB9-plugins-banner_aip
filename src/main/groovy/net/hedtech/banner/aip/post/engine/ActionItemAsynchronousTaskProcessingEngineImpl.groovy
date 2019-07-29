@@ -175,7 +175,7 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
                 errorExecutor = Executors.newFixedThreadPool(1)
             } catch (ApplicationException e) {
                 log.fatal("JobProcessingEngine for " + jobManager.getJobType() + " caught " + e, e)
-                throw new RuntimeException(e)
+
             }
             pollingThread.start()
             threadsRunning = true
@@ -554,11 +554,13 @@ public class ActionItemAsynchronousTaskProcessingEngineImpl implements Asynchron
         public void run() {
             try {
                 asynchronousBannerAuthenticationSpoofer.authenticateAndSetFormContextForExecute()
-                if (cause instanceof ApplicationException) {
+                jobManager.markFailed(job, ActionItemErrorCode.UNKNOWN_ERROR.name(), cause)
+
+                /*if (cause instanceof ApplicationException) {
                     jobManager.markFailed(job, cause.friendlyName, cause)
                 } else {
                     jobManager.markFailed(job, ActionItemErrorCode.UNKNOWN_ERROR.name(), cause)
-                }
+                }*/
             } catch (Throwable t) {
                 log.error("JobProcessingEngine " + this + " - An error handler could not mark job " + job.getId() + " as in error", t)
             }

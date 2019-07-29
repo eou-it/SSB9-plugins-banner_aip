@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
  *********************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
@@ -10,7 +10,6 @@ import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskManager
 import net.hedtech.banner.general.asynchronous.task.AsynchronousTaskMonitorRecord
 import net.hedtech.banner.general.communication.groupsend.automation.StringHelper
 import org.apache.commons.lang.NotImplementedException
-import org.apache.log4j.Logger
 import org.springframework.transaction.annotation.Propagation
 import grails.gorm.transactions.Transactional
 
@@ -132,6 +131,7 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
     public void markFailed( AsynchronousTask task, String errorCode, Throwable cause ) throws ApplicationException {
         ActionItemPostWork groupSendItem = (ActionItemPostWork) task
+        log.debug "GroupSendItemManager.markFailed(task=${groupSendItem.getId()} and error code is ${errorCode}"
         actionItemPostWorkProcessorService.failGroupSendItem( groupSendItem.getId(), errorCode, StringHelper.stackTraceToString( cause ) )
         log.debug(  "GroupSendItemManager.markFailed(task=" + groupSendItem.getId() + ") has marked the task as failed " )
     }
@@ -139,7 +139,7 @@ class ActionItemPostWorkTaskManagerService implements AsynchronousTaskManager {
 
     @Transactional(rollbackFor = Throwable.class)
     public AsynchronousTaskMonitorRecord updateMonitorRecord( AsynchronousTaskMonitorRecord monitorRecord ) {
-        LOGGER.trace "${monitorRecord?.toString()}"
+        log.trace "${monitorRecord?.toString()}"
         null
     }
 

@@ -61,8 +61,8 @@ Brief summary/description of the plugin.
             applicationContext.virtualDomainUtilService.importAllFromDir(virtualDomainPath, applicationContext.virtualDomainUtilService.loadIfNew)
             applicationContext.cssUtilService.importAllFromDir(cssPath, applicationContext.cssUtilService.loadIfNew)
         }
-    }
 
+     }
     void onChange(Map<String, Object> event) {
         // TODO Implement code that is executed when any artefact that this plugin is
         // watching is modified and reloaded. The event contains: event.source,

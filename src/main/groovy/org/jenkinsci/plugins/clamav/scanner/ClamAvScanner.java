@@ -23,6 +23,8 @@
  */
 package org.jenkinsci.plugins.clamav.scanner;
 
+import groovy.util.logging.Slf4j;
+
 import java.io.Closeable;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -41,6 +43,7 @@ import static org.jenkinsci.plugins.clamav.scanner.ScanResult.Status;
  * @see http://www.clamav.net/doc/latest/html/node28.html
  * @author Seiji Sogabe
  */
+@Slf4j
 public class ClamAvScanner {
 
     private static final int BUFFER_SIZE = 2048;
