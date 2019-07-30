@@ -96,3 +96,7 @@ grailsPublish {
 assets {
     packagePlugin = true
 }
+
+integrationTest {
+    ignoreFailures = true
+}
