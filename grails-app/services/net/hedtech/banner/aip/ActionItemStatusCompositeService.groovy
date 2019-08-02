@@ -186,7 +186,14 @@ class ActionItemStatusCompositeService {
                     message = MessageHelper.message("actionItemStatusRule.statusId.nullable.error")
                     throw new ApplicationException(ActionItemStatusCompositeService, new BusinessLogicValidationException(message, []))
                 }
-             def numberOfAttachments=Integer.parseInt(rule.allowedAttachments)
+                def numberOfAttachments
+                if(rule.allowedAttachments instanceof String ) {
+                     numberOfAttachments = Integer.parseInt(rule.allowedAttachments)
+                }
+                else{
+                     numberOfAttachments = rule.allowedAttachments
+                }
+              
                 if (rule.statusRuleId) {
                     statusRule = ActionItemStatusRule.get(rule.statusRuleId)
                     statusRule.seqOrder = rule.statusRuleSeqOrder.toInteger()
