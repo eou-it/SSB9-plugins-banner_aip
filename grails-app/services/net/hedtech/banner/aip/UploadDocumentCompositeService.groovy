@@ -42,8 +42,8 @@ class UploadDocumentCompositeService {
      * Save uploaded document details in GCRAFLU
      * @param map
      */
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
-    def addDocument(map) {
+
+        def addDocument(map) {
         boolean success = false
         String message = null
         UploadDocument saveUploadDocument = null
