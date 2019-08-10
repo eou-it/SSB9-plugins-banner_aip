@@ -189,7 +189,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
             )
             actionItemPostDetailService.create( groupDetail )
         }
-        actionItemPostCompositeService.schedulePost( aip, USERNAME )
+        actionItemPostCompositeService.schedulePost( aip, USERNAME ,false)
         assert aip.postingCurrentState == ActionItemPostExecutionState.Scheduled
     }
 
@@ -200,7 +200,7 @@ class ActionItemPostCompositeServiceIntegrationTests extends BaseIntegrationTest
         aip.postingScheduleDateTime = new Date() - 2
         aip = actionItemPostService.create( aip )
         try {
-            actionItemPostCompositeService.schedulePost( aip, USERNAME )
+            actionItemPostCompositeService.schedulePost( aip, USERNAME , false)
         } catch (ApplicationException e) {
             assertApplicationException( e, 'invalidScheduledDate' )
         }
