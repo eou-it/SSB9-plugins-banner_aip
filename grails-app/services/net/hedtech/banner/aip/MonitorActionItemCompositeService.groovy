@@ -12,6 +12,7 @@ import org.omg.CORBA.portable.ApplicationException
 import net.hedtech.banner.i18n.MessageHelper
 
 import java.sql.SQLException
+import java.util.regex.Pattern
 
 
 /**
@@ -245,7 +246,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
     private def filterResults(def result, def searchParam) {
         def filteredResult
         String regexPattern
-        regexPattern = searchParam ? WILDCARD + searchParam.toString().toUpperCase() + WILDCARD : WILDCARD + WILDCARD;
+        regexPattern = searchParam ? WILDCARD + Pattern.quote(searchParam.toString().toUpperCase())+ WILDCARD : WILDCARD + WILDCARD;
         filteredResult = result.findAll { it ->
             it.actionItemName.toString().toUpperCase().matches(regexPattern) ||
                     it.status.toString().toUpperCase().matches(regexPattern) ||
