@@ -82,12 +82,6 @@ class ActionItemPostDetail implements Serializable {
     @Column(name = "GCRAPST_DATA_ORIGIN")
     String dataOrigin
 
-    /**
-     * VPDI CODE: Multi-entity processing code.
-     */
-    @Column(name = "GCRAPST_VPDI_CODE")
-    String vpdiCode
-
     static constraints = {
         version( nullable: true, maxSize: 19 )
         actionItemPostId( nullable: false, maxSize: 19 )
@@ -95,7 +89,7 @@ class ActionItemPostDetail implements Serializable {
         lastModified( nullable: true )
         lastModifiedBy( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 30 )
-        vpdiCode( nullable: true, maxSize: 6 )
+
     }
 
     public static List fetchByActionItemPostId(Long postId) {

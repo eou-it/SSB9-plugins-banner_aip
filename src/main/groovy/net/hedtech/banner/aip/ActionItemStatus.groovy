@@ -28,8 +28,8 @@ import javax.persistence.Version
         @NamedQuery(name = "ActionItemStatus.fetchDefaultActionItemStatus",
                 query = """
                    FROM ActionItemStatus a
-                   WHERE a.actionItemStatusDefault = :myY  AND (:mepCode is null or a.mepCode = :mepCode)
-                  """),
+                   WHERE a.actionItemStatusDefault = :myY
+                    """),
         @NamedQuery(name = "ActionItemStatus.checkIfNameAlreadyPresent",
                 query = """ SELECT COUNT(actionItemStatus)
                            FROM ActionItemStatus a
@@ -113,11 +113,6 @@ class ActionItemStatus implements Serializable {
     @Column(name = "GCVASTS_VERSION")
     Long version
 
-    /**
-     * VPDI Code
-     */
-    @Column(name = "GCVASTS_VPDI_CODE")
-    String mepCode
 
     /**
      * Data Origin column for GCVASTS
@@ -134,7 +129,7 @@ class ActionItemStatus implements Serializable {
         actionItemStatusSystemRequired( blank: false, nullable: false, maxSize: 1 )
         lastModifiedBy( blank: false, nullable: true, maxSize: 30 )
         version( nullable: true )
-        mepCode( nullable: true )
+
         dataOrigin( nullable: true, maxSize: 30 )
     }
 
@@ -154,11 +149,10 @@ class ActionItemStatus implements Serializable {
      * @param mepCode
      * @return
      */
-    static ActionItemStatus fetchDefaultActionItemStatus( mepCode = null ) {
+    static ActionItemStatus fetchDefaultActionItemStatus( ) {
         ActionItemStatus.withSession {session ->
             session.getNamedQuery( 'ActionItemStatus.fetchDefaultActionItemStatus' )
                     .setString( 'myY', 'Y' )
-                    .setString( 'mepCode', mepCode )
                     .uniqueResult()
         }
     }
