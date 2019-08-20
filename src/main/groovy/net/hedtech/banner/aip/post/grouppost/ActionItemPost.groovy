@@ -239,12 +239,6 @@ class ActionItemPost implements Serializable {
     String dataOrigin
 
     /**
-     * VPDI CODE: Multi-entity processing code.
-     */
-    @Column(name = "GCBAPST_VPDI_CODE")
-    String vpdiCode
-
-    /**
      * postingDisplayDateTime: Store user entered Date Time.
      */
 
@@ -296,7 +290,6 @@ class ActionItemPost implements Serializable {
         lastModified( nullable: true )
         lastModifiedBy( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 30 )
-        vpdiCode( nullable: true, maxSize: 6 )
         postingDisplayDateTime( nullable: true )
         postingTimeZone( nullable: true, maxSize: 100 )
         recurringPostInd( nullable: true )

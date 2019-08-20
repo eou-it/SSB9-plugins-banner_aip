@@ -85,11 +85,7 @@ class UploadDocumentContent implements Serializable {
     @Column(name = "GCRAFCT_DATA_ORIGIN")
     String dataOrigin
 
-    /**
-     * Vpdi code for MEP
-     */
-    @Column(name = "GCRAFCT_VPDI_CODE")
-    String vpdiCode
+
 
     static constraints = {
         fileUploadId(nullable: false, maxSize: 19)
@@ -98,7 +94,6 @@ class UploadDocumentContent implements Serializable {
         lastModified(nullable: true)
         version(nullable: true, maxSize: 30)
         dataOrigin(nullable: true, maxSize: 30)
-        vpdiCode(nullable: true, maxSize: 6)
     }
 
     /**
