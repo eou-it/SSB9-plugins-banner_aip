@@ -87,6 +87,9 @@ class ActionItemPostWork implements AsynchronousTask {
     @Column(name = "GCRAIIM_USER_ID")
     String lastModifiedBy
 
+    @Column(name = "GCRAIIM_VPDI_CODE")
+    String mepCode
+
     /**
      *  Date that record was created or last updated.
      */
@@ -165,6 +168,7 @@ class ActionItemPostWork implements AsynchronousTask {
         startedDate( nullable: true )
         stopDate( nullable: true )
         errorText( nullable: true )
+        mepCode( nullable: true )
         errorCode( nullable: true )
     }
 
