@@ -126,12 +126,6 @@ class ActionItemBlockedProcessReadOnly implements Serializable {
     Long version
 
     /**
-     *  VPDI Code of record
-     */
-    @Column(name = "blocked_process_vpdi_code")
-    String vpdiCode
-
-    /**
      *
      * @param actionItemId
      * @return

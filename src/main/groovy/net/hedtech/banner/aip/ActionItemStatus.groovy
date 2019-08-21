@@ -146,7 +146,6 @@ class ActionItemStatus implements Serializable {
 
     /**
      *
-     * @param mepCode
      * @return
      */
     static ActionItemStatus fetchDefaultActionItemStatus( ) {

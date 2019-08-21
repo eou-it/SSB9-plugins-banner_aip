@@ -107,11 +107,7 @@ class AipReviewState implements Serializable {
     @Column(name = "GCRRVST_DATA_ORIGIN")
     String dataOrigin
 
-    /**
-     * VPDI Code for MEP.
-     */
-    @Column(name = "GCRRVST_VPDI_CODE")
-    String vpdiCode
+
 
     static constraints = {
         id(nullable: false, maxSize: 19)
@@ -124,7 +120,6 @@ class AipReviewState implements Serializable {
         activityDate(nullable: false)
         version(nullable: true, maxSize: 19)
         dataOrigin(nullable: true, maxSize: 30)
-        vpdiCode(nullable: true, maxSize: 6)
     }
 
     /**

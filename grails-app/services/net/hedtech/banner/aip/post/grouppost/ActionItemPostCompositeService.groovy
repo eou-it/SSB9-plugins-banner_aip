@@ -912,6 +912,8 @@ class ActionItemPostCompositeService {
         CommunicationPopulationVersion populationVersion
 
         if (population.changesPending) {
+            def mepCode = RequestContextHolder.currentRequestAttributes().request.session.getAttribute('mep')
+            population.setMepCode(mepCode)
             populationVersion = communicationPopulationCompositeService.createPopulationVersion(population)
             population.changesPending = false
             communicationPopulationCompositeService.updatePopulation(population)
