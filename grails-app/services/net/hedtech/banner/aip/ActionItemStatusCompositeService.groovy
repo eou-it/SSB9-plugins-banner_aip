@@ -11,6 +11,8 @@ import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.i18n.MessageHelper
 import org.apache.log4j.Logger
 import net.hedtech.banner.general.configuration.ConfigProperties
+import org.springframework.web.context.request.RequestContextHolder
+
 @Transactional
 class ActionItemStatusCompositeService {
     private static final def LOGGER = Logger.getLogger(this.class)
@@ -135,7 +137,8 @@ class ActionItemStatusCompositeService {
                 actionItemStatus: paramMap.title,
                 actionItemStatusActive: AIPConstants.YES_IND,
                 actionItemStatusBlockedProcess: paramMap.block == true ? AIPConstants.YES_IND : AIPConstants.NO_IND,
-                actionItemStatusSystemRequired: AIPConstants.NO_IND
+                actionItemStatusSystemRequired: AIPConstants.NO_IND,
+                mepCode: getVpdiCode()
         )
         ActionItemStatus newStatus
         def success = false
@@ -248,5 +251,10 @@ class ActionItemStatusCompositeService {
             result = [maxAttachment: defaultMaxAttachmentCount]
         }
         result
+    }
+
+    private def getVpdiCode() {
+        def session = RequestContextHolder?.currentRequestAttributes()?.request?.session
+        session.getAttribute('mep')
     }
 }
