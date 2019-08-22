@@ -611,7 +611,8 @@ class ActionItemPostCompositeService {
                 postingCreatorId: user.oracleUserName,
                 postingCurrentState: requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New),
                 postingDisplayDateTime: displayDateTimeCalendar ? displayDateTimeCalendar.getTime() : null,
-                postingTimeZone: requestMap.displayDatetimeZone.timeZoneVal
+                postingTimeZone: requestMap.displayDatetimeZone.timeZoneVal,
+                vpdiCode: getVpdiCode()
 
         )
 
@@ -841,12 +842,14 @@ class ActionItemPostCompositeService {
     //////////////////////////////////////////////////////////////////////////////////////
 
     public ActionItemPost calculatePopulationVersionForPostFired(SchedulerJobContext jobContext) {
+        asynchronousBannerAuthenticationSpoofer.setMepContext(sessionFactory.currentSession.connection(), jobContext.parameters.get("mepCode"))
         markArtifactsAsPosted(jobContext.parameters.get("groupSendId") as Long)
         calculatePopulationVersionForGroupSend(jobContext.parameters)
     }
 
 
     public ActionItemPost calculatePopulationVersionForPostFailed(SchedulerErrorContext errorContext) {
+        asynchronousBannerAuthenticationSpoofer.setMepContext(sessionFactory.getCurrentSession().connection(),errorContext.jobContext?.parameters?.get("mepCode"))
         scheduledPostCallbackFailed(errorContext)
     }
 
@@ -1143,6 +1146,15 @@ class ActionItemPostCompositeService {
      */
     String getSysGuId() {
         sessionFactory.currentSession.createSQLQuery(' select RAWTOHEX(sys_guid()) from dual').uniqueResult()
+    }
+
+    /**
+     *
+     * @return vpidCode
+     */
+    private def getVpdiCode() {
+        def session = RequestContextHolder?.currentRequestAttributes()?.request?.session
+        session.getAttribute('mep')
     }
 
 }
