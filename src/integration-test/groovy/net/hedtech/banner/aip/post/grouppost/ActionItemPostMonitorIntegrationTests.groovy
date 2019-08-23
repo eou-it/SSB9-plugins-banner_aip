@@ -69,7 +69,6 @@ class ActionItemPostMonitorIntegrationTests extends BaseIntegrationTestCase {
     private getInstance() {
         CommunicationPopulation population = CommunicationPopulation.findAllByPopulationName( 'AIP Student Population 1' )[0]
         CommunicationPopulationVersion populationVersion = CommunicationPopulationVersion.findLatestByPopulationId( population.id )
-        SimpleDateFormat defaultDateFormat = new SimpleDateFormat()
         SimpleDateFormat testingDateFormat = new SimpleDateFormat( 'MM/dd/yyyy' )
         CommunicationPopulationListView populationListView = actionItemProcessingCommonService.fetchPopulationListForSend( 'p', [max: 10, offset:
                 0] )[0]
@@ -77,7 +76,7 @@ class ActionItemPostMonitorIntegrationTests extends BaseIntegrationTestCase {
         def actionItemGroup = actionItemGroups[0]
         List<Long> actionItemIds = ActionItemGroupAssign.fetchByGroupId( actionItemGroup.id ).collect {it.actionItemId}
         def correspondingServerDetails =new JSONObject()
-        correspondingServerDetails.put("dateVal",defaultDateFormat.format( new Date() ))
+        correspondingServerDetails.put("dateVal","06/21/2018")
         correspondingServerDetails.put("timeVal","0330")
         correspondingServerDetails.put("timeZoneVal","(GMT+5:30) Asia/Kolkata")
         def requestMap = [:]
@@ -92,7 +91,7 @@ class ActionItemPostMonitorIntegrationTests extends BaseIntegrationTestCase {
         requestMap.displayEndDate = testingDateFormat.format( new Date() + 50 )
         requestMap.scheduledStartDate = new Date() + 1
         requestMap.actionItemIds = actionItemIds
-        requestMap.populationRegenerateIndicator=false
+		requestMap.populationRegenerateIndicator=false
         def actionItemPost = actionItemPostCompositeService.getActionPostInstance( requestMap, springSecurityService.getAuthentication()?.user )
         actionItemPost.populationCalculationId = populationVersion.id
         actionItemPost.populationVersionId = populationVersion.id

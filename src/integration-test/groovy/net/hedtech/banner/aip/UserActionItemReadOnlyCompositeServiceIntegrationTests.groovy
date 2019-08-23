@@ -91,7 +91,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         logout()
         loginSSB( 'CSRSTU026', '111111' )
         def result = userActionItemReadOnlyCompositeService.listActionItemByPidmWithinDate()
-        assert result.groups.isEmpty() == true
+        assertNull result
     }
 
     @Test
@@ -174,7 +174,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         logout()
         loginSSB( 'CSRSTU001', '111111' )
         def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'group', groupId: '50'])
-        assert result1.isEmpty() == true
+        assertNull result1
     }
 
     @Test
@@ -182,14 +182,14 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         logout()
         loginSSB( 'CSRSTU001', '111111' )
         def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'actionItem', actionItemId: '50'])
-        assert result1.isEmpty() == true
+        assertNull result1
     }
     @Test
     void actionItemOrGroupInfoInvalidSearchType() {
         logout()
         loginSSB( 'CSRSTU001', '111111' )
         def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'invalid'])
-        assert result1.isEmpty() == true
+        assertNull result1
     }
 
     @Test
