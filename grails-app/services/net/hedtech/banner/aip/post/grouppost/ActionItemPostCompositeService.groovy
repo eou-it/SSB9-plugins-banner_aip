@@ -451,7 +451,6 @@ class ActionItemPostCompositeService {
     {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd")
         Date newRecurEndDate = sdf.parse(sdf.format(new Date(editedRecurEndDate)))
-        def size=actionItemPostRecurringJobs.size()
         actionItemPostRecurringJobs.each {
             Date postingDisplayDate = sdf.parse(sdf.format(it.postingDisplayDateTime))
             if (newRecurEndDate.compareTo(postingDisplayDate)<0)

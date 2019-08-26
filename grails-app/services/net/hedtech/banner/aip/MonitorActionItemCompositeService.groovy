@@ -4,14 +4,11 @@
 package net.hedtech.banner.aip
 
 import grails.util.Holders
-import groovy.sql.Sql
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.service.ServiceBase
 import org.apache.log4j.Logger
 import org.omg.CORBA.portable.ApplicationException
 import net.hedtech.banner.i18n.MessageHelper
-
-import java.sql.SQLException
 import java.util.regex.Pattern
 
 
