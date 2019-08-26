@@ -82,7 +82,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
         //turnSqlTraceOn("searchByPersonNameCount")
         def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonNameCount(actionItemId, personName)
         assertNotNull result
-        assertEquals 0, result
+        assertEquals 1, result
         stopWatch.stop()
         //turnSqlTraceOff("searchByPersonNameCount")
         println(stopWatch.prettyPrint())
@@ -94,7 +94,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
         String personName = ""
         def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItemId, personName, pagingAndSortParamsAsc)
         assertNotNull result
-        assertEquals 12, result.size()
+        assertEquals 13, result.size()
     }
 
     @Test
@@ -102,7 +102,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
         String personName = ""
         def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonNameCount(actionItemId, personName)
-        assertEquals 12, result
+        assertEquals 13, result
     }
 
     @Test
@@ -165,7 +165,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
         def result = MonitorActionItemReadOnly.fetchByActionItemId(actionItemId, pagingAndSortParamsAsc)
         assertNotNull result
-        assertEquals 12, result.size()
+        assertEquals 13, result.size()
     }
 
     @Test
