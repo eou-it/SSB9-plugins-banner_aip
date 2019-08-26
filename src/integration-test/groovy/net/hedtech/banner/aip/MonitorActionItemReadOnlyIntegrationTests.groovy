@@ -54,7 +54,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
         //turnSqlTraceOn("searchByPersonName")
         def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItemId, personName, pagingAndSortParamsAsc)
         assertNotNull result
-        assertEquals 0, result.size()
+        assertEquals 1, result.size()
 
         stopWatch.stop()
         //turnSqlTraceOff("searchByPersonName")
@@ -68,7 +68,7 @@ class MonitorActionItemReadOnlyIntegrationTests extends BaseIntegrationTestCase 
 
         def result = MonitorActionItemReadOnly.fetchByActionItemIdAndPersonName(actionItemId, personName, pagingAndSortParamsDesc)
         assertNotNull result
-        assertEquals 0, result.size()
+        assertEquals 1, result.size()
 
     }
 
