@@ -114,7 +114,7 @@ class ActionItemPostMonitor implements DisposableBean {
                 }
             }
         } catch (Throwable t) {
-            log.error( t )
+            log.error( t.toString() )
         }
     }
 

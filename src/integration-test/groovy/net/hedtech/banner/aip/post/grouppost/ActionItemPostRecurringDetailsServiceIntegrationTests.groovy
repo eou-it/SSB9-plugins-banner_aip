@@ -5,10 +5,14 @@ package net.hedtech.banner.aip.post.grouppost
 
 import grails.testing.mixin.integration.Integration
 import grails.transaction.Rollback
+import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import net.hedtech.banner.exceptions.ApplicationException
+import static groovy.test.GroovyAssert.shouldFail
+
 
 @Integration
 @Rollback
@@ -252,29 +256,26 @@ class ActionItemPostRecurringDetailsServiceIntegrationTests extends BaseIntegrat
     @Test
     void testRecurEndDateGreaterThanStartDate() {
         //map  && map.postingDispEndDays && !map.postingDisplayEndDate && !(map.postingDispEndDays >= map.postingDispStartDays )
-
+      //  if (map && map.recurFrequencyType == AIPConstants.RECURR_FREQUENCY_TYPE_DAYS && map.recurStartDate && (recurStartDate.compareTo(recurEndDate)) > 0) {
         def exception = false
         def requestMap = [:]
         requestMap.recurFrequency = 1
-        requestMap.recurFrequencyType = 'DAYS'
+        requestMap.recurFrequencyType = AIPConstants.RECURR_FREQUENCY_TYPE_DAYS
         requestMap.postingDispStartDays = 2
         requestMap.postingDisplayEndDate = new Date() + 5
-        requestMap.recurStartDate = new Date()
+        requestMap.recurStartDate = new Date()+1
         requestMap.recurEndDate = new Date()
         requestMap.recurStartTime = new Date()
 
-
         def resp
-        try {
+        def actualException = shouldFail(ApplicationException){
             resp = actionItemPostRecurringDetailsService.preCreateValidate(requestMap)
         }
-        catch (Exception ex) {
-            exception = true
-            assertNotNull ex
-            assertEquals 'preCreate.validation.recurrence.recurStartDate.less.than.recurEndDate', ex.getMessage()
-        }
-        assertTrue exception
         assertNull resp
+        assertEquals 'preCreate.validation.recurrence.recurStartDate.less.than.recurEndDate',actualException.getMessage()
+
+
+
 
     }
 

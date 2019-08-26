@@ -129,7 +129,7 @@ class ActionItemIntegrationTests extends BaseIntegrationTestCase {
         actionNew.name = "Action Item name for testNullFolderError"
         actionNew.title = 'a title f984h'
         actionNew.folderId = null
-        actionNew.status = 'Pending'
+        actionNew.status = 'A'
         actionNew.description = actionItem.description
         actionNew.creatorId = actionItem.creatorId
         actionNew.createDate = actionItem.createDate
