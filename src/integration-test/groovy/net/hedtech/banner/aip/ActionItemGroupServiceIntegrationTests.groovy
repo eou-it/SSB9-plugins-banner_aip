@@ -10,6 +10,7 @@ import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.testing.BaseIntegrationTestCase
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 
 @Integration
@@ -140,24 +141,6 @@ class ActionItemGroupServiceIntegrationTests extends BaseIntegrationTestCase {
             ]] )
         } catch (ApplicationException e) {
             assertApplicationException( e, 'MaxSizeError' )
-        }
-    }
-
-
-    @Test
-    void testValidateInvalidInput() {
-
-        try {
-            actionItemGroupService.preCreate( [domainModel: [
-                    title      : 'title',
-                    name       : 'name',
-                    description: 'description',
-                    postingInd : 'N',
-                    folderId   : '1XYZ', // Should be long
-                    status     : 'P'
-            ]] )
-        } catch (ApplicationException e) {
-            assertApplicationException( e, 'ValidationError' )
         }
     }
 
