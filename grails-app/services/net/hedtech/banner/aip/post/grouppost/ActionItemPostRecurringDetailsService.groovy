@@ -288,8 +288,4 @@ class ActionItemPostRecurringDetailsService extends ServiceBase {
         calculatedStartDate.getTime()
     }
 
-    private boolean isIntegerNumber(value){
-        return
-
-    }
 }

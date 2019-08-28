@@ -12,6 +12,7 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import static groovy.test.GroovyAssert.shouldFail
 
 @Integration
 @Transactional
@@ -136,19 +137,29 @@ class ActionItemServiceIntegrationTests extends BaseIntegrationTestCase {
     @Test
     void testCreateActionItemFailsNoFolderId() {
         ActionItem existingAI = actionItemService.list()[7]
+        assertNotNull existingAI
         ActionItem ai = new ActionItem()
         ai.folderId = null
-        ai.status = 'Pending'
+        ai.name ='Test Action Item'
+        ai.status = 'A'
         ai.title = ' a title ds8f4h3 2'
         ai.description = 'this is some action item'
         // fails due to no folder matching id
-        try {
+       /* try {
             actionItemService.create( ai )
             Assert.fail "Expected to fail because folder does not exist."
         } catch (ApplicationException e) {
             assertTrue( e.getMessage().toString().contains( ActionItemService.NO_FOLDER_ERROR ) )
             assertTrue( e.getDefaultMessage().toString().contains( 'actionItem.folderId.nullable.error' ) )
+        }*/
+
+        def excption = shouldFail(ApplicationException){
+            actionItemService.create( ai )
         }
+        assertEquals ActionItemService.NO_FOLDER_ERROR,excption.wrappedException.getMessage()
+        assertEquals  'actionItem.folderId.nullable.error',excption.defaultMessage
+
+
     }
 
 

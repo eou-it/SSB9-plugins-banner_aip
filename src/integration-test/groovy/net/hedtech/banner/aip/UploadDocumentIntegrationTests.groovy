@@ -95,8 +95,8 @@ class UploadDocumentIntegrationTests extends BaseIntegrationTestCase {
         def result = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert result.success == true
         def paramsObj = [
-                userActionItemId: userActionItemId.toString(),
-                responseId      : responseId.toString(),
+                userActionItemId: userActionItemId,
+                responseId      : responseId,
                 filterName      : "%",
                 sortColumn      : "id",
                 sortAscending   : false
@@ -114,8 +114,8 @@ class UploadDocumentIntegrationTests extends BaseIntegrationTestCase {
         result = saveUploadDocumentService(userActionItemId, responseId, 'TestFileDoc.docx')
         assert result.success == true
         def paramsObj = [
-                userActionItemId: userActionItemId.toString(),
-                responseId      : responseId.toString(),
+                userActionItemId: userActionItemId,
+                responseId      : responseId,
                 filterName      : "%",
                 sortColumn      : "id",
                 sortAscending   : true
@@ -134,8 +134,8 @@ class UploadDocumentIntegrationTests extends BaseIntegrationTestCase {
         result = saveUploadDocumentService(userActionItemId, responseId, 'TestFileDoc.docx')
         assert result.success == true
         def paramsObj = [
-                userActionItemId: userActionItemId.toString(),
-                responseId      : responseId.toString(),
+                userActionItemId: userActionItemId,
+                responseId      : responseId,
                 filterName      : "%",
                 sortColumn      : "id",
                 sortAscending   : false
@@ -152,8 +152,8 @@ class UploadDocumentIntegrationTests extends BaseIntegrationTestCase {
         def result = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert result.success == true
         def paramsObj = [
-                userActionItemId: userActionItemId.toString(),
-                responseId      : responseId.toString(),
+                userActionItemId: userActionItemId,
+                responseId      : responseId,
                 sortColumn      : "id",
                 sortAscending   : false
         ]
@@ -167,8 +167,8 @@ class UploadDocumentIntegrationTests extends BaseIntegrationTestCase {
         def result = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert result.success == true
         def paramsObj = [
-                userActionItemId: userActionItemId.toString(),
-                responseId      : responseId.toString(),
+                userActionItemId: userActionItemId,
+                responseId      : responseId,
                 filterName      : "%",
                 sortColumn      : "id",
                 sortAscending   : false

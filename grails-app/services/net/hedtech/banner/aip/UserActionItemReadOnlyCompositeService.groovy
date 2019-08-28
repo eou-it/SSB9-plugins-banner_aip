@@ -7,7 +7,7 @@ import grails.gorm.transactions.Transactional
 import groovy.util.logging.Slf4j
 import net.hedtech.banner.i18n.MessageHelper
 import net.hedtech.banner.service.ServiceBase
-import org.apache.log4j.Logger
+
 
 /**
  * Composite Service class for UserActionItemReadOnly domain

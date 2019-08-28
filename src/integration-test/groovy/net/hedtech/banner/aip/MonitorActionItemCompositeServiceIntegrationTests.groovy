@@ -514,7 +514,7 @@ class MonitorActionItemCompositeServiceIntegrationTests extends BaseIntegrationT
 
         def response = monitorActionItemCompositeService.searchMonitorActionItems(actionItemId, personName, personId, filterData, pagingAndSortParams)
         assertNotNull response
-        assertEquals 'Archibalde, Hank', response.result[0].actionItemPersonName
+        assertEquals 'Brady, Jesus B', response.result[0].actionItemPersonName
     }
 
     @Test

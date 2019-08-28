@@ -71,7 +71,6 @@ class ActionItemTemplateIntegrationTests extends BaseIntegrationTestCase {
         actionItemTemplateNew.activeInd = actionItemTemplate.activeInd
         actionItemTemplateNew.lastModified = actionItemTemplate.lastModified
         actionItemTemplateNew.dataOrigin = actionItemTemplate.dataOrigin
-        actionItemTemplateNew.vpdiCode = actionItemTemplate.vpdiCode
 
         assertFalse actionItemTemplateNew.validate()
         assertTrue( actionItemTemplateNew.errors.allErrors.codes[0].contains( 'actionItemTemplate.title.nullable.error' ) )

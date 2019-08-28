@@ -27,9 +27,9 @@ import javax.persistence.Version
           """),
         @NamedQuery(name = "ActionItemStatus.fetchDefaultActionItemStatus",
                 query = """
-                   FROM ActionItemStatus a
-                   WHERE a.actionItemStatusDefault = :myY  AND (:mepCode is null or a.mepCode = :mepCode)
-                  """),
+                  FROM ActionItemStatus a
+                  WHERE a.actionItemStatusDefault = :myY  AND (:mepCode is null or a.mepCode = :mepCode)
+                 """),
         @NamedQuery(name = "ActionItemStatus.checkIfNameAlreadyPresent",
                 query = """ SELECT COUNT(actionItemStatus)
                            FROM ActionItemStatus a
@@ -150,7 +150,6 @@ class ActionItemStatus implements Serializable {
     }
 
     /**
-     *
      * @param mepCode
      * @return
      */

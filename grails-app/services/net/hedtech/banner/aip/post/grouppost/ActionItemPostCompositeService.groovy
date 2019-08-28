@@ -451,7 +451,6 @@ class ActionItemPostCompositeService {
     {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd")
         Date newRecurEndDate = sdf.parse(sdf.format(new Date(editedRecurEndDate)))
-        def size=actionItemPostRecurringJobs.size()
         actionItemPostRecurringJobs.each {
             Date postingDisplayDate = sdf.parse(sdf.format(it.postingDisplayDateTime))
             if (newRecurEndDate.compareTo(postingDisplayDate)<0)
@@ -611,7 +610,8 @@ class ActionItemPostCompositeService {
                 postingCreatorId: user.oracleUserName,
                 postingCurrentState: requestMap.postNow ? ActionItemPostExecutionState.Queued : (requestMap.scheduled ? ActionItemPostExecutionState.Scheduled : ActionItemPostExecutionState.New),
                 postingDisplayDateTime: displayDateTimeCalendar ? displayDateTimeCalendar.getTime() : null,
-                postingTimeZone: requestMap.displayDatetimeZone.timeZoneVal
+                postingTimeZone: requestMap.displayDatetimeZone.timeZoneVal,
+                vpdiCode: getVpdiCode()
 
         )
 
@@ -841,12 +841,14 @@ class ActionItemPostCompositeService {
     //////////////////////////////////////////////////////////////////////////////////////
 
     public ActionItemPost calculatePopulationVersionForPostFired(SchedulerJobContext jobContext) {
+        asynchronousBannerAuthenticationSpoofer.setMepContext(sessionFactory.currentSession.connection(), jobContext.parameters.get("mepCode"))
         markArtifactsAsPosted(jobContext.parameters.get("groupSendId") as Long)
         calculatePopulationVersionForGroupSend(jobContext.parameters)
     }
 
 
     public ActionItemPost calculatePopulationVersionForPostFailed(SchedulerErrorContext errorContext) {
+        asynchronousBannerAuthenticationSpoofer.setMepContext(sessionFactory.getCurrentSession().connection(),errorContext.jobContext?.parameters?.get("mepCode"))
         scheduledPostCallbackFailed(errorContext)
     }
 
@@ -912,6 +914,13 @@ class ActionItemPostCompositeService {
         CommunicationPopulationVersion populationVersion
 
         if (population.changesPending) {
+            if (RequestContextHolder?.getRequestAttributes()?.request?.session) {
+                def session = RequestContextHolder.currentRequestAttributes()?.request?.session
+                def mepCode = session?.getAttribute("mep")
+                if (mepCode != null) {
+                    population.setMepCode(mepCode)
+                }
+            }
             populationVersion = communicationPopulationCompositeService.createPopulationVersion(population)
             population.changesPending = false
             communicationPopulationCompositeService.updatePopulation(population)
@@ -1141,6 +1150,15 @@ class ActionItemPostCompositeService {
      */
     String getSysGuId() {
         sessionFactory.currentSession.createSQLQuery(' select RAWTOHEX(sys_guid()) from dual').uniqueResult()
+    }
+
+    /**
+     *
+     * @return vpidCode
+     */
+    private def getVpdiCode() {
+        def session = RequestContextHolder?.currentRequestAttributes()?.request?.session
+        session.getAttribute('mep')
     }
 
 }

@@ -138,16 +138,4 @@ class ActionItemStatusRuleServiceIntegrationTest extends BaseIntegrationTestCase
     }
 
 
-    @Test
-    void testValidateInvalidInput() {
-        try {
-            actionItemStatusRuleService.validate( [domainModel: [
-                    actionItemId: '1XYZ',
-                    seqOrder    : 1,
-                    labelText   : 'Text'
-            ]] )
-        } catch (ApplicationException e) {
-            assertApplicationException( e, 'ValidationError' )
-        }
-    }
 }

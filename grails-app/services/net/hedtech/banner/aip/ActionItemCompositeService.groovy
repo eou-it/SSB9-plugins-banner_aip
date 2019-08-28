@@ -190,7 +190,7 @@ class ActionItemCompositeService {
         def actionItemDetailText = map.actionItemContent
         def success = false
         def result = validateEditActionItemContent( actionItemId )
-        println "result $result"
+
         if (!result.editable) {
             def model = [
                     success: false,

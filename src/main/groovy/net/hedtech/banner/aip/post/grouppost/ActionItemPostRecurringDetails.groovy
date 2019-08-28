@@ -115,11 +115,6 @@ class ActionItemPostRecurringDetails implements Serializable {
     @Column(name = "GCBRAPT_DATA_ORIGIN")
     String dataOrigin
 
-    /**
-     * VPDI CODE: Multi-entity processing code.
-     */
-    @Column(name = "GCBRAPT_VPDI_CODE")
-    String vpdiCode
 
     /**
      * VERSION: Optimistic lock token.
@@ -143,7 +138,6 @@ class ActionItemPostRecurringDetails implements Serializable {
         lastModified( nullable: true )
         lastModifiedBy( nullable: true, maxSize: 30 )
         dataOrigin( nullable: true, maxSize: 30 )
-        vpdiCode( nullable: true, maxSize: 6 )
         version( nullable: true, maxSize: 19 )
 
     }

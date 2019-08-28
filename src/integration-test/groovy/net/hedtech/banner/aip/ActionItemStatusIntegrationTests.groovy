@@ -123,7 +123,7 @@ class ActionItemStatusIntegrationTests extends BaseIntegrationTestCase {
                 actionItemStatusSystemRequired: 'N'
         ).save( flash: true ,failOnError:true)
         def results = ActionItemStatus.fetchWithPagingAndSortParams(
-                [params: [name: "%_INT_TEST"]],
+                [params: [name: "%"]],
                 [sortColumn: "actionItemStatusBlockedProcess", sortAscending: false, max: 50, offset: 0] )
 
         boolean foundNotBlocked = false

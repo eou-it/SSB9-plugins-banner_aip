@@ -106,18 +106,13 @@ class ActionItemTemplate implements Serializable {
     @Column(name = "GCBPBTR_DATA_ORIGIN")
     String dataOrigin
 
-    /**
-     *
-     */
-    @Column(name = "GCBPBTR_VPDI_CODE")
-    String vpdiCode
+
 
     static constraints = {
         title(blank: false, nullable: false)
         sourceInd(blank: false, nullable: false)
         systemRequired(blank: false, nullable: false)
         activeInd(nullable: false)
-        vpdiCode(nullable:true)
     }
 
     /**

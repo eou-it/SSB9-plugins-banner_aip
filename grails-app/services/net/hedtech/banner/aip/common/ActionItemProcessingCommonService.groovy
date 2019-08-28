@@ -14,7 +14,6 @@ import net.hedtech.banner.general.communication.folder.CommunicationFolder
 import net.hedtech.banner.general.communication.population.CommunicationPopulationListView
 import net.hedtech.banner.i18n.LocalizeUtil
 import net.hedtech.banner.i18n.MessageHelper
-import org.apache.log4j.Logger
 import org.springframework.context.i18n.LocaleContextHolder
 
 import java.text.SimpleDateFormat

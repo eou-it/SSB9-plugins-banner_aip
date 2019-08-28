@@ -128,8 +128,8 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert saveResult.success == true
         def paramsObj = [
-                userActionItemId: userActionItemId.toString(),
-                responseId      : responseId.toString(),
+                userActionItemId: userActionItemId,
+                responseId      : responseId,
                 sortColumn      : "id",
                 sortAscending   : false
         ]
@@ -157,8 +157,8 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert saveResult.success == true
         def paramsObj = [
-                userActionItemId: userActionItemId.toString(),
-                responseId      : responseId.toString(),
+                userActionItemId: userActionItemId,
+                responseId      : responseId,
                 sortColumn      : "id",
                 sortAscending   : false
         ]
@@ -184,8 +184,8 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert saveResult.success == true
         def paramsObj = [
-                userActionItemId: userActionItemId.toString(),
-                responseId      : responseId.toString(),
+                userActionItemId: userActionItemId,
+                responseId      : responseId,
                 sortColumn      : "id",
                 sortAscending   : false
         ]
@@ -412,8 +412,8 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         assertTrue saveResult5.success
 
         Map paramsMapObj = [
-                userActionItemId: "" + userActionItemId,
-                responseId      : "" + responseId
+                userActionItemId: userActionItemId,
+                responseId      : responseId
         ]
         boolean isMaxAttachmentValidation = uploadDocumentCompositeService.validateMaxAttachments(paramsMapObj)
         assertEquals true, isMaxAttachmentValidation
@@ -435,8 +435,8 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         def saveResult6 = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileXLS.xlsx')
         assertTrue saveResult6.success
         Map paramsMapObj = [
-                userActionItemId: "" + userActionItemId,
-                responseId      : "" + responseId
+                userActionItemId:  userActionItemId,
+                responseId      :  responseId
         ]
         boolean isMaxAttachmentValidation = uploadDocumentCompositeService.validateMaxAttachments(paramsMapObj)
         assertEquals false, isMaxAttachmentValidation
@@ -454,7 +454,7 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         ActionItemStatusRule response = responsesList.find { it.labelText == 'I have to research this' }
         def respId = response.id
         Map paramsMapObj = [
-                responseId: "" + respId
+                responseId:  respId
         ]
         boolean isMaxAttachmentValidation = uploadDocumentCompositeService.validateMaxAttachments(paramsMapObj)
         assertEquals false, isMaxAttachmentValidation
@@ -465,8 +465,8 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert saveResult.success == true
         def paramsObj = [
-                userActionItemId: userActionItemId.toString(),
-                responseId      : responseId.toString(),
+                userActionItemId: userActionItemId,
+                responseId      : responseId,
                 sortColumn      : "id",
                 sortAscending   : false
         ]
@@ -480,8 +480,8 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert saveResult.success == true
         def paramsObj = [
-                userActionItemId: userActionItemId.toString(),
-                responseId      : responseId.toString(),
+                userActionItemId: userActionItemId,
+                responseId      : responseId,
                 sortColumn      : "id",
                 sortAscending   : false
         ]
@@ -504,8 +504,8 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
             def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
             assert saveResult.success == true
             def paramsObj = [
-                    userActionItemId: userActionItemId.toString(),
-                    responseId      : responseId.toString(),
+                    userActionItemId: userActionItemId,
+                    responseId      : responseId,
                     sortColumn      : "id",
                     sortAscending   : false
             ]
@@ -538,8 +538,8 @@ class UploadDocumentCompositeServiceIntegrationTest extends BaseIntegrationTestC
         def saveResult = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert saveResult.success == true
         def paramsObj = [
-                userActionItemId: userActionItemId.toString(),
-                responseId      : responseId.toString(),
+                userActionItemId: userActionItemId,
+                responseId      : responseId,
                 sortColumn      : "id",
                 sortAscending   : false
         ]

@@ -56,8 +56,8 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         assert result.groups.size() > 0
         assert result.groups.items.size() > 0
         def group = result.groups.find{it.title == 'Enrollment'}
-        def item = group.items.find {it.name == 'Drug and Alcohol Policy'}
-        assert item.name == 'Drug and Alcohol Policy'
+        def item = group.items.find {it.name == 'Personal Information'}
+        assert item.name == 'Personal Information'
         assert result.header == ["title", "state", "completedDate", "description"]
     }
 
@@ -81,7 +81,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         assert result.groups.size() > 0
         assert result.groups.items.size() > 0
         def group = result.groups.find{it.title == 'Enrollment'}
-        def item = group.items.find {it.name == 'Drug and Alcohol Policy'}
+        def item = group.items.find {it.name == 'Personal Information'}
         assert item.actionItemHalted == null
         assert group.groupHalted == true
     }
@@ -140,13 +140,13 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
     void actionItemOrGroupInfoByActionItemSearch() {
         logout()
         loginSSB( 'CSRSTU001', '111111' )
-        List result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'actionItem', actionItemId: "${ActionItem.findByName( 'Drug and Alcohol Policy' ).id}"] )
+        List result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'actionItem', actionItemId: ActionItem.findByName( 'Personal Information' ).id.toString()])
         def result = result1.find {
-            it instanceof ActionItemReadOnly && it.actionItemName == 'Drug and Alcohol Policy'
+           it.actionItemName == 'Personal Information'
         }
         assert result.actionItemId != null
-        assert result.actionItemName == 'Drug and Alcohol Policy'
-        assert result.actionItemTitle == 'Drug and Alcohol Policy'
+        assert result.actionItemName == 'Personal Information'
+        assert result.actionItemTitle == 'Personal Information'
         assert result.folderId != null
         assert result.folderName != null
     }
@@ -156,7 +156,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         logout()
         loginSSB( 'CSRSTU001', '111111' )
         sessionFactory.currentSession.createSQLQuery( """UPDATE gcbagrp set GCBAGRP_INSTRUCTION = null where GCBAGRP_NAME='Enrollment'""" ).executeUpdate()
-        def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'group', groupId: "${ActionItemGroup.findByName( 'Enrollment' ).id}"] )
+        def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'group', groupId: ActionItemGroup.findByName( 'Enrollment' ).id.toString()] )
         def result = result1.find {
             it.title == 'Enrollment'
         }
@@ -174,7 +174,7 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         logout()
         loginSSB( 'CSRSTU001', '111111' )
         def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'group', groupId: '50'])
-        assert result1.isEmpty() == true
+        assertNull result1
     }
 
     @Test
@@ -182,14 +182,14 @@ class UserActionItemReadOnlyCompositeServiceIntegrationTests extends BaseIntegra
         logout()
         loginSSB( 'CSRSTU001', '111111' )
         def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'actionItem', actionItemId: '50'])
-        assert result1.isEmpty() == true
+        assertNull result1
     }
     @Test
     void actionItemOrGroupInfoInvalidSearchType() {
         logout()
         loginSSB( 'CSRSTU001', '111111' )
         def result1 = userActionItemReadOnlyCompositeService.actionItemOrGroupInfo( [searchType: 'invalid'])
-        assert result1.isEmpty() == true
+        assertNull result1
     }
 
     @Test

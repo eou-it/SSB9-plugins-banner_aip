@@ -50,7 +50,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
     void testCountUserActionItemByActionItemId() {
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
         def result = UserActionItem.countUserActionItemByActionItemId(actionItemId)
-        assertEquals 12, result
+        assertEquals 13, result
 
     }
 
@@ -67,7 +67,7 @@ class UserActionItemIntegrationTests extends BaseIntegrationTestCase {
         Long actionItemId = drugAndAlcoholPolicyActionItem.id
         def result = UserActionItem.countUserActionItemByActionItemId(actionItemId)
         assertNotNull result
-        assertEquals 12, result
+        assertEquals 13, result
     }
 
     @Test

@@ -8,7 +8,7 @@ import groovy.util.logging.Slf4j
 import net.hedtech.banner.general.asynchronous.AsynchronousBannerAuthenticationSpoofer
 import org.springframework.beans.factory.DisposableBean
 import org.springframework.beans.factory.annotation.Required
-import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException
+import org.springframework.orm.hibernate5.HibernateOptimisticLockingFailureException
 
 /**
  * Action Item Monitor class
@@ -114,7 +114,7 @@ class ActionItemPostMonitor implements DisposableBean {
                 }
             }
         } catch (Throwable t) {
-            log.error( t )
+            log.error( t.toString() )
         }
     }
 

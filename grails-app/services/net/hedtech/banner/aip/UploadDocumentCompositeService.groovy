@@ -11,7 +11,6 @@ import net.hedtech.banner.i18n.MessageHelper
 import net.hedtech.banner.security.BannerGrantedAuthorityService
 import org.apache.log4j.Logger
 import org.jenkinsci.plugins.clamav.scanner.ScanResult
-import org.springframework.transaction.annotation.Propagation
 import org.springframework.web.multipart.MultipartFile
 import net.hedtech.banner.imaging.BdmUtility
 import javax.xml.ws.WebServiceException
@@ -42,8 +41,8 @@ class UploadDocumentCompositeService {
      * Save uploaded document details in GCRAFLU
      * @param map
      */
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
-    def addDocument(map) {
+
+        def addDocument(map) {
         boolean success = false
         String message = null
         UploadDocument saveUploadDocument = null

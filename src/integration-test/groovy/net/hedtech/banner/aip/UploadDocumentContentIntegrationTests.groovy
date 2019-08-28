@@ -81,8 +81,8 @@ class UploadDocumentContentIntegrationTests extends BaseIntegrationTestCase {
         def result = saveUploadDocumentService(userActionItemId, responseId, 'AIPTestFileTXT.txt')
         assert result.success == true
         def paramsObj = [
-                userActionItemId : userActionItemId.toString(),
-                responseId   : responseId.toString(),
+                userActionItemId : userActionItemId,
+                responseId   : responseId,
                 pidm         : pidm,
                 filterName   : "%",
                 sortColumn   : "id",
