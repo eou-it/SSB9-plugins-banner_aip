@@ -3,16 +3,18 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import net.hedtech.banner.aip.common.LoggerUtility
+import grails.gorm.transactions.Transactional
+import groovy.util.logging.Slf4j
 import net.hedtech.banner.i18n.MessageHelper
 import net.hedtech.banner.service.ServiceBase
-import org.apache.log4j.Logger
+
 
 /**
  * Composite Service class for UserActionItemReadOnly domain
  */
+@Transactional
+@Slf4j
 class UserActionItemReadOnlyCompositeService extends ServiceBase {
-    private static final def LOGGER = Logger.getLogger( this.class )
     def groupFolderReadOnlyService
     def userActionItemReadOnlyService
     def springSecurityService
@@ -128,7 +130,7 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
      */
     def actionItemOrGroupInfo( params ) {
         def itemDetailInfo = []
-        LoggerUtility.debug( LOGGER, 'Params for actionItemOrGroupInfo ' + params )
+        log.debug(  'Params for actionItemOrGroupInfo ' + params )
         if (params.searchType == 'group') {
             def group = groupFolderReadOnlyService.getActionItemGroupById( Long.parseLong( params.groupId ) )
             if (group) {
@@ -148,15 +150,52 @@ class UserActionItemReadOnlyCompositeService extends ServiceBase {
                 itemDetailInfo << groupItem
             }
         } else if (params.searchType == 'actionItem') {
+
             def itemDetail = actionItemContentService.listActionItemContentById( Long.parseLong( params.actionItemId ) )
             def templateInfo = actionItemReadOnlyService.getActionItemROById( Long.parseLong( params.actionItemId ) )
+            def actionItem=[]
+            def actionItemContent=[]
             if (itemDetail) {
-                itemDetailInfo << itemDetail
+                  actionItem=[
+                          id:itemDetail.id,
+                          actionItemId:itemDetail.actionItemId,
+                          text:itemDetail.text,
+                          actionItemTemplateId:itemDetail.actionItemTemplateId,
+                          lastModifiedBy:itemDetail.lastModifiedBy,
+                          version:itemDetail.version
+                  ]
+                itemDetailInfo << actionItem
             }
+
             if (templateInfo) {
-                itemDetailInfo << templateInfo
+                actionItemContent=[
+                        actionItemId:templateInfo.actionItemId,
+                        actionItemName:templateInfo.actionItemName,
+                        actionItemTitle:templateInfo.actionItemTitle,
+                        folderId:templateInfo.folderId,
+                        folderName:templateInfo.folderName,
+                        folderDesc:templateInfo.folderDesc,
+                        actionItemDesc:templateInfo.actionItemDesc,
+                        actionItemStatus:templateInfo.actionItemStatus,
+                        actionItemPostedStatus:templateInfo.actionItemPostedStatus,
+                        actionItemActivityDate:templateInfo.actionItemActivityDate,
+                        actionItemUserId:templateInfo.actionItemUserId,
+                        actionItemContentUserId:templateInfo.actionItemContentUserId,
+                        actionItemCreatorId:templateInfo.actionItemCreatorId,
+                        actionItemCompositeDate:templateInfo.actionItemCompositeDate,
+                        actionItemLastUserId:templateInfo.actionItemLastUserId,
+                        actionItemVersion:templateInfo.actionItemVersion,
+                        actionItemTemplateId:templateInfo.actionItemTemplateId,
+                        actionItemTemplateName:templateInfo.actionItemTemplateName,
+                        actionItemTemplateDesc:templateInfo.actionItemTemplateDesc,
+                        actionItemPageName:templateInfo.actionItemPageName,
+                        actionItemContentId:templateInfo.actionItemContentId,
+                        actionItemContentDate:templateInfo.actionItemContentDate,
+                        actionItemContent:templateInfo.actionItemContent,
+                ]
+                itemDetailInfo << actionItemContent
             }
         }
-        itemDetailInfo
+
     }
 }

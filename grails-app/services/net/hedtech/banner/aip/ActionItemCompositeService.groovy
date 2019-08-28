@@ -3,7 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.general.communication.folder.CommunicationFolder
@@ -18,8 +18,9 @@ import net.hedtech.banner.aip.block.process.ActionItemBlockedProcess
 /**
  * Class for ActionItemCompositeService.
  */
+@Transactional
 class ActionItemCompositeService {
-    static transactional = true
+
     def actionItemService
     def springSecurityService
     def actionItemReadOnlyCompositeService
@@ -182,12 +183,14 @@ class ActionItemCompositeService {
      * @param map
      * @return
      */
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = ApplicationException.class)
     def updateActionItemDetailWithTemplate( map ) {
         def templateId = map.templateId.toInteger()
         def actionItemId = map.actionItemId.toInteger()
         def actionItemDetailText = map.actionItemContent
         def success = false
         def result = validateEditActionItemContent( actionItemId )
+
         if (!result.editable) {
             def model = [
                     success: false,
@@ -203,7 +206,7 @@ class ActionItemCompositeService {
         aic.actionItemTemplateId = templateId
         aic.text = actionItemDetailText
 
-        ActionItemContent newAic = actionItemContentService.createOrUpdate( aic )
+        ActionItemContent newAic = actionItemContentService.createOrUpdate( aic ,false)
         def errors = []
         def actionItemRO = actionItemReadOnlyService.getActionItemROById( newAic.actionItemId )
         actionItemRO = actionItemRO?.collect {ActionItemReadOnly it ->

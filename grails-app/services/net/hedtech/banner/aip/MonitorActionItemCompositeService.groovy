@@ -3,11 +3,13 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import grails.util.Holders
 import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.service.ServiceBase
 import org.apache.log4j.Logger
 import org.omg.CORBA.portable.ApplicationException
 import net.hedtech.banner.i18n.MessageHelper
+import java.util.regex.Pattern
 
 
 /**
@@ -24,6 +26,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
     def configUserPreferenceService
     def aipReviewStateService
     def actionItemService
+    def preferredNameService
 
     /**
      * get Action Item
@@ -36,7 +39,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                  actionItemName      : userActionItemDetails.actionItemName,
                  actionItemGroupName : userActionItemDetails.actionItemGroupName,
                  spridenId           : userActionItemDetails.spridenId,
-                 actionItemPersonName: formatPersonName(userActionItemDetails),
+                 actionItemPersonName: getPreferredName(userActionItemDetails.pidm),
                  status              : userActionItemDetails.status,
                  responseDate        : userActionItemDetails.responseDate,
                  displayStartDate    : userActionItemDetails.displayStartDate,
@@ -78,6 +81,8 @@ class MonitorActionItemCompositeService extends ServiceBase {
         LOGGER.debug("Action ID : {$actionId} -- PersonName :{$personName} -- PersonID :{$personId}-- ${filterData} -- ${pagingAndSortParams}")
         def qryresult
         def count
+
+        pagingAndSortParams?.sortColumn = (pagingAndSortParams?.sortColumn == 'actionItemPersonName')?'personSearchFullName':pagingAndSortParams?.sortColumn
         if (actionId && personName && !personId) {          // action id + person name combination
             qryresult = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonName(actionId, personName, pagingAndSortParams)
             count = monitorActionItemReadOnlyService.fetchByActionItemIdAndPersonNameCount(actionId, personName)
@@ -117,7 +122,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
                         actionItemName      : it.actionItemName,
                         actionItemGroupName : it.actionItemGroupName,
                         spridenId           : it.spridenId,
-                        actionItemPersonName: formatPersonName(it),
+                        actionItemPersonName: getPreferredName(it.pidm),
                         status              : it.status,
                         responseDate        : it.responseDate,
                         displayStartDate    : it.displayStartDate,
@@ -128,7 +133,6 @@ class MonitorActionItemCompositeService extends ServiceBase {
                         attachments         : it.attachments])
 
         }
-
         def resultMap = [result: filterResults(result, filterData.params.searchString),
                          length: filterData.params.searchString ? filterResults(result, filterData.params.searchString).size() : count];
 
@@ -239,7 +243,7 @@ class MonitorActionItemCompositeService extends ServiceBase {
     private def filterResults(def result, def searchParam) {
         def filteredResult
         String regexPattern
-        regexPattern = searchParam ? WILDCARD + searchParam.toString().toUpperCase() + WILDCARD : WILDCARD + WILDCARD;
+        regexPattern = searchParam ? WILDCARD + Pattern.quote(searchParam.toString().toUpperCase())+ WILDCARD : WILDCARD + WILDCARD;
         filteredResult = result.findAll { it ->
             it.actionItemName.toString().toUpperCase().matches(regexPattern) ||
                     it.status.toString().toUpperCase().matches(regexPattern) ||
@@ -277,20 +281,33 @@ class MonitorActionItemCompositeService extends ServiceBase {
         reviewAuditObject
     }
 
-    private String formatPersonName(monitorActionItemObj) {
-        String personLastName = monitorActionItemObj.personLastName ?: ''
-        String personFirstName = monitorActionItemObj.personFirstName ?: ''
-        String personMiddleName = monitorActionItemObj.personMiddleName ?: ''
-        String displayName
-        if (personLastName && personFirstName) {
-            displayName = personLastName + ", " + personFirstName + " " + personMiddleName
+    public String getPreferredName(pidm) {
+        def params = [:]
+        def conn
+        params.put("pidm", pidm)
+        params.put("productname", "General")
+        params.put("appname", "GeneralSsb")
+        params.put("pagename", "Monitor Action Item")
+        params.put("sectionname", "Search Results")
+
+        if (isSsbEnabled()) {
+            conn = dataSource.getSsbConnection()
+            log.debug "MonitorActionItem.getPreferredName using banssuser ssb connection"
+        } else {
+            conn = dataSource.getConnection()
+            log.debug "MonitorActionItem.getPreferredName using banproxy connection"
         }
-        if(!personFirstName){
-            displayName = personLastName + ", " + personMiddleName
+        try {
+            preferredNameService.getName(params, conn)
         }
-        if(!personFirstName && !personMiddleName){
-            displayName = personLastName
+        catch (net.hedtech.banner.exceptions.ApplicationException aex) {
+            log.error "ApplicationException occurred while fetching Preferred Name with :${aex}"
         }
-        displayName = displayName?.trim()
+        finally {
+            conn?.close()
+        }
+    }
+    private def isSsbEnabled() {
+        Holders.config.ssbEnabled instanceof Boolean ? Holders.config.ssbEnabled : false
     }
 }

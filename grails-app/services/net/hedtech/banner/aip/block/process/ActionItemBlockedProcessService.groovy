@@ -4,11 +4,14 @@
 
 package net.hedtech.banner.aip.block.process
 
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.service.ServiceBase
+
 
 /**
  * Service class for Action item Blocked Process
  */
+@Transactional
 class ActionItemBlockedProcessService extends ServiceBase {
 
     /**

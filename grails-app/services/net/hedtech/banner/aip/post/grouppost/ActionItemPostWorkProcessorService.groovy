@@ -3,9 +3,11 @@
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
+import grails.gorm.transactions.Transactional
 import groovy.sql.Sql
+import groovy.util.logging.Slf4j
 import net.hedtech.banner.aip.post.ActionItemErrorCode
-import org.apache.log4j.Logger
+
 
 import java.sql.SQLException
 
@@ -13,10 +15,11 @@ import java.sql.SQLException
  * Process a group send item to the point of creating recipient merge data values and submitting an individual ActionItem job
  * for the recipient.
  */
+@Slf4j
+@Transactional
 class ActionItemPostWorkProcessorService {
-    boolean transactional = true
-    private static
-    final log = Logger.getLogger( 'net.hedtech.banner.aip.post.grouppost.ActionItemPostWorkProcessorService' )
+
+
 
     def actionItemPerformPostService
     def actionItemPostWorkService
@@ -25,7 +28,7 @@ class ActionItemPostWorkProcessorService {
 
     private static final int noWaitErrorCode = 54
 
-    public void performPostItem( ActionItemPostWork actionItemPostWork ) {
+    void performPostItem( ActionItemPostWork actionItemPostWork ) {
 
         asynchronousBannerAuthenticationSpoofer.setMepContext( sessionFactory.currentSession.connection(), actionItemPostWork.mepCode )
 
@@ -45,7 +48,7 @@ class ActionItemPostWorkProcessorService {
      * @param errorCode
      * @param errorText
      */
-    public void failGroupSendItem( Long groupSendItemId, String errorCode, String errorText ) {
+     void failGroupSendItem( Long groupSendItemId, String errorCode, String errorText ) {
         ActionItemPostWork groupSendItem = (ActionItemPostWork) actionItemPostWorkService.get( groupSendItemId )
 
         asynchronousBannerAuthenticationSpoofer.setMepContext( sessionFactory.currentSession.connection(), groupSendItem.mepCode )
@@ -70,7 +73,7 @@ class ActionItemPostWorkProcessorService {
      * @param state the group send item execution state
      * @return true if the record was successfully locked and false otherwise
      */
-    public boolean lockGroupSendItem( final Long groupSendItemId, final ActionItemPostWorkExecutionState state ) {
+     boolean lockGroupSendItem( final Long groupSendItemId, final ActionItemPostWorkExecutionState state ) {
         Sql sql = null
         try {
             sql = new Sql( sessionFactory.getCurrentSession().connection() )
@@ -86,8 +89,6 @@ class ActionItemPostWorkProcessorService {
             } else {
                 throw e
             }
-        } finally {
-            sql?.close() // note that the test will close the connection, since it's our current session's connection
         }
     }
 }

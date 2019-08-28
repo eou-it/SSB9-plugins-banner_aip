@@ -3,7 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import grails.validation.ValidationException
 import net.hedtech.banner.MessageUtility
 import net.hedtech.banner.aip.common.AIPConstants
@@ -17,7 +17,7 @@ import java.text.MessageFormat
 /**
  * Composite Service for Action Item Group
  */
-
+@Transactional
 class ActionItemGroupCompositeService {
 
     def actionItemGroupService

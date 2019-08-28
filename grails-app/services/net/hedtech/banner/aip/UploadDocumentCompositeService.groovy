@@ -3,7 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
 import net.hedtech.banner.general.configuration.ConfigProperties
@@ -24,6 +24,7 @@ import org.jenkinsci.plugins.clamav.scanner.ClamAvScanner
 /**
  * UploadDocumentCompositeService Class for adding, preview and deleting of uploaded files.
  */
+@Transactional
 class UploadDocumentCompositeService {
 
     def springSecurityService
@@ -40,9 +41,8 @@ class UploadDocumentCompositeService {
      * Save uploaded document details in GCRAFLU
      * @param map
      */
-    @Transactional
-    def addDocument(map) {
 
+        def addDocument(map) {
         boolean success = false
         String message = null
         UploadDocument saveUploadDocument = null
@@ -340,7 +340,7 @@ class UploadDocumentCompositeService {
      * @return validation flag
      */
     public boolean validateMaxAttachments(paramsMapObj) {
-        ActionItemStatusRuleReadOnly actionItemStatusRule = actionItemStatusRuleReadOnlyService.getActionItemStatusRuleROById(Long.parseLong(paramsMapObj.responseId))
+        ActionItemStatusRuleReadOnly actionItemStatusRule = actionItemStatusRuleReadOnlyService.getActionItemStatusRuleROById(paramsMapObj.responseId)
         if (actionItemStatusRule?.statusAllowedAttachment > 0) {
             def resultCount = uploadDocumentService.fetchDocumentsCount(paramsMapObj)
             return resultCount <= actionItemStatusRule.statusAllowedAttachment

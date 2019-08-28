@@ -3,6 +3,7 @@
  **********************************************************************************/
 package net.hedtech.banner.aip
 
+import grails.gorm.transactions.Transactional
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
@@ -10,7 +11,9 @@ import net.hedtech.banner.general.person.PersonUtility
 import net.hedtech.banner.i18n.MessageHelper
 import org.apache.log4j.Logger
 import net.hedtech.banner.general.configuration.ConfigProperties
+import org.springframework.web.context.request.RequestContextHolder
 
+@Transactional
 class ActionItemStatusCompositeService {
     private static final def LOGGER = Logger.getLogger(this.class)
     private static final int defaultMaxAttachmentCount = 10
@@ -134,7 +137,8 @@ class ActionItemStatusCompositeService {
                 actionItemStatus: paramMap.title,
                 actionItemStatusActive: AIPConstants.YES_IND,
                 actionItemStatusBlockedProcess: paramMap.block == true ? AIPConstants.YES_IND : AIPConstants.NO_IND,
-                actionItemStatusSystemRequired: AIPConstants.NO_IND
+                actionItemStatusSystemRequired: AIPConstants.NO_IND,
+                mepCode: getVpdiCode()
         )
         ActionItemStatus newStatus
         def success = false
@@ -185,7 +189,14 @@ class ActionItemStatusCompositeService {
                     message = MessageHelper.message("actionItemStatusRule.statusId.nullable.error")
                     throw new ApplicationException(ActionItemStatusCompositeService, new BusinessLogicValidationException(message, []))
                 }
-
+                def numberOfAttachments
+                if(rule.allowedAttachments instanceof String ) {
+                     numberOfAttachments = Integer.parseInt(rule.allowedAttachments)
+                }
+                else{
+                     numberOfAttachments = rule.allowedAttachments
+                }
+              
                 if (rule.statusRuleId) {
                     statusRule = ActionItemStatusRule.get(rule.statusRuleId)
                     statusRule.seqOrder = rule.statusRuleSeqOrder.toInteger()
@@ -193,7 +204,7 @@ class ActionItemStatusCompositeService {
                     statusRule.actionItemStatusId = statusId
                     statusRule.reviewReqInd = rule.reviewReqInd
                     statusRule.actionItemId = jsonObj.actionItemId.toLong()
-                    statusRule.allowedAttachments = rule.allowedAttachments.toInteger()
+                    statusRule.allowedAttachments = numberOfAttachments
                 } else {
                     statusRule = new ActionItemStatusRule(
                             seqOrder: rule.statusRuleSeqOrder,
@@ -201,7 +212,7 @@ class ActionItemStatusCompositeService {
                             actionItemId: jsonObj.actionItemId.toLong(),
                             actionItemStatusId: statusId,
                             reviewReqInd: rule.reviewReqInd,
-                            allowedAttachments:rule.allowedAttachments
+                            allowedAttachments:numberOfAttachments
                     )
                 }
                 ruleList.push(statusRule)
@@ -229,9 +240,10 @@ class ActionItemStatusCompositeService {
     def getMaxAttachmentsValue(maxAttachment) {
         def result
         try {
-            ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.institution.maximum.attachment.number', grailsApplication.metadata['app.appId'])
-            maxAttachment = (configProperties ? Integer.parseInt(configProperties.configValue) : 0)
 
+            //TODO Remove Hardcored AppId
+            ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.institution.maximum.attachment.number', "GENERAL_SS")
+            maxAttachment = (configProperties ? Integer.parseInt(configProperties.configValue) : 0)
             result = [maxAttachment: (maxAttachment <= 0) ? defaultMaxAttachmentCount : maxAttachment]
         }
         catch(Exception e)
@@ -239,5 +251,10 @@ class ActionItemStatusCompositeService {
             result = [maxAttachment: defaultMaxAttachmentCount]
         }
         result
+    }
+
+    private def getVpdiCode() {
+        def session = RequestContextHolder?.currentRequestAttributes()?.request?.session
+        session.getAttribute('mep')
     }
 }

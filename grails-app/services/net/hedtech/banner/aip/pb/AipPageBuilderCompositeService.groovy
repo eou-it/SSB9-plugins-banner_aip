@@ -4,14 +4,17 @@
 
 package net.hedtech.banner.aip.pb
 
+import grails.gorm.transactions.Transactional
 import groovy.json.JsonSlurper
-import org.apache.log4j.Logger
+import groovy.util.logging.Slf4j
+
 
 /**
  * Service class for Action item Processing Page Builder
  */
+@Transactional
+@Slf4j
 class AipPageBuilderCompositeService {
-    private static final def LOGGER = Logger.getLogger( this.class )
     def pageService
     def jsonSlurper = new JsonSlurper()
     def compileService
@@ -51,8 +54,8 @@ class AipPageBuilderCompositeService {
                 groovyPagesTemplateEngine.clearPageCache()
                 groovyPagesTemplateEngine.createTemplate( compiledView, 'test' ).make().writeTo( output )
             }catch(Exception exp){
-                LOGGER.debug("Error while creating the template compiledView >>>>"+compiledView)
-                LOGGER.debug("Error while creating the template Exception >>>>" +exp)
+                log.debug("Error while creating the template compiledView >>>>"+compiledView)
+                log.debug("Error while creating the template Exception >>>>" +exp)
             }
             return ['html': output.toString(), 'pageName': pageName, 'script': compiledJSCode.toString(), 'compiled': html]
         }
