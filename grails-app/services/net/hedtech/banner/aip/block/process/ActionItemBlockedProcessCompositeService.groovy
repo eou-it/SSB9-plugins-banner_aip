@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2020 Ellucian Company L.P. and its affiliates.
  ****************************************************************************** */
 
 package net.hedtech.banner.aip.block.process
@@ -49,7 +49,7 @@ class ActionItemBlockedProcessCompositeService {
                      processPersonaBlockAllowedInd: obj.processPersonaBlockAllowedInd,
                      processSystemReqInd          : obj.processSystemReqInd,
                      blockedProcessAppRole        : obj.blockedProcessAppRole,
-                     blockedProcessAppRoleDisplay : obj.blockedProcessAppRole ? MessageHelper.message( 'aip.blocking.process.persona.' + obj.blockedProcessAppRole ) : null,
+                     blockedProcessAppRoleDisplay : obj.blockedProcessAppRole ? MessageHelper.message( 'aip.blocking.process.persona.' + (obj.blockedProcessAppRole).trim() ) : null,
                      processCode                  : obj.processCode,
                      processName                  : obj.processName,
                      version                      : obj.version,
