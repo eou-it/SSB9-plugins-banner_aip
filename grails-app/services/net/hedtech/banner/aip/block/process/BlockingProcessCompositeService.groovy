@@ -31,7 +31,7 @@ class BlockingProcessCompositeService {
 
 
         configuredPersona.each {
-            personaMap.put( it, MessageHelper.message( 'aip.blocking.process.persona.' + it.trim() ) )
+            personaMap.put( it.trim(), MessageHelper.message( 'aip.blocking.process.persona.' + it.trim() ) )
         }
         processList.each {BlockingProcess it ->
             List processUrlList = allProcessUrlList.findAll {BlockingProcessUrls x ->
