@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2020 Ellucian Company L.P. and its affiliates.
  *******************************************************************************/
 package net.hedtech.banner.aip.post.grouppost
 
@@ -1123,7 +1123,7 @@ class ActionItemPostCompositeService {
     void createPostItems(ActionItemPost groupSend) {
         log.debug( "Generating group send item records for group send with id = " + groupSend?.id)
         def session = sessionFactory.currentSession
-        def timeoutSeconds = (grailsApplication.config.banner?.transactionTimeout instanceof Integer ? (grailsApplication.config.banner?.transactionTimeout) : 300)
+        def timeoutSeconds = (Holders?.config?.banner?.transactionTimeout instanceof Integer ? (Holders?.config?.banner?.transactionTimeout) : 300)
         try {
             Holders.applicationContext.getBean('transactionManager')?.setDefaultTimeout(timeoutSeconds * 2)
             List<ActionItemPostSelectionDetailReadOnly> list = session.getNamedQuery('ActionItemPostSelectionDetailReadOnly.fetchSelectionIds')
