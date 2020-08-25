@@ -4,6 +4,7 @@
 package net.hedtech.banner.aip
 
 import grails.gorm.transactions.Transactional
+import grails.util.Holders
 import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.banner.exceptions.ApplicationException
 import net.hedtech.banner.exceptions.BusinessLogicValidationException
@@ -191,12 +192,12 @@ class ActionItemStatusCompositeService {
                 }
                 def numberOfAttachments
                 if(rule.allowedAttachments instanceof String ) {
-                     numberOfAttachments = Integer.parseInt(rule.allowedAttachments)
+                    numberOfAttachments = Integer.parseInt(rule.allowedAttachments)
                 }
                 else{
-                     numberOfAttachments = rule.allowedAttachments
+                    numberOfAttachments = rule.allowedAttachments
                 }
-              
+
                 if (rule.statusRuleId) {
                     statusRule = ActionItemStatusRule.get(rule.statusRuleId)
                     statusRule.seqOrder = rule.statusRuleSeqOrder.toInteger()
@@ -240,10 +241,9 @@ class ActionItemStatusCompositeService {
     def getMaxAttachmentsValue(maxAttachment) {
         def result
         try {
-
             //TODO Remove Hardcored AppId
-            ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.institution.maximum.attachment.number', "GENERAL_SS")
-            maxAttachment = (configProperties ? Integer.parseInt(configProperties.configValue) : 0)
+            maxAttachment=Holders.config.aip.institution.maximum.attachment.number
+            maxAttachment = (maxAttachment ? Integer.parseInt(maxAttachment) : 0)
             result = [maxAttachment: (maxAttachment <= 0) ? defaultMaxAttachmentCount : maxAttachment]
         }
         catch(Exception e)

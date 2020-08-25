@@ -20,6 +20,7 @@ import net.hedtech.banner.aip.common.AIPConstants
 import net.hedtech.bdm.services.BDMManager
 import org.json.JSONObject
 import org.jenkinsci.plugins.clamav.scanner.ClamAvScanner
+import grails.util.Holders
 
 /**
  * UploadDocumentCompositeService Class for adding, preview and deleting of uploaded files.
@@ -42,7 +43,7 @@ class UploadDocumentCompositeService {
      * @param map
      */
 
-        def addDocument(map) {
+    def addDocument(map) {
         boolean success = false
         String message = null
         UploadDocument saveUploadDocument = null
@@ -245,22 +246,22 @@ class UploadDocumentCompositeService {
      */
     def getRestrictedFileTypes() {
         def results
-        ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.restricted.attachment.type', 'GENERAL_SS')
+        def mepCode=getVpdiCode()
+        def configValue =Holders.config.aip.restricted.attachment.type
+        def configValueList=[]
 
-        def configValue = configProperties?.configValue?.toUpperCase()
-
-        if (configValue?.length() > 0 && configValue?.indexOf(AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE) == -1) {
-            def restrictedFileTypes = configValue.substring(0, configValue.length() - 1)
-            restrictedFileTypes = restrictedFileTypes.concat(",")
-            restrictedFileTypes = restrictedFileTypes.concat(AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE)
-            configValue = restrictedFileTypes.concat("]")
+        configValue.each() {
+            it = it.replaceAll("\"", "");
+            configValueList.push(it.toUpperCase())
         }
 
-        if (!configValue || configValue?.length() == 0) {
-            configValue = AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE
+        if (configValueList.size() > 0 && !(configValueList.contains(AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE)) ) {
+            configValueList.add(configValueList.size(),AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE)
         }
-
-        results = [restrictedFileTypes: configValue]
+        if (configValueList.size() == 0) {
+            configValueList = AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE
+        }
+        results = [restrictedFileTypes: configValueList]
     }
 
     /**
@@ -269,8 +270,9 @@ class UploadDocumentCompositeService {
      */
     def getMaxFileSize() {
         def results
-        ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.allowed.attachment.max.size', 'GENERAL_SS')
-        results = [maxFileSize: configProperties ? configProperties.configValue : null]
+        def mepCode=getVpdiCode()
+        def configValue =Holders.config.aip.allowed.attachment.max.size
+        results = [maxFileSize: configValue ? configValue : null]
     }
 
     /**
@@ -279,8 +281,9 @@ class UploadDocumentCompositeService {
      */
     def getDocumentStorageSystem() {
         def results
-        ConfigProperties configProperties = ConfigProperties.fetchByConfigNameAndAppId('aip.attachment.file.storage.location', 'GENERAL_SS')
-        results = [documentStorageLocation: configProperties ? configProperties.configValue : AIPConstants.FILE_STORAGE_SYSTEM_AIP]
+        def mepCode=getVpdiCode()
+        def configValue =Holders.config.aip.attachment.file.storage.location
+        results = [documentStorageLocation: configValue ? configValue :  AIPConstants.FILE_STORAGE_SYSTEM_AIP]
     }
 
     /**
