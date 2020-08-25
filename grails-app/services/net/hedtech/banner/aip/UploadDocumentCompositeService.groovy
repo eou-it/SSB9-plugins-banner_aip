@@ -246,7 +246,6 @@ class UploadDocumentCompositeService {
      */
     def getRestrictedFileTypes() {
         def results
-        def mepCode=getVpdiCode()
         def configValue =Holders.config.aip.restricted.attachment.type
         def configValueList=[]
 
@@ -270,7 +269,6 @@ class UploadDocumentCompositeService {
      */
     def getMaxFileSize() {
         def results
-        def mepCode=getVpdiCode()
         def configValue =Holders.config.aip.allowed.attachment.max.size
         results = [maxFileSize: configValue ? configValue : null]
     }
@@ -281,7 +279,6 @@ class UploadDocumentCompositeService {
      */
     def getDocumentStorageSystem() {
         def results
-        def mepCode=getVpdiCode()
         def configValue =Holders.config.aip.attachment.file.storage.location
         results = [documentStorageLocation: configValue ? configValue :  AIPConstants.FILE_STORAGE_SYSTEM_AIP]
     }
