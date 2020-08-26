@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2019 Ellucian Company L.P. and its affiliates.
+ Copyright 2019-2020 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -250,7 +250,7 @@ class UploadDocumentCompositeService {
         def configValueList=[]
 
         configValue.each() {
-            it = it.replaceAll("\"", "");
+            it = it.replaceAll("[^A-Za-z]", "");
             configValueList.push(it.toUpperCase())
         }
 
@@ -261,6 +261,7 @@ class UploadDocumentCompositeService {
             configValueList = AIPConstants.DEFAULT_RESTRICTED_FILE_TYPE
         }
         results = [restrictedFileTypes: configValueList]
+        results
     }
 
     /**

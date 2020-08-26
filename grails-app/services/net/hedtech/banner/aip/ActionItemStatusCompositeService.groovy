@@ -1,5 +1,5 @@
 /*********************************************************************************
- Copyright 2018-2019 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2020 Ellucian Company L.P. and its affiliates.
  **********************************************************************************/
 package net.hedtech.banner.aip
 
@@ -241,7 +241,6 @@ class ActionItemStatusCompositeService {
     def getMaxAttachmentsValue(maxAttachment) {
         def result
         try {
-            //TODO Remove Hardcored AppId
             maxAttachment=Holders.config.aip.institution.maximum.attachment.number
             maxAttachment = (maxAttachment ? Integer.parseInt(maxAttachment) : 0)
             result = [maxAttachment: (maxAttachment <= 0) ? defaultMaxAttachmentCount : maxAttachment]
