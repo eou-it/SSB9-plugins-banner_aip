@@ -18,8 +18,8 @@ class BlockingProcessCompositeService {
 
     def loadBlockingProcessLov() {
         def result = [:]
-        def configData = ConfigurationData.fetchByNameAndType("BANNER_AIP_BLOCK_PROCESS_PERSONA", "arraylist", "GENERAL_SS")
-        String personaConfigStr = configData?.value
+        def configData =  Holders.config.BANNER_AIP_BLOCK_PROCESS_PERSONA
+        String personaConfigStr = configData
         if(personaConfigStr){
             personaConfigStr = personaConfigStr?.substring(1,personaConfigStr?.length()-1)
         }
