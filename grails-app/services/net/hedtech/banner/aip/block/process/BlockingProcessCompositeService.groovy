@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2018-2020 Ellucian Company L.P. and its affiliates.
+ Copyright 2018 Ellucian Company L.P. and its affiliates.
  ****************************************************************************** */
 
 package net.hedtech.banner.aip.block.process
@@ -18,8 +18,8 @@ class BlockingProcessCompositeService {
 
     def loadBlockingProcessLov() {
         def result = [:]
-        def configData =  Holders.config.BANNER_AIP_BLOCK_PROCESS_PERSONA
-        String personaConfigStr = configData
+        def configData = ConfigurationData.fetchByNameAndType("BANNER_AIP_BLOCK_PROCESS_PERSONA", "arraylist", "GENERAL_SS")
+        String personaConfigStr = configData?.value
         if(personaConfigStr){
             personaConfigStr = personaConfigStr?.substring(1,personaConfigStr?.length()-1)
         }
