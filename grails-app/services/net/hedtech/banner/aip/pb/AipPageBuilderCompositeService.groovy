@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright 2018 Ellucian Company L.P. and its affiliates.
+ Copyright 2018-2020 Ellucian Company L.P. and its affiliates.
  ****************************************************************************** */
 
 package net.hedtech.banner.aip.pb
@@ -41,6 +41,7 @@ class AipPageBuilderCompositeService {
     def page( pageId ) {
         def html
         def data = pageService.get( pageId )
+        pageService.compilePage( data )
         def validateResult = compileService.preparePage( data.modelView )
         def pageName = jsonSlurper.parseText( data.modelView ).name
         if (validateResult.valid) {
